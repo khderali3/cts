@@ -1,0 +1,48 @@
+
+.sliderContainer {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .slide {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+  }
+  
+  .image_slider {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;  /* Ensures the image is fully visible, without cropping */
+    border-radius: 10px;  /* Optional for rounded corners */
+    color: wheat;
+  }
+
+  .slick-dots li button:before {
+    color: white !important;
+    
+  }
+
+  /* Remove the box-shadow */
+.btn:focus, .btn:active {
+  box-shadow: none !important;
+}
+
+
+/* .sidebar-wrapper {
+  scrollbar-color:rgb(15, 1, 32) #939296 ;
+} */
+
+
+.min-vh-150 {
+  min-height: 150vh;
+}
+
+
+.form-floating label {
+  font-size: 0.85rem;
+}
+.form-control-sm {
+  height: calc(1.5em + 0.5rem + 2px); /* Adjust height as needed */
+}
