@@ -12,57 +12,83 @@ export const Footer = () => {
 
         <>
         
- 
-  {/* Start Footer Section */}
-  <div className="footer background-color  ">
-    <div className="foot-back background-image" />
-    <div className="container-fluid d-flex justify-content-between align-items-center flex-wrap">
-      <div className="intro">
-        <ul className="text-light d-flex flex-column justify-content-center">
-          <li className="active mb-4">Home</li>
-          <li className="mb-4">Product</li>
-          <li className="mb-4">About us</li>
-          <li className="mb-4">Contact</li>
+        <footer>
+  <div className="container">
+    <div className="row">
+      <div className="col-md-2 mx-auto ">
+        <h5>About Us</h5>
+        <p>
+          Cloud Tech Sky provides top-notch IT and network solutions for your
+          business needs.
+        </p>
+      </div>
+      <div className="col-md-2 mx-auto">
+        <h5>Quick Links</h5>
+        <ul className="footer-links ps-2">
+          <li>
+            <a className="text-light" href="#">
+              Home
+            </a>
+          </li>
+          <li>
+            <a className="text-light" href="#">
+              Products
+            </a>
+          </li>
+          <li>
+            <a className="text-light" href="#">
+              Services
+            </a>
+          </li>
+          <li>
+            <a className="text-light" href="#">
+              About us
+            </a>
+          </li>
+          <li>
+            <a className="text-light" href="#">
+              Support
+            </a>
+          </li>
         </ul>
       </div>
-      <div className="mo-map">
-        <div className="map text-light mb-5">
-          <h4>We are headquartered in:</h4>
-          <p className="ms-3 mt-3">building, street, area, city, contry</p>
-          <p className="ms-3 mt-3">building, street, area, city, contry</p>
-        </div>
-        <div className="map text-light mt-5">
-          <h4>You can also reach us by email:</h4>
-          <p className="ms-3 mt-3">Cloudtech@gmailcom</p>
-          <p className="ms-3 mt-3">+963 999 999 999</p>
-        </div>
-      </div>
-      <div className="contac">
-        <p className="text-light mb-5">
-          <span>Cloud Tech</span> is a leading company in the field of
-          technology and IT solutions.
-        </p>
-        <div className="form text-light d-flex flex-column justify-content-around">
-          <form action="" className="d-flex flex-column">
-            <label htmlFor="" className="mb-4 ms-1">
-              your feedback:
-            </label>
-            <textarea
-              name=""
-              id=""
-              rows={2}
-              placeholder="Message Here"
-              defaultValue={""}
-            />
-          </form>
-          <button className="mt-4 w-25 ms-1 p-1">Submite</button>
-        </div>
+      <div className="col-md-2 mx-auto">
+        <h5>Contact Us</h5>
+        <p>Email: info@cloudtechsky.com</p>
+        <p>Phone: +123 456 7890</p>
+        <ul className="footer-social">
+          <li>
+            <a className="text-light" href="#">
+              <i className="fab fa-facebook" />
+            </a>
+          </li>
+          <li>
+            <a className="text-light" href="#">
+              <i className="fab fa-twitter" />
+            </a>
+          </li>
+          <li>
+            <a className="text-light" href="#">
+              <i className="fab fa-linkedin" />
+            </a>
+          </li>
+          <li>
+            <a className="text-light" href="#">
+              <i className="fab fa-instagram" />
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
-  {/* End Footer Section */}
-
-
+  <div
+    className="text-center p-3"
+    style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
+  >
+    © 2020 Copyright:
+    <a className="text-white" href="https://mdbootstrap.com/" />
+  </div>
+</footer>
 
         
         </>

@@ -13527,6 +13527,10 @@ textarea.form-control-lg {
     animation-delay: 0.3s;
   }
 }
+
+
+/* 
+
 @media (max-width: 991.98px) {
   .sidebar-expand-lg::before {
     display: none;
@@ -13718,6 +13722,13 @@ textarea.form-control-lg {
 .sidebar-expand.layout-fixed .app-sidebar .sidebar-wrapper {
   height: calc(100vh - (calc(3.5rem + 1px)));
 }
+
+
+
+ */
+
+
+
 .sidebar-expand.sidebar-open .nav-link > .nav-badge,
 .sidebar-expand.sidebar-open .nav-link > p > .nav-badge {
   animation-name: fadeIn;

@@ -17,12 +17,13 @@ class HomeSection(models.Model):
         return f"{self.id},{self.home_sec_title}"
    
 
-
+#who we are 
 class AboutUs(models.Model):
     about_us_title = models.TextField(blank=True, null=True, db_index=True, unique=True)
     about_us_company_name = models.CharField( max_length=255 ,blank=True, null=True, db_index=True, unique=True) 
     about_us_hint = models.TextField(blank=True, null=True, db_index=True, unique=True)    
     about_us_details = models.TextField(blank=True, null=True, db_index=True, unique=True)
+    about_us_youtube_url = models.URLField(blank=True, null=True )
     about_us_title_ar = models.TextField(blank=True, null=True, db_index=True, unique=True)
     about_us_company_name_ar = models.CharField( max_length=255 ,blank=True, null=True, db_index=True, unique=True)  
     about_us_hint_ar = models.TextField(blank=True, null=True, db_index=True, unique=True)    
@@ -84,10 +85,10 @@ class ProductSection(models.Model):
 
 
 class Product(models.Model):
-    prod_name = models.CharField( null=True, db_index=True,  max_length=255)
-    prod_name_hint = models.CharField( null=True, db_index=True,  max_length=255)
-    prod_details_hint = models.TextField( null=True, db_index=True, blank=True )
-    prod_details = models.TextField( null=True, db_index=True, blank=True )
+    prod_name = models.CharField(  db_index=True,  max_length=255)
+    prod_name_hint = models.CharField(  db_index=True,  max_length=255)
+    prod_details_hint = models.TextField(  db_index=True,   )
+    prod_details = models.TextField(   db_index=True,   )
     prod_image = models.ImageField(upload_to='Product', null=True, blank=True)
     prod_name_ar = models.CharField( null=True, db_index=True,  max_length=255, blank=True)
     prod_name_hint_ar = models.CharField( null=True, db_index=True,  max_length=255, blank=True)

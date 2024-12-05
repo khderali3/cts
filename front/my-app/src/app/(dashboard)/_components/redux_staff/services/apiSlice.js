@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { setAuth, logout }  from '../features/authSlice'
+import { setAuth, setLogout }  from '../features/authSlice'
 import { Mutex } from 'async-mutex'
 
 
@@ -32,7 +32,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
           // retry the initial query
           result = await baseQuery(args, api, extraOptions)
         } else {
-          api.dispatch(logout())
+          api.dispatch(setLogout())
         }
       } finally {
         // release must be called once the mutex should be released again.

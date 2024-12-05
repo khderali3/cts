@@ -67,9 +67,9 @@ export const Nav = () => {
           </li>
           <li className="nav-item">
             <Link
-            className="nav-link  p-lg-3 p-4 services "
+            className="nav-link  p-lg-3 p-4 services2 "
 
-            href="/#services"
+            href="/#services2"
            
             >
               Services

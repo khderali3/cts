@@ -30,9 +30,6 @@
 }
 
 
-/* .sidebar-wrapper {
-  scrollbar-color:rgb(15, 1, 32) #939296 ;
-} */
 
 
 .min-vh-150 {
@@ -44,5 +41,60 @@
   font-size: 0.85rem;
 }
 .form-control-sm {
-  height: calc(1.5em + 0.5rem + 2px); /* Adjust height as needed */
+  height: calc(1.5em + 0.5rem + 2px);  
 }
+
+.not_showing {
+  display: none !important;
+}
+
+.services .container .row {
+  z-index: 1;
+}
+
+
+ul {
+  list-style-type: none;  
+}
+
+
+
+.sidebar-expand-lg .app-sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  max-height: 100vh;
+  
+}
+
+.without_marker::marker {
+  content: none;
+}
+
+.language_select:focus, select:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+ 
+/* .sidebar-wrapper {
+  scrollbar-color:rgb(15, 1, 32) #939296 ;
+} */
+
+ 
+
+ .nav-item:hover {
+  background-color: #4692dd1e;
+  color: #fff;
+}
+
+.nav_item_active {
+  background-color: #4692dd1e;
+  color: #fff;
+}
+
+
+
+
+
+ 

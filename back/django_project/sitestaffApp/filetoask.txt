@@ -1,0 +1,37 @@
+i have the follwing model :
+
+class HomeSection(models.Model):
+    home_sec_title = models.TextField(blank=True, null=True, db_index=True, unique=True)
+
+    home_sec_details = models.TextField(blank=True, null=True, db_index=True, unique=True)
+    home_sec_image = models.ImageField(upload_to='HomeSection', null=True, blank=True)
+    home_sec_title_ar = models.TextField(blank=True, null=True, db_index=True, unique=True)
+    home_sec_details_ar = models.TextField(blank=True, null=True, db_index=True, unique=True)
+    home_sec_created_date = models.DateTimeField(auto_now_add=True)
+    home_sec_updated_date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.id},{self.home_sec_title}"
+
+
+and i have the follwing serializer :
+class HomeSectionSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = HomeSection
+		fields = ['id', 'home_sec_title', 'home_sec_details', 'home_sec_image', 'home_sec_title_ar', 'home_sec_details_ar' ]
+		rede_only_fields = ['id']
+
+and the folling view :
+
+class HomeSectionView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+    def get(self, request):
+        home_section_obj, created = HomeSection.objects.get_or_create(id=1)
+        serializer = HomeSectionSerializer(home_section_obj, context={'request': self.request} )
+        return Response(serializer.data)
+
+
+how to how to use update or post method to update the object where the object is :
+	home_section_obj, created = HomeSection.objects.get_or_create(id=1)
+

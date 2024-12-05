@@ -10,14 +10,16 @@ const ProductButton = ({ slug }) => {
   const handleMoreDetails = () => {
     if(slug) {
     // Navigate to the product page with the given slug
-        router.push(`/product/${slug}`);
+    console.log("id clicked")
+    router.push(`/product/${slug}`);
+    } else {
+      console.log('clicket without slug')
     }
 
-  };
-
+  }
   return (
     <button onClick={handleMoreDetails} className="btn btn-primary">
-      More Details
+      More Detailse
     </button>
   );
 };

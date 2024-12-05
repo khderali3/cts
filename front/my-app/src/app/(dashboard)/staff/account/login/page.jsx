@@ -5,9 +5,8 @@ import { useRouter } from 'next/navigation';
 
 import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staff/features/authApiSlice";
 import { useDispatch } from 'react-redux';
-import { setAuth, setloginFirstName, setprofileImage,
-        setIsStaff,setIsSupserUser, setGroups, setPermissions,finishIntialLoad
-        } from '@/app/(dashboard)/_components/redux_staff/features/authSlice';
+import { setAuth,finishIntialLoad,setloginFirstName,setprofileImage,setIsStaff,setIsSupserUser,setGroups,setPermissions  } from '@/app/(dashboard)/_components/redux_staff/features/authSlice';
+import { redirect } from "next/navigation";
 
 
 const Login = () => {
@@ -63,30 +62,20 @@ const Login = () => {
 
           } else {
             toast.error("you have no permission to access this area");
+            router.push('/');
           }
 
-
-          // Clear form fields and files on successful submission
-          // setFormData({
-          //   ticket_department: "",
-          //   ticket_subject: "",
-          //   ticket_body: "",
-          // });
-          // setFiles([{ id: 1, file: null }]);
-          // fileInputRefs.current.forEach((input) => {
-          //   if (input) input.value = ""; // Reset file input value
-          // });
-  
-          // toast.success("Your replay was added successfully!");
-          // router.push('/tickets');  
+ 
         } else {
           
           console.log(response)
           if(response.error.data.non_field_errors){
             toast.error(response.error.data.non_field_errors[0]);
-            console.log(response.error.data.non_field_errors)
+
+          
           } else {
             toast.error("Failed to login");
+         
           }
         }
       } catch (error) {

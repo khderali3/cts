@@ -1,9 +1,7 @@
 
 import "@/app/(site)/_components/assets/css/bootstrap.min.css"
-
 import "@/app/(site)/_components/assets/css/all.min.css"
 import "@/app/(site)/_components/assets/css/style.css"
-
 import "@/app/globals.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -19,6 +17,11 @@ import { Nav } from "@/app/(site)/_components/jsx/nav";
 import Script from "next/script";
 import { Footer } from "@/app/(site)/_components/jsx/footer";
 import Setup from "@/app/(site)/_components/utils/setup";
+
+
+
+
+
 
 export default function RootLayout({ children }) {
 
@@ -46,28 +49,18 @@ export default function RootLayout({ children }) {
       
       <body >
 
-        {/* <Provider> 
-          <Setup />
-        <Nav /> 
-          
-          {children}
-          
 
-          <Footer />
+  <Provider> 
+    <Setup />
+    <Nav /> 
 
-        </Provider>
- */}
+    <div className="custom_min_vh_100   "> 
+      {children}  
 
-<Provider> 
-  <Setup />
-  <Nav /> 
 
-    {children}  
-
-  {/* <Footer /> */}
-
-  {/* <Footer /> */}
-</Provider > 
+    </div>
+    <Footer />
+  </Provider > 
 
 
 

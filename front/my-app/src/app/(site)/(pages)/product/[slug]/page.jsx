@@ -31,7 +31,7 @@ const Page = async ({ params }) => {
 
 
 
-<div className="products-info d-flex justify-content-center align-items-center vh-100">
+<div className="products-info d-flex justify-content-center align-items-center">
   <p className="fs-6 text-light text-center">Product not found or loading...</p>
 </div>
 
@@ -60,7 +60,7 @@ const Page = async ({ params }) => {
                   />
                 </div>
                 <div className="text mt-5 mb-5 col-md-10 col-12 text-start">
-                  <h2 className="text-light text-bolder col-12 fs-1 mb-3">
+                  <h2 className="text-light text-bolder col-12 fs-1  ">
                     {data?.prod_name} <p>{data?.prod_name_hint}</p>
                   </h2>
                   <p className="fs-6 text-light">{data?.prod_details_hint}</p>

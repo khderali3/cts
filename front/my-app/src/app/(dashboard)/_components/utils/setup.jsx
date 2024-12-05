@@ -2,11 +2,11 @@
 
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-
+import useVerify from "../../hooks/use-verify";
 
 const StaffSetup = () => {
 
-    // useVerify();
+    useVerify();
     return < ToastContainer/>
 } 
 

@@ -8,6 +8,13 @@ from ticketSystemApp.views import ProtectedMediaView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/staff/auth/', include('staffAuthApp.urls')),
+    path('api/staff/site/', include('sitestaffApp.urls')),
+    
+
+
+
+
+
     path('api/', include('djoser.urls')),
     path('api/', include('usersAuthApp.urls')),
     path('api/site/', include('siteusersApp.urls')),

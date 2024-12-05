@@ -18,8 +18,18 @@ const authSlice = createSlice({
         setAuth: state => {
             state.isAuthenticated = true
         },
-        logout: state => {
+        setLogout: state => {
             state.isAuthenticated = false
+
+
+            state.isLoading= true,
+            state.loginFirstName= ''
+            state.profileImage= ''
+            state.is_staff=false
+            state.is_superuser=false
+            state.groups=[]
+            state.permissions=[]
+
 
         },
         finishIntialLoad: state => {
@@ -46,7 +56,7 @@ const authSlice = createSlice({
     }
 })
 
-export const {setAuth, logout, finishIntialLoad,
+export const {setAuth, setLogout, finishIntialLoad,
      setloginFirstName, setprofileImage, setIsStaff,
-     setIsSupserUser, setGroups, setPermissions}  = authSlice.actions;
+     setIsSupserUser, setGroups, setPermissions, }  = authSlice.actions;
 export default authSlice.reducer;
