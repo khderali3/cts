@@ -78,24 +78,8 @@ const Page = () => {
       
   };
 
-        //   const handleChange = (e) => {
-        //     console.log()
-        //     const { name, value } = e.target;
-        //     console.log(name, value)
-        //     setData((prevState) => ({
-        //       ...prevState,
-        //       [name]: value,
-        //     }));
-        //   };
-
           const handleChange = (e) => {
             const { name, value, type, files } = e.target;
-          
-            // setData((prevState) => ({
-            //   ...prevState,
-            //   // [name]: type === "file" ? files[0] : value, // Handle file input specifically
-            //   [name]: type === "file" ? files[0] : value, // Handle file input specifically
-            // }));
 
             if (type === "file") {
               // If the input is a file, update the selectedFile state
@@ -107,9 +91,6 @@ const Page = () => {
                 [name]: value,
               }));
             }
-
-
-
           };
 
 

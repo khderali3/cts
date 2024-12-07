@@ -169,6 +169,8 @@ const Home = async () => {
             <h3 className="fs-1 fw-bolder">{data?.produc_sec?.prd_sec_title}</h3>
             <p className="fw-bold text-light">{data?.produc_sec?.prd_sec_hint }</p>
           </div>
+
+
           <div className="row justify-content-center row-cols-auto">
           { data?.products?.map( i => 
 
@@ -196,6 +198,9 @@ const Home = async () => {
 
 
           </div>
+
+
+          
         </div>
       </div>
 
@@ -220,7 +225,7 @@ const Home = async () => {
             </p>
             <div className="">
               <ul className="row">
-              { data?.feature_whayus?.map( i =>  <li key={i.id} className=" mb-2 col-md-6 col-12"> {i.feat_whyus_title}</li>)}
+              { data?.services?.map( i =>  <li key={i.id} className=" mb-2 col-md-6 col-12"> {i.service_name}</li>)}
               </ul>
             </div>
           </div>

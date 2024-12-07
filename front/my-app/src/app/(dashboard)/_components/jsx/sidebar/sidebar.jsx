@@ -108,9 +108,9 @@ useEffect(() => {
               </li>
                 <ul className=" collapse nav  ps-2 " id="WebSite_Managment" >
                   <li className="nav-item text-light">
-                    <Link href="/staff/site" className="  rounded text-light nav-link  "  >
+                    <Link href="/staff/main_index" className="  rounded text-light nav-link  "  >
                     <i className="nav-icon bi bi-circle" />
-                    <p>Min Website Page</p>
+                    <p>Min Index Page</p>
 
                     </Link>
                   </li>

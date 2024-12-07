@@ -19,15 +19,15 @@ class HomeSection(models.Model):
 
 #who we are 
 class AboutUs(models.Model):
-    about_us_title = models.TextField(blank=True, null=True, db_index=True, unique=True)
-    about_us_company_name = models.CharField( max_length=255 ,blank=True, null=True, db_index=True, unique=True) 
-    about_us_hint = models.TextField(blank=True, null=True, db_index=True, unique=True)    
-    about_us_details = models.TextField(blank=True, null=True, db_index=True, unique=True)
+    about_us_title = models.TextField( db_index=True, unique=True)
+    about_us_company_name = models.CharField(max_length=255, db_index=True, unique=True) 
+    about_us_hint = models.TextField(db_index=True, unique=True)    
+    about_us_details = models.TextField( db_index=True, unique=True)
     about_us_youtube_url = models.URLField(blank=True, null=True )
-    about_us_title_ar = models.TextField(blank=True, null=True, db_index=True, unique=True)
-    about_us_company_name_ar = models.CharField( max_length=255 ,blank=True, null=True, db_index=True, unique=True)  
-    about_us_hint_ar = models.TextField(blank=True, null=True, db_index=True, unique=True)    
-    about_us_details_ar = models.TextField(blank=True, null=True, db_index=True, unique=True)
+    about_us_title_ar = models.TextField( db_index=True, unique=True)
+    about_us_company_name_ar = models.CharField( max_length=255 , db_index=True, unique=True)  
+    about_us_hint_ar = models.TextField(blank=True, unique=True)    
+    about_us_details_ar = models.TextField(db_index=True, unique=True)
     about_us_created_date = models.DateTimeField(auto_now_add=True)
     about_us_updated_date = models.DateTimeField(auto_now=True)
     def __str__(self):
@@ -114,13 +114,13 @@ class Product(models.Model):
 
 
 class OurServicesSection(models.Model):   
-    servic_sec_title = models.CharField( null=True, db_index=True,  max_length=255)
-    servic_sec_sub_title = models.CharField( null=True, db_index=True,  max_length=255)
-    servic_sec_hint = models.CharField( null=True, db_index=True,  max_length=255)
+    servic_sec_title = models.CharField(  db_index=True,  max_length=255,  null=True, blank=True)
+    servic_sec_sub_title = models.CharField( db_index=True,  max_length=255,  null=True, blank=True)
+    servic_sec_hint = models.CharField(  db_index=True,  max_length=255,  null=True, blank=True)
 
-    servic_sec_title_ar = models.CharField( null=True, db_index=True,  max_length=255, blank=True)
-    servic_sec_sub_title_ar = models.CharField( null=True, db_index=True,  max_length=255, blank=True)
-    servic_sec_hint_ar = models.CharField( null=True, db_index=True,  max_length=255, blank=True)
+    servic_sec_title_ar = models.CharField(  db_index=True,  max_length=255,  null=True, blank=True )
+    servic_sec_sub_title_ar = models.CharField(  db_index=True,  max_length=255,  null=True, blank=True)
+    servic_sec_hint_ar = models.CharField(  db_index=True,  max_length=255,  null=True, blank=True)
 
     servic_sec_created_date = models.DateTimeField(auto_now_add=True)
     servic_sec_updated_date = models.DateTimeField(auto_now=True) 
@@ -130,11 +130,11 @@ class OurServicesSection(models.Model):
     
 
 class Service(models.Model):
-    service_name = models.CharField( null=True, db_index=True,  max_length=255)
-    service_detail = models.TextField(  null=True, db_index=True, blank=True )
+    service_name = models.CharField(  db_index=True,  max_length=255)
+    service_detail = models.TextField(  db_index=True, blank=True )
     service_image = models.ImageField(upload_to='service', null=True, blank=True)
-    service_name_ar = models.CharField( null=True, db_index=True,  max_length=255, blank=True)
-    service_detail_ar = models.TextField( null=True, db_index=True, blank=True)
+    service_name_ar = models.CharField(  db_index=True,  max_length=255,)
+    service_detail_ar = models.TextField(  db_index=True, )
     service_created_date = models.DateTimeField(auto_now_add=True)
     service_updated_date = models.DateTimeField(auto_now=True) 
 

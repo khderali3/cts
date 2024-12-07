@@ -1,6 +1,6 @@
 from .models import (HomeSection, AboutUs, WhyUs, FeatureWhyUs, ProductSection,
                       Product , Service, OurServicesSection, OurVision, Focus,
-					  OurClient, OurClientSection, CompnayIfRight
+					  OurClient, OurClientSection, CompnayIfRight, 
                       )
 
 from rest_framework import serializers
@@ -45,7 +45,7 @@ class OurServicesSectionSerializer(serializers.ModelSerializer):
 class ServiceSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Service
-		fields = ('service_name', )
+		fields = ('id','service_name', 'service_name_ar')
           
 
 

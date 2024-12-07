@@ -1,9 +1,13 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from siteusersApp.models import HomeSection, AboutUs,WhyUs, FeatureWhyUs, ProductSection, Product
+from siteusersApp.models import (HomeSection, AboutUs,WhyUs, FeatureWhyUs, ProductSection, Product,
+                                  OurServicesSection, Service, OurVision, Focus, OurClientSection, OurClient, CompnayIfRight
+                                  )
 from .my_serializers import (HomeSectionSerializer, AboutUsSectionSerializer,
                               WhyUsSectionSerializer, FeatureWhyUsSectionSerializer, 
-                              ProductSectionSerializer, ProductSerializer
+                              ProductSectionSerializer, ProductSerializer, OurServicesSectionSerializer, ServiceSerializer,
+                              OurVisionSerializer, FocusSecSerializer, OurClientSectionSerializer, OurClientSerializer,
+                              CompnayIfRightSecSerializer
                                 )
 
 from rest_framework.response import Response
@@ -189,3 +193,208 @@ class ProductView(APIView):
 
             product_obj.delete()  # This will delete the object
             return Response({"detail": "Deleted successfully."}, status=status.HTTP_202_ACCEPTED)
+    
+
+
+
+
+
+class OurServicesSectionView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+    def get(self, request):
+        our_services_sec_obj, created = OurServicesSection.objects.get_or_create(id=1)
+        serializer = OurServicesSectionSerializer(our_services_sec_obj, context={'request': self.request} )
+        return Response(serializer.data)
+    
+    def post(self, request):
+        our_services_sec_obj, created = OurServicesSection.objects.get_or_create(id=1)
+        serializer = OurServicesSectionSerializer(our_services_sec_obj, data=request.data, context={'request': self.request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+
+
+
+
+class ServiceView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+    def get(self, request, pk=None):
+
+        if pk:
+            try:
+                Service_obj = Service.objects.get(pk=pk)
+                serializer = ServiceSerializer(Service_obj, context={'request': self.request})
+                return Response(serializer.data)
+            except Service.DoesNotExist:
+                return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            Service_lise = Service.objects.all()
+            serializer = ServiceSerializer(Service_lise, many=True, context={'request': self.request} )
+            return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = ServiceSerializer(data=request.data, context={'request': self.request})
+        if serializer.is_valid():
+            serializer.save()  # This will save the new object
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        try:
+            Service_obj = Service.objects.get(pk=pk)
+        except Service.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ServiceSerializer(Service_obj, data=request.data, context={'request': self.request}, partial=False)
+        if serializer.is_valid():
+            serializer.save()  # This will update the object
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk):
+            try:
+                Service_obj = Service.objects.get(pk=pk)
+            except Service.DoesNotExist:
+                return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+            Service_obj.delete()  # This will delete the object
+            return Response({"detail": "Deleted successfully."}, status=status.HTTP_202_ACCEPTED)
+    
+
+
+class OurVisionSectionView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+    def get(self, request):
+        our_vision_obj, created = OurVision.objects.get_or_create(id=1)
+        serializer = OurVisionSerializer(our_vision_obj, context={'request': self.request} )
+        return Response(serializer.data)
+    
+    def post(self, request):
+        our_vision_obj, created = OurVision.objects.get_or_create(id=1)
+        serializer = OurVisionSerializer(our_vision_obj, data=request.data, context={'request': self.request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+
+class FocusSecView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+    def get(self, request):
+        focus_obj, created = Focus.objects.get_or_create(id=1)
+        serializer = FocusSecSerializer(focus_obj, context={'request': self.request} )
+        return Response(serializer.data)
+    
+    def post(self, request):
+        focus_obj, created = Focus.objects.get_or_create(id=1)
+        serializer = FocusSecSerializer(focus_obj, data=request.data, context={'request': self.request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+class OurClientSectionView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+    def get(self, request):
+        our_client_sec_obj, created = OurClientSection.objects.get_or_create(id=1)
+        serializer = OurClientSectionSerializer(our_client_sec_obj, context={'request': self.request} )
+        return Response(serializer.data)
+    
+    def post(self, request):
+        our_client_sec_obj, created = OurClientSection.objects.get_or_create(id=1)
+        serializer = OurClientSectionSerializer(our_client_sec_obj, data=request.data, context={'request': self.request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+
+
+
+
+
+
+class OurClientView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+    def get(self, request, pk=None):
+
+        if pk:
+            try:
+                our_clients_obj = OurClient.objects.get(pk=pk)
+                serializer = OurClientSerializer(our_clients_obj, context={'request': self.request})
+                return Response(serializer.data)
+            except OurClient.DoesNotExist:
+                return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            our_clients_lise = OurClient.objects.all()
+            serializer = OurClientSerializer(our_clients_lise, many=True, context={'request': self.request} )
+            return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = OurClientSerializer(data=request.data, context={'request': self.request})
+        if serializer.is_valid():
+            serializer.save()  # This will save the new object
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        try:
+            our_clients_obj = OurClient.objects.get(pk=pk)
+        except OurClient.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = OurClientSerializer(our_clients_obj, data=request.data, context={'request': self.request}, partial=False)
+        if serializer.is_valid():
+            serializer.save()  # This will update the object
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk):
+            try:
+                our_clients_obj = OurClient.objects.get(pk=pk)
+            except OurClient.DoesNotExist:
+                return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+            our_clients_obj.delete()  # This will delete the object
+            return Response({"detail": "Deleted successfully."}, status=status.HTTP_202_ACCEPTED)
+    
+
+
+
+
+
+class CompnayIfRightSectionView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+    def get(self, request):
+        company_if_right_sec_obj, created = CompnayIfRight.objects.get_or_create(id=1)
+        serializer = CompnayIfRightSecSerializer(company_if_right_sec_obj, context={'request': self.request} )
+        return Response(serializer.data)
+    
+    def post(self, request):
+        company_if_right_sec_obj, created = CompnayIfRight.objects.get_or_create(id=1)
+        serializer = CompnayIfRightSecSerializer(company_if_right_sec_obj, data=request.data, context={'request': self.request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

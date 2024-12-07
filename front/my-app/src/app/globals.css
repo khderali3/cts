@@ -94,6 +94,13 @@ ul {
 }
 
 
+/* for staff forms  */
+input[readonly] {
+  background-color: #e9ecef !important; /* Light gray background */
+  cursor: not-allowed; /* Optional: change cursor to indicate readonly */
+}
+
+
 
 
 

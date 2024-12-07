@@ -1,38 +1,14 @@
-the problem has been solved , it is from fech caching , i disable the cach and the problem has been solved ,
+  const [editingItem, setEditingItem] = useState({
+	id:null,
+	feat_whyus_title:'',
+	feat_whyus_title_ar:''
+  });
 
 
-now my iframe vidio url from my api is works fine , and here is my code :
-
-  let res = ''
-  let data= ''
-  try {
-
-    res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/site/index/`,
-     { cache: 'no-store',}  // Disable caching
-    );
-    data = await res.json();
-  } catch (error) {
-    
-  }
-
-
-
-
-and my iframe is just like the follwing :
-
-
-             
-                <iframe
-                  src={data?.about_us?.about_us_youtube_url}
-                  
-                  title="YouTube video player"
-                  style={{ border: "none" }}
-                  frameBorder="0"
-                  // allowFullScreen
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                  // referrerPolicy="strict-origin-when-cross-origin"
-                  referrerPolicy="no-referrer"
-                />
-
-
-, 
+onClick={() => {
+  setEditingItem({
+  id:item.id,
+	feat_whyus_title:item.feat_whyus_title,
+	feat_whyus_title_ar:item.feat_whyus_title_ar
+  });
+}}
