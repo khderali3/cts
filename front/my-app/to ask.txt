@@ -1,14 +1,5 @@
-  const [editingItem, setEditingItem] = useState({
-	id:null,
-	feat_whyus_title:'',
-	feat_whyus_title_ar:''
-  });
+i add 	  setIsModalOpen(false); in function for deleting item , and it works fine , 
+and here is my full delete item function:
 
 
-onClick={() => {
-  setEditingItem({
-  id:item.id,
-	feat_whyus_title:item.feat_whyus_title,
-	feat_whyus_title_ar:item.feat_whyus_title_ar
-  });
-}}
+

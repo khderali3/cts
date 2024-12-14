@@ -51,20 +51,19 @@ const Page = async ({ params }) => {
         <div className="container">
           <div className="row">
             <div className="col">
-              <div className="product-desc w-100 d-flex flex-column justify-content-center align-items-center">
+              <div className="product-desc w-100 d-flex flex-column justify-content-center align-items-center mt-5">
                 <div className="product-img">
                   <img
                     src={data?.prod_image}
                     alt=""
-                    className="image_product_dait"
+                    className="image_product_dait "
                   />
                 </div>
                 <div className="text mt-5 mb-5 col-md-10 col-12 text-start">
                   <h2 className="text-light text-bolder col-12 fs-1  ">
                     {data?.prod_name} <p>{data?.prod_name_hint}</p>
                   </h2>
-                  <p className="fs-6 text-light">{data?.prod_details_hint}</p>
-                  <p className="fs-6 text-light">{data?.prod_details}</p>
+                  <p className="fs-6 text-light" style={{ whiteSpace: 'pre-line' }} >{data?.prod_details}</p>
                 </div>
               </div>
             </div>

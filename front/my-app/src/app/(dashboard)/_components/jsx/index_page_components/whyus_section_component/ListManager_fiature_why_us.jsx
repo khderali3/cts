@@ -47,10 +47,6 @@ export default function ListManagerFeatureWhyUs() {
 
 	if (
 		
-	// 	editingItem.feat_whyus_title.trim() !== '' 
-	// && editingItem.feat_whyus_title_ar.trim() !== ''
-
-
 	(editingItem.feat_whyus_title && editingItem.feat_whyus_title.trim() !== '') &&
 	(editingItem.feat_whyus_title_ar && editingItem.feat_whyus_title_ar.trim() !== '')
 
@@ -210,26 +206,6 @@ const handleaddItem = async (e) => {
 
 
 
-
-
-
-
-
-
-  // Edit existing item
-  const saveEdit = async () => {
-    const res = await fetch("/api/listItems", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: editingItem.id, content: newContent }),
-    });
-    if (res.ok) {
-      fetchItems();
-      setEditingItem(null);
-      setNewContent("");
-    }
-  };
-
   // Delete item
   const deleteItem = async (id) => {
 	setDeletingItemId(id)
@@ -243,6 +219,7 @@ const handleaddItem = async (e) => {
  
 	  if( response && response.data) {
 		fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/feature_why_us/`);
+		setIsModalOpen(false);
 
 	  }
 
@@ -254,23 +231,18 @@ const handleaddItem = async (e) => {
 
   return (
     <div className="container mt-5">
-      <h2>Manage List Items Why us</h2>
+      <h6>Manage List Items Why us</h6>
 
       {/* Table Display */}
       <table className="table table-bordered mt-4">
         <thead className="table-light">
           <tr>
-            {/* <th>#</th>
-            <th>Content</th>
-            <th>Content (Ar)</th>
-            <th>Actions</th> */}
-    <th style={{ width: '5%' }}>#</th>
-    <th style={{ width: '35%' }}>Content</th>
-    <th style={{ width: '35%' }}  >
-      Content (Ar)
-    </th>
-    <th style={{ width: '25%' }}>Actions</th>
-
+				<th style={{ width: '5%' }}>#</th>
+				<th style={{ width: '35%' }}>Content</th>
+				<th style={{ width: '35%' }}  >
+				Content (Ar)
+				</th>
+				<th style={{ width: '25%' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -282,19 +254,14 @@ const handleaddItem = async (e) => {
               <td>
                 <button
                   className="btn btn-sm btn-primary m-2"
-                //   onClick={() => {
-                //     setEditingItem(item);
-                //     setNewContent(item.feat_whyus_title);
-                //   }}
-
-				onClick={() => {
-					setEditingItem({
-						id:item.id,
-						  feat_whyus_title:item.feat_whyus_title,
-						  feat_whyus_title_ar:item.feat_whyus_title_ar
-						}
-					)
-				}}
+					onClick={() => {
+						setEditingItem({
+							id:item.id,
+							feat_whyus_title:item.feat_whyus_title,
+							feat_whyus_title_ar:item.feat_whyus_title_ar
+							}
+						)
+					}}
 
                   data-bs-toggle="modal"
                   data-bs-target="#editModal"
@@ -309,9 +276,6 @@ const handleaddItem = async (e) => {
 
                 <button
                   className="btn btn-sm btn-danger m-2"
-                //   onClick={() => deleteItem(item.id)}
-
-
 					onClick= { () => {
 						setItemIdToDelete(item.id)
 						setIsModalOpen(true)

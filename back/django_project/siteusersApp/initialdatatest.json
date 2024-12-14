@@ -115,7 +115,6 @@
     "fields": {      
       "prod_name": "Microwave Links Equipment",
       "prod_name_hint": "(From A to Z)",
-      "prod_details_hint": "Lorem ipsum dolor sit amet consectetur. Diam mattis odio ornare facilisi Eu etiam suspendisse habitasse venenatis mi eleifend scelerisque",
       "prod_details": "Lorem ipsum dolor sit amet consectetur.\n \n Diam mattis odio ornare facilisi Eu etiam suspendisse habitasse\\n\\nvenenatis mi eleifend scelerisque",
 
 
@@ -130,7 +129,6 @@
     "fields": {      
       "prod_name": "Microwave Links Equipment",
       "prod_name_hint": "(From A to Z)",
-      "prod_details_hint": "Lorem ipsum dolor sit amet consectetur. Diam mattis odio ornare facilisi Eu etiam suspendisse habitasse venenatis mi eleifend scelerisque",
       "prod_details": "Lorem ipsum dolor sit amet consectetur.\n \n Diam mattis odio ornare facilisi Eu etiam suspendisse habitasse\\n\\nvenenatis mi eleifend scelerisque",
 
 
@@ -145,7 +143,6 @@
     "fields": {      
       "prod_name": "Microwave Links Equipment",
       "prod_name_hint": "(From A to Z)",
-      "prod_details_hint": "Lorem ipsum dolor sit amet consectetur. Diam mattis odio ornare facilisi Eu etiam suspendisse habitasse venenatis mi eleifend scelerisque",
 
       "prod_details": "Lorem ipsum dolor sit amet consectetur.\n \n Diam mattis odio ornare facilisi Eu etiam suspendisse habitasse\\n\\nvenenatis mi eleifend scelerisque",
 

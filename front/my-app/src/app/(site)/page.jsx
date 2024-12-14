@@ -174,22 +174,32 @@ const Home = async () => {
           <div className="row justify-content-center row-cols-auto">
           { data?.products?.map( i => 
 
-            <div  key={i.id}  className="col-lg-3 col-md-4 col-sm-10 mt-3 col-8">
-              <div className="product-1 p-3">
+            <div  key={i.id}  className="col-lg-3 col-md-4 col-sm-10 mt-3 col-8 ">
+              <div className="product-1 p-3  h-100  card ">
               {/* <img src="/Images/services.png" alt="" /> */}
-              <img src={i.prod_image} alt="" />
+              <img src={i.prod_image} alt=""  className='  card-img-top   img-fluid' 
+              style={{ objectFit: "contain", height: "200px" }}
+              />
 
 
-                <div className="text">
-                  <h2 className="text-light fs-4">
+                <div className="  card-body  flex-grow-1 ">
+                  <h2 className="text-light fs-4 card-title">
                   {i.prod_name }  <br />
                   {i.prod_name_hint}
                   </h2>
-                  <p className="fs-6">
-                  {i.prod_details_hint}
+                  {/* <p className="fs-6">
+                  {i.prod_details}
+                  </p> */}
+                  <p className="fs-6 card-text ">
+                    {i.prod_details.length > 50 
+                      ? `${i.prod_details.slice(0, 50)}...` 
+                      : i.prod_details}
                   </p>
+
+
+
                 </div>
-              <div className="but  text-center">
+              <div className="but  text-center mt-auto card-footer  ">
                 <ProductButton slug={i.prod_slog} />
               </div>
               </div>

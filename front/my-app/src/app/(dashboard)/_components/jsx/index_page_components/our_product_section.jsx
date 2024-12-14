@@ -5,24 +5,22 @@ import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staf
 import { useState, useEffect } from "react"
 import { toast } from "react-toastify";
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
-import ListManagerFeatureWhyUs from "./whyus_section_component/ListManager_fiature_why_us";
+import ListManagerProduct from "./our_product_section_component/ListManager_product";
 
 
 
-
-const WyeUsSection = () => {
+const OurProductSection = () => {
 	const [canEdit, setCanEdit] = useState(false)
 	const [customFetch] = useCustomFetchMutation()
 	const [submitting, setSubmitting] = useState(false)
 	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-	const [selectedFile, setSelectedFile] = useState(null)
+
 
 	const [data, setData] = useState({
-		why_us_title: "",
-		why_us_image: "",
-		why_us_details: "",
-		why_us_title_ar: "",
-		why_us_details_ar: "",
+		prd_sec_title: "",
+		prd_sec_hint: "",
+		prd_sec_title_ar: "",
+		prd_sec_hint_ar: "",
 	});
 
 
@@ -34,27 +32,23 @@ const WyeUsSection = () => {
 
 		for (const key in data) {
 			if (data.hasOwnProperty(key)) {
-				if(key !== 'why_us_image') {
 					form.append(key, data[key]);
-				}
 			}}
 
-		if(selectedFile instanceof File  ) {
-			form.append("why_us_image", selectedFile);
-		}
+
 
 		if (
 
-      (  data.why_us_title &&   data.why_us_title.trim() !== '' ) && 
-      ( data.why_us_details &&  data.why_us_details.trim() !== '' ) &&
-      ( data.why_us_title_ar &&  data.why_us_title_ar.trim() !== '' ) &&
-      ( data.why_us_details_ar && data.why_us_details_ar.trim() !== ''  )
+      (  data.prd_sec_title &&   data.prd_sec_title.trim() !== '' ) && 
+      ( data.prd_sec_hint &&  data.prd_sec_hint.trim() !== '' ) &&
+      ( data.prd_sec_title_ar &&  data.prd_sec_title_ar.trim() !== '' ) &&
+      ( data.prd_sec_hint_ar && data.prd_sec_hint_ar.trim() !== ''  )
 	
 	  ){ 
 		try {
 			// Send form data using customFetch mutation
 			const response = await customFetch({
-			  url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/why_us/`,
+			  url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/product_sec/`,
 			  method: "POST",
 			  body: form, // Send FormData as the body
 			});
@@ -62,7 +56,7 @@ const WyeUsSection = () => {
 			if( response && response.data){
 			  setCanEdit(false)
 			  toast.success("your data has been updated ");
-			  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/why_us/`)
+			  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/product_sec/`)
 			  setIsModalOpen(false)
 	  
 			} else{
@@ -127,24 +121,18 @@ const WyeUsSection = () => {
 
 
 	const handleChange = (e) => {
-		const { name, value, type, files } = e.target;
-
-		if (type === "file") {
-		  // If the input is a file, update the selectedFile state
-		  setSelectedFile(files[0]);
-		} else {
-		  // If the input is not a file, update the data state
-		  setData((prevState) => ({
+		const { name, value } = e.target;
+    setData((prevState) => ({
 			...prevState,
 			[name]: value,
-		  }));
-		}
+		  }))
+
 	  };
 
 
     useEffect(() => {
   
-      fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/why_us/`)
+      fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/product_sec/`)
   
     }, []);
 
@@ -152,7 +140,7 @@ const WyeUsSection = () => {
 
             
         <div className="container mt-2">
-        <h6>Why Us (Third Section)  
+        <h6>Product Section (Fourth Section)  
 
         </h6>
         {/* Row for Search Form */}
@@ -165,16 +153,16 @@ const WyeUsSection = () => {
             
            
             <div className="mb-3">
-              <label htmlFor="why_us_title" className="form-label">
+              <label htmlFor="prd_sec_title" className="form-label">
                 Title
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="why_us_title"
-                name="why_us_title"
+                id="prd_sec_title"
+                name="prd_sec_title"
                 readOnly={!canEdit}
-                value={data?.why_us_title  || ""}
+                value={data?.prd_sec_title  || ""}
                 onChange={handleChange}
 
 
@@ -183,16 +171,16 @@ const WyeUsSection = () => {
 
 
             <div className="mb-3">
-              <label htmlFor="why_us_details" className="form-label">
+              <label htmlFor="prd_sec_hint" className="form-label">
                 Details
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="why_us_details"
-                name="why_us_details"
+                id="prd_sec_hint"
+                name="prd_sec_hint"
                 readOnly={!canEdit}
-                value={data?.why_us_details  || ""}
+                value={data?.prd_sec_hint  || ""}
                 onChange={handleChange}
 
 
@@ -201,18 +189,18 @@ const WyeUsSection = () => {
 
 
             <div className="mb-3">
-              <label htmlFor="why_us_title_ar" className="form-label">
+              <label htmlFor="prd_sec_title_ar" className="form-label">
                 Title (Ar)
               </label>
               <input
                 dir="rtl"
                 type="text"
                 className="form-control text-end"
-                id="why_us_title_ar"
+                id="prd_sec_title_ar"
 
-                name="why_us_title_ar"
+                name="prd_sec_title_ar"
                 readOnly={!canEdit}
-                value={data?.why_us_title_ar  || ""}
+                value={data?.prd_sec_title_ar  || ""}
                 onChange={handleChange}
 
               />
@@ -220,47 +208,22 @@ const WyeUsSection = () => {
 
 
             <div className="mb-3">
-              <label htmlFor="why_us_details_ar" className="form-label">
+              <label htmlFor="prd_sec_hint_ar" className="form-label">
                 Details  (Ar)
               </label>
               <input
                 dir="rtl"
                 type="text"
                 className="form-control text-end"
-                id="why_us_details_ar"
+                id="prd_sec_hint_ar"
 
-                name="why_us_details_ar"
+                name="prd_sec_hint_ar"
                 readOnly={!canEdit}
-                value={data?.why_us_details_ar  || ""}
+                value={data?.prd_sec_hint_ar  || ""}
                 onChange={handleChange}
 
               />
             </div>
-
-
-            <div className="mb-3">
-              <label htmlFor="why_us_image" className="form-label">
-                Image
-              </label>
-              <input
-                type="file"
-                className="form-control"
-                accept="image/*"
-                id="why_us_image"
-                name="why_us_image"
-                disabled={!canEdit}
-                onChange={handleChange}
-              />
-
-              {data?.why_us_image &&  <a href={data?.why_us_image}>  Current Image  </a> }
-             
-            </div>
-
-
-
-
-
-
 
 
 
@@ -296,7 +259,7 @@ const WyeUsSection = () => {
           </div>
         </div>
 
-        <ListManagerFeatureWhyUs />  
+        <ListManagerProduct />  
        
         <hr   />
 
@@ -305,10 +268,10 @@ const WyeUsSection = () => {
 
 
     <CustomModal  
-		id="why_us_modal"
+		id="our_product_section"
 		handleSubmit={handleSubmit}
 		submitting={submitting}
-		message={"Are you sure you want to update 'Why us section' Data?"}
+		message={"Are you sure you want to update 'Our Product Section' Data?"}
 		showModal={true} 
 		isModalOpen={isModalOpen}
 		setIsModalOpen={setIsModalOpen}
@@ -332,4 +295,4 @@ const WyeUsSection = () => {
 }
 
 
-export default WyeUsSection
+export default OurProductSection

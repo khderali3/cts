@@ -2,27 +2,32 @@
 
 import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staff/features/authApiSlice"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { toast } from "react-toastify";
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
-import ListManagerFeatureWhyUs from "./whyus_section_component/ListManager_fiature_why_us";
 
 
 
 
-const WyeUsSection = () => {
+
+const FocusSection = () => {
 	const [canEdit, setCanEdit] = useState(false)
 	const [customFetch] = useCustomFetchMutation()
 	const [submitting, setSubmitting] = useState(false)
-	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+
 	const [selectedFile, setSelectedFile] = useState(null)
+  const fileInputRef = useRef(null);
+
+  
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+
 
 	const [data, setData] = useState({
-		why_us_title: "",
-		why_us_image: "",
-		why_us_details: "",
-		why_us_title_ar: "",
-		why_us_details_ar: "",
+		focus_title: "",
+		focus_detail: "",
+		focus_title_ar: "",
+		focus_detail_ar: "",
+		focus_image: null,            
 	});
 
 
@@ -34,27 +39,30 @@ const WyeUsSection = () => {
 
 		for (const key in data) {
 			if (data.hasOwnProperty(key)) {
-				if(key !== 'why_us_image') {
+				if(key !== 'focus_image') {
 					form.append(key, data[key]);
 				}
 			}}
 
 		if(selectedFile instanceof File  ) {
-			form.append("why_us_image", selectedFile);
+			form.append("focus_image", selectedFile);
 		}
 
+
+    console.log('datadfdfdf', data)
 		if (
 
-      (  data.why_us_title &&   data.why_us_title.trim() !== '' ) && 
-      ( data.why_us_details &&  data.why_us_details.trim() !== '' ) &&
-      ( data.why_us_title_ar &&  data.why_us_title_ar.trim() !== '' ) &&
-      ( data.why_us_details_ar && data.why_us_details_ar.trim() !== ''  )
-	
+    ( data.focus_title && data.focus_title.trim() !== '' ) &&
+    ( data.focus_detail &&  data.focus_detail.trim() !== '') &&
+    ( data.focus_title_ar &&  data.focus_title_ar.trim() !== '' ) &&
+    ( data.focus_detail_ar &&  data.focus_detail_ar.trim() !== ''  ) 
+
+
 	  ){ 
 		try {
 			// Send form data using customFetch mutation
 			const response = await customFetch({
-			  url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/why_us/`,
+			  url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/focus_sec/`,
 			  method: "POST",
 			  body: form, // Send FormData as the body
 			});
@@ -62,8 +70,9 @@ const WyeUsSection = () => {
 			if( response && response.data){
 			  setCanEdit(false)
 			  toast.success("your data has been updated ");
-			  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/why_us/`)
-			  setIsModalOpen(false)
+			  setSelectedFile(null)
+			  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/focus_sec/`)
+        setIsModalOpen(false)
 	  
 			} else{
 			  console.log(response)
@@ -79,8 +88,9 @@ const WyeUsSection = () => {
 		toast.error("Error. all fields are required ");
 
 	  }
-	
+
 	  setSubmitting(false);
+    fileInputRef.current.value = "";
 		  
 	};
 
@@ -99,20 +109,20 @@ const WyeUsSection = () => {
 			}, 
 		  });
 	 
-      if (response && response.data ) {
+      if( response && response.data) {
+
         const filteredData = Object.fromEntries(
-          Object.entries(response.data).filter(([key, value]) => value !== null)
+          Object.entries(response.data).filter(([key, value]) => value != null)
           ) 
-    
-        // setData(filteredData);	
+
         setData((prevData) => ({
           ...prevData,
           ...filteredData,
         }));
 
-
       }
 
+	
 	
 		} catch (error) {
 		  console.error("Error fetching data:", error);
@@ -142,17 +152,17 @@ const WyeUsSection = () => {
 	  };
 
 
-    useEffect(() => {
-  
-      fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/why_us/`)
-  
-    }, []);
+      useEffect(() => {
+    
+        fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/focus_sec/`)
+    
+      }, []);
 
     return (
 
             
         <div className="container mt-2">
-        <h6>Why Us (Third Section)  
+        <h6> Stay Focus (Seventh Section)  
 
         </h6>
         {/* Row for Search Form */}
@@ -165,16 +175,16 @@ const WyeUsSection = () => {
             
            
             <div className="mb-3">
-              <label htmlFor="why_us_title" className="form-label">
+              <label htmlFor="focus_title" className="form-label">
                 Title
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="why_us_title"
-                name="why_us_title"
+                id="focus_title"
+                name="focus_title"
                 readOnly={!canEdit}
-                value={data?.why_us_title  || ""}
+                value={data?.focus_title  || ""}
                 onChange={handleChange}
 
 
@@ -183,55 +193,57 @@ const WyeUsSection = () => {
 
 
             <div className="mb-3">
-              <label htmlFor="why_us_details" className="form-label">
+              <label htmlFor="focus_detail" className="form-label">
                 Details
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="why_us_details"
-                name="why_us_details"
-                readOnly={!canEdit}
-                value={data?.why_us_details  || ""}
-                onChange={handleChange}
+                id="focus_detail"
 
+                name="focus_detail"
+                readOnly={!canEdit}
+                value={data?.focus_detail  || ""}
+                onChange={handleChange}
 
               />
             </div>
 
 
+
+
             <div className="mb-3">
-              <label htmlFor="why_us_title_ar" className="form-label">
+              <label htmlFor="focus_title_ar" className="form-label">
                 Title (Ar)
               </label>
               <input
-                dir="rtl"
                 type="text"
+                 dir="rtl"
                 className="form-control text-end"
-                id="why_us_title_ar"
-
-                name="why_us_title_ar"
+                id="focus_title_ar"
+                name="focus_title_ar"
                 readOnly={!canEdit}
-                value={data?.why_us_title_ar  || ""}
+                value={data?.focus_title_ar  || ""}
                 onChange={handleChange}
 
               />
             </div>
 
 
+
             <div className="mb-3">
-              <label htmlFor="why_us_details_ar" className="form-label">
-                Details  (Ar)
+              <label htmlFor="focus_detail_ar" className="form-label">
+                Details (Ar)
               </label>
               <input
-                dir="rtl"
                 type="text"
-                className="form-control text-end"
-                id="why_us_details_ar"
+                className="form-control text-end "
+                dir="rtl"
 
-                name="why_us_details_ar"
+                id="focus_detail_ar"
+                name="focus_detail_ar"
                 readOnly={!canEdit}
-                value={data?.why_us_details_ar  || ""}
+                value={data?.focus_detail_ar  || ""}
                 onChange={handleChange}
 
               />
@@ -239,28 +251,23 @@ const WyeUsSection = () => {
 
 
             <div className="mb-3">
-              <label htmlFor="why_us_image" className="form-label">
+              <label htmlFor="focus_image" className="form-label">
                 Image
               </label>
               <input
                 type="file"
                 className="form-control"
                 accept="image/*"
-                id="why_us_image"
-                name="why_us_image"
+                id="focus_image"
+                name="focus_image"
                 disabled={!canEdit}
                 onChange={handleChange}
+                ref={fileInputRef}
               />
 
-              {data?.why_us_image &&  <a href={data?.why_us_image}>  Current Image  </a> }
+              {data?.focus_image &&  <a href={data?.focus_image}>  Current Image  </a> }
              
             </div>
-
-
-
-
-
-
 
 
 
@@ -270,19 +277,22 @@ const WyeUsSection = () => {
 
                     { canEdit === true ?
 
-                          <> 
-                        <button type="button" disabled={submitting} 
-                            onClick= { () => setIsModalOpen(true)}
-                              className="btn btn-primary"
-                              >
-
-                         {!submitting ? 'Update' : 'Updating...'}
+                      <> 
+                      <button type="button" disabled={submitting} 
+                      onClick= { () => setIsModalOpen(true)}
+                      
+                        className="btn btn-primary"
+                      >
+          
+                      {!submitting ? 'Update' : 'Updating...'}
                       </button>
 
-                          <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  ms-2">
+
+                        <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  ms-2">
                           Cancel
-                          </button>
-                          </>
+                        </button>
+
+                      </>
                         :   
 
                         <button  onClick={handleCanEdit }   className="  btn  btn-secondary">
@@ -295,8 +305,6 @@ const WyeUsSection = () => {
 
           </div>
         </div>
-
-        <ListManagerFeatureWhyUs />  
        
         <hr   />
 
@@ -304,19 +312,19 @@ const WyeUsSection = () => {
 
 
 
+    {/* <CustomModal  id="home_modal" handleSubmit={handleSubmit} submitting={submitting} message={'Are you sure you want to update Data?'} />   */}
+
+
     <CustomModal  
-		id="why_us_modal"
+		id="focus_section_modal"
 		handleSubmit={handleSubmit}
 		submitting={submitting}
-		message={"Are you sure you want to update 'Why us section' Data?"}
+		message={"Are you sure you want to update 'focus section'Data?"}
 		showModal={true} 
 		isModalOpen={isModalOpen}
 		setIsModalOpen={setIsModalOpen}
 
 		/>  
-
-
-
 
 
 
@@ -332,4 +340,4 @@ const WyeUsSection = () => {
 }
 
 
-export default WyeUsSection
+export default FocusSection

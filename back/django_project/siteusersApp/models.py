@@ -87,7 +87,7 @@ class ProductSection(models.Model):
 class Product(models.Model):
     prod_name = models.CharField(  db_index=True,  max_length=255)
     prod_name_hint = models.CharField(  db_index=True,  max_length=255)
-    prod_details_hint = models.TextField(  db_index=True,   )
+    # prod_details_hint = models.TextField(  db_index=True,   )
     prod_details = models.TextField(   db_index=True,   )
     prod_image = models.ImageField(upload_to='Product', null=True, blank=True)
     prod_name_ar = models.CharField( null=True, db_index=True,  max_length=255, blank=True)
@@ -130,11 +130,11 @@ class OurServicesSection(models.Model):
     
 
 class Service(models.Model):
-    service_name = models.CharField(  db_index=True,  max_length=255)
-    service_detail = models.TextField(  db_index=True, blank=True )
+    service_name = models.CharField(  db_index=True,  max_length=255, blank=True , null=True)
+    service_detail = models.TextField(  db_index=True, blank=True , null=True )
     service_image = models.ImageField(upload_to='service', null=True, blank=True)
-    service_name_ar = models.CharField(  db_index=True,  max_length=255,)
-    service_detail_ar = models.TextField(  db_index=True, )
+    service_name_ar = models.CharField(  db_index=True,  max_length=255,blank=True , null=True)
+    service_detail_ar = models.TextField(  db_index=True, blank=True , null=True)
     service_created_date = models.DateTimeField(auto_now_add=True)
     service_updated_date = models.DateTimeField(auto_now=True) 
 
@@ -172,7 +172,7 @@ class Focus(models.Model):
 
 class OurClientSection(models.Model):
     our_client_sec_title = models.CharField( null=True, db_index=True,  max_length=255)
-    our_client_sec_ar = models.CharField( null=True, db_index=True,  max_length=255)
+    our_client_sec_title_ar = models.CharField( null=True, db_index=True,  max_length=255)
     our_client_sec_created_date = models.DateTimeField(auto_now_add=True)
     our_client_sec_updated_date = models.DateTimeField(auto_now=True) 
 

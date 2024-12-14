@@ -115,13 +115,13 @@ useEffect(() => {
                     </Link>
                   </li>
 
-                  <li className="nav-item text-light active ">
+                  {/* <li className="nav-item text-light active ">
                     <Link href="/staff/site/product" className="  rounded text-light nav-link  "  >
                     <i className="nav-icon bi bi-circle" />
                     <p>Product</p>
 
                     </Link>
-                  </li>
+                  </li> */}
 
 
                 </ul>
