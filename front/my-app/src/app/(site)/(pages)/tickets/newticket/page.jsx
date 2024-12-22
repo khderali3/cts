@@ -170,7 +170,7 @@ useEffect(() => {
 
 
     return (
-      <> 
+      <div className="mb-5 pb-5">  
       <div className="container mt-2">
         <h6> <Link href='/tickets'> Tickets </Link>   - New Request </h6>
         <hr />
@@ -178,7 +178,7 @@ useEffect(() => {
 
 
 
-        <div className="container mt-5 ">
+        <div className="container ">
 
 
 
@@ -186,7 +186,7 @@ useEffect(() => {
 
 
           <h2>Submit a request</h2>
-          <form className="col-md-8 col-12" onSubmit={handleSubmit}>
+          <form className="col-md-8 col-12 mb5 " onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="requestType" className="form-label">
                 Please select target department
@@ -333,7 +333,7 @@ useEffect(() => {
         </div>
 
  
-        </>
+        </div>
     )
 
 }

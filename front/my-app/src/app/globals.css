@@ -70,10 +70,6 @@
 }
 
 
-ul {
-  list-style-type: none;  
-}
-
 
 
 .sidebar-expand-lg .app-sidebar {
@@ -133,3 +129,15 @@ textarea[readonly] {
 .product_img_staff {
   background-color: var(--primary-color) ;
 }
+
+
+
+.ul_staff {
+  list-style-type: none;  
+}
+
+
+
+
+
+

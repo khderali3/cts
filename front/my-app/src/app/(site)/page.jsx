@@ -233,9 +233,9 @@ const Home = async () => {
             <p className="fs-5 pb-4">
             {data?.our_services_section?.servic_sec_hint }
             </p>
-            <div className="">
+            <div className=" mb-5">
               <ul className="row">
-              { data?.services?.map( i =>  <li key={i.id} className=" mb-2 col-md-6 col-12"> {i.service_name}</li>)}
+              { data?.services?.map( i =>  <li key={i.id} className=" mb-2  col-md-6 col-12"> {i.service_name}</li>)}
               </ul>
             </div>
           </div>

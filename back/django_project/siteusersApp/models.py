@@ -198,3 +198,17 @@ class CompnayIfRight(models.Model):
     def __str__(self):
         return f"{self.id},{self.company_if_right_title}"
     
+
+class Footer (models.Model):
+    about_us_content = models.CharField( max_length=255, null=True, blank=True)
+    contact_us_email = models.EmailField(  null=True, blank=True  )
+    contact_us_phone = models.CharField( max_length=255, null=True, blank=True)
+
+
+
+class SocialMedia (models.Model):
+    facebook_url = models.URLField( max_length=255, null=True, blank=True)
+    youtube_url = models.URLField( max_length=255, null=True, blank=True)
+    instagram_url  = models.URLField( max_length=255, null=True, blank=True)
+    linkedIn_url  = models.URLField( max_length=255, null=True, blank=True)
+    twitter_url = models.URLField( max_length=255, null=True, blank=True)

@@ -5,7 +5,7 @@ from django.urls import path
 from .views import (HomeSectionView, AboutUsSectionView, WhyUsSectionView,
                      FeatureWhyUsSectionView, ProductSectionView, ProductView,
                      OurServicesSectionView, ServiceView,OurVisionSectionView, FocusSecView, OurClientSectionView, OurClientView,
-                     CompnayIfRightSectionView
+                     CompnayIfRightSectionView, FooterSectionView, SocialMediaFooterView
                      )
 
 urlpatterns = [
@@ -35,5 +35,9 @@ urlpatterns = [
     path('our_clients/<int:pk>/', OurClientView.as_view()),
 
     path('company_if_right_sec/', CompnayIfRightSectionView.as_view()),
+	
+    path('footer/', FooterSectionView.as_view()),
+	
+    path('footer_social_media/', SocialMediaFooterView.as_view()),
 
 ]

@@ -6,6 +6,9 @@ from .models import (Ticket, TicketFiles, validate_file_or_image,
     
 
 from django.conf import settings
+from rest_framework.exceptions import ValidationError
+
+
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,7 +48,6 @@ class TicketReplyFilesSerializer(serializers.ModelSerializer):
 
 
 
-from rest_framework.exceptions import ValidationError
 
 
 
@@ -324,3 +326,9 @@ class TicketSerializer(serializers.ModelSerializer):
     def get_ticket_replies(self, obj):
         ticket_replies  = TicketReplay.objects.filter(ticket_replay_ticket=obj)
         return TicketReplaySerializer(ticket_replies, many=True, context=self.context ).data
+    
+
+
+
+
+ 

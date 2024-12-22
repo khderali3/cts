@@ -64,6 +64,10 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email    
 
+
+
+
+
 class Profile(models.Model):
     PRF_user = models.OneToOneField(UserAccount, related_name='profile_prf_user_relaed_useraccount', on_delete=models.CASCADE)
     PRF_company = models.CharField(max_length=255)

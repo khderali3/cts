@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'siteusersApp',
     'ticketSystemApp',
     'sitestaffApp',
+	'ticketSystemStaffApp',
 ]
 
 

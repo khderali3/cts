@@ -184,7 +184,7 @@ const Page = () => {
 
 
 
-      <div className="container mt-1">
+      <div className="container mt-1 mb-5 pb-5 ">
 
       <div className="container mt-2">
         <h6> <Link href='/tickets'> Tickets </Link>  </h6>
@@ -250,7 +250,7 @@ const Page = () => {
             </div>
           </div>
         </div>
-        <table className="table table-striped d-none d-md-table">
+        <table className="table table-striped d-none d-md-table ">
           <thead>
             <tr>
               <th scope="col">Subject</th>

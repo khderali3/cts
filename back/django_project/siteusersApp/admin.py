@@ -1,7 +1,8 @@
 from django.contrib import admin
 from .models import (HomeSection, AboutUs, WhyUs, FeatureWhyUs,
                       ProductSection, Product, OurServicesSection, Service, OurVision, 
-                      Focus,OurClientSection, OurClient,CompnayIfRight
+                      Focus,OurClientSection, OurClient,CompnayIfRight,
+					  Footer, SocialMedia
                       )
 # Register your models here.
 
@@ -19,4 +20,6 @@ admin.site.register(Focus)
 admin.site.register(OurClientSection)
 admin.site.register(OurClient)
 admin.site.register(CompnayIfRight)
+admin.site.register(Footer)
+admin.site.register(SocialMedia)
 

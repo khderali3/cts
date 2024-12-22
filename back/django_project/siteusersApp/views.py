@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import (HomeSection, AboutUs, WhyUs, FeatureWhyUs, ProductSection, Product,
                       OurServicesSection, Service, OurVision, Focus, OurClient, OurClientSection,
-                      CompnayIfRight
+                      CompnayIfRight, Footer, SocialMedia
                     )
 from rest_framework.response import Response
 from rest_framework import viewsets
@@ -11,7 +11,24 @@ from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView
 from rest_framework import status
 
+from .my_serializer import (FooterSerializer, SocialMediaSerializer)
 
+
+
+class FooterView(APIView):
+    permission_classes = []
+    def get(self, request):
+        footer_obj, created = Footer.objects.get_or_create(id=1)
+        serializer = FooterSerializer(footer_obj, many=False,  context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class SocialMediaView(APIView):
+    permission_classes = []
+    def get(self, request):
+        socialmedia_obj, create = SocialMedia.objects.get_or_create(id=1)
+        serializer = SocialMediaSerializer(socialmedia_obj, many=False,  context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
@@ -41,7 +58,7 @@ Timeline = namedtuple('Timeline', ('home_section',
                                     'focus_section',
                                     'our_clients',
                                     'our_client_sec',
-                                    'comp_if_right',                              
+                                    'comp_if_right', 
                                     ))
 
 
@@ -75,7 +92,7 @@ class Index(viewsets.ViewSet):
             focus_section  = focus_section_obj,
             our_client_sec = our_client_sec_obj,
             our_clients = our_clients_list,
-            comp_if_right = comp_if_right_obj
+            comp_if_right = comp_if_right_obj,
         )
         serializer = TimelineSerializer(timeline, context={'request': request})
         return Response(serializer.data)

@@ -90,7 +90,7 @@ useEffect(() => {
                 </ul>
           </ul>
 
-          <ul className="nav sidebar-menu flex-column    ">
+          <ul className="nav sidebar-menu flex-column  ul_staff  ">
             <li className="nav-item">
                   <a
                       className="nav-link"
@@ -106,22 +106,101 @@ useEffect(() => {
                       </p>
                   </a>
               </li>
-                <ul className=" collapse nav  ps-2 " id="WebSite_Managment" >
+                <ul className=" collapse nav  ps-2   " id="WebSite_Managment" >
+
+
+
+
                   <li className="nav-item text-light">
-                    <Link href="/staff/main_index" className="  rounded text-light nav-link  "  >
-                    <i className="nav-icon bi bi-circle" />
-                    <p>Min Index Page</p>
+                    <Link href="/staff/main_index/home" className="  rounded text-light nav-link  "  >
+                    <i className={`nav-icon bi bi-circle ${isActive('/staff/main_index/home') ? 'bg-primary' : ''}   `} />
+                    <p>Home Section</p>
 
                     </Link>
                   </li>
 
-                  {/* <li className="nav-item text-light active ">
-                    <Link href="/staff/site/product" className="  rounded text-light nav-link  "  >
-                    <i className="nav-icon bi bi-circle" />
-                    <p>Product</p>
+
+                  <li className="nav-item text-light">
+                    <Link href="/staff/main_index/about_us" className="  rounded text-light nav-link  "  >
+                    <i className={`nav-icon bi bi-circle ${isActive('/staff/main_index/about_us') ? 'bg-primary' : ''}   `} />
+                    <p>About</p>
 
                     </Link>
-                  </li> */}
+                  </li>
+
+
+                  <li className="nav-item text-light">
+                    <Link href="/staff/main_index/why_us" className="  rounded text-light nav-link  "  >
+                    <i className={`nav-icon bi bi-circle ${isActive('/staff/main_index/why_us') ? 'bg-primary' : ''}   `} />
+                    <p>Why Us </p>
+
+                    </Link>
+                  </li>
+
+
+
+                  <li className="nav-item text-light">
+                    <Link href="/staff/main_index/our_products" className="  rounded text-light nav-link  "  >
+                    <i className={`nav-icon bi bi-circle ${isActive('/staff/main_index/our_products') ? 'bg-primary' : ''}   `} />
+                    <p>Our Products </p>
+
+                    </Link>
+                  </li>
+
+
+                  <li className="nav-item text-light">
+                    <Link href="/staff/main_index/our_services" className="  rounded text-light nav-link  "  >
+                    <i className={`nav-icon bi bi-circle ${isActive('/staff/main_index/our_services') ? 'bg-primary' : ''}   `} />
+                    <p>Our Services </p>
+
+                    </Link>
+                  </li>
+
+
+
+                  <li className="nav-item text-light  ">
+                    <Link href="/staff/main_index/our_vision" className="   rounded text-light nav-link  "  >
+                    <i className={`nav-icon bi bi-circle ${isActive('/staff/main_index/our_vision') ? 'bg-primary' : ''}   `}/>
+                    <p>Our Vision </p>
+
+                    </Link>
+                  </li>
+
+                  <li className="nav-item text-light    ">
+                    <Link href="/staff/main_index/focus" className="    rounded text-light nav-link active "  >
+                    <i className={`nav-icon bi bi-circle ${isActive('/staff/main_index/focus') ? 'bg-primary' : ''}   `} />
+                    <p  >Focus Section </p>
+
+                    </Link>
+                  </li>
+
+
+                  <li className="nav-item text-light">
+                    <Link href="/staff/main_index/our_clients" className="  rounded text-light nav-link  "  >
+                    <i className={`nav-icon bi bi-circle ${isActive('/staff/main_index/our_clients') ? 'bg-primary' : ''}   `} />
+                    <p>Our Clients </p>
+
+                    </Link>
+                  </li>
+
+
+                  <li className="nav-item text-light">
+                    <Link href="/staff/main_index/company_if_right" className="  rounded text-light nav-link  "  >
+                    <i className={`nav-icon bi bi-circle ${isActive('/staff/main_index/company_if_right') ? 'bg-primary' : ''}   `} />
+                    <p>Projects Section</p>
+
+                    </Link>
+                  </li>
+
+
+
+                  <li className="nav-item text-light">
+                    <Link href="/staff/main_index/footer" className="  rounded text-light nav-link  "  >
+                    <i className={`nav-icon bi bi-circle ${isActive('/staff/main_index/footer') ? 'bg-primary' : ''}   `} />
+                    <p>footer</p>
+
+                    </Link>
+                  </li>
 
 
                 </ul>
@@ -150,7 +229,7 @@ useEffect(() => {
                 <ul className=" collapse nav ps-2" id="Ticket_Managment" >
                   <li className="nav-item text-light  ">
                     <Link href="/staff/ticket" className={` rounded text-light nav-link      `}  >
-                    <i className={ `nav-icon bi bi-circle  ${isActive('/staff/ticket') ? ' text-info ' : ''  }  `} />
+                    <i className={ `nav-icon bi bi-circle    `} />
                     <p>Tickets</p>
 
                     </Link>

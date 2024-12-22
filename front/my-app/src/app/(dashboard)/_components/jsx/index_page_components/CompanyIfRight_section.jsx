@@ -132,7 +132,6 @@ const CompanyIfRightSection = () => {
 
             
         <div className="container mt-2">
-          		<hr   />
 
         <h6>Our Company if Right (Eighth Section)  
 

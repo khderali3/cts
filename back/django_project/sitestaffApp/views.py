@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from siteusersApp.models import (HomeSection, AboutUs,WhyUs, FeatureWhyUs, ProductSection, Product,
-                                  OurServicesSection, Service, OurVision, Focus, OurClientSection, OurClient, CompnayIfRight
+                                  OurServicesSection, Service, OurVision, Focus, OurClientSection, OurClient, CompnayIfRight,
+                                  Footer, SocialMedia
                                   )
 from .my_serializers import (HomeSectionSerializer, AboutUsSectionSerializer,
                               WhyUsSectionSerializer, FeatureWhyUsSectionSerializer, 
                               ProductSectionSerializer, ProductSerializer, OurServicesSectionSerializer, ServiceSerializer,
                               OurVisionSerializer, FocusSecSerializer, OurClientSectionSerializer, OurClientSerializer,
-                              CompnayIfRightSecSerializer
+                              CompnayIfRightSecSerializer, FooterSectionSerializer, SocialMediaSerializer
                                 )
 
 from rest_framework.response import Response
@@ -394,6 +395,44 @@ class CompnayIfRightSectionView(APIView):
     def post(self, request):
         company_if_right_sec_obj, created = CompnayIfRight.objects.get_or_create(id=1)
         serializer = CompnayIfRightSecSerializer(company_if_right_sec_obj, data=request.data, context={'request': self.request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+class FooterSectionView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+    def get(self, request):
+        footer_obj, created = Footer.objects.get_or_create(id=1)
+        serializer = FooterSectionSerializer(footer_obj, context={'request': self.request} )
+        return Response(serializer.data)
+    
+    def post(self, request):
+        footer_obj, created = Footer.objects.get_or_create(id=1)
+        serializer = FooterSectionSerializer(footer_obj, data=request.data, context={'request': self.request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+
+class SocialMediaFooterView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+    def get(self, request):
+        social_media_obj, created = SocialMedia.objects.get_or_create(id=1)
+        serializer = SocialMediaSerializer(social_media_obj, context={'request': self.request} )
+        return Response(serializer.data)
+    
+    def post(self, request):
+        social_media_obj, created = SocialMedia.objects.get_or_create(id=1)
+        serializer = SocialMediaSerializer(social_media_obj, data=request.data, context={'request': self.request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

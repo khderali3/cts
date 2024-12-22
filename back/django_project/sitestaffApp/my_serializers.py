@@ -1,9 +1,26 @@
 
 from siteusersApp.models import (  HomeSection, AboutUs, WhyUs, FeatureWhyUs, ProductSection,
 								  Product, OurServicesSection, Service, OurVision , Focus, OurClientSection, OurClient,
-								  CompnayIfRight
+								  CompnayIfRight, Footer, SocialMedia
 								  )
 from rest_framework import serializers
+
+
+
+class FooterSectionSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Footer
+		fields = '__all__'
+		read_only_fields  = ['id']
+
+
+class SocialMediaSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = SocialMedia
+		fields =  '__all__'
+		read_only_fields  = ['id']
+
+
 
 
 

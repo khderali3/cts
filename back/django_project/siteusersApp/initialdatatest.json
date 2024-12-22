@@ -436,7 +436,28 @@
       "company_if_right_created_date": "2024-11-08T18:37:51.037546Z",
       "company_if_right_updated_date": "2024-11-08T18:37:51.037546Z"
     }
+  },
+  {
+    "model": "siteusersApp.Footer",
+    "pk": 1,
+    "fields": {      
+      "about_us_content": "Cloud Tech Sky provides top-notch IT and network solutions for your business needs.",
+      "contact_us_email": "info@CloudTech-it.com",
+      "contact_us_phone": "+123 456 7890"
+    }
+  },
+  {
+    "model": "siteusersApp.SocialMedia",
+    "pk": 1,
+    "fields": {      
+      "facebook_url": "www.test.com",
+      "youtube_url": "www.test.com",
+      "instagram_url": "www.test.com",
+      "linkedIn_url": "www.test.com", 
+      "twitter_url": "www.test.com" 
+    }
   }
+  
   
   
 ]

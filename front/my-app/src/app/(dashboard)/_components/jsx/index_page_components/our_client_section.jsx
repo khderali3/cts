@@ -133,7 +133,6 @@ const OurClientsSection = () => {
 
             
         <div className="container mt-2">
-          		<hr   />
 
         <h6>Our Clients Section (seventh Section)  
 

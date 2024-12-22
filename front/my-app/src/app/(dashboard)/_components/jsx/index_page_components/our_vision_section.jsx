@@ -137,7 +137,6 @@ const OurVisionSection = () => {
 
             
         <div className="container mt-2">
-          		<hr   />
 
         <h6>Our Vision Section (Sixth Section)  
 
