@@ -4,8 +4,11 @@ from django.shortcuts import render
 from ticketSystemApp.models import Department, Ticket, TicketFiles, TicketReplay
 from rest_framework.views import APIView
 from .my_serializers import (DepartmentStaffSerializer, CreateTicketStaffSerializer, ChangeTicketStaffSerializer,
-							 TicketStaffSerializer, TicketListStaffSerializer, TicketFileStaffSerializer, TicketAssignStaffSerializer
-                             )
+							 TicketStaffSerializer, TicketListStaffSerializer, TicketFileStaffSerializer,
+							  TicketAssignStaffSerializer, GetTicketByIdStaffSerializer
+                             
+							 
+							 )
 from rest_framework.response import Response
 
 from rest_framework import status
@@ -99,6 +102,7 @@ class ReopenTicketStaffView(APIView):
 		# Update the ticket's status and clear closed_by field
 		ticket.ticket_status = 'open'
 		ticket.ticket_closed_by = None
+		ticket.ticket_assigned_to = request.user
 		ticket.save()
 
 		# Add a reply indicating the ticket was reopened
@@ -201,13 +205,34 @@ class MyCustomStaffPagination(PageNumberPagination):
 
 
 
+
+class GetTicketByIdStaff(APIView):
+	def get(self, request, *args, **kwargs):
+			ticket_id = kwargs.get('id')
+			if ticket_id:
+				ticket = get_object_or_404(Ticket, id=ticket_id )
+				serializer = GetTicketByIdStaffSerializer(ticket, context={'request': request})
+				return Response(serializer.data, status=status.HTTP_200_OK)
+
+			return Response({"error": "Ticket ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
 class TicketStaffView(APIView):
 	permission_classes = [IsStaffOrSuperUser]
 
 	def post(self, request, *args, **kwargs):
 		serializer = CreateTicketStaffSerializer(data=request.data, context={'request': request})
+
 		if serializer.is_valid():
 			ticket = serializer.save()  # This will also save ticket files
+
+ 
+
+
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -234,7 +259,7 @@ class TicketStaffView(APIView):
 			except Ticket.DoesNotExist:
 				return Response({"detail": "Ticket not found."}, status=status.HTTP_404_NOT_FOUND)
 			ticket_object.delete()
-			return Response({"detail": "ticket deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+			return Response({"detail": "ticket deleted successfully."}, status=status.HTTP_202_ACCEPTED)
 	
 
 
@@ -253,9 +278,6 @@ class TicketStaffView(APIView):
 				return Response(serializer.data, status=status.HTTP_200_OK)
 
 			else:
-				# tickets = Ticket.objects.all()
-				# tickets = Ticket.objects.filter(ticket_assigned_to=request.user)
-
 				if request.resolver_match.view_name == 'get_my_ticket_list':
 					tickets = Ticket.objects.filter(ticket_assigned_to=request.user)
 				else:
@@ -280,15 +302,25 @@ class TicketStaffView(APIView):
 				# Retrieve search and status parameters from the query string
 				search_query = request.query_params.get('search', None)
 				status_query = request.query_params.get('status', None)
+				user_id_query = request.query_params.get('userId', None)
+
 				# Apply filtering based on search query (if provided)
 				if search_query:
 					tickets = tickets.filter(
 						Q(ticket_subject__icontains=search_query) |
-						Q(ticket_body__icontains=search_query)
+						Q(ticket_body__icontains=search_query)  
 					)
 				# Apply filtering based on status (if provided)
 				if status_query and status_query != 'all':
 					tickets = tickets.filter(ticket_status=status_query)
+
+				if user_id_query and user_id_query != 'all':
+					tickets = tickets.filter(ticket_user=user_id_query)
+
+
+
+
+
 				paginator = MyCustomStaffPagination()
 				page = paginator.paginate_queryset(tickets, request)
 				serializer = TicketListStaffSerializer(page, many=True)
@@ -332,6 +364,6 @@ class TicketFileStaffView(APIView):
 		try:
 			ticket_file = TicketFiles.objects.get(id=file_id)
 			ticket_file.delete()
-			return Response({"detail": "File deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+			return Response({"detail": "File deleted successfully."}, status=status.HTTP_202_ACCEPTED)
 		except TicketFiles.DoesNotExist:
 			return Response({"detail": "File not found."}, status=status.HTTP_404_NOT_FOUND)

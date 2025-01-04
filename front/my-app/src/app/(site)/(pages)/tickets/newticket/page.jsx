@@ -224,6 +224,8 @@ useEffect(() => {
 
               className="form-control" 
               id="subject" required="" 
+              maxLength="50" 
+
               />
             </div>
 

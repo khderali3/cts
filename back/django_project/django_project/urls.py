@@ -10,7 +10,8 @@ urlpatterns = [
     path('api/staff/auth/', include('staffAuthApp.urls')),
     path('api/staff/site/', include('sitestaffApp.urls')),
     path('api/staff/ticket/', include('ticketSystemStaffApp.urls')),
-    
+    path('api/staff/usersmanagment/', include('usersManagmentStaffApp.urls')),
+
 
 
 

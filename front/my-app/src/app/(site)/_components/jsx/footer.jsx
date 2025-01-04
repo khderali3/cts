@@ -53,7 +53,7 @@ export const Footer = async () => {
 
         <>
         
-        <footer>
+        <footer  id="footer_id">
   <div className="container">
     <div className="row">
       <div className="col-md-2 mx-auto ">

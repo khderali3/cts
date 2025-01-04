@@ -2,13 +2,17 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     isAuthenticated : false,
+    user_id : null,
+
     isLoading: true,
     loginFirstName: '',
     profileImage: '',
     is_staff:false,
     is_superuser:false,
     groups:[],
-    permissions:[]
+    permissions:[],
+    departments:[]
+    
 }
 
 const authSlice = createSlice({
@@ -20,7 +24,7 @@ const authSlice = createSlice({
         },
         setLogout: state => {
             state.isAuthenticated = false
-
+            state.user_id = null
 
             state.isLoading= true,
             state.loginFirstName= ''
@@ -29,6 +33,7 @@ const authSlice = createSlice({
             state.is_superuser=false
             state.groups=[]
             state.permissions=[]
+            state.departments=[]
 
 
         },
@@ -44,6 +49,11 @@ const authSlice = createSlice({
         setIsStaff: (state, action) => {
             state.is_staff = action.payload
         },
+
+        setIsUserId: (state, action) => {
+            state.user_id = action.payload
+        },
+
         setIsSupserUser: (state, action) => {
             state.is_superuser = action.payload
         },
@@ -52,11 +62,14 @@ const authSlice = createSlice({
         },
         setPermissions : (state, action) => {
             state.permissions = action.payload
-        }
+        },
+        setDepartments : (state, action) => {
+            state.departments = action.payload
+        },
     }
 })
 
 export const {setAuth, setLogout, finishIntialLoad,
      setloginFirstName, setprofileImage, setIsStaff,
-     setIsSupserUser, setGroups, setPermissions, }  = authSlice.actions;
+     setIsSupserUser, setGroups, setPermissions, setDepartments, setIsUserId }  = authSlice.actions;
 export default authSlice.reducer;

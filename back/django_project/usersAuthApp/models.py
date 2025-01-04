@@ -70,16 +70,13 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
 class Profile(models.Model):
     PRF_user = models.OneToOneField(UserAccount, related_name='profile_prf_user_relaed_useraccount', on_delete=models.CASCADE)
-    PRF_company = models.CharField(max_length=255)
+    PRF_company = models.CharField(max_length=255, blank=True, null=True)
     PRF_country = models.CharField(max_length=255, blank=True, null=True)
     PRF_city = models.CharField(max_length=255, blank=True, null=True)
-    PRF_address = models.CharField(max_length=255, null=False)
-
+    PRF_address = models.CharField(max_length=255, blank=True, null=True)
     PRF_phone_number = models.CharField(max_length=255, null=True, blank=True)
     PRF_slug = models.SlugField(max_length=50, blank=True, null=True)
     PRF_image = models.ImageField(upload_to='profile_img', blank=True, null=True )
-
-
     def save(self , *args , **kwargs):
         # add slug value
         if not self.PRF_slug :
@@ -96,33 +93,49 @@ class Profile(models.Model):
 
 
 # create profile automatically  when the user is created using (signal) ##
-def create_profile(sender , **kwargs):
-    if kwargs['created']:
-        Profile.objects.create(PRF_user=kwargs['instance'])
+from django.dispatch import receiver
+
+@receiver(post_save, sender=UserAccount)
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(PRF_user=instance)
 
 
 
 
-post_save.connect(create_profile , sender=UserAccount)
+# post_save.connect(create_profile , sender=UserAccount)
 # done create profile automatically  ##
 
 
 
-# class CustomPermission(models.Model):
+class CustomPermission(models.Model):
             
-#     class Meta:
+    class Meta:
         
-#         managed = False  # No database table creation or deletion  \
-#                          # operations will be performed for this model. 
+        managed = False  # No database table creation or deletion  \
+                         # operations will be performed for this model. 
                 
-#         default_permissions = () # disable "add", "change", "delete"
-#                                  # and "view" default permissions
+        default_permissions = () # disable "add", "change", "delete"
+                                 # and "view" default permissions
 
-#         permissions = ( 
-#             ('customer_rights', 'Global customer rights'),  
-#             ('vendor_rights', 'Global vendor rights'), 
-#             ('any_rights', 'Global any rights'), 
-#         )
+        permissions = ( 
+            ('user_managment', 'User Managment'),  
+            ('site_managment', 'Site Managment'), 
+
+            ('ticket_change', 'Ticket Change'), 
+            ('ticket_delete', 'Ticket Delete'),
+
+            ('ticket_attachment_add_after_submited', 'Ticket Attachment Add After Submited'), 
+            ('ticket_attachment_delete_after_submited', 'Ticket Attachment Delete After Submited'), 
+            
+            ('ticket_reply_change', 'Ticket Reply Change'), 
+            ('ticket_reply_delete', 'Ticket Reply Delete'),
+
+            ('ticket_reply_attachment_add_after_submited', 'Ticket Reply Attachment Add After Submited'), 
+            ('ticket_reply_attachment_delete_after_submited', 'Ticket Reply Attachment Delete After Submited'), 
+
+
+        )
 
 
 from django.db.models.signals import post_migrate
@@ -153,47 +166,47 @@ from django.apps import apps
 
 
 
-from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
-from django.db.models.signals import post_migrate
-from django.dispatch import receiver
+# from django.contrib.auth.models import Group, Permission
+# from django.contrib.contenttypes.models import ContentType
+# from django.db.models.signals import post_migrate
+# from django.dispatch import receiver
 
-@receiver(post_migrate)
-def create_default_groups_and_permissions(sender, **kwargs):
-    if sender.name != 'usersAuthApp':  # Replace with your app's name
-        return
+# @receiver(post_migrate)
+# def create_default_groups_and_permissions(sender, **kwargs):
+#     if sender.name != 'usersAuthApp':  # Replace with your app's name
+#         return
 
-    # Define custom permissions not tied to a specific model
-    custom_permissions = [
-        ('global_customer_rights', 'Global customer rights'),
-        ('global_vendor_rights', 'Global vendor rights'),
-        ('global_admin_rights', 'Global admin rights'),
-    ]
+#     # Define custom permissions not tied to a specific model
+#     custom_permissions = [
+#         ('global_customer_rights', 'Global customer rights'),
+#         ('global_vendor_rights', 'Global vendor rights'),
+#         ('global_admin_rights', 'Global admin rights'),
+#     ]
 
-    # Use a generic ContentType for global permissions
-    content_type = ContentType.objects.get(app_label='auth', model='permission')
+#     # Use a generic ContentType for global permissions
+#     content_type = ContentType.objects.get(app_label='auth', model='permission')
 
-    # Create permissions
-    for codename, name in custom_permissions:
-        permission, created = Permission.objects.get_or_create(
-            codename=codename,
-            name=name,
-            content_type=content_type
-        )
+#     # Create permissions
+#     for codename, name in custom_permissions:
+#         permission, created = Permission.objects.get_or_create(
+#             codename=codename,
+#             name=name,
+#             content_type=content_type
+#         )
 
-    # Define default groups and assign global permissions
-    groups_with_permissions = {
-        'Global Customer Group': ['global_customer_rights'],
-        'Global Vendor Group': ['global_vendor_rights', 'global_admin_rights'],
-    }
+#     # Define default groups and assign global permissions
+#     groups_with_permissions = {
+#         'Global Customer Group': ['global_customer_rights'],
+#         'Global Vendor Group': ['global_vendor_rights', 'global_admin_rights'],
+#     }
 
-    for group_name, permission_codenames in groups_with_permissions.items():
-        group, created = Group.objects.get_or_create(name=group_name)
-        if created:
-            for codename in permission_codenames:
-                try:
-                    permission = Permission.objects.get(codename=codename)
-                    group.permissions.add(permission)
-                except:
-                    pass
+#     for group_name, permission_codenames in groups_with_permissions.items():
+#         group, created = Group.objects.get_or_create(name=group_name)
+#         if created:
+#             for codename in permission_codenames:
+#                 try:
+#                     permission = Permission.objects.get(codename=codename)
+#                     group.permissions.add(permission)
+#                 except:
+#                     pass
 

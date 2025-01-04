@@ -106,11 +106,18 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         # Add any extra claims if necessary
         data['firstname'] = user.first_name  # or any other info you want to include in the token
         data['lastname'] = user.last_name  # or any other info you want to include in the token
+        data['user_id'] = user.id  # or any other info you want to include in the token
+
+
         data['is_staff'] = user.is_staff  # or any other info you want to include in the token
         data['is_superuser'] = user.is_superuser  # or any other info you want to include in the token
 
         data['permissions'] = list(user.get_all_permissions()) 
         data['groups'] = list(user.groups.values('id', 'name'))
+        data['departments'] = list(user.departments.values('id', 'department_name'))
+
+
+
 
         # Handle profile image with the full URL
         if hasattr(user, 'profile_prf_user_relaed_useraccount') and user.profile_prf_user_relaed_useraccount.PRF_image:

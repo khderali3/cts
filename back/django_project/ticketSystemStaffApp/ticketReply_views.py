@@ -7,12 +7,25 @@ from .my_utils import IsStaffOrSuperUser
 from rest_framework.views import APIView
 from rest_framework import status
 from ticketSystemApp.models import (TicketReplay, TicketReplyFiles)
-
+from django.shortcuts import get_object_or_404
 
 
 class TicketReplayStaffView(APIView):
 	permission_classes = [IsStaffOrSuperUser]
       
+	def delete(self, request, *args, **kwargs):
+			ticket_reply_id = kwargs.get('id')  # Get the ID from the URL
+			if ticket_reply_id:
+				try:
+					ticket_reply_obj = get_object_or_404(TicketReplay, id=ticket_reply_id)
+					ticket_reply_obj.delete()
+					return Response({"message": "Ticket reply deleted successfully."}, status=status.HTTP_202_ACCEPTED)
+				except Exception as e:
+					return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+			return Response({"error": "Ticket Reply ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+
 	def post(self, request, *args, **kwargs):
 
 		serializer = CreateTicketReplayStaffSerializer(data=request.data, context={'request': request})
@@ -21,6 +34,18 @@ class TicketReplayStaffView(APIView):
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+	def get(self, request, *args, **kwargs):
+			ticket_reply_id = kwargs.get('id')
+			if ticket_reply_id:
+				ticket_reply_obj = get_object_or_404(TicketReplay, id=ticket_reply_id )
+				serializer = TicketReplayStaffSerializer(ticket_reply_obj, context={'request': request})
+				return Response(serializer.data, status=status.HTTP_200_OK)
+
+			return Response({"error": "Ticket Reply ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 	def put(self , request, *args, **kwargs):
 		ticket_reply_id = kwargs.get('id')
@@ -80,6 +105,6 @@ class TicketReplyFileStaffView(APIView):
 		try:
 			ticket_reply_file = TicketReplyFiles.objects.get(id=file_id)
 			ticket_reply_file.delete()
-			return Response({"detail": "File deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+			return Response({"detail": "File deleted successfully."}, status=status.HTTP_202_ACCEPTED)
 		except TicketReplyFiles.DoesNotExist:
 			return Response({"detail": "File not found."}, status=status.HTTP_404_NOT_FOUND)

@@ -66,21 +66,10 @@ export default function Layout({ children }) {
 
   </CustomProviderStaff>
  
-
-
-        {/* <Script src="http://localhost:3000/js/bootstrap.bundle.min.js" /> */}
-
-        {/* <Script src="http://localhost:3000/js/adminlte.js" /> */}
-
-        {/* <Script 
-        src="http://localhost:3000/js/adminlte.js" 
-        strategy="afterInteractive" 
-      /> */}
-
-
+ 
       <Script src="/js/bootstrap.bundle.min.js"  strategy="afterInteractive"/>
 
-      {/* <Script src="/js/adminlte.js" strategy="afterInteractive" /> */}
+      <Script src="/js/adminlte.js" strategy="afterInteractive" />
 
 
       </body>

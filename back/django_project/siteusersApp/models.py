@@ -212,3 +212,6 @@ class SocialMedia (models.Model):
     instagram_url  = models.URLField( max_length=255, null=True, blank=True)
     linkedIn_url  = models.URLField( max_length=255, null=True, blank=True)
     twitter_url = models.URLField( max_length=255, null=True, blank=True)
+
+
+

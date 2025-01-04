@@ -8,6 +8,17 @@ from .models import (Ticket, TicketFiles, validate_file_or_image,
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
 
+def get_client_ip(request):
+    try:
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0].strip()
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip or None
+    except :
+        return None
+
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -89,6 +100,9 @@ class CreateTicketReplaySerializer(serializers.ModelSerializer):
         # Add ticket_user and ticket_created_by to validated data before saving
         validated_data['ticket_replay_from'] = self.context['request'].user
 
+        ticket_replay_created_ip_address = get_client_ip(self.context['request'])
+        validated_data['ticket_replay_created_ip_address'] = ticket_replay_created_ip_address
+
         # Create the ticket
         ticket_replay_obj = super().create(validated_data)
 
@@ -154,6 +168,8 @@ class TicketReplaySerializer(serializers.ModelSerializer):
         return None
 
 
+
+
 class CreateTicketSerializer(serializers.ModelSerializer):
     ticket_files = serializers.ListField(
         child=serializers.FileField(validators=[validate_file_or_image]),
@@ -176,6 +192,10 @@ class CreateTicketSerializer(serializers.ModelSerializer):
         # Add ticket_user and ticket_created_by to validated data before saving
         validated_data['ticket_user'] = self.context['request'].user
         validated_data['ticket_created_by'] = self.context['request'].user
+
+
+        ticket_created_ip_address = get_client_ip(self.context['request'])
+        validated_data['ticket_created_ip_address'] = ticket_created_ip_address
 
         # Create the ticket
         ticket = super().create(validated_data)
@@ -204,13 +224,15 @@ class TicketFilesSerializer(serializers.ModelSerializer):
 
 class TicketSerializer(serializers.ModelSerializer):
 
-    ticket_department = serializers.StringRelatedField()  # Display the department name instead of ID
-    ticket_user = serializers.SerializerMethodField()  # Custom field to show both first and last names
-    ticket_files =   serializers.SerializerMethodField() # Use a method to get the related files
+    ticket_department = serializers.StringRelatedField()   
+    ticket_user = serializers.SerializerMethodField()   
+    ticket_files =   serializers.SerializerMethodField()  
     ticket_replies = serializers.SerializerMethodField()
     
-    ticket_created_by = serializers.SerializerMethodField()  # Custom field to show both first and last names
-    ticket_closed_by = serializers.SerializerMethodField()  # Custom field to show both first and last names
+    ticket_created_by = serializers.SerializerMethodField()  
+    ticket_closed_by = serializers.SerializerMethodField()   
+
+    ticket_assigned_to = serializers.SerializerMethodField()   
 
 
     ticket_latest_activity = serializers.SerializerMethodField()
@@ -274,7 +296,19 @@ class TicketSerializer(serializers.ModelSerializer):
         return None
     
 
+    def get_ticket_assigned_to(self, obj):
+        if obj.ticket_assigned_to:
+            full_name = f"{obj.ticket_assigned_to.first_name} {obj.ticket_assigned_to.last_name}".strip()
 
+            return {
+                "fullname": full_name,
+                "is_staff": obj.ticket_assigned_to.is_staff,
+                "is_superuser": obj.ticket_assigned_to.is_superuser,
+                "departments": [department.department_name for department in obj.ticket_assigned_to.departments.all()] ,
+                "user_id": obj.ticket_assigned_to.id
+  
+            }
+        
 
     def get_ticket_latest_activity(self, obj):
         # Retrieve the latest TicketReplay for this ticket

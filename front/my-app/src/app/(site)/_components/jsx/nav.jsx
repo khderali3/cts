@@ -1,13 +1,11 @@
 
 import AuthLinks from "./nav_components/autheLinks";
 import Link from "next/link";
-
-
+import ContactUsButton from "./nav_components/contactUs_button";
 
 export const Nav = () => {
 
-
-
+ 
         return(
             <>
 
@@ -29,9 +27,20 @@ export const Nav = () => {
         <i className="fa-solid fa-bars-staggered" />
       </button>
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
-        <button type="button" className="btn btn-primary ps-4 pe-4">
+
+        {/* <button type="button" className="btn btn-primary ps-4 pe-4"
+        onClick={ ()=> {
+          router.push('/#footer_id');
+        }  
+        }
+        >
           Contact Us
-        </button>
+        </button> */}
+
+
+      <ContactUsButton />
+
+
         <div className="Eng p-2 d-none d-lg-block">
           <i className="fa-solid fa-globe" />
           <span>English</span>

@@ -1,5 +1,5 @@
 'use client'
-import { useState , useRef, useEffect } from "react";
+import { useState , useRef } from "react";
 import { useCustomFetchMutation } from "../../../redux/features/siteApiSlice";
 import { toast } from 'react-toastify';
  
@@ -200,8 +200,11 @@ const  AddNewReplayForm = ({ticket_id, handleReplayAdded }) => {
 
 
 
-      <button type="submit" className="btn btn-primary mt-3 mb-5">
-      {loading ? "Submitting..." : "Submit"}
+      <button type="submit" className="btn btn-outline-primary  mt-3 mb-5 btn-flexible" disabled={loading}>
+
+      { loading && ( <span className="spinner-border spinner-border-sm me-2"></span> ) }  
+
+        Submit
       </button>
     </form>
  

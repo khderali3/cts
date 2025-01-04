@@ -40,6 +40,7 @@ class Ticket(models.Model):
     ticket_slog = models.SlugField(max_length=100, blank=True, null=True, db_index=True, unique=True)
     ticket_created_date = models.DateTimeField(auto_now_add=True)
     ticket_updated_date = models.DateTimeField(auto_now=True)
+    ticket_created_ip_address = models.GenericIPAddressField(null=True, blank=True)  # Add this line to store the IP address
 
 
 
@@ -83,6 +84,7 @@ class TicketReplay(models.Model):
     ticket_replay_body = models.TextField(verbose_name="ticket reply body")
     ticket_replay_created_date = models.DateTimeField(auto_now_add=True)
     ticket_replay_updated_date = models.DateTimeField(auto_now=True)
+    ticket_replay_created_ip_address = models.GenericIPAddressField(null=True, blank=True)  # Add this line to store the IP address
 
     class Meta:
         ordering = ('id',)

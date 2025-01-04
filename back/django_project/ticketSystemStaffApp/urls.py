@@ -2,8 +2,7 @@
 from django.urls import path
 from .ticket_views import (DepartmentsStaffView, TicketStaffView,
 					 TicketFileStaffView, CloseTicketStaffView, ReopenTicketStaffView,
-					 AssignTicketToMeStaffView, AssignReassignTicketStaffView
-					 
+					 AssignTicketToMeStaffView, AssignReassignTicketStaffView,GetTicketByIdStaff
 					 )
 
 
@@ -25,6 +24,10 @@ urlpatterns = [
 
 	path('tickets/<int:id>/', TicketStaffView.as_view(), name='delete_ticket_object'),  
 	path('tickets/<slug:slug>/', TicketStaffView.as_view(), name='get_ticket_object'),
+	path('tickets/get_ticket_by_id/<int:id>/', GetTicketByIdStaff.as_view(), name='get_ticket_object_by_id'),
+
+
+
 
 	path('tickets/', TicketStaffView.as_view(), name='get_all_ticket_list'), 
 	path('my_tickets/', TicketStaffView.as_view(), name='get_my_ticket_list'), 
@@ -39,7 +42,7 @@ urlpatterns = [
 	# start ticket reply  staff views 
 	
     path('ticket_reply/', TicketReplayStaffView.as_view(), name='ticket_reply'),
-    path('ticket_reply/<int:id>/', TicketReplayStaffView.as_view(), name='ticket_reply_edit'),
+    path('ticket_reply/<int:id>/', TicketReplayStaffView.as_view(), name='ticket_reply_edit_and_get_or_delete'),
 
     path('ticket_reply/<int:ticket_reply_id>/files/', TicketReplyFileStaffView.as_view(), name='ticket_reply_get_list_or_post_list'),
 

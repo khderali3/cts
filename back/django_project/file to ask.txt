@@ -1,94 +1,87 @@
-the return object when add new file just like the foolwing :
-
-[
-    {
-        "id": 14,
-        "ticket_replay_file_ticket_replay": 35,
-        "ticket_replay_file": "/media_url/ticket/ticket_replay_files/services_u6Lx0Op.png",
-        "ticket_replay_file_name": "services.png",
-        "ticket_replay_file_created_data": "2024-12-21T09:36:47.921718Z"
-    },
-    {
-        "id": 15,
-        "ticket_replay_file_ticket_replay": 35,
-        "ticket_replay_file": "/media_url/ticket/ticket_replay_files/services_eYqYotY.png",
-        "ticket_replay_file_name": "services.png",
-        "ticket_replay_file_created_data": "2024-12-21T09:36:47.961692Z"
+hi when i send get request for user object , the response like this :
+{
+    "id": 33,
+    "email": "test26@test.local",
+    "first_name": "my first",
+    "last_name": "my last",
+    "is_active": true,
+    "is_staff": false,
+    "is_superuser": false,
+    "groups": [],
+    "user_permissions": [],
+    "departments": [],
+    "is_ticket_priority_support": false,
+    "last_login": null,
+    "profile": {
+        "PRF_company": "my company",
+        "PRF_country": null,
+        "PRF_city": null,
+        "PRF_address": null,
+        "PRF_phone_number": null,
+        "PRF_image": "http://127.0.0.1:8000/media_url/profile_img/services_ncORW6B.png"
     }
-]
-
-ticket_replay_file : not full path 
-
-
+}
 
 and here is my serializer :
+class UserObjectSerializer(serializers.ModelSerializer):
+    groups = GroupSerializer(many=True)  # Nested serializer for groups
+    user_permissions = PermissionSerializer(many=True)  # Nested serializer for permissions
+    departments = DepartmentSerializer(many=True)  # Nested serializer for departments
 
+    profile = ProfileSerializer(source='profile_prf_user_relaed_useraccount', allow_null=True)
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'email',
+            'first_name',
+            'last_name',
+            'is_active',
+            'is_staff',
+            'is_superuser',
+            'groups',
+            'user_permissions',
+            'departments',
+            'is_ticket_priority_support',
+            'last_login',
+            'profile',
+        ]
+        read_only_fields = ['id' ]
 
+and here is my view:
+class UserobjectView(APIView):
+	permission_classes = [IsStaffOrSuperUser]
+	parser_classes = [MultiPartParser, FormParser]  # Enable handling of form-data and file uploads
 
-class TicketReplyFileStaffSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = TicketReplyFiles
-		fields = ['id', 'ticket_replay_file_ticket_replay', 'ticket_replay_file',  'ticket_replay_file_name', 'ticket_replay_file_created_data']
-		read_only_fields = ['id', 'ticket_replay_file_name', 'ticket_replay_file_created_data', 'ticket_replay_file']
+	def get(self, request, *args, **kwargs):
+		user_id = kwargs.get('id')
+		user = get_object_or_404(User, id=user_id)
+		serializer = UserObjectSerializer(user, context={'request': request})
+		return Response(serializer.data, status=200)
 
-	def validate(self, attrs):
-		"""
-		Ensure that ticket_files[] is present in the request.
-		"""
-		request = self.context.get('request')
-		files = request.FILES.getlist('ticket_reply_files[]')
+but i want the response like the follwing results , how can i do it :
 
-		if not files:  # Check if no files are provided
-			raise serializers.ValidationError({"ticket_reply_files[]": "This field is required and cannot be empty."})
-		
-		return attrs
-
-
-	def create(self, validated_data):
-		"""
-		Handle creating multiple files for a ticket.
-		"""
-		# Access the request from the context
-		request = self.context['request']
-
-		# Retrieve files from the request's FILES
-		files = request.FILES.getlist('ticket_reply_files[]')  # Access the list of files
-
-		# Retrieve the ticket from the URL
-		ticket_reply_id = self.context['ticket_reply_id']
-		ticket_reply_obj = TicketReplay.objects.get(id=ticket_reply_id)
-
-		# Create ticket file instances
-		ticket_reply_files = [
-			TicketReplyFiles(
-				ticket_replay_file_ticket_replay=ticket_reply_obj,
-				ticket_replay_file=file,
-				ticket_replay_file_name=file.name
-			)
-			for file in files
-		]
-
-		# Bulk create the files
-		created_files = TicketReplyFiles.objects.bulk_create(ticket_reply_files)
-
-		return created_files  # Returning metadata about created files
-
-
-
-and here is my post view:
-
-	def post(self, request, ticket_reply_id, *args, **kwargs):
-
-		serializer = TicketReplyFileStaffSerializer(data=request.data, context={'request': request, 'ticket_reply_id': ticket_reply_id})
-
-		if serializer.is_valid():
-			created_files = serializer.save()  # Returns the created file instances
-			response_data = TicketReplyFileStaffSerializer(created_files, many=True).data
-			return Response(response_data, status=status.HTTP_201_CREATED)
-
-
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
+{
+	"user" : {
+		"id": 33,
+		"email": "test26@test.local",
+		"first_name": "my first",
+		"last_name": "my last",
+		"is_active": true,
+		"is_staff": false,
+		"is_superuser": false,
+		"groups": [],
+		"user_permissions": [],
+		"departments": [],
+		"is_ticket_priority_support": false,
+		"last_login": null,
+	}
+    "profile": {
+        "PRF_company": "my company",
+        "PRF_country": null,
+        "PRF_city": null,
+        "PRF_address": null,
+        "PRF_phone_number": null,
+        "PRF_image": "http://127.0.0.1:8000/media_url/profile_img/services_ncORW6B.png"
+    }
+}

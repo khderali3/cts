@@ -258,7 +258,7 @@ const Page = () => {
               <th scope="col">Created</th>
               <th scope="col">Latest activity</th>
               <th scope="col">Status</th>
-              <th scope="col">Actions</th>
+              {/* <th scope="col">Actions</th> */}
             </tr>
           </thead>
           <tbody>
@@ -278,9 +278,9 @@ const Page = () => {
                     {ticket.ticket_status}
                   </span>
                 </td>
-                <td>
+                {/* <td>
                   <Link href="/#">Re open ticket </Link>
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>

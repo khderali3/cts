@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staff/features/authApiSlice";
 import { useDispatch } from 'react-redux';
-import { setAuth,finishIntialLoad,setloginFirstName,setprofileImage,setIsStaff,setIsSupserUser,setGroups,setPermissions  } from '@/app/(dashboard)/_components/redux_staff/features/authSlice';
+import { setAuth,finishIntialLoad,setloginFirstName,setprofileImage,setIsStaff,setIsSupserUser,setGroups,setPermissions, setDepartments, setIsUserId   } from '@/app/(dashboard)/_components/redux_staff/features/authSlice';
 import { redirect } from "next/navigation";
 
 
@@ -51,12 +51,17 @@ const Login = () => {
           if(response.data.is_staff === true || response.data.is_superuser === true){
             dispatch(setAuth());
             dispatch(setloginFirstName(response.data.firstname))
+            dispatch(setIsUserId(response.data.user_id))
+
+
             dispatch(setprofileImage(response.data.PRF_image)) 
             dispatch(setIsStaff(response.data.is_staff)) 
             dispatch(setIsSupserUser(response.data.is_superuser)) 
             dispatch(setGroups(response.data.groups)) 
             dispatch(setPermissions(response.data.permissions)) 
             
+            dispatch(setDepartments(response.data.departments)) 
+
             toast.success('Logged in');
             router.push('/staff');
 

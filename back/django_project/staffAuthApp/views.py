@@ -219,6 +219,8 @@ class StaffTokenVerifyView(generics.GenericAPIView):
                 "is_superuser": user.is_superuser,
                 "permissions": list(user.get_all_permissions()),
                 "groups": list(user.groups.values('id', 'name')),
+                'departments': list(user.departments.values('id', 'department_name'))
+
             }
 
             response_data['profile_image'] = None

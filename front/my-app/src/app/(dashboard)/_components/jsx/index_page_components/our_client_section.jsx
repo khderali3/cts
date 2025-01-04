@@ -60,14 +60,14 @@ const OurClientsSection = () => {
 		  } catch (error) {
 			console.error("Error submitting form:", error);
 			toast.error("Error submitting form2.");
-		  }
+		  } finally{setSubmitting(false)}
 
 	  } else {
 		toast.error("Error. all fields are required ");
-
+    setSubmitting(false);
 	  }
 	
-	  setSubmitting(false);
+	  
 		  
 	};
 

@@ -14,7 +14,7 @@ class EmployeeAdmin(UserAdmin):
     list_display = ("email", "first_name", "last_name", "is_staff", 'is_ticket_priority_support')
     search_fields = ("email", "first_name", "last_name")
     list_filter = ('is_staff', 'is_superuser')
-    # filter_horizontal = ('departments',)  # Enable filtering for ManyToManyField
+    filter_horizontal = ('departments',)  # Enable filtering for ManyToManyField
     ordering = ("email",)
     add_fieldsets = (
         (
@@ -44,6 +44,7 @@ class EmployeeAdmin(UserAdmin):
                     "groups",
                     "user_permissions",
                     "is_ticket_priority_support",
+                    "departments",
 
 
                 ),

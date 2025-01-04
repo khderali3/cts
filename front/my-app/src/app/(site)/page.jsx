@@ -275,16 +275,16 @@ const Home = async () => {
 
 
 
-  <section id="our-client" className=' background-color pt-0 mt-0'> 
-      <div className="text text-light text-center pt-5  ">
-      {/* <h2>Some Of Our Clients</h2> */}
-      <h2>{data?.our_client_sec?.our_client_sec_title}</h2>
-      </div>
+      <section id="our-client" className=' background-color pt-0 mt-0'> 
+          <div className="text text-light text-center pt-5  ">
+          {/* <h2>Some Of Our Clients</h2> */}
+          <h2>{data?.our_client_sec?.our_client_sec_title}</h2>
+          </div>
 
-  <ImageSlider  clients={data?.our_clients} />
+      <ImageSlider  clients={data?.our_clients} />
 
 
-  </section> 
+      </section> 
 
   <div className="contact">
   <div className="container text-light d-flex justify-content-center align-items-center flex-column">

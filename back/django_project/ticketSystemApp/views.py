@@ -14,12 +14,73 @@ from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
 
 # from urllib.parse import quote as urlquote  # Use urllib's quote
-from .models import TicketFiles, TicketReplyFiles, Ticket, Department
+from .models import TicketFiles, TicketReplyFiles, Ticket, Department, TicketReplay
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from django.http import HttpResponseForbidden, FileResponse
 from mimetypes import guess_type
  
+
+
+
+
+
+
+
+class CloseTicketView(APIView):
+
+	def post(self, request, ticket_id, *args, **kwargs):
+		# Get the ticket
+		ticket = get_object_or_404(Ticket, id=ticket_id)
+
+		if ticket.ticket_closed_by is not None:
+			return Response({"message": "Ticket already closed."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+		# Update the ticket's status and closed_by fields
+		ticket.ticket_status = 'solved'
+		ticket.ticket_closed_by = request.user
+		ticket.save()
+
+		# Add a reply indicating the ticket was closed
+		TicketReplay.objects.create(
+			ticket_replay_ticket=ticket,
+			ticket_replay_from=request.user,
+			ticket_replay_body="This ticket has been closed after being resolved."
+		)
+
+		return Response({"message": "Ticket successfully closed."}, status=status.HTTP_200_OK)
+
+
+
+class ReopenTicketView(APIView):
+
+	def post(self, request, ticket_id, *args, **kwargs):
+		# Get the ticket
+		ticket = get_object_or_404(Ticket, id=ticket_id)
+
+		if ticket.ticket_closed_by is None:
+			return Response({"message": "Ticket already not closed ."}, status=status.HTTP_400_BAD_REQUEST)
+		
+		# Update the ticket's status and clear closed_by field
+		ticket.ticket_status = 'open'
+		ticket.ticket_closed_by = None
+		ticket.ticket_assigned_to = request.user
+		ticket.save()
+
+		# Add a reply indicating the ticket was reopened
+		TicketReplay.objects.create(
+			ticket_replay_ticket=ticket,
+			ticket_replay_from=request.user,
+			ticket_replay_body="This ticket has been re-opened."
+		)
+
+		return Response({"message": "Ticket successfully reopened."}, status=status.HTTP_200_OK)
+
+
+
+
+
 
 
 

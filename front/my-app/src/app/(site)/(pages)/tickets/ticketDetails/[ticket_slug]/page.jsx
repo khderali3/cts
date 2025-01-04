@@ -8,8 +8,8 @@ import getTicketStatusColor from "@/app/(site)/_components/jsx/tickets/ticket_st
 import AddNewReplayForm from "@/app/(site)/_components/jsx/tickets/ticketReply/addReplay";
 import Link from "next/link";
 
-
-
+import CloseTicketButton from "@/app/(site)/_components/jsx/tickets/close_ticket/closeTicket";
+import ReOpenTicketButton from "@/app/(site)/_components/jsx/tickets/reopen_ticket/reOpenTicket";
 
 
 
@@ -38,10 +38,14 @@ const Page = () => {
     const [ticketDetails, setTcketDetails] = useState({})
     const [loading, setLoading] = useState(true); // Loading state
     const [customFetch] = useCustomFetchMutation();
-    const [ticketDetailsUpdated, setticketDetailsUpdated] =  useState(false)
+ 
+    const [reloadFlag , setReloadFlag] = useState(false)
 
+    const reloadComponentMethod = () => {
+      setReloadFlag((prev) => !prev); // Toggle state to trigger a reload
+    };
 
-
+    const [canReply, setCanReply] = useState(false)
 
 
     const fetchData = async (pageUrl) => {
@@ -60,36 +64,34 @@ const Page = () => {
         } catch (error) {
           console.error("Error fetching data:", error);
         }
-        setLoading(false);
-        setticketDetailsUpdated(false)
+        finally{
+            setLoading(false);
+         }
+
       };
     
 
 
 
+useEffect(() => {    
 
+if(   
+
+    (!ticketDetails?.ticket_closed_by)
+    ) {
+    setCanReply(true)
+    } else { setCanReply(false)}
+
+}, [  ticketDetails ]);
 
 
 useEffect(() => {    
     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ticket/${ticket_slug}/`
-
     fetchData(url)
-
-}, [ ticketDetailsUpdated ]);
-
+}, [  reloadFlag ]);
 
 
-const handleReplayAdded = () => {
-    console.log('parent component is now know about new replay ')
-    setticketDetailsUpdated(true)
-  };
-
-
-// useEffect(() => {
  
-//   }, [ticketDetails]); 
-
-
     return (
 
         
@@ -336,7 +338,24 @@ const handleReplayAdded = () => {
 
 
 
-        <AddNewReplayForm  ticket_id={ticketDetails?.id} handleReplayAdded={handleReplayAdded}/>
+        {/* <AddNewReplayForm  ticket_id={ticketDetails?.id} handleReplayAdded={reloadComponentMethod}/> */}
+
+
+
+        { canReply ? 
+                <AddNewReplayForm  ticket_id={ticketDetails?.id} handleReplayAdded={reloadComponentMethod}/>
+                :
+                <div className="mt-5 text-center"> 
+                    <p className="text-info"> you can't reply to this ticket because it is closed. </p>
+                </div>
+            }
+
+
+
+
+
+
+
 
         </div>
 
@@ -410,7 +429,7 @@ const handleReplayAdded = () => {
                 href="#"
                 className="text-decoration-none det position-absolute start-50"
                 >
-                <p className="p-0 m-0 text-dark">#{ticketDetails.id}</p>
+                <p className="p-0 m-0 text-dark">#{ticketDetails?.id}</p>
                 </a>
             </div>
             <div className="d-flex justify-content-between position-relative p-1">
@@ -460,6 +479,29 @@ const handleReplayAdded = () => {
                 <p className="text-dark">{ticketDetails?.ticket_pr_support ? 'Yes': 'No'}</p>
                 </a>
             </div>
+
+
+
+            <hr />
+            <div className="d-flex justify-content-between position-relative p-1">
+            {/* <CloseTicketButton ticket_id = {ticketDetails?.id} reloadComponentMethod={reloadComponentMethod} />  
+
+            <ReOpenTicketButton ticket_id = {ticketDetails?.id} reloadComponentMethod={reloadComponentMethod}/> */}
+
+                { ticketDetails?.ticket_closed_by ?     
+
+                    <ReOpenTicketButton ticket_id={ticketDetails?.id} reloadComponentMethod={reloadComponentMethod}/>
+                        : 
+
+                    <CloseTicketButton ticket_id={ticketDetails?.id} reloadComponentMethod={reloadComponentMethod} />  
+
+                } 
+  
+            </div>
+
+
+
+             
             </div>
         </div>
         </div>

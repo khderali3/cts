@@ -72,13 +72,16 @@
 
 
 
-.sidebar-expand-lg .app-sidebar {
+ .app-sidebar {
   position: fixed;
   top: 0;
   bottom: 0;
   max-height: 100vh;
-  
+
 }
+
+ 
+ 
 
 .without_marker::marker {
   content: none;
@@ -136,8 +139,38 @@ textarea[readonly] {
   list-style-type: none;  
 }
 
+ 
+
+ 
+ 
+.form-check-input:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.form-control:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+ 
 
 
+ .active_class {
+  background-color: transparent; /* Keep background transparent */
+  border-left: 4px solid #007bff; /* Active border on the left */
+  color: #007bff !important; /* Match the active color to the theme */
+  font-weight: bold; /* Make the active link more prominent */
+  padding-left: 1.5rem; /* Adjust padding to accommodate the border */
+  
 
+}
+ 
+.btn-flexible {
+  min-width: 120px;
+  padding: 0.5rem 1rem;
+}
 
-
+.disabled_link {
+  cursor: not-allowed;   /* Show the "not-allowed" cursor */
+  opacity: 0.5;
+}

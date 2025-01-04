@@ -220,12 +220,9 @@ const handleaddItem = async (e) => {
 	  if( response && response.data) {
 		fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/feature_why_us/`);
 		setIsModalOpen(false);
-
 	  }
 
 	  setDeletingItemId(null)
-
-
 
   };
 

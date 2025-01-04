@@ -17,10 +17,9 @@ const authSlice = createSlice({
         logout: state => {
             state.isAuthenticated = false
 
-            state.isLoading = true
             state.loginFirstName = ''
             state.profileImage = ''
-
+            
         },
         finishIntialLoad: state => {
             state.isLoading = false

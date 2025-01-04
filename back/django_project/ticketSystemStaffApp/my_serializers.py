@@ -13,6 +13,17 @@ from django.conf import settings
 from rest_framework.exceptions import ValidationError
 from rest_framework import fields
 
+def get_client_ip(request):
+    try:
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0].strip()
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip or None
+    except :
+        return None
+
 
 
 
@@ -91,16 +102,45 @@ class TicketReplyFileStaffSerializer(serializers.ModelSerializer):
 
 
 class TicketReplayStaffSerializer (serializers.ModelSerializer):
+    ticket_reply_files = serializers.ListField(
+        child=serializers.FileField(validators=[validate_file_or_image]),
+        required=False,  # Make this optional
+        allow_empty=True,  # Allow empty list
+        )
+    ticket_slug = serializers.SerializerMethodField()
+
     class Meta:
         model = TicketReplay
         fields = (
             'id',
+            'ticket_slug',
             'ticket_replay_body',
+            'ticket_reply_files'
             )
-        read_only_fields = ['id']  # Set id as read-only
+        read_only_fields = ['id', 'ticket_replay_ticket']  # Set id as read-only
 
 
 
+    def get_ticket_slug(self, obj):
+        return obj.ticket_replay_ticket.ticket_slog
+
+
+    def update(self, instance, validated_data):
+        ticket_reply_files = self.context['request'].FILES.getlist('ticket_reply_files[]')
+
+        # Use the default update method for other fields
+        instance = super().update(instance, validated_data)
+
+        # Handle ticket files
+        for file in ticket_reply_files:
+            TicketReplyFiles.objects.create(
+                ticket_replay_file_ticket_replay=instance,
+                ticket_replay_file=file,
+                ticket_replay_file_name=file.name,
+            )
+
+        return instance
+ 
 
 
 
@@ -158,6 +198,8 @@ class CreateTicketReplayStaffSerializer(serializers.ModelSerializer):
         is_wait_customer_reply = validated_data.pop('is_wait_customer_reply', False)
 
 
+        ticket_replay_created_ip_address = get_client_ip(self.context['request'])
+        validated_data['ticket_replay_created_ip_address'] = ticket_replay_created_ip_address
 
         # Create the ticket
         ticket_replay_obj = super().create(validated_data)
@@ -228,7 +270,8 @@ class DepartmentStaffSerializer(serializers.ModelSerializer):
 
 class TicketListStaffSerializer(serializers.ModelSerializer):
     latest_activity = serializers.SerializerMethodField()
-
+    ticket_assigned_to = serializers.SerializerMethodField()
+    
     class Meta:
         model = Ticket
         fields = '__all__'  # You can specify the fields you want to expose
@@ -241,7 +284,19 @@ class TicketListStaffSerializer(serializers.ModelSerializer):
         # If no replies, return the ticket creation date
         return obj.ticket_created_date
 
+    def get_ticket_assigned_to(self, obj):
+        if obj.ticket_assigned_to:
+            full_name = f"{obj.ticket_assigned_to.first_name} {obj.ticket_assigned_to.last_name}".strip()
 
+            return {
+                "fullname": full_name,
+                "is_staff": obj.ticket_assigned_to.is_staff,
+                "is_superuser": obj.ticket_assigned_to.is_superuser,
+                "departments": [department.department_name for department in obj.ticket_assigned_to.departments.all()] ,
+                "user_id": obj.ticket_assigned_to.id
+  
+            }
+        return None
 
 
 
@@ -262,18 +317,18 @@ class CreateTicketStaffSerializer(serializers.ModelSerializer):
             'ticket_files',  # Add the ticket_files field here
             'ticket_slog',
             'ticket_user',
-            'ticket_created_by'
+            'ticket_created_by',
         ]
         read_only_fields = ['id', 'ticket_slog', 'ticket_created_by']  # Set id as read-only
 
     def create(self, validated_data):
-        # Add   ticket_created_by to validated data before saving
-        # validated_data['ticket_user'] = self.context['request'].user
         validated_data['ticket_created_by'] = self.context['request'].user
+        ticket_created_ip_address = get_client_ip(self.context['request'])
+        validated_data['ticket_created_ip_address'] = ticket_created_ip_address
 
         # Create the ticket
         ticket = super().create(validated_data)
-
+ 
         # Handle the uploaded files and create TicketFiles entries
 
         ticket_files = self.context['request'].FILES.getlist('ticket_files[]')
@@ -358,6 +413,11 @@ class TicketFileStaffSerializer(serializers.ModelSerializer):
 
 
 class ChangeTicketStaffSerializer(serializers.ModelSerializer):
+    ticket_files = serializers.ListField(
+        child=serializers.FileField(validators=[validate_file_or_image]),
+        required=False,  # Make this optional
+        allow_empty=True,  # Allow empty list
+    )
 
     class Meta:
         model = Ticket
@@ -368,12 +428,55 @@ class ChangeTicketStaffSerializer(serializers.ModelSerializer):
             'ticket_department',
             'ticket_user',
             'ticket_slog',
-
+            'ticket_files'
         ]
-        read_only_fields = ['id', 'ticket_slog']  # Set id as read-only
+        read_only_fields = ['id', 'ticket_slog', 'ticket_user']  
+
+    def update(self, instance, validated_data):
+        ticket_files = self.context['request'].FILES.getlist('ticket_files[]')
+
+        # Use the default update method for other fields
+        instance = super().update(instance, validated_data)
+
+        # Handle ticket files
+        for file in ticket_files:
+            TicketFiles.objects.create(
+                ticket_file_ticket=instance,
+                ticket_file_ticket_file=file,
+                ticket_file_name=file.name,
+            )
+
+        return instance
+
+
+
+
 
  
     
+
+class GetTicketByIdStaffSerializer(serializers.ModelSerializer):
+    ticket_files =   serializers.SerializerMethodField() # Use a method to get the related files
+
+    class Meta:
+        model = Ticket
+        fields = [
+            "id",
+            'ticket_subject',
+            'ticket_body',
+            'ticket_department',
+            'ticket_user',
+            'ticket_slog',
+            'ticket_files',
+        ]
+        read_only_fields = ['id', 'ticket_slog', 'ticket_user']  
+
+    def get_ticket_files(self, obj):
+        # Get related ticket files for this ticket
+        ticket_files = TicketFiles.objects.filter(ticket_file_ticket=obj)
+        # Serialize the related TicketFiles objects
+        return TicketFilesSerializer(ticket_files, many=True, context=self.context ).data
+
 
 
 
@@ -388,6 +491,7 @@ class TicketStaffSerializer(serializers.ModelSerializer):
     ticket_created_by = serializers.SerializerMethodField()  # Custom field to show both first and last names
     ticket_closed_by = serializers.SerializerMethodField()  # Custom field to show both first and last names
 
+    ticket_assigned_to = serializers.SerializerMethodField()  # Custom field to show both first and last names
 
     ticket_latest_activity = serializers.SerializerMethodField()
     ticket_pr_support = serializers.SerializerMethodField()
@@ -452,6 +556,13 @@ class TicketStaffSerializer(serializers.ModelSerializer):
 
 
 
+
+
+
+
+
+
+
     def get_ticket_latest_activity(self, obj):
         # Retrieve the latest TicketReplay for this ticket
         latest_reply = TicketReplay.objects.filter(ticket_replay_ticket=obj).order_by('-ticket_replay_created_date').first()
@@ -465,19 +576,13 @@ class TicketStaffSerializer(serializers.ModelSerializer):
         if obj.ticket_created_by:
             full_name = f"{obj.ticket_created_by.first_name} {obj.ticket_created_by.last_name}".strip()
 
-
-
-            PRF_image = None
-            if hasattr(obj.ticket_created_by, 'profile_prf_user_relaed_useraccount'):
-                PRF_image = obj.ticket_created_by.profile_prf_user_relaed_useraccount.PRF_image.url if obj.ticket_created_by.profile_prf_user_relaed_useraccount.PRF_image else None
-                if PRF_image:
-                    PRF_image = f"{settings.MY_SITE_URL}{PRF_image}"
-
             return {
                 "fullname": full_name,
                 "is_staff": obj.ticket_created_by.is_staff,
-                "PRF_image" : PRF_image
-
+                "is_superuser": obj.ticket_created_by.is_superuser,
+                "departments": [department.department_name for department in obj.ticket_created_by.departments.all()],
+                "user_id": obj.ticket_created_by.id
+ 
             }
         return None
     
@@ -487,10 +592,26 @@ class TicketStaffSerializer(serializers.ModelSerializer):
             return {
                 "fullname": full_name,
                 "is_staff": obj.ticket_closed_by.is_staff,
+                "is_superuser": obj.ticket_closed_by.is_superuser,
+                "departments": [department.department_name for department in obj.ticket_closed_by.departments.all()] ,
+                "user_id": obj.ticket_closed_by.id
+  
             }
         return None
     
+    def get_ticket_assigned_to(self, obj):
+        if obj.ticket_assigned_to:
+            full_name = f"{obj.ticket_assigned_to.first_name} {obj.ticket_assigned_to.last_name}".strip()
 
+            return {
+                "fullname": full_name,
+                "is_staff": obj.ticket_assigned_to.is_staff,
+                "is_superuser": obj.ticket_assigned_to.is_superuser,
+                "departments": [department.department_name for department in obj.ticket_assigned_to.departments.all()] ,
+                "user_id": obj.ticket_assigned_to.id
+  
+            }
+        return None
 
 
     def get_ticket_files(self, obj):
