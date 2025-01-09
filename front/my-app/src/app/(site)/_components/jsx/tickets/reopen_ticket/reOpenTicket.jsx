@@ -8,7 +8,7 @@ import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staf
 import { toast } from "react-toastify";
 
 
-const ReOpenTicketButton = ({ticket_id, reloadComponentMethod}) => {
+const ReOpenTicketButton = ({ticket_id, reloadComponentMethod , customflag='customflag'}) => {
     const [loadingReOpenTicket, setloadingReOpenTicket] = useState(false); // Loading state
 
 
@@ -72,7 +72,7 @@ const ReOpenTicketButton = ({ticket_id, reloadComponentMethod}) => {
 	
 	
 	<CustomModal  
-	id="re_open_ticket_site_modal_id"
+	id={`re_open_ticket_site_modal_id_${customflag}`}
 	handleSubmit={handleReOpenTicket}
 	submitting={loadingReOpenTicket}
 	message={"Are you sure you want to re-open the ticket?"}

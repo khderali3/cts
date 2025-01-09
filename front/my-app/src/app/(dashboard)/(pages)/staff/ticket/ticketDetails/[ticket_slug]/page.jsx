@@ -28,6 +28,10 @@ import { toast } from "react-toastify";
 
 import { useRouter } from "next/navigation";
 
+ 
+
+
+
 const Page = () => {
 
     const { user_id } = useSelector(state => state.staff_auth);
@@ -230,35 +234,42 @@ useEffect(() => {
     
 
         <div className="   ">
-        <div className="ticket-text col-lg-8 col-11 border-bottom border-2">
-            <h3>{ticketDetails?.ticket_subject}</h3>
-        </div>
 
+
+        {/* <div className="ticket-text col-lg-8 col-11 border-bottom border-2">
+            <h3>{ticketDetails?.ticket_subject}</h3>
+        </div> */}
+
+        <div className=" col-11  border-bottom border-2 text-start my-2  ">
+            <h3 className="text-break mx-2">{ticketDetails?.ticket_subject} </h3>
+        </div>
 
         <div className="row d-flex justify-content-between">
 
 
             <div className="col-lg-4 col-md-10 d-lg-none d-block ms-auto me-auto  ">
             <div className="dropdown ">
-                <div className="container mt-5">
+                <div className="container  ">
 
-                <button
-                    className="d-block d-lg-none border-0 me-auto border-bottom collapse  "
-                    id="toggleButton"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#collapseExample"
-                    aria-expanded="false"
-                    aria-controls="collapseExample"
-                >
-                    Ticket Details <i className="fa-solid fa-caret-down fs-3" />
-                </button>
+            <button
+                className="d-block d-lg-none border-0 me-auto border-bottom collapse btn  "
+                id="toggleButton"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseExample"
+                aria-expanded="false"
+                aria-controls="collapseExample"
+            >
+                 Ticket Details <i className="bi bi-caret-down" />
+            </button>
+
+
 
                 <hr className="d-block" />
                 <div
                     id="collapseExample"
                     className="card collapse  toggle-content mt-3 d-md-block"
                 >
-                    <div className="card-body">
+                    {/* <div className="card-body">
                     <div className="d-flex justify-content-between position-relative p-1">
                         <a href="#" className="text-decoration-none det">
                         <p className="p-0 m-0 text-muted">Requester</p>
@@ -362,6 +373,196 @@ useEffect(() => {
                         </a>
                     </div>
                     </div>
+ */}
+
+
+
+<div className="card-body">
+
+
+<div className="d-flex justify-content-between position-relative p-1 ">
+    <a href="#" className="text-decoration-none det">
+    <p className="p-0 m-0 text-muted">Requester</p>
+    </a>
+    <a
+    href="#"
+    className="text-decoration-none det position-absolute start-50"
+    >
+    <p className="p-0 m-0 text-dark">{ticketDetails?.ticket_created_by?.fullname}</p>
+    </a>
+</div>
+
+
+<div className="d-flex justify-content-between position-relative p-1 ">
+    <a href="#" className="text-decoration-none det">
+    <p className="p-0 m-0 text-muted">Related User</p>
+    </a>
+    <a
+    href="#"
+    className="text-decoration-none det position-absolute start-50"
+    >
+    <p className="p-0 m-0 text-dark">{ticketDetails?.ticket_user?.fullname}</p>
+    </a>
+</div>
+
+
+<div className="d-flex justify-content-between position-relative   p-1 pb-2 mb-2">
+    <a href="#" className="text-decoration-none det">
+    <p className="p-0 m-0 text-muted">Created</p>
+    </a>
+    <a
+    href="#"
+    className="text-decoration-none det position-absolute start-50"
+    >
+    <p className="p-0 m-0 text-dark fs-6">{formatDate( ticketDetails?.ticket_created_date)}</p>
+    </a>
+</div>
+
+
+
+
+<div className="d-flex justify-content-between position-relative   p-1 p-1 pb-2 mb-2 ">
+    <a href="#" className="text-decoration-none det">
+    <p className="p-0 m-0 text-muted">Latest Activity</p>
+    </a>
+    <a
+    href="#"
+    className="text-decoration-none det position-absolute start-50"
+    >
+    <p className="p-0 m-0 text-dark">{formatDate( ticketDetails?.ticket_latest_activity)}</p>
+    </a>
+</div>
+<hr />
+<div className="d-flex justify-content-between position-relative p-1">
+    <a href="#" className="text-decoration-none det">
+    <p className="p-0 m-0 text-muted">Assigned to</p>
+    </a>
+    <a
+    href="#"
+    className="text-decoration-none det position-absolute start-50"
+    >
+    <p className="p-0 m-0 text-dark">
+        {ticketDetails?.ticket_assigned_to ? ticketDetails?.ticket_assigned_to?.fullname : 'Pinding..'}
+    </p>
+    </a>
+</div>
+<div className="d-flex justify-content-between position-relative p-1">
+    <a href="#" className="text-decoration-none det">
+    <p className="p-0 m-0 text-muted">ID</p>
+    </a>
+    <a
+    href="#"
+    className="text-decoration-none det position-absolute start-50"
+    >
+    <p className="p-0 m-0 text-dark">#{ticketDetails?.id}</p>
+    </a>
+</div>
+<div className="d-flex justify-content-between position-relative p-1">
+    <a href="#" className="text-decoration-none det">
+    <p className="p-0 m-0 text-muted">Status</p>
+
+
+
+    
+    </a>
+    <a
+    href="#"
+    className="text-decoration-none det position-absolute start-50"
+    >
+    <p className={`p-0 m-0 text-light badge  p-1  ${getTicketStatusColor(ticketDetails?.ticket_status)}`}  >
+
+        {ticketDetails?.ticket_status}
+    </p>
+
+
+
+
+
+    
+    </a>
+</div>
+<hr />
+<div className="d-flex justify-content-between text-center position-relative p-1">
+    <a href="#" className="text-decoration-none det">
+    <p className="p-0 m-0 text-muted">Department</p>
+    </a>
+    <a
+    href="#"
+    className="text-decoration-none det position-absolute start-50"
+    >
+    <p className="p-0 m-0 text-dark">{ticketDetails?.ticket_department}</p>
+    </a>
+</div>
+<div className="d-flex justify-content-between position-relative p-1">
+    <a href="#" className="text-decoration-none det">
+    <p className="p-0 m-0 text-muted">Priority Support</p>
+    </a>
+    <a
+    href="#"
+    className="text-decoration-none det position-absolute start-50"
+    >
+    <p className="text-dark">{ticketDetails?.ticket_pr_support ? 'Yes': 'No'}</p>
+    </a>
+</div>
+
+
+<hr />
+
+<div className="d-flex justify-content-between position-relative p-1">
+    {/* <Link href="/#"              
+        data-bs-toggle="modal"
+        data-bs-target="#assign_ticket_to_staff"
+                    
+        >
+        Assigne / re-Assigne Ticket  
+    </Link> */}
+
+
+    <button className= {`btn btn-outline-primary   w-100     `}
+        data-bs-toggle="modal"
+        data-bs-target="#assign_ticket_to_staff"
+     
+      >
+        Assigne / re-Assigne Ticket 
+    </button>
+
+
+
+</div>
+
+
+
+<div className="d-flex justify-content-between position-relative p-1">
+
+    { ticketDetails?.ticket_closed_by ?     
+
+        <ReOpenTicketButton ticket_id = {ticketDetails?.id} reloadComponentMethod={reloadComponentMethod} customFlag="customFlag_1"/>
+            : 
+
+        <CloseTicketButton ticket_id = {ticketDetails?.id} reloadComponentMethod={reloadComponentMethod} customFlag="customFlag_1" />  
+
+    } 
+      
+</div>
+
+
+
+<div className="d-flex justify-content-between position-relative p-1">
+
+
+<DeleteTicketButton ticket_id = {ticketDetails?.id} customFlag="customFlag_1"  />  
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
                 </div>
                 </div>
             </div>
@@ -385,17 +586,17 @@ useEffect(() => {
                     className="  rounded-circle me-2"
                     />
 
-
                     
                     <div className="d-flex flex-column justify-content-center ">
-                        <h6 className="m-0 fs-6 text-muted">{ticketDetails?.ticket_user?.fullname}</h6>
+                        <h6 className="m-0 fs-6 text-muted">{ticketDetails?.ticket_user?.fullname}
+
+                        {ticketDetails?.ticket_user?.is_staff &&  <span className="badge bg-light text-dark ms-2">Staff</span> }
+
+
+                        </h6>
                         <p className="m-0 text-muted"> {formatDate( ticketDetails?.ticket_created_date)  }</p> 
                     </div>
  
-
-
-
-
 
                 </div>
                 
@@ -407,11 +608,14 @@ useEffect(() => {
 
                                 return(
                                     <div key={file.id} className=" m-0 p-0 ">
-                                        <Link href={file.ticket_file_ticket_file} className="  m-0 p-0">
+                                        <Link href={file.ticket_file_ticket_file} target="_blank" className="  m-0 p-0">
                                             <i className="fa fa-file me-2"></i> {file.ticket_file_name}
                                         </Link>
                                     </div>
                                     
+
+
+
                                 )
                             })}
                     </div>
@@ -472,7 +676,12 @@ useEffect(() => {
 
                         />
                         <div className="d-flex flex-column justify-content-center">
-                            <h4 className="m-0 fs-6 text-muted">{replied?.ticket_replay_from?.fullname}</h4>
+                            <h4 className="m-0 fs-6 text-muted">{replied?.ticket_replay_from?.fullname}
+
+                            {replied?.ticket_replay_from?.is_staff &&  <span className="badge bg-light text-dark ms-2">Staff</span> }
+
+
+                            </h4>
                             <p className="m-0 text-muted">{formatDate(replied?.ticket_replay_created_date)}</p>
                         </div>
 
@@ -495,11 +704,13 @@ useEffect(() => {
 
                             return(
                                 <div key={file.id} className=" m-0 p-0 ">
-                                    <Link href={file.ticket_replay_file} className="  m-0 p-0">
-                                    <i className="fa fa-file me-2"></i> {file.ticket_replay_file_name}
+                                    <Link href={file.ticket_replay_file} className="  m-0 p-0"   target="_blank"  >
+                                        <i className="fa fa-file me-2"></i> {file.ticket_replay_file_name}
                                     </Link>
                                 </div>
 
+
+ 
                             )
                             })}
                         </div>
@@ -584,6 +795,7 @@ useEffect(() => {
 
             <div className="col-md-4  d-lg-block d-none">
             <div className="card">
+
                 <div className="card-body">
 
 
@@ -764,6 +976,7 @@ useEffect(() => {
                 
 
                 </div>
+
             </div>
             </div>
         </div>

@@ -37,7 +37,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class StaffCustomTokenRefreshView(APIView):
-    
+    permission_classes = []  # No permissions required for this view
+
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get('refresh')
 

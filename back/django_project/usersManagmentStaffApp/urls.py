@@ -3,8 +3,8 @@ from django.urls import path
 
 from .views import (  UsersView, StaffUsersView, UserobjectView,
 					 GroupAPIView, PermissionAPIView,
-					  AssignOrRemoveGroupToUserAPIView, AssignOrRemovePermissionToUserAPIView,
-					  SetPasswordAPIView, AssignOrRemoveDepartmentToUserAPIView
+					  UserGroupView, UserPermissionView,
+					  SetPasswordAPIView, UserDepartmnetsView, GroupPermissionView
 					  )
 
 urlpatterns = [
@@ -17,14 +17,19 @@ urlpatterns = [
 	  
     path('group/', GroupAPIView.as_view(), name='group-list'),  # For list and create
     path('group/<int:pk>/', GroupAPIView.as_view(), name='group-detail'),  # For retrieve, update, and delete
+    path('group/<int:group_id>/permission/', GroupPermissionView.as_view(), name='group-detail'),  # For retrieve, update, and delete
 
 
 	path('permissions/', PermissionAPIView.as_view(), name='permission-list'),
     path('permissions/<int:pk>/', PermissionAPIView.as_view(), name='permission-detail'),
 
-    path('users/<int:user_id>/assign-or-remove-group/', AssignOrRemoveGroupToUserAPIView.as_view(), name='assign-remove-group'),
-    path('users/<int:user_id>/assign-or-remove-permission/', AssignOrRemovePermissionToUserAPIView.as_view(), name='assign-remove-permission'),
-    path('users/<int:user_id>/assign-or-remove-department/', AssignOrRemoveDepartmentToUserAPIView.as_view(), name='assign-remove-department'),
+	
+    path('users/<int:user_id>/permission/', UserPermissionView.as_view(), name='assign-remove-permission'),
+
+
+    path('users/<int:user_id>/department/', UserDepartmnetsView.as_view(), name='assign-remove-department'),
+
+    path('users/<int:user_id>/group/', UserGroupView.as_view(), name='assign-remove-group'),
 
 
 ]

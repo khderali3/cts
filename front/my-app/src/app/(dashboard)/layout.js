@@ -4,7 +4,7 @@
 import Head from "next/head";
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
+// import "@/app/(site)/_components/assets/css/all.min.css"
 import '@/app/(dashboard)/_components/assets/css/adminlte.css'; // AdminLTE CSS
 
 // import "@/app/(site)/_components/assets/css/bootstrap.min.css"

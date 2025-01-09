@@ -8,43 +8,15 @@ import LogoutLink from './nav_component/logoutComponent';
 const Nav = () => {
   const { isAuthenticated,loginFirstName, profileImage } = useSelector(state => state.staff_auth);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+ 
 
-
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      // Request fullscreen on the document
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      } else if (document.documentElement.mozRequestFullScreen) { // Firefox
-        document.documentElement.mozRequestFullScreen();
-      } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari, Opera
-        document.documentElement.webkitRequestFullscreen();
-      } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
-        document.documentElement.msRequestFullscreen();
-      }
-    } else {
-      // Exit fullscreen
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.mozCancelFullScreen) { // Firefox
-        document.mozCancelFullScreen();
-      } else if (document.webkitExitFullscreen) { // Chrome, Safari, Opera
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) { // IE/Edge
-        document.msExitFullscreen();
-      }
-    }
-  };
-
-
-
-
+  
 
   useEffect(() => {
     // Function to check if the screen is small (sm or below)
     const checkScreenSize = () => {
-      setIsSmallScreen(window.innerWidth < 768);
+       setIsSmallScreen(window.innerWidth < 992);
+
     };
 
     // Set the initial screen size check
@@ -119,33 +91,17 @@ const Nav = () => {
 
           <li className="nav-item d-none d-md-block">
  
-            <Link href="/staff" className="nav-link">
+            <Link href="/staff/ticket" className="nav-link">
               Home
             </Link>
           </li>
-          <li className="nav-item d-none d-md-block">
 
-            <a href="#" className="nav-link">
-              Contact
-            </a>
-          </li>
+
         </ul>
 
         <ul className="navbar-nav ms-auto">
 
-          <li className="nav-item">
-            <a onClick={toggleFullscreen} className="nav-link" href="#" data-lte-toggle="fullscreen">
-              <i
-                // data-lte-icon="maximize"
-                className="bi bi-arrows-fullscreen"
-              />{" "}
-              <i
-                // data-lte-icon="minimize"
-                className="bi bi-fullscreen-exit"
-                style={{ display: "none" }}
-              />
-            </a>
-          </li>
+
  
           <li className="nav-item dropdown user-menu">
             <a

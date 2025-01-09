@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 
 
 
-const CloseTicketButton = ({ticket_id, reloadComponentMethod}) => {
+const CloseTicketButton = ({ticket_id, reloadComponentMethod, customflag='customflag' }) => {
 	const [loadingCloseTicket, setloadingCloseTicket] = useState(false); // Loading state
     const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
@@ -76,7 +76,7 @@ const CloseTicketButton = ({ticket_id, reloadComponentMethod}) => {
 	
 	
 	<CustomModal  
-	id="close_ticket_site_modal_id"
+	id={`close_ticket_site_modal_id_${customflag}`}
 	handleSubmit={handleCloseTicket}
 	submitting={loadingCloseTicket}
 	message={"Are you sure you want to close the ticket?"}

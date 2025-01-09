@@ -54,8 +54,8 @@ import { Suspense } from 'react'
 
 
 	return (
-		<div className="form account_form d-flex align-items-center justify-content-center background-color ">
-			<h1 className='text-light'> Logging in ....  </h1>
+		<div className=" d-flex align-items-center justify-content-center background-color   " style={{ height: "100vh" }}>
+			<h1 className='text-light'> Logging in with google account ....  </h1>
 		</div>
 
 

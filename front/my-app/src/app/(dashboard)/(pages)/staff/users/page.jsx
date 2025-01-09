@@ -21,6 +21,11 @@ const Page = () => {
 
 
 
+
+   const handleEditUser = (user_id) => {
+    router.push(`/staff/users/edit_user/${user_id}`)
+   }
+
    const fetchData = async ( fetchUrl) => {
     setLoading(true)
 		try {
@@ -188,7 +193,7 @@ const Page = () => {
         <th scope="col">Last Name</th>
         <th scope="col">Is Staff</th>
         <th scope="col">Is Super User</th>
-        <th scope="col"> Edit or Delete </th>
+        <th scope="col"> Edit </th>
       </tr>
     </thead>
     <tbody>
@@ -203,7 +208,22 @@ const Page = () => {
           <td> {user_obj.last_name} </td>
           <td>{user_obj.is_staff ? 'Yes' : 'No'}</td>
           <td>{user_obj.is_superuser ? 'Yes' : 'No'}</td>
-          <td> edit  </td>
+          <td>    
+            <a
+                href="#"
+                className="text-primary "
+                title="Edit"
+                onClick={(e) => {
+                    e.preventDefault(); 
+                    handleEditUser(user_obj.id)
+                }}
+              
+                >
+                <i className="bi bi-pencil-fill"></i>
+            </a>
+
+
+          </td>
         </tr>
       ))}
     </tbody>

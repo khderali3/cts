@@ -163,7 +163,7 @@ class DepartmentsStaffView(APIView):
 			except Department.DoesNotExist:
 				return Response({"detail": "Department not found."}, status=status.HTTP_404_NOT_FOUND)
 			department.delete()
-			return Response({"detail": "Department deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+			return Response({"detail": "Department deleted successfully."}, status=status.HTTP_202_ACCEPTED)
 	
 
 

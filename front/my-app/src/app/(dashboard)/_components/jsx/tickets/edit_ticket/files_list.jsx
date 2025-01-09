@@ -97,40 +97,37 @@ useEffect(() => {
             <label className="form-label">Attached Files</label>
             <ul className="list-group">
                 {files.map((file) => (
-                    <li key={file.id} className="list-group-item d-flex justify-content-between align-items-center mb-2">
-                        {/* <span>{file.ticket_file_name}</span> */}
 
-                        <span>
-                            <Link
-                                href={file.ticket_file_ticket_file} // Replace with the actual URL field of the file
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-decoration-none"
-                            >
-                                {file.ticket_file_name}
-                            </Link>
-                        </span>
+			<li
+			key={file.id}
+			className="list-group-item d-flex justify-content-between align-items-start mb-2 flex-wrap  "
+			>
+				<span className=" ">
+					<Link
+					href={file.ticket_file_ticket_file}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="text-decoration-none"
+					>
+					{file.ticket_file_name}
+					</Link>
+				</span>
+				<button
+					type="button"
+					className="btn btn-outline-danger btn-sm   mt-md-0   ms-auto"
+					onClick={() => {
+					setFileIdToDelete(file?.id);
+					setIsModalOpen(true);
+					}}
+				>
+					{loadingDelete && fileIdToDelete === file.id ? "Deleting..." : "Delete"}
+				</button>
+			</li>
 
 
+ 
 
-                        <button
-                            type="button"
-                            className="btn  btn-outline-danger  btn-sm "
-                            // onClick={() => handleDelete(file.id)}
-							onClick= { () => {
-								setFileIdToDelete(file?.id)
-								setIsModalOpen(true)
-							
-							}
-						
-								}                      
 
-                        >
-                          
-						  {loadingDelete && fileIdToDelete === file.id ?  'Deleting...' : 'Delete' }  
-						    {/* Delete */}
-                        </button>
-                    </li>
                 ))}
             </ul>
 

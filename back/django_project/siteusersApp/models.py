@@ -195,6 +195,7 @@ class CompnayIfRight(models.Model):
     
     company_if_right_created_date = models.DateTimeField(auto_now_add=True)
     company_if_right_updated_date = models.DateTimeField(auto_now=True) 
+    
     def __str__(self):
         return f"{self.id},{self.company_if_right_title}"
     

@@ -99,10 +99,12 @@
 
  
 
+ 
  .nav-item:hover {
   background-color: #4692dd1e;
   color: #fff;
 }
+
 
 .nav_item_active {
   background-color: #4692dd1e;
@@ -174,3 +176,14 @@ textarea[readonly] {
   cursor: not-allowed;   /* Show the "not-allowed" cursor */
   opacity: 0.5;
 }
+
+ 
+
+
+/* Ensure sidebar scrolling on small screens */
+.sidebar-wrapper {
+  overflow-y: auto !important; /* Allow vertical scrolling */
+  height: 100vh; /* Ensure full viewport height */
+}
+
+ 

@@ -19,6 +19,8 @@ class FooterView(APIView):
     permission_classes = []
     def get(self, request):
         footer_obj, created = Footer.objects.get_or_create(id=1)
+
+
         serializer = FooterSerializer(footer_obj, many=False,  context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 

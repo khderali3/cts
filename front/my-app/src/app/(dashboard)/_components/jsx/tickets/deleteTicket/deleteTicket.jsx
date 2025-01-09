@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
 
-const DeleteTicketButton = ({ticket_id}) => {
+const DeleteTicketButton = ({ticket_id, customFlag="customFlag"}) => {
 	const [loadingDeleteTicket, setloadingDeleteTicket] = useState(false); // Loading state
     const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
@@ -67,7 +67,7 @@ const DeleteTicketButton = ({ticket_id}) => {
 	
 	
 	<CustomModal  
-	id="delete_ticket_modal_id"
+	id={`delete_ticket_modal_id_${customFlag}`}
 	handleSubmit={handleDelteTicket}
 	submitting={loadingDeleteTicket}
 	message={"Are you sure you want to delete this ticket ?"}

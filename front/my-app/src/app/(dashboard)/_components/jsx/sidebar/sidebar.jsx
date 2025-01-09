@@ -55,9 +55,10 @@ useEffect(() => {
 
       </div>
 
-      <div className="sidebar-wrapper   overflow-scroll    " >
-        <nav className="mt-2     min-vh-150  "   >
+      <div className="sidebar-wrapper      " >
 
+        <nav className="mt-2     min-vh-150  "   >
+ 
 
           <ul className="nav sidebar-menu flex-column    ">
             <li className="nav-item ">
@@ -84,6 +85,26 @@ useEffect(() => {
 
                     </Link>
                   </li>
+
+
+                  <li className="nav-item text-light">
+                    <Link href="/staff/departments" className={` rounded text-light nav-link ${isActive('/staff/departments') ? ' active_class' : '' }  `}  >
+                    <i className={`nav-icon bi bi-circle   `} />
+                    <p>Departments </p>
+
+                    </Link>
+                  </li>
+
+
+
+                  <li className="nav-item text-light">
+                    <Link href="/staff/groups" className={` rounded text-light nav-link ${isActive('/staff/groups') ? ' active_class' : '' }  `}  >
+                    <i className={`nav-icon bi bi-circle   `} />
+                    <p>Groups </p>
+
+                    </Link>
+                  </li>
+
 
 
   
@@ -263,58 +284,7 @@ useEffect(() => {
 
           </ul>
 
-          <ul className="nav sidebar-menu flex-column mr-1 ">
-            <li className="nav-item">
-                  <a
-                      className="nav-link"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#Project_Managment"
-                      aria-expanded="false"
-                      role="button"
-                    >
-                      <i className="nav-icon bi bi-speedometer" />
-                      <p>
-                        Project Managment
-                        <i className="nav-arrow bi bi-chevron-right  " />
-                      </p>
-                  </a>
-            </li>
-                <ul className=" collapse nav ps-2 " id="Project_Managment" >
-                  <li className="nav-item text-light">
-                    <a href="#" className="  rounded text-light nav-link  "  >
-                    <i className="nav-icon bi bi-circle" />
-                    <p>Dashboard v1</p>
-
-                    </a>
-                  </li>
-
-                  <li className="nav-item text-light">
-                    <a href="#" className="  rounded text-light nav-link  "  >
-                    <i className="nav-icon bi bi-circle" />
-                    <p>Dashboard v1</p>
-
-                    </a>
-                  </li>
-
-                  <li className="nav-item text-light">
-                    <a href="#" className="  rounded text-light nav-link  "  >
-                    <i className="nav-icon bi bi-circle" />
-                    <p>Dashboard v1</p>
-
-                    </a>
-                  </li>
-                </ul>
-
-
-
-
-
-
-
-
-          </ul>
-
-          
+ 
 
           <li className=" text-center mb-auto  mt-5 w-50 without_marker  ">
               <div className="form-group   ">

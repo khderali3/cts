@@ -397,12 +397,6 @@ useEffect(() => {
         ))}
 
 
- 
-            {/* <button type="submit" className="btn btn-outline-primary btn-flexible" disabled={isSubmiting}>
-            { isSubmiting && ( <span className="spinner-border spinner-border-sm me-2"></span> ) }  
-
-              Submit 
-            </button> */}
 
 
             <div className="pt-2">

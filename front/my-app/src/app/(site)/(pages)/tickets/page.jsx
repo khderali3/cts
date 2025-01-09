@@ -266,7 +266,14 @@ const Page = () => {
               <tr key={`table_${ticket.id}`}>
                 <td>
                   {/* <Link href="/ticket/">{ticket.ticket_subject}</Link> */}
-                  <Link href={`/tickets/ticketDetails/${ticket.ticket_slog}`}  >{ticket.ticket_subject}</Link>
+                  <Link href={`/tickets/ticketDetails/${ticket.ticket_slog}`} > 
+                  {/* {ticket.ticket_subject} */}
+                  {ticket.ticket_subject.length > 25 
+                  ? `${ticket.ticket_subject.slice(0, 25)}...` 
+                  : ticket.ticket_subject
+                  }  
+                  
+                  </Link>
 
 
                 </td>
@@ -301,7 +308,21 @@ const Page = () => {
             <div className="card mb-3" key={`card_${ticket.id}`}>
               <div className="card-body">
                 <p>
-                  <strong>Subject:</strong> {ticket.ticket_subject}
+                  <strong>Subject:</strong> 
+                  {/* {ticket.ticket_subject} */}
+
+                  <Link className="ms-2" href={`/tickets/ticketDetails/${ticket.ticket_slog}`}>
+                  {/* {ticket.ticket_subject} */}
+                  {ticket.ticket_subject.length > 25 
+                  ? `${ticket.ticket_subject.slice(0, 25)}...` 
+                  : ticket.ticket_subject
+                  }        
+            
+                  </Link>
+
+
+
+
                 </p>
                 <p>
                   <strong>ID:</strong> #{ticket.id}
@@ -319,9 +340,9 @@ const Page = () => {
                     {ticket.ticket_status}
                   </span>
                 </p>
-                <p>
-                  <strong>Actions:</strong> re-open
-                </p>
+
+ 
+                
               </div>
             </div>
           ))}

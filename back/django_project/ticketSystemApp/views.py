@@ -183,11 +183,11 @@ class TicketView(APIView):
                 serializer = TicketListSerializer(page, many=True)
                 return paginator.get_paginated_response(serializer.data)            
             
-
-
+ 
 
 class ProtectedMediaView(APIView):
 
+    
     def get(self, request, file_name, *args, **kwargs):
         # Ensure the user is authenticated (the permission classes do this)
         if request.user.is_authenticated:

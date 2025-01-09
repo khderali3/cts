@@ -1,87 +1,99 @@
-hi when i send get request for user object , the response like this :
-{
-    "id": 33,
-    "email": "test26@test.local",
-    "first_name": "my first",
-    "last_name": "my last",
-    "is_active": true,
-    "is_staff": false,
-    "is_superuser": false,
-    "groups": [],
-    "user_permissions": [],
-    "departments": [],
-    "is_ticket_priority_support": false,
-    "last_login": null,
-    "profile": {
-        "PRF_company": "my company",
-        "PRF_country": null,
-        "PRF_city": null,
-        "PRF_address": null,
-        "PRF_phone_number": null,
-        "PRF_image": "http://127.0.0.1:8000/media_url/profile_img/services_ncORW6B.png"
-    }
-}
+hi i have the follwing view for assing permission to group , how to return also group name and with permission , for example :
 
-and here is my serializer :
-class UserObjectSerializer(serializers.ModelSerializer):
-    groups = GroupSerializer(many=True)  # Nested serializer for groups
-    user_permissions = PermissionSerializer(many=True)  # Nested serializer for permissions
-    departments = DepartmentSerializer(many=True)  # Nested serializer for departments
-
-    profile = ProfileSerializer(source='profile_prf_user_relaed_useraccount', allow_null=True)
-    class Meta:
-        model = User
-        fields = [
-            'id',
-            'email',
-            'first_name',
-            'last_name',
-            'is_active',
-            'is_staff',
-            'is_superuser',
-            'groups',
-            'user_permissions',
-            'departments',
-            'is_ticket_priority_support',
-            'last_login',
-            'profile',
-        ]
-        read_only_fields = ['id' ]
-
-and here is my view:
-class UserobjectView(APIView):
-	permission_classes = [IsStaffOrSuperUser]
-	parser_classes = [MultiPartParser, FormParser]  # Enable handling of form-data and file uploads
-
-	def get(self, request, *args, **kwargs):
-		user_id = kwargs.get('id')
-		user = get_object_or_404(User, id=user_id)
-		serializer = UserObjectSerializer(user, context={'request': request})
-		return Response(serializer.data, status=200)
-
-but i want the response like the follwing results , how can i do it :
 
 {
-	"user" : {
-		"id": 33,
-		"email": "test26@test.local",
-		"first_name": "my first",
-		"last_name": "my last",
-		"is_active": true,
-		"is_staff": false,
-		"is_superuser": false,
-		"groups": [],
-		"user_permissions": [],
-		"departments": [],
-		"is_ticket_priority_support": false,
-		"last_login": null,
-	}
-    "profile": {
-        "PRF_company": "my company",
-        "PRF_country": null,
-        "PRF_city": null,
-        "PRF_address": null,
-        "PRF_phone_number": null,
-        "PRF_image": "http://127.0.0.1:8000/media_url/profile_img/services_ncORW6B.png"
-    }
+    group_name : group name,
+    permissions : []
 }
+
+
+
+
+class GroupPermissionView(APIView):
+    permission_classes = [IsAdminUser]  # Only admin can assign/remove permissions
+
+    def get(self, request, group_id):
+        try:
+            group = Group.objects.get(id=group_id)
+            permissions = group.permissions.all()
+            serializer = AssignOrRemovePermissionSerializer(permissions, many=True)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        except Group.DoesNotExist:
+            return Response({'error': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request, group_id):
+        try:
+            permission_ids = request.data.getlist('permission[]', [])
+        except:
+            permission_ids = []
+
+        if not permission_ids:
+            try:
+                group = Group.objects.get(id=group_id)
+                group.permissions.clear()  # Clear all permissions
+                permissions = group.permissions.all()
+                serializer = AssignOrRemovePermissionSerializer(permissions, many=True)
+                return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+            except Group.DoesNotExist:
+                return Response({'error': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Initialize a list for valid permission IDs
+        valid_permission_ids = []
+        for permission_id in permission_ids:
+            if permission_id:
+                valid_permission_ids.append(permission_id)
+
+        try:
+            # Get the group by ID
+            group = Group.objects.get(id=group_id)
+            
+            # Get the ContentType for CustomPermission model
+            custom_permission_content_type = ContentType.objects.get_for_model(CustomPermission)
+            
+            # If no valid permission IDs, clear the group's permissions
+            if not valid_permission_ids:
+                group.permissions.clear()
+                permissions = group.permissions.filter(content_type=custom_permission_content_type)
+                serializer = AssignOrRemovePermissionSerializer(permissions, many=True)
+                return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+
+            # Get the permissions from valid_permission_ids that belong to the CustomPermission model
+            permissions = Permission.objects.filter(
+                id__in=valid_permission_ids,
+                content_type=custom_permission_content_type
+            )
+
+            # If no permissions are found or they don't belong to CustomPermission, return an error
+            if not permissions.exists():
+                return Response({'error': 'One or more permissions not found or do not belong to the CustomPermission model.'}, 
+                                status=status.HTTP_404_NOT_FOUND)
+
+            # Set the permissions for the group
+            group.permissions.set(permissions)
+
+            # Fetch the updated list of permissions for the group
+            permissions = group.permissions.filter(content_type=custom_permission_content_type)
+            serializer = AssignOrRemovePermissionSerializer(permissions, many=True)
+            
+            # Return the updated permissions in the response
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        
+        except Group.DoesNotExist:
+            return Response({'error': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Permission.DoesNotExist:
+            return Response({'error': 'One or more permissions not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+ 
+
+
+
+

@@ -231,7 +231,7 @@ const handleaddItem = async (e) => {
 
   return (
     <div className="container mt-5">
-      <h6>Manage List Items Why us</h6>
+      <h6>Manage List Items Services</h6>
 
       {/* Table Display */}
       <table className="table table-bordered mt-4">

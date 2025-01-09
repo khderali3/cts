@@ -366,16 +366,11 @@ useEffect(() => {
           <td>
             {/* <Link href="/ticket/">{ticket.ticket_subject}</Link> */}
             <Link href={`/staff/ticket/ticketDetails/${ticket.ticket_slog}`}  >
-            {/* {ticket.ticket_subject} */}
-            
-            {ticket.ticket_subject.length > 25 
-            ? `${ticket.ticket_subject.slice(0, 25)}...` 
-            : ticket.ticket_subject
-            }
-            
-            
-            
-            </Link>
+              {ticket.ticket_subject.length > 25 
+              ? `${ticket.ticket_subject.slice(0, 25)}...` 
+              : ticket.ticket_subject
+              }
+           </Link>
 
 
           </td>
@@ -419,7 +414,16 @@ useEffect(() => {
       <div className="card mb-3" key={`card_${ticket.id}`}>
         <div className="card-body">
           <p>
-            <strong>Subject:</strong> {ticket.ticket_subject}
+            <strong>Subject:</strong> 
+            
+            {/* {ticket.ticket_subject} */}
+            <Link className="ms-2" href={`/staff/ticket/ticketDetails/${ticket.ticket_slog}`}  >
+              {ticket.ticket_subject.length > 25 
+              ? `${ticket.ticket_subject.slice(0, 25)}...` 
+              : ticket.ticket_subject
+              }
+           </Link>
+
           </p>
           <p>
             <strong>ID:</strong> #{ticket.id}
@@ -438,8 +442,18 @@ useEffect(() => {
             </span>
           </p>
           <p>
-            <strong>Actions:</strong> re-open
-          </p>
+          <strong>Assigned: </strong>
+          {!ticket?.ticket_assigned_to ? 
+                <Link href="/#"
+                
+                data-bs-toggle="modal"
+                data-bs-target="#assign_ticket_to_staff"
+                onClick={ ()=> { setAssiningTicketId( ticket.id  )}   }             
+                >Assign </Link>
+                :
+                ticket?.ticket_assigned_to?.fullname
+              }
+           </p>
         </div>
       </div>
     ))}

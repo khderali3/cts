@@ -746,6 +746,13 @@ img.prof {
 li.prof {
   top: 15px;
 }
+
+li.prof:hover {
+  background-color: transparent; /* or any value to neutralize the background */
+  color: inherit; /* Neutralize text color */
+  /* Any other hover effect you want to remove can go here */
+}
+
 a.bg-focus:hover {
   background-color: var(--main-font-color);
 }
