@@ -110,14 +110,9 @@ def create_profile(sender, instance, created, **kwargs):
 
 class CustomPermission(models.Model):
             
-    class Meta:
-        
-        managed = False  # No database table creation or deletion  \
-                         # operations will be performed for this model. 
-                
-        default_permissions = () # disable "add", "change", "delete"
-                                 # and "view" default permissions
-
+    class Meta:        
+        managed = False   
+        default_permissions = ()                                
         permissions = ( 
             ('user_managment', 'User Managment'),  
             ('site_managment', 'Site Managment'), 
@@ -125,13 +120,13 @@ class CustomPermission(models.Model):
             ('ticket_change', 'Ticket Change'), 
             ('ticket_delete', 'Ticket Delete'),
 
-            ('ticket_attachment_add_after_submited', 'Ticket Attachment Add After Submited'), 
+            # ('ticket_attachment_add_after_submited', 'Ticket Attachment Add After Submited'), 
             ('ticket_attachment_delete_after_submited', 'Ticket Attachment Delete After Submited'), 
             
             ('ticket_reply_change', 'Ticket Reply Change'), 
             ('ticket_reply_delete', 'Ticket Reply Delete'),
 
-            ('ticket_reply_attachment_add_after_submited', 'Ticket Reply Attachment Add After Submited'), 
+            # ('ticket_reply_attachment_add_after_submited', 'Ticket Reply Attachment Add After Submited'), 
             ('ticket_reply_attachment_delete_after_submited', 'Ticket Reply Attachment Delete After Submited'), 
 
 

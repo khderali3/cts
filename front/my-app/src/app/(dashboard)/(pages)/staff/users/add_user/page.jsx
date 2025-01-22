@@ -5,7 +5,8 @@ import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/
 import { toast } from "react-toastify";
 import { useRouter } from 'next/navigation';
 
-
+import { useTranslations, useLocale } from "next-intl";
+import { useSelector } from "react-redux";
 
 const Page = () =>  {
 
@@ -14,6 +15,11 @@ const Page = () =>  {
 
   const router = useRouter()
  
+    const t = useTranslations("dashboard.users_managment.users.add_new_user")
+    const locale = useLocale()
+
+    const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
+
 
   const [formData, setFormData] = useState({
     email: "",
@@ -25,7 +31,7 @@ const Page = () =>  {
 
 
  
-
+   const [isSubmiting, setIsSubmiting] =  useState(false)
 
   // Handle input changes for text fields
   const handleChange = (e) => {
@@ -40,6 +46,7 @@ const Page = () =>  {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmiting(true)
     const form = new FormData();
 
     // Append text fields to form data
@@ -62,7 +69,14 @@ const Page = () =>  {
     ) {
       
       if(formData.password !== formData.confirm_password){
-        toast.error("Passwords do not match. Please try again!");
+        if(locale === "ar"){
+          toast.error("كلمة المرور وتأكيد كلمة المرور غير متطابقتين . يرجى المحاولة مجدداً.");
+
+        } else {
+          toast.error("Passwords do not match. Please try again!");
+
+        }
+        setIsSubmiting(false)
         return;
       }
 
@@ -76,24 +90,66 @@ const Page = () =>  {
       });
 
       if (response && response.data) {
+        if(locale === "ar"){
+          toast.success("تم إنشاء المستخدم بنجاح");
+
+        } else {
+          toast.success("the user has been added succussfuly!");
+
+        }
  
-        toast.success("the user has been added succussfuly!");
         router.push('/staff/users');  
 
       } else {
-        toast.error("Failed to submit the request.");
+
+        if(locale === "ar"){
+          toast.error("حصل خطأ رقم 1 إثناء انشاء المستخدم . يرجى المحاولة مجدداً.");
+
+        } else {
+          toast.error("Failed 1 to submit the request.");
+
+        }
+
+        if (response?.error?.data?.detail) {
+          if(response.error.data.detail === "Permission denied for this operation."){
+            if(locale === "ar") {
+              toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+      
+            } else {
+              toast.error(response.error.data.detail);
+            }
+      
+          }
+        }
+
         console.log('response', response)
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Error submitting form.");
-    }
+
+      if(locale === "ar"){
+        toast.error("حصل خطأ رقم 2 إثناء انشاء المستخدم . يرجى المحاولة مجدداً.");
+
+      } else {
+        toast.error("Failed 2 to submit the request.");
+      }
+
+ 
+    } finally{ setIsSubmiting(false)  }
 
  
       console.log("Form is valid");
     } else {
+      if(locale === "ar"){
 
-      toast.error("all fields are required ");
+        toast.error("جميع الحقول مطلوبة ");
+
+      } else {
+        toast.error("all fields are required ");
+
+      }
+
+      setIsSubmiting(false)
     }
 
  
@@ -117,6 +173,15 @@ useEffect(() => {
 }, []);
 
 
+
+if (!is_superuser && !(permissions?.includes('usersAuthApp.user_managment') && is_staff)) {
+  return;
+} 
+
+
+
+
+
     return (
  
 
@@ -124,26 +189,7 @@ useEffect(() => {
       <div className="app-content-header">
 
 
-        <div className="container-fluid">
-
-
-          <div className="row">
-            <div className="col-sm-6">
-              <h3 className="mb-0">Main Index Page </h3>
-            </div>
-
-            <div className="col-sm-6">
-              <ol className="breadcrumb float-sm-end">
-                <li className="breadcrumb-item">
-                  <a href="#">Docs</a>
-                </li>
-                <li className="breadcrumb-item active" aria-current="page">
-                  Site Managment
-                </li>
-              </ol>
-            </div>
-          </div>
-        </div>
+ 
 
       </div>
 
@@ -154,7 +200,7 @@ useEffect(() => {
         <div className="container-fluid  min-vh-150 bg-white p-3 border rounded " >
 
 
-          <h2>Add a new user</h2>
+          <h2>{t('title')}</h2>
  
 
             <form className="col-md-8 col-12 mb-5" onSubmit={handleSubmit}>
@@ -162,7 +208,7 @@ useEffect(() => {
 
               <div className="mb-3 col-md-6">
                 <label htmlFor="email" className="form-label small">
-                  Email Address <span className="text-danger">*</span>
+                {t('Email')} <span className="text-danger">*</span>
                 </label>
                 <input
                   name="email"
@@ -179,7 +225,7 @@ useEffect(() => {
 
               <div className="mb-3 col-md-6">
                 <label htmlFor="first_name" className="form-label small">
-                  First Name <span className="text-danger">*</span>
+                {t('First_Name')} <span className="text-danger">*</span>
                 </label>
                 <input
                   name="first_name"
@@ -196,7 +242,7 @@ useEffect(() => {
 
               <div className="mb-3 col-md-6">
                 <label htmlFor="last_name" className="form-label small">
-                  Last Name <span className="text-danger">*</span>
+                {t('Last_Name')} <span className="text-danger">*</span>
                 </label>
                 <input
                   name="last_name"
@@ -215,7 +261,7 @@ useEffect(() => {
 
               <div className="mb-3 col-md-6">
                 <label htmlFor="password" className="form-label small">
-                  Password <span className="text-danger">*</span>
+                {t('password')} <span className="text-danger">*</span>
                 </label>
                 <input
                   name="password"
@@ -232,15 +278,15 @@ useEffect(() => {
 
               <div className="mb-3 col-md-6">
                 <label htmlFor="confirm_password" className="form-label small">
-                  Confirm Password <span className="text-danger">*</span>
+                {t('confirm_password')} <span className="text-danger">*</span>
                 </label>
                 <input
                   name="confirm_password"
                   onChange={handleChange}
-                  value={formData.confirm_password} // Controlled input
+                  value={formData.confirm_password}  
 
                   type="password"
-                  className="form-control form-control-sm" // Added 'form-control-sm' for smaller input
+                  className="form-control form-control-sm"  
                   id="confirm_password"
                   required
                   maxLength="50"
@@ -248,8 +294,15 @@ useEffect(() => {
               </div>
 
 
-              <button type="submit" className="btn btn-primary btn-sm"> {/* Added 'btn-sm' for smaller button */}
-                Submit
+              <button type="submit" 
+              className="btn btn-primary btn-sm"
+              disabled={isSubmiting}
+              >
+
+                {/* {t('submit')} */}
+
+                  { isSubmiting ? t('submitting') : t('submit')}
+
               </button>
             </form>
 

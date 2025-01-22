@@ -7,14 +7,27 @@ import { toast } from "react-toastify";
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 import FooterSocialUrls from "./footer_component/footer_social_media";
 
+
+import { useTranslations, useLocale } from "next-intl";
+import { useSelector } from "react-redux";
+
 const FooterSection = () => {
 	const [canEdit, setCanEdit] = useState(false)
 	const [customFetch] = useCustomFetchMutation()
 	const [submitting, setSubmitting] = useState(false)
 	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
+  const t = useTranslations('dashboard.site_managment.footer_section')
+  const locale = useLocale()
+  const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
+
+
+
+
+
 	const [data, setData] = useState({
 		about_us_content: "",
+		about_us_content_ar: "",
 		contact_us_email: "",
 		contact_us_phone: "",
 	});
@@ -36,8 +49,9 @@ const FooterSection = () => {
 
       (  data.about_us_content &&   data.about_us_content.trim() !== '' ) && 
       ( data.contact_us_email &&  data.contact_us_email.trim() !== '' )  &&
-      ( data.contact_us_phone &&  data.contact_us_phone.trim() !== '' ) 
-	
+      ( data.contact_us_phone &&  data.contact_us_phone.trim() !== '' )   && 
+      (  data.about_us_content_ar &&   data.about_us_content_ar.trim() !== '' )
+
 	  ){ 
 		try {
 			// Send form data using customFetch mutation
@@ -49,22 +63,63 @@ const FooterSection = () => {
 	  
 			if( response && response.data){
 			  setCanEdit(false)
-			  toast.success("your data has been updated ");
+        if(locale === "ar"){
+          toast.success("تم تعديل البيانات بنجاح");
+
+        } else {
+          toast.success("your data has been updated ");
+
+        }
 			  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/footer/`)
 			  setIsModalOpen(false)
 	  
 			} else{
 			  console.log(response)
-			  toast.error("Error submitting form 1.");
+        if(locale === "ar"){
+          toast.error("حصل خطأ رقم 1 أثناء عملية تعديل البيانات يرجى المحاولة مجدداً");
+
+        } else {
+          toast.error("Error submitting form 1.");
+
+        }
+        if (response?.error?.data?.detail) {
+          if(response.error.data.detail === "Permission denied for this operation."){
+            if(locale === "ar") {
+              toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+
+            } else {
+              toast.error(response.error.data.detail);
+            }
+
+          } 
+        } else {
+          toast.error(JSON.stringify(response?.error?.data));
+        }
+
+
+
 			}
 	  
 		  } catch (error) {
 			console.error("Error submitting form:", error);
-			toast.error("Error submitting form2.");
+
+      if(locale === "ar"){
+        toast.error("حصل خطأ رقم 2 أثناء عملية تعديل البيانات يرجى المحاولة مجدداً");
+
+      } else {
+        toast.error("Error submitting form2.");
+
+      }
 		  } finally{setSubmitting(false);}
 
 	  } else {
-		toast.error("Error. all fields are required ");
+      if(locale === "ar"){
+        toast.error("كافة الحقول مطلوبة ");
+
+      } else {
+        toast.error("Error. all fields are required ");
+
+      }
     setSubmitting(false);
 	  }
 	
@@ -130,13 +185,23 @@ const FooterSection = () => {
   
     }, []);
 
+
+
+
+    if (!is_superuser && !(permissions?.includes('usersAuthApp.site_managment') && is_staff)) {
+      return;
+    } 
+
+
+
+
     return (
 
             
         <div className="container mt-2">
           		<hr   />
 
-        <h6> Footer Section (nineth Section)  
+        <h6> {t('title')}  
 
         </h6>
         {/* Row for Search Form */}
@@ -150,7 +215,8 @@ const FooterSection = () => {
            
             <div className="mb-3">
               <label htmlFor="about_us_content" className="form-label">
-                About us 
+                {/* About us  */}
+                {t('form.About_us')}
               </label>
               <input
                 type="text"
@@ -160,6 +226,8 @@ const FooterSection = () => {
                 readOnly={!canEdit}
                 value={data?.about_us_content  || ""}
                 onChange={handleChange}
+                dir='ltr'
+
               />
             </div>
 
@@ -167,7 +235,8 @@ const FooterSection = () => {
 
             <div className="mb-3">
               <label htmlFor="contact_us_email" className="form-label">
-                Contact us Email 
+                {/* Contact us Email */}
+                {t('form.Contact_us_Email')} 
               </label>
               <input
                 type="text"
@@ -177,13 +246,16 @@ const FooterSection = () => {
                 readOnly={!canEdit}
                 value={data?.contact_us_email  || ""}
                 onChange={handleChange}
+                dir='ltr'
+
               />
             </div>
 
 
             <div className="mb-3">
               <label htmlFor="contact_us_phone" className="form-label">
-                Contact us phone 
+                {/* Contact us phone  */}
+                {t('form.Contact_us_phone')} 
               </label>
               <input
                 type="text"
@@ -193,63 +265,37 @@ const FooterSection = () => {
                 readOnly={!canEdit}
                 value={data?.contact_us_phone  || ""}
                 onChange={handleChange}
+                dir='ltr'
+
               />
             </div>
 
 
            
             <div className="mb-3">
-              <label htmlFor="about_us_content" className="form-label">
-                About us (Ar)
+              <label htmlFor="about_us_content_ar" className="form-label">
+                {/* About us (Ar) */}
+                {t('form.About_us_ar')} 
               </label>
               <input
                 type="text"
                 className="form-control text-end"
                 dir="rtl"
-                id="about_us_content"
-                name="about_us_content"
+                id="about_us_content_ar"
+                name="about_us_content_ar"
                 readOnly={!canEdit}
-                value={data?.about_us_content  || ""}
+                value={data?.about_us_content_ar  || ""}
                 onChange={handleChange}
+       
+
               />
             </div>
 
 
 
-            <div className="mb-3">
-              <label htmlFor="contact_us_email" className="form-label">
-                Contact us Email (Ar)
-              </label>
-              <input
-                type="text"
-                className="form-control text-end"
-                dir="rtl"
+ 
 
-                id="contact_us_email"
-                name="contact_us_email"
-                readOnly={!canEdit}
-                value={data?.contact_us_email  || ""}
-                onChange={handleChange}
-              />
-            </div>
-
-
-            <div className="mb-3">
-              <label htmlFor="contact_us_phone" className="form-label">
-                Contact us phone (Ar)
-              </label>
-              <input
-                type="text"
-                className="form-control text-end"
-                dir="rtl"
-
-                id="contact_us_phone"
-                name="contact_us_phone"
-                readOnly={!canEdit}
-                value={data?.contact_us_phone  || ""}
-                onChange={handleChange}
-              />
-            </div>
+ 
 
 
  
@@ -266,17 +312,17 @@ const FooterSection = () => {
                               className="btn btn-primary"
                               >
 
-                         {!submitting ? 'Update' : 'Updating...'}
+                         {!submitting ? t('form.update')  : t('form.updating')}
                       </button>
 
-                          <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  ms-2">
-                          Cancel
+                          <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  mx-2">
+                          {t('form.cancel')} 
                           </button>
                           </>
                         :   
 
-                        <button  onClick={handleCanEdit }   className="  btn  btn-secondary">
-                        Edit 
+                        <button  onClick={handleCanEdit }   className="  btn mx-2  btn-secondary">
+                          {t('form.edit')} 
                         </button>
                     }
 
@@ -297,7 +343,7 @@ const FooterSection = () => {
 		id="footer_section"
 		handleSubmit={handleSubmit}
 		submitting={submitting}
-		message={"Are you sure you want to update 'Footer section' Data?"}
+		message= {t('form.modal_msg')} 
 		showModal={true} 
 		isModalOpen={isModalOpen}
 		setIsModalOpen={setIsModalOpen}

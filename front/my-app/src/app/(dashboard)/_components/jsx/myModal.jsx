@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import { useTranslations, useLocale } from "next-intl";
 
 const CustomModal = ( { id, handleSubmit, submitting,
      message="Are you sure you want to update Data?",
@@ -9,6 +10,10 @@ const CustomModal = ( { id, handleSubmit, submitting,
      } ) => {
 
 
+      const t = useTranslations('common.custom_modal')
+
+      const locale = useLocale()
+      
 
  
 
@@ -75,7 +80,8 @@ const CustomModal = ( { id, handleSubmit, submitting,
 
 
 
-                Confirm Submission
+                {/* Confirm Submission */}
+                {t('title')}
               </h5>
               <button
                 type="button"
@@ -85,7 +91,7 @@ const CustomModal = ( { id, handleSubmit, submitting,
                 onClick={()=> setIsModalOpen(false)}
               />
             </div>
-            <div className="modal-body">
+            <div className={`modal-body ${locale === "ar" ? "ms-auto" : "me-auto" }`}>
                 {message}
               
             </div>
@@ -96,7 +102,7 @@ const CustomModal = ( { id, handleSubmit, submitting,
                 data-bs-dismiss="modal"
                 onClick={()=> setIsModalOpen(false)}
               >
-                Cancel
+                {t('cancel')}
               </button>
  
               <button
@@ -118,9 +124,9 @@ const CustomModal = ( { id, handleSubmit, submitting,
     
                 {
                   operationType === "Delete" 
-                  ? ( !submitting ? 'Yes' : 'Deleting...') 
+                  ? ( !submitting ? t('yes') : t('deleting')) 
                   
-                  : ( !submitting ? 'Yes' : 'Updating...')
+                  : ( !submitting ? t('yes') : t('updating'))
                 }
              
               </button>

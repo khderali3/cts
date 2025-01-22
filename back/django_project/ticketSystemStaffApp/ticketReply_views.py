@@ -15,6 +15,10 @@ class TicketReplayStaffView(APIView):
       
 	def delete(self, request, *args, **kwargs):
 			ticket_reply_id = kwargs.get('id')  # Get the ID from the URL
+
+			if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.ticket_reply_delete'):
+				return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
+
 			if ticket_reply_id:
 				try:
 					ticket_reply_obj = get_object_or_404(TicketReplay, id=ticket_reply_id)
@@ -49,14 +53,18 @@ class TicketReplayStaffView(APIView):
 
 	def put(self , request, *args, **kwargs):
 		ticket_reply_id = kwargs.get('id')
+
+		if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.ticket_reply_change'):
+			return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
+		
 		try:
 			ticket_reply_object = TicketReplay.objects.get(id=ticket_reply_id)
 		except TicketReplay.DoesNotExist:
 			return Response({"detail": "Ticket not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
-		if ticket_reply_object.ticket_replay_ticket.ticket_closed_by:
-			return Response({"detail": "Ticket closed, you can't reply!"}, status=status.HTTP_400_BAD_REQUEST)
+		# if ticket_reply_object.ticket_replay_ticket.ticket_closed_by:
+		# 	return Response({"detail": "Ticket closed, you can't reply!"}, status=status.HTTP_400_BAD_REQUEST)
 
 		if not request.data.get('ticket_replay_body'):
 			return Response(
@@ -85,23 +93,25 @@ class TicketReplyFileStaffView(APIView):
 		serializer = TicketReplyFileStaffSerializer(ticket_files, many=True, context={'request': request})
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
-	def post(self, request, ticket_reply_id, *args, **kwargs):
+	# def post(self, request, ticket_reply_id, *args, **kwargs):
 
-		serializer = TicketReplyFileStaffSerializer(data=request.data, context={'request': request, 'ticket_reply_id': ticket_reply_id})
+	# 	serializer = TicketReplyFileStaffSerializer(data=request.data, context={'request': request, 'ticket_reply_id': ticket_reply_id})
 
-		if serializer.is_valid():
-			created_files = serializer.save()  # Returns the created file instances
-			response_data = TicketReplyFileStaffSerializer(created_files, many=True, context={'request': request}).data
-			return Response(response_data, status=status.HTTP_201_CREATED)
+	# 	if serializer.is_valid():
+	# 		created_files = serializer.save()  # Returns the created file instances
+	# 		response_data = TicketReplyFileStaffSerializer(created_files, many=True, context={'request': request}).data
+	# 		return Response(response_data, status=status.HTTP_201_CREATED)
 
 
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	# 	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 	def delete(self, request, file_id, *args, **kwargs):
 		"""
 		Delete a file by its file_id
 		"""
+		if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.ticket_reply_attachment_delete_after_submited'):
+			return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
 		try:
 			ticket_reply_file = TicketReplyFiles.objects.get(id=file_id)
 			ticket_reply_file.delete()

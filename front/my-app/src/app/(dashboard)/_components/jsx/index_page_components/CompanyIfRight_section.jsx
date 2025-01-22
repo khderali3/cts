@@ -7,11 +7,22 @@ import { toast } from "react-toastify";
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 
 
+
+
+import { useTranslations, useLocale } from "next-intl";
+import { useSelector } from "react-redux";
+
 const CompanyIfRightSection = () => {
 	const [canEdit, setCanEdit] = useState(false)
 	const [customFetch] = useCustomFetchMutation()
 	const [submitting, setSubmitting] = useState(false)
 	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+
+  const t = useTranslations('dashboard.site_managment.project_section')
+  const locale = useLocale()
+  const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
+
+
 
 	const [data, setData] = useState({
 		company_if_right_title: "",
@@ -47,22 +58,60 @@ const CompanyIfRightSection = () => {
 	  
 			if( response && response.data){
 			  setCanEdit(false)
-			  toast.success("your data has been updated ");
+        if(locale === "ar"){
+          toast.success("تم تعديل البيانات بنجاح ");
+
+        } else{
+          toast.success("your data has been updated ");
+
+        }
 			  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/company_if_right_sec/`)
 			  setIsModalOpen(false)
 	  
 			} else{
 			  console.log(response)
-			  toast.error("Error submitting form 1.");
+        if(locale === "ar"){
+          toast.error("حدث خطأ رقم 1 اثناء عملية التعديل يرجى المحاولة مجدداً");
+
+        } else {
+          toast.error("Error submitting form 1.");
+
+        }
+        if (response?.error?.data?.detail) {
+          if(response.error.data.detail === "Permission denied for this operation."){
+            if(locale === "ar") {
+              toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+
+            } else {
+              toast.error(response.error.data.detail);
+            }
+
+          } 
+        } else {
+          toast.error(JSON.stringify(response?.error?.data));
+        }
+
+
 			}
 	  
 		  } catch (error) {
 			console.error("Error submitting form:", error);
-			toast.error("Error submitting form2.");
+      if(locale === "ar"){
+        toast.error("حدث خطأ رقم 2 اثناء عملية التعديل يرجى المحاولة مجدداً");
+
+      } else {
+        toast.error("Error submitting form2.");
+      }
+			
 		  } finally{setSubmitting(false);}
 
 	  } else {
-		toast.error("Error. all fields are required ");
+      if(locale === "ar"){
+        toast.error("جميع الحقول مطلوبة ");
+      } else {
+        toast.error("Error. all fields are required ");
+      }
+		
     setSubmitting(false);
 	  }
 	
@@ -128,12 +177,20 @@ const CompanyIfRightSection = () => {
   
     }, []);
 
+
+    if (!is_superuser && !(permissions?.includes('usersAuthApp.site_managment') && is_staff)) {
+      return;
+    } 
+
+
+
+
     return (
 
             
         <div className="container mt-2">
 
-        <h6>Our Company if Right (Eighth Section)  
+        <h6>{t('title')} 
 
         </h6>
         {/* Row for Search Form */}
@@ -147,7 +204,7 @@ const CompanyIfRightSection = () => {
            
             <div className="mb-3">
               <label htmlFor="company_if_right_title" className="form-label">
-                Title
+              {t('form.title')}
               </label>
               <input
                 type="text"
@@ -157,6 +214,8 @@ const CompanyIfRightSection = () => {
                 readOnly={!canEdit}
                 value={data?.company_if_right_title  || ""}
                 onChange={handleChange}
+                dir='ltr'
+
               />
             </div>
 
@@ -164,7 +223,7 @@ const CompanyIfRightSection = () => {
            
             <div className="mb-3">
               <label htmlFor="company_if_right_title_ar" className="form-label">
-                Title (Ar)
+              {t('form.title_ar')}
               </label>
               <input
                 type="text"
@@ -193,17 +252,17 @@ const CompanyIfRightSection = () => {
                               className="btn btn-primary"
                               >
 
-                         {!submitting ? 'Update' : 'Updating...'}
+                         {!submitting ? t('form.update') : t('form.updating')}
                       </button>
 
-                          <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  ms-2">
-                          Cancel
+                          <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  mx-2">
+                            {t('form.cancel')}
                           </button>
                           </>
                         :   
 
-                        <button  onClick={handleCanEdit }   className="  btn  btn-secondary">
-                        Edit 
+                        <button  onClick={handleCanEdit }   className=" mx-2  btn  btn-secondary">
+                        {t('form.edit')} 
                         </button>
                     }
 
@@ -224,7 +283,7 @@ const CompanyIfRightSection = () => {
 		id="for_project_section_modal"
 		handleSubmit={handleSubmit}
 		submitting={submitting}
-		message={"Are you sure you want to update 'project section' Data?"}
+		message={t('form.modal_msg')}
 		showModal={true} 
 		isModalOpen={isModalOpen}
 		setIsModalOpen={setIsModalOpen}

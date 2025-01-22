@@ -19,14 +19,41 @@ import { useRef } from "react";
 import UsersSearchInput from "@/app/(dashboard)/_components/jsx/tickets/input_search_users/page";
 
  
+import { useTranslations, useLocale } from "next-intl";
+import { ar, enUS } from "date-fns/locale"; // Import necessary locales
+
+
 
 const Page = () => {
 
+   const t = useTranslations('dashboard.ticket')
+   const t_common = useTranslations('common')
+
+
+ 
+
+  const locales = { ar, en: enUS }; // Map of supported locales
+  const locale = useLocale(); // Get the current locale
+
+  const formatNumber = (number) => {
+    const formatter = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US"); // Arabic for "ar", fallback to English
+    return formatter.format(number);
+  };
+
+
+
+
   const formatDate = (dateString) => {
+    const dateFnsLocale = locales[locale] || enUS; // Map to date-fns locale, fallback to English
+ 
     if (dateString) {
-        return formatDistanceToNow(parseISO(dateString), { addSuffix: true });
+      return formatDistanceToNow(parseISO(dateString), {
+        addSuffix: true,
+        locale: dateFnsLocale,
+      });
     }
   };
+
 
 
   const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/ticket/tickets/`
@@ -223,26 +250,6 @@ useEffect(() => {
         <div className="app-content-header">
 
 
-          <div className="container-fluid">
-
-
-            <div className="row">
-              <div className="col-sm-6">
-                <h3 className="mb-0">Main Index Page </h3>
-              </div>
-
-              <div className="col-sm-6">
-                <ol className="breadcrumb float-sm-end">
-                  <li className="breadcrumb-item">
-                    <a href="#">Docs</a>
-                  </li>
-                  <li className="breadcrumb-item active" aria-current="page">
-                    Site Managment
-                  </li>
-                </ol>
-              </div>
-            </div>
-          </div>
 
         </div>
 
@@ -261,10 +268,16 @@ useEffect(() => {
  
 <div className="row">
 <div className="col-12 col-md-6  ">
-  <h1 className="mb-2">Tickets</h1>
+  <h1 className="mb-2">
+    {/* Tickets */}
+    {t('all_tickets.all_requests_title')}
+  </h1>
 </div>
 <div className="col-12 col-md-6 d-flex justify-content-md-end">
-  <button type="button" onClick={handleAddRequest} className="btn btn-outline-secondary">Add a new Request</button>
+  <button type="button" onClick={handleAddRequest} className="btn btn-outline-secondary">
+    {/* Add a new Request */}
+    {t('all_tickets.add_new_request_button')}
+  </button>
 </div>
 </div>
 
@@ -285,12 +298,15 @@ useEffect(() => {
 
 
             <div className="col-md-5 col-12 pt-2">
-              <label htmlFor="search_words"> Search in Subject / Ticket Body </label>
+              <label htmlFor="search_words"> 
+                {/* Search in Subject / Ticket Body  */}
+                {t('all_tickets.search_aria.label_search_words')}
+              </label>
               <input
                 type="text"
                 className="form-control  "
                 id="search_words"
-                placeholder="search here"
+                placeholder={t('all_tickets.search_aria.placeholder_search_words')}  
                 aria-describedby="search"
                 value={searchQuery}
                 onChange={handleSearchChange}
@@ -298,7 +314,10 @@ useEffect(() => {
             </div>
 
             <div className="col-md-5 col-12 pt-2">
-            <label htmlFor="search_words"> Search Per Ticket Status </label>
+            <label htmlFor="search_words">  
+              {/* Search Per Ticket Status  */}
+              {t('all_tickets.search_aria.label_search_ticket_status')}
+              </label>
 
               <select
                 className="form-select  "
@@ -307,25 +326,33 @@ useEffect(() => {
                 onChange={handleStatusChange}
 
               >
-                <option value={'all'}>all status</option>
-                <option value={'open'}>Open</option>
-                <option value={'wait_customer_reply'}>wait_customer_reply</option>
-                <option value={'replied_by_staff'}>replied_by_staff</option>
-                <option value={'replied_by_customer'}>replied_by_customer</option>
-                <option value={'solved'}>solved</option>
+                <option value={'all'}>
+                  {/* all status */}
+                  {t_common('ticket_status.all')}
+                </option>
+                <option value={'open'}>{t_common('ticket_status.open')}</option>
+                <option value={'wait_customer_reply'}>{t_common('ticket_status.wait_customer_reply')}</option>
+                <option value={'replied_by_staff'}>{t_common('ticket_status.replied_by_staff')}</option>
+                <option value={'replied_by_customer'}>{t_common('ticket_status.replied_by_customer')}</option>
+                <option value={'solved'}>{t_common('ticket_status.solved')}</option>
               </select>
             </div>
 
 
             <div className="col-md-5 col-12 pt-2">
 
-              <UsersSearchInput handleUserIdChange={handleUserIdChange} userId={userId}/>
+              <UsersSearchInput 
+                  handleUserIdChange={handleUserIdChange}
+                    userId={userId}
+                    ph={t('all_tickets.search_aria.label_search_per_uer_ph')}
+                    lable={t('all_tickets.search_aria.label_search_per_uer')}
+               />
 
             </div>
 
           </div>
 
-          <h4 className="text-muted mt-2">{searchQuery && `results for : ${searchQuery}` }</h4>
+          <h4 className="text-muted mt-2">{searchQuery && `${t('all_tickets.search_aria.results_label')} : ${searchQuery}` }</h4>
 
 
         </form>
@@ -337,12 +364,12 @@ useEffect(() => {
   <table className="table table-striped d-none d-md-table ">
     <thead>
       <tr>
-        <th scope="col">Subject</th>
-        <th scope="col">ID</th>
-        <th scope="col">Created</th>
-        <th scope="col">Latest activity</th>
-        <th scope="col">Status</th>
-        <th scope="col"> Assigned </th>
+        <th scope="col">{t('all_tickets.table_list_items.subject')}</th>
+        <th scope="col">{t('all_tickets.table_list_items.id')}</th>
+        <th scope="col">{t('all_tickets.table_list_items.created')}</th>
+        <th scope="col">{t('all_tickets.table_list_items.latest_activity')}</th>
+        <th scope="col">{t('all_tickets.table_list_items.status')}</th>
+        <th scope="col"> {t('all_tickets.table_list_items.Assigned')} </th> 
       </tr>
     </thead>
     <tbody>
@@ -359,12 +386,13 @@ useEffect(() => {
 
 
           </td>
-          <td>#{ticket.id}</td>
+          <td>#{formatNumber(ticket.id)}</td>
           <td>{formatDate(ticket.ticket_created_date)}</td>
           <td>{formatDate(ticket.latest_activity)}</td>
           <td>
             <span className={`badge ${getTicketStatusColor(ticket.ticket_status)}`}>
-              {ticket.ticket_status}
+              {/* {ticket.ticket_status} */}
+              {ticket.ticket_status && t_common(`ticket_status.${ticket.ticket_status}`)}
             </span>
           </td>
           <td>
@@ -375,7 +403,7 @@ useEffect(() => {
               data-bs-toggle="modal"
               data-bs-target="#assign_ticket_to_staff"
               onClick={ ()=> { setAssiningTicketId( ticket.id  )}   }             
-              >Assign </Link>
+              >{t('all_tickets.table_list_items.Assign')} </Link>
               :
               ticket?.ticket_assigned_to?.fullname
             }
@@ -389,7 +417,11 @@ useEffect(() => {
   {/* Loading Indicator */}
   {loading && (
     <div className="text-center mt-4">
-      <p>Loading data...</p>
+      <p>
+        {locale === "ar" ? "جاري تحميل المحتوى..." : " Loading data..." }
+       
+      
+      </p>
     </div>
   )}
 
@@ -401,7 +433,7 @@ useEffect(() => {
       <div className="card mb-3" key={`card_${ticket.id}`}>
         <div className="card-body">
           <p>
-            <strong>Subject:</strong>
+            <strong>{t('all_tickets.table_list_items.subject')} : </strong>
              {/* {ticket.ticket_subject} */}
 
              <Link className="ms-2" href={`/staff/ticket/ticketDetails/${ticket.ticket_slog}`}  >
@@ -414,26 +446,27 @@ useEffect(() => {
 
           </p>
           <p>
-            <strong>ID:</strong> #{ticket.id}
+            <strong>{t('all_tickets.table_list_items.id')} : </strong> #{formatNumber(ticket.id)}
           </p>
           <p>
-            <strong>Created:</strong> {formatDate(ticket.ticket_created_date)}
+            <strong>{t('all_tickets.table_list_items.created')} : </strong> {formatDate(ticket.ticket_created_date)}
           </p>
           <p>
-            <strong>Latest activity:</strong>{" "}
+            <strong>{t('all_tickets.table_list_items.latest_activity')} : </strong>{" "}
             {formatDate(ticket.latest_activity)}
           </p>
           <p>
-            <strong>Status:</strong>{" "}
+            <strong>{t('all_tickets.table_list_items.status')} : </strong>{" "}
             <span className={`badge ${getTicketStatusColor(ticket.ticket_status)}`}>
-              {ticket.ticket_status}
+              {/* {ticket.ticket_status} */}
+              {ticket.ticket_status && t_common(`ticket_status.${ticket.ticket_status}`)}
             </span>
           </p>
           <p>
             {/* <strong>Assigned: </strong> re-open */}
 
 
-            <strong>Assigned: </strong>
+            <strong>{t('all_tickets.table_list_items.Assigned')} : </strong>
             {!ticket?.ticket_assigned_to ? 
               <Link href="/#"
               
@@ -473,6 +506,8 @@ useEffect(() => {
 
 
     )
+
+
 }
 
 export default Page

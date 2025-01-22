@@ -7,7 +7,14 @@ import { useRouter, useParams } from 'next/navigation';
 import FileList from "@/app/(dashboard)/_components/jsx/tickets/edit_ticket_reply/files_list";  
 
 
+import { useTranslations, useLocale } from "next-intl";
+
+
+
 const Page = () =>  {
+
+
+
 
   const [customFetch] = useCustomFetchMutation();
  
@@ -16,12 +23,16 @@ const Page = () =>  {
   const router = useRouter()
   const { ticket_reply_id } = useParams()  
  
-   
+  const t = useTranslations('dashboard.ticket.edit_ticket_reply')
+  const locale = useLocale()
  
 
   const [formData, setFormData] = useState({
     ticket_replay_body: "",
    });
+
+
+ 
 
 
 
@@ -43,6 +54,7 @@ const Page = () =>  {
       } else {
         // Handle the error case if there's no data or an error in the response
         console.log("Failed to get reply details1 :", response);
+        router.push('/404')
       }
     } catch (error) {
       // Catch any errors during the fetch operation
@@ -149,18 +161,50 @@ const Page = () =>  {
           if (input) input.value = ""; // Reset file input value
         });
 
-        toast.success("Your ticket has been added successfully!");
+
+        if(locale === "ar" ) {
+          toast.success("تم تحديث البيانات بنجاح");
+
+        } else {
+          toast.success("data has been updated successfully!");
+
+        }
 
         console.log('ticket_slog', response.data.ticket_slog)
         // router.push('/staff/ticket');  
         router.push(`/staff/ticket/ticketDetails/${response.data.ticket_slug}`)
       } else {
-        toast.error("Failed to submit the request.");
+        if(locale === "ar" ){
+          toast.error("حصل خطأ رقم 1 في تحديث البيانات");
+
+        } else {
+          toast.error("Failed 1 to update data ");
+
+        }
+        if (response?.error?.data?.detail) {
+          if(response.error.data.detail === "Permission denied for this operation."){
+            if(locale === "ar") {
+              toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+      
+            } else {
+              toast.error(response.error.data.detail);
+            }
+      
+          }
+        }
+ 
+         
         console.log('response', response)
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Error submitting form.");
+      if(locale === "ar" ){
+        toast.error("حصل خطأ رقم 2 في تحديث البيانات");
+
+      } else {
+        toast.error("Failed 2 to update data ");
+
+      }
     }
 
       
@@ -204,26 +248,6 @@ useEffect(() => {
       <div className="app-content-header">
 
 
-        <div className="container-fluid">
-
-
-          <div className="row">
-            <div className="col-sm-6">
-              <h3 className="mb-0">Main Index Page </h3>
-            </div>
-
-            <div className="col-sm-6">
-              <ol className="breadcrumb float-sm-end">
-                <li className="breadcrumb-item">
-                  <a href="#">Docs</a>
-                </li>
-                <li className="breadcrumb-item active" aria-current="page">
-                  Site Managment
-                </li>
-              </ol>
-            </div>
-          </div>
-        </div>
 
       </div>
 
@@ -234,20 +258,20 @@ useEffect(() => {
         <div className="container-fluid  min-vh-150 bg-white p-3 border rounded " >
 
 
-          <h2>Edit Ticket Reply</h2>
+          <h2>{t('form_title')}</h2>
           <form className="col-md-8 col-12 mb-5 " >
 
  
  
             <div className="mb-3">
               <label htmlFor="reply" className="form-label">
-                Repsponse  <span className="text-danger">*</span>
+              {t('response')}  <span className="text-danger">*</span>
               </label>
               <textarea
                 className="form-control"
                 id="reply"
                 rows={6}
-                placeholder="Please enter the details of your reply"
+                placeholder={t('response_placeholder')}
                 required=""
                 // onChange={handleChange}
                 name="ticket_replay_body"
@@ -262,7 +286,7 @@ useEffect(() => {
 
 
 
-                  <FileList ticket_reply_id={ticket_reply_id}/>
+                  <FileList ticket_reply_id={ticket_reply_id} attached_files_title={t('attached_files_title')}/>
 
 
 
@@ -279,11 +303,11 @@ useEffect(() => {
                 htmlFor={`fileInput-${fileInput.id}`} 
                 className="form-label fw-bold me-2"
                 >
-                Upload File {index + 1}
+                {t('upload_file') } {index + 1}
                 </label>
                 <input
                 type="file"
-                className="form-control-file"
+                className="form-control-file mx-2"
                 id={`fileInput-${fileInput.id}`}
                 onChange={(e) => handleFileChange(e, fileInput.id)}
                 name="ticket_reply_files[]"
@@ -301,7 +325,7 @@ useEffect(() => {
                         onClick={handleAddMore}
                         >
                         <i className="fa fa-plus me-2"></i> {/* Font Awesome icon */}
-                        Add More
+                          {t('btn_add_More_file')}
                         </button>
                     </div>
                     <div className="col-12 col-md-auto">
@@ -312,7 +336,7 @@ useEffect(() => {
                         disabled={files.length <= 1} // Disable if only one input left
                         >
                         <i className="fa fa-trash me-2"></i> {/* Font Awesome icon */}
-                        Delete
+                          {t('btn_remove_file')}
                         </button>
                     </div>
 
@@ -327,12 +351,15 @@ useEffect(() => {
  
           <div className="pt-2">
 
-            <button   className="btn btn-outline-primary" onClick={handleSubmit}>
-                Submit
-              </button>
-              <button   className="btn btn-outline-secondary ms-2" onClick={handleCancel}>
-                Cancel
-              </button>
+            <button   className="btn btn-outline-primary  mx-2" onClick={handleSubmit}>
+                {t('submit')}
+
+            </button>
+
+            <button   className="btn btn-outline-secondary mx-2 " onClick={handleCancel}>
+              {t('calcel')}
+
+            </button>
 
           </div>
 

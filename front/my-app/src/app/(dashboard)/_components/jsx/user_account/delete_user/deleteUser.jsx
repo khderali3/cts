@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 
 
 
+import { useLocale } from "next-intl";
 
 
 
@@ -15,6 +16,13 @@ const DeleteUserButton = ({user_id}) => {
 	const [customFetch] = useCustomFetchMutation();
 	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 	const [isDeleting, setIsDeleting] = useState(false)
+
+	const locale = useLocale()
+
+
+
+
+
 
 	const handleDelete = async ( ) => {
 		setIsDeleting(true);
@@ -28,14 +36,45 @@ const DeleteUserButton = ({user_id}) => {
 		  });
 	  
 		  if (response && response.data) {
-			toast.success('the user has been deleted successfully!')
+			if(locale === "ar"){
+				toast.success('تم حذف المستخدم بنجاح')
+			} else {
+				toast.success('the user has been deleted successfully!')
+			}
+			
 			route.push('/staff/users');
 		  } else {
-			toast.error('error 1 with delete user!')
+			if(locale === "ar"){
+				toast.error('حصل خطأ رقم 1 أثناء محاولة حذف المستخدم . يرجى المحاولة لاحقاً')
+
+			} else {
+				toast.error('error 1 with delete user!')
+
+			}
 			console.log('error1', response)
+
+			if (response?.error?.data?.detail) {
+				if(response.error.data.detail === "Permission denied for this operation."){
+					if(locale === "ar") {
+						toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+		
+					} else {
+						toast.error(response.error.data.detail);
+					}
+		
+				}
+			}
+
+
 		  }
 		} catch (error) {
-		  toast.error('error 2 with delete user!')
+			if(locale === "ar"){
+				toast.error('حصل خطأ رقم 2 أثناء محاولة حذف المستخدم . يرجى المحاولة لاحقاً')
+
+			} else {
+				toast.error('error 2 with delete user!')
+
+			}
 	
 		  console.error("Error 2 deleting user:", error);
 		} finally {
@@ -69,7 +108,7 @@ const DeleteUserButton = ({user_id}) => {
 		id="delete_user_id"
 		handleSubmit={ handleDelete}
 		submitting={isDeleting}
-		message={"Are you sure you want to Delete this User ?"}
+		message={ locale === "ar"  ? "هل فعلاً تريد حذف هذا المستخدم؟" : "Are you sure you want to Delete this User ?" }
 		operationType = "Delete"
 		showModal={true} 
 		isModalOpen={isModalOpen}

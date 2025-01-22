@@ -7,6 +7,10 @@ import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/
 import { toast } from "react-toastify";
 
 
+
+import { useLocale, useTranslations } from "next-intl";
+
+
 const GroupAasignOrRemoveSection = ({user_id}) => {
 
 	const [customFetch] = useCustomFetchMutation();
@@ -17,7 +21,8 @@ const GroupAasignOrRemoveSection = ({user_id}) => {
 	const [allGroups, setAllGroups] = useState([])
 	const [userGroups, setUserGroups] = useState([])
 
-
+	const locale = useLocale()
+	const t = useTranslations('dashboard.users_managment.users.edit_user_groups')
 
 	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
@@ -88,16 +93,47 @@ const GroupAasignOrRemoveSection = ({user_id}) => {
 		  });	  
 		  if (response && response.data) {	
 			fetchUserGroups()
-			toast.success("the user Groups has been updated succussfuly!");
+			if(locale === "ar"){
+				toast.success("تم تعديل البيانات بنجاح");
+
+			} else {
+				toast.success("the user Groups has been updated succussfuly!");
+
+			}
 			setCanEdit(false)
  
 		  } else {
-			toast.error("Error submitting form.");
+			if(locale === "ar"){
+				toast.error("حدث خطأ رقم 1 أثناء التعديل . يرجى المحاولة لاحقاً");
+
+			} else {
+				toast.error("Error 1 submitting form.");
+
+			}
+
+			if (response?.error?.data?.detail) {
+				if(response.error.data.detail === "Permission denied for this operation."){
+					if(locale === "ar") {
+						toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+		
+					} else {
+						toast.error(response.error.data.detail);
+					}
+		
+				}
+			}
+
 			
 			console.log("Failed to update user 1", response);
 		  }
 		} catch (error) {
-			toast.error("Error submitting form.");			
+			if(locale === "ar"){
+				toast.error("حدث خطأ رقم 2 أثناء التعديل . يرجى المحاولة لاحقاً");
+
+			} else {
+				toast.error("Error 2 submitting form.");			
+
+			}
 			console.log("Failed to update user 2");
 		} finally{ setIsObjUpdateing(false)}
 	  };
@@ -118,7 +154,7 @@ useEffect(() => {
 
 		<div>
 		<hr />
-		<h6> Edit User Groups ( Staff User Only) </h6>
+		<h6> {t('title')} </h6>
 		<div> 	  
 			<form className="  col-md-10 mb-5 "   >
 
@@ -133,9 +169,9 @@ useEffect(() => {
 					{allGroups.map( (group) => (
 						
 
-						<div key={group.id} className="form-check col-md-2   ms-2">
+						<div key={group.id}className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `} >
 							<input
-								className="form-check-input"
+								className="  form-check-input "
 								type="checkbox"
 								name={group?.name}
 								id={`${group?.id}_group_id`}
@@ -144,7 +180,7 @@ useEffect(() => {
 								disabled={!canEdit}
 		
 							/>
-							<label className="form-check-label small" htmlFor={`${group?.id}_group_id`}>
+							<label className="form-check-label   small" htmlFor={`${group?.id}_group_id`}>
 								{group?.name}
 							</label>
 						</div>
@@ -167,25 +203,25 @@ useEffect(() => {
 			<button  
 			// onClick={ handleSubmit }
 			onClick={setIsModalOpen}
-			style={{ width: '75px' }}  className="btn btn-primary btn-sm "
+			  className="btn btn-primary btn-sm mx-2 "
 			disabled={isObjUpdateing}
 			
 			>  
-			{isObjUpdateing ? 'Updating..' : 'Update' }     
+			{isObjUpdateing ? t('updating') : t('update') }     
 			</button>
 
 
 
-			<button onClick={()=> setCanEdit(false)} style={{ width: '75px' }}   className="btn btn-secondary btn-sm  ms-2 ">  
-			Cancel
+			<button onClick={()=> setCanEdit(false)}    className="btn btn-secondary btn-sm  mx-2 ">  
+				{t('cancel')}
 			</button>
 			</>
 
 
 			:  
 			
-			<button onClick={()=> setCanEdit(true)} style={{ width: '75px' }}   className="btn btn-outline-primary btn-sm  ">  
-			Edit
+			<button onClick={()=> setCanEdit(true)}     className="btn btn-outline-primary mx-2 btn-sm  ">  
+				{t('edit')}
 			</button>
 
 			}
@@ -200,7 +236,7 @@ useEffect(() => {
 	id="edit_user_group_id"
 	handleSubmit={handleSubmit}
 	submitting={isObjUpdateing}
-	message={"Are you sure you want Update this User Groups ?"}
+	message={t('modal_msg')}
 	operationType = "Update"
 	showModal={true} 
 	isModalOpen={isModalOpen}

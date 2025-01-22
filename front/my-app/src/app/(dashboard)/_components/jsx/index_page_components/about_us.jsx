@@ -6,8 +6,10 @@ import { useState, useEffect } from "react"
 import { toast } from "react-toastify";
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 
+import { useTranslations, useLocale } from "next-intl";
 
 
+import { useSelector } from "react-redux";
 
 
 const AboutUsSection = () => {
@@ -15,6 +17,12 @@ const AboutUsSection = () => {
 	const [customFetch] = useCustomFetchMutation()
 	const [submitting, setSubmitting] = useState(false)
 	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  
+  const t = useTranslations('dashboard.site_managment.about_us')
+  const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
+
+  const locale = useLocale()
+
 
 	const [data, setData] = useState({
 		about_us_title: "",
@@ -66,22 +74,67 @@ const AboutUsSection = () => {
 	  
 			if( response && response.data){
 			  setCanEdit(false)
-			  toast.success("your data has been updated ");
+
+        if(locale === "ar") {
+          toast.success("تم تحديث البيانات بنجاح");
+
+        }else {
+          toast.success("your data has been updated ");
+
+        }
+
+
 			  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/about_us/`)
 			  setIsModalOpen(false)
 	  
 			} else{
 			  console.log(response)
-			  toast.error("Error submitting form 1.");
+        if(locale === "ar") {
+          toast.error("حصل خطأ رقم 1 في تحديث البيانات");
+
+        } else {
+          toast.error("Error submitting form 1.");
+
+        }
+        if (response?.error?.data?.detail) {
+          if(response.error.data.detail === "Permission denied for this operation."){
+            if(locale === "ar") {
+              toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+
+            } else {
+              toast.error(response.error.data.detail);
+            }
+
+          } 
+        } else {
+          toast.error(JSON.stringify(response?.error?.data));
+        }
+
+
+
+        
 			}
 	  
 		  } catch (error) {
 			console.error("Error submitting form:", error);
-			toast.error("Error submitting form2.");
+      if(locale === "ar"){
+        toast.error("حصل خطأ رقم 2 في تحديث البيانات");
+
+      } else {
+        toast.error("Error submitting form2.");
+
+      }
+
 		  } finally{setSubmitting(false);}
 
 	  } else {
-		toast.error("Error. all fields are required ");
+    if(locale === "ar"){
+      toast.error("خطأ . جميع الحقول مطلوبة");
+
+    }else {
+      toast.error("Error. all fields are required ");
+
+    }
     setSubmitting(false);
 	  }
 	
@@ -134,12 +187,20 @@ const AboutUsSection = () => {
   
     }, []);
 
+
+
+    if (!is_superuser && !(permissions?.includes('usersAuthApp.site_managment') && is_staff)) {
+      return;
+    } 
+
+
+
     return (
 
-            
+       
         <div className="container mt-2">
-        <h6>About Us (Second Section)  
-
+        <h6>{t('title')}  
+ 
         </h6>
         {/* Row for Search Form */}
         <div className="row my-4 py-4 px-4 border">
@@ -152,7 +213,8 @@ const AboutUsSection = () => {
            
             <div className="mb-3">
               <label htmlFor="about_us_title" className="form-label">
-                Title
+                {/* Title */}
+                {t('form.title')}
               </label>
               <input
                 type="text"
@@ -162,6 +224,7 @@ const AboutUsSection = () => {
                 readOnly={!canEdit}
                 value={data?.about_us_title  || ""}
                 onChange={handleChange}
+                dir='ltr'
 
 
               />
@@ -170,7 +233,8 @@ const AboutUsSection = () => {
 
             <div className="mb-3">
               <label htmlFor="about_us_company_name" className="form-label">
-                Company Name
+                {/* Company Name */}
+                {t('form.Company_Name')}
               </label>
               <input
                 type="text"
@@ -180,7 +244,7 @@ const AboutUsSection = () => {
                 readOnly={!canEdit}
                 value={data?.about_us_company_name  || ""}
                 onChange={handleChange}
-
+                dir='ltr'
 
               />
             </div>
@@ -188,7 +252,8 @@ const AboutUsSection = () => {
 
             <div className="mb-3">
               <label htmlFor="about_us_hint" className="form-label">
-                Hint
+                {/* Hint */}
+                {t('form.Hint')}
               </label>
               <input
                 type="text"
@@ -199,14 +264,16 @@ const AboutUsSection = () => {
                 readOnly={!canEdit}
                 value={data?.about_us_hint  || ""}
                 onChange={handleChange}
-
+                dir='ltr'
               />
             </div>
 
 
             <div className="mb-3">
               <label htmlFor="about_us_details" className="form-label">
-                Details
+                {/* Details */}
+                {t('form.Details')}
+
               </label>
               <input
                 type="text"
@@ -217,6 +284,7 @@ const AboutUsSection = () => {
                 readOnly={!canEdit}
                 value={data?.about_us_details  || ""}
                 onChange={handleChange}
+                dir='ltr'
 
               />
             </div>
@@ -224,7 +292,8 @@ const AboutUsSection = () => {
 
             <div className="mb-3">
               <label htmlFor="about_us_youtube_url" className="form-label">
-                Youtube Video URL  
+                {/* Youtube Video URL  */}
+                {t('form.youtube_url')} 
               </label>
               <input
                 type="text"
@@ -235,6 +304,8 @@ const AboutUsSection = () => {
                 readOnly={!canEdit}
                 value={data?.about_us_youtube_url  || ""}
                 onChange={handleChange}
+                dir='ltr'
+
 
               />
             </div>
@@ -250,7 +321,8 @@ const AboutUsSection = () => {
 
             <div className="mb-3">
               <label htmlFor="about_us_title_ar" className="form-label">
-                Title (Ar)
+                {/* Title (Ar) */}
+                {t('form.title_ar')} 
               </label>
               <input
                 type="text"
@@ -269,7 +341,8 @@ const AboutUsSection = () => {
 
             <div className="mb-3">
               <label htmlFor="about_us_company_name_ar" className="form-label">
-              Company Name (Ar)
+              {/* Company Name (Ar) */}
+              {t('form.Company_Name_ar')}
               </label>
               <input
                 type="text"
@@ -290,7 +363,8 @@ const AboutUsSection = () => {
 
             <div className="mb-3">
               <label htmlFor="about_us_hint_ar" className="form-label">
-              Hint (Ar)
+              {/* Hint (Ar) */}
+              {t('form.Hint_ar')}
               </label>
               <input
                 type="text"
@@ -309,7 +383,8 @@ const AboutUsSection = () => {
 
             <div className="mb-3">
               <label htmlFor="about_us_details_ar" className="form-label">
-              Detials (Ar)
+              {/* Detials (Ar) */}
+              {t('form.Details_ar')}
               </label>
               <input
                 type="text"
@@ -346,17 +421,17 @@ const AboutUsSection = () => {
 						  className="btn btn-primary"
 						   >
 
-                         {!submitting ? 'Update' : 'Updating...'}
+                         {!submitting ? t('form.update') : t('form.updating')}
                       </button>
 
-						<button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  ms-2">
-						Cancel
-						</button>
-						</>
+                      <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  mx-2">
+                        {t('form.cancel')}
+                      </button>
+                      </>
                         :   
 
-                        <button  onClick={handleCanEdit }   className="  btn  btn-secondary">
-                        Edit 
+                        <button  onClick={handleCanEdit }   className="  btn mx-2  btn-secondary">
+                          {t('form.edit')} 
                         </button>
                     }
 
@@ -376,7 +451,7 @@ const AboutUsSection = () => {
 		id="about_us_modal"
 		handleSubmit={handleSubmit}
 		submitting={submitting}
-		message={"Are you sure you want to update 'about us section' Data?"}
+		message={t('form.modal_msg')}
 		showModal={true} 
 		isModalOpen={isModalOpen}
 		setIsModalOpen={setIsModalOpen}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useDispatch } from 'react-redux';
@@ -7,10 +7,32 @@ import { setAuth, setloginFirstName, setprofileImage } from '../redux/features/a
 import { toast } from 'react-toastify';
 import { jwtDecode} from 'jwt-decode';
 
+
+import { useLocale } from 'next-intl';
+import ReCAPTCHA from "react-google-recaptcha";
+
+
 export default function useLogin() {
+
+  const [recaptchaValue, setRecaptchaValue] = useState('')
+  const recaptchaRef = useRef(null);
+
+  function onChangeRecaptcha(value) { 
+    setRecaptchaValue(value)
+  }
+
+
+
+
+
 	const router = useRouter();
 	const dispatch = useDispatch();
 	const [login, { isLoading }] = useLoginMutation();
+
+	const locale = useLocale()
+
+
+
 
 	const [formData, setFormData] = useState({
 		email: '',
@@ -28,8 +50,24 @@ export default function useLogin() {
 	const onSubmit = (event) => {
 		event.preventDefault();
 
+ 
+		if (!recaptchaValue) {
+			if(locale === "ar"){
+			  toast.error("يرجى الضغط على انا لست روبوت");
+	
+			} else{
+			  toast.error("Please complete the CAPTCHA.");
+	
+			}
+ 
+ 
+			return;
+		  }
 
-		login({ email, password })
+ 
+
+
+		login({ email, password, recaptcha_value:recaptchaValue })
 			.unwrap()
 			.then((data) => {
 
@@ -40,15 +78,46 @@ export default function useLogin() {
 					dispatch(setloginFirstName(user_first_name))
 					const profileImage = token_info?.PRF_image
 					dispatch(setprofileImage(profileImage)) 
-					toast.success('Logged in');
+
+					if(locale === "ar"){
+						toast.success('تم تسجيل الدخول بنجاح');
+
+					} else {
+						toast.success('Logged in successfully');
+
+					}
+
+
+
+
 					router.push('/');
 
 				} else  {
-				toast.error('All fields are required');
+
+					if(locale === "ar"){
+						toast.error('جميع الحقول مطلوبة!');
+
+					} else {
+						toast.error('All fields are required');
+
+					}
 				}
 			})
-			.catch(() => {
-				toast.error('Failed to log in');
+			.catch((error) => {
+				recaptchaRef.current.reset();
+				console.log(error)
+
+				if(locale === "ar"){
+					toast.error('فشل في تسجل الدخول');
+
+				} else {
+					toast.error('Failed to log in');
+
+				}
+				if(error.data.detail === "Invalid reCAPTCHA. Please try again."){
+					toast.error("Invalid reCAPTCHA. Please try again.");
+
+				}
 			});
 	};
 
@@ -58,5 +127,9 @@ export default function useLogin() {
 		isLoading,
 		onChange,
 		onSubmit,
+		ReCAPTCHA,
+		onChangeRecaptcha,
+		recaptchaRef,
+		locale
 	};
 }

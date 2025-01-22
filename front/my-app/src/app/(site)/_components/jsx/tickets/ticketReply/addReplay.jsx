@@ -4,9 +4,13 @@ import { useCustomFetchMutation } from "../../../redux/features/siteApiSlice";
 import { toast } from 'react-toastify';
  
 
+import { useTranslations, useLocale } from "next-intl";
 
 
 const  AddNewReplayForm = ({ticket_id, handleReplayAdded }) => {
+
+    const t = useTranslations('site.ticket.ticket_details_msgs.ticket_reply_form')
+    const locale = useLocale()
 
     const [customFetch] = useCustomFetchMutation();
 
@@ -88,7 +92,13 @@ const  AddNewReplayForm = ({ticket_id, handleReplayAdded }) => {
       
       
           if (response && response.data) {
-              toast.success("Your Replay added successfully");
+              if( locale === "ar" ){
+                toast.success("تم إضافة الرد بنجاح");
+
+              } else {
+                toast.success("Your Replay added successfully");
+
+              }
               setTicketReplayBody("");
               setFiles([{ id: 1, file: null }]);
         
@@ -100,12 +110,27 @@ const  AddNewReplayForm = ({ticket_id, handleReplayAdded }) => {
               handleReplayAdded();
             } else {
               // Handle the error case if there's no data or an error in the response
-              toast.error("Failed to add replay. Please try again.");
+              console.log("response", response)
+              if( locale === "ar" ) {
+                toast.error("حدث خطأ في اضافة الرد يرجى المحاولة مجدداً");
+
+              } else {
+                toast.error("Failed to add replay. Please try again.");
+
+              }
             }
       
           } catch (error) {
             console.error("Error submitting data:", error);
-            toast.error('Error submitting data');
+
+            if( locale === "ar" ) {
+              toast.error("حدث خطأ في اضافة الرد يرجى المحاولة مجدداً");
+
+            } else {
+              toast.error('Error submitting data');
+
+            }
+
           }
           setLoading(false);
 
@@ -131,7 +156,10 @@ const  AddNewReplayForm = ({ticket_id, handleReplayAdded }) => {
  
 <form className="mt-5 mb-5" onSubmit={handleSubmit}>
       <div className="form-group">
-        <label htmlFor="exampleFormControlTextarea1">Add A New Replay</label>
+        <label htmlFor="exampleFormControlTextarea1">
+          {/* Add A New Replay */}
+          {t('add_a_new_reply')}
+        </label>
         <textarea
           className="form-control"
           id="exampleFormControlTextarea1"
@@ -151,9 +179,11 @@ const  AddNewReplayForm = ({ticket_id, handleReplayAdded }) => {
             <div className="mb-3">
                 <label 
                 htmlFor={`fileInput-${fileInput.id}`} 
-                className="form-label fw-bold me-2"
+                className="form-label fw-bold me-1 ms-1"
                 >
-                Upload File {index + 1}
+                {/* Upload File {index + 1} */}
+                {t('upload_file') } {index + 1}
+
                 </label>
                 <input
                 type="file"
@@ -175,7 +205,8 @@ const  AddNewReplayForm = ({ticket_id, handleReplayAdded }) => {
                         onClick={handleAddMore}
                         >
                         <i className="fa fa-plus me-2"></i> {/* Font Awesome icon */}
-                        Add More
+                        {/* Add More */}
+                        {t('btn_add_More_file')}
                         </button>
                     </div>
                     <div className="col-12 col-md-auto">
@@ -186,7 +217,8 @@ const  AddNewReplayForm = ({ticket_id, handleReplayAdded }) => {
                         disabled={files.length <= 1} // Disable if only one input left
                         >
                         <i className="fa fa-trash me-2"></i> {/* Font Awesome icon */}
-                        Delete
+                        {/* Delete */}
+                        {t('btn_remove_file')}
                         </button>
                     </div>
 
@@ -204,7 +236,8 @@ const  AddNewReplayForm = ({ticket_id, handleReplayAdded }) => {
 
       { loading && ( <span className="spinner-border spinner-border-sm me-2"></span> ) }  
 
-        Submit
+        {/* Submit */}
+        {t('btn_submit')}
       </button>
     </form>
  

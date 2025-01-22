@@ -5,9 +5,11 @@ import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staf
 import { useState, useEffect } from "react"
 import { toast } from "react-toastify";
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
+import { useSelector } from "react-redux";
 
 
 
+import { useTranslations, useLocale } from "next-intl";
 
 
 const HomeSection = () => {
@@ -16,6 +18,12 @@ const HomeSection = () => {
 	const [submitting, setSubmitting] = useState(false)
 	const [selectedFile, setSelectedFile] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+
+  const t = useTranslations('dashboard.site_managment.home_section')
+
+  const locale = useLocale()
+
+  const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
 
 
 	const [data, setData] = useState({
@@ -65,23 +73,65 @@ const HomeSection = () => {
 	  
 			if( response && response.data){
 			  setCanEdit(false)
-			  toast.success("your data has been updated ");
+
+        if(locale === "ar") {
+          toast.success("تم تحديث البيانات بنجاح");
+
+        } else {
+          toast.success("your data has been updated ");
+
+        }
+
+
+
 			  setSelectedFile(null)
 			  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/home/`)
         setIsModalOpen(false)
 	  
 			} else{
 			  console.log(response)
-			  toast.error("Error submitting form 1.");
+        if(locale === "ar"){
+          toast.error("حصل خطأ رقم 1 في تحديث البيانات");
+        }else {
+          toast.error("Error submitting form 1.");
+        }
+
+        
+        if (response?.error?.data?.detail) {
+          if(response.error.data.detail === "Permission denied for this operation."){
+            if(locale === "ar") {
+              toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+
+            } else {
+              toast.error(response.error.data.detail);
+            }
+
+          } 
+        } else {
+          toast.error(JSON.stringify(response?.error?.data));
+        }
+			  
 			}
 	  
 		  } catch (error) {
 			console.error("Error submitting form:", error);
-			toast.error("Error submitting form2.");
+      if(locale === "ar"){
+        toast.error("حصل خطأ رقم 2 في تحديث البيانات");
+
+      } else {
+        toast.error("Error submitting form2.");
+
+      }
 		  } finally{setSubmitting(false);}
 
 	  } else {
-		toast.error("Error. all fields are required ");
+      if(locale === "ar"){
+        toast.error("خطأ . جميع الحقول مطلوبة ");
+
+      } else {
+        toast.error("Error. all fields are required ");
+
+      }
     setSubmitting(false);
 	  }
 	
@@ -152,12 +202,23 @@ const HomeSection = () => {
     
       }, []);
 
+
+  if (!is_superuser && !(permissions?.includes('usersAuthApp.site_managment') && is_staff)) {
+    return;
+  } 
+    
+
+
+
+
+
     return (
 
             
         <div className="container mt-2">
-        <h6> Home Section (first Section)  
-
+        <h6> 
+          {/* Home Section (first Section)   */}
+          {t('title')}
         </h6>
         {/* Row for Search Form */}
         <div className="row my-4 py-4 px-4 border">
@@ -170,7 +231,8 @@ const HomeSection = () => {
            
             <div className="mb-3">
               <label htmlFor="home_sec_title" className="form-label">
-                Title
+                {/* Title */}
+                {t('form.title')}
               </label>
               <input
                 type="text"
@@ -180,6 +242,8 @@ const HomeSection = () => {
                 readOnly={!canEdit}
                 value={data?.home_sec_title  || ""}
                 onChange={handleChange}
+                dir='ltr'
+
 
 
               />
@@ -188,7 +252,7 @@ const HomeSection = () => {
 
             <div className="mb-3">
               <label htmlFor="home_sec_details" className="form-label">
-                Details
+              {t('form.details')}
               </label>
               <input
                 type="text"
@@ -199,6 +263,8 @@ const HomeSection = () => {
                 readOnly={!canEdit}
                 value={data?.home_sec_details  || ""}
                 onChange={handleChange}
+                dir='ltr'
+
 
               />
             </div>
@@ -208,7 +274,8 @@ const HomeSection = () => {
 
             <div className="mb-3">
               <label htmlFor="home_sec_title_ar" className="form-label">
-                Title (Ar)
+                {/* Title (Ar) */}
+                {t('form.title_ar')}
               </label>
               <input
                 type="text"
@@ -227,7 +294,8 @@ const HomeSection = () => {
 
             <div className="mb-3">
               <label htmlFor="home_sec_details_ar" className="form-label">
-                Details (Ar)
+                {/* Details (Ar) */}
+                {t('form.details_ar')}
               </label>
               <input
                 type="text"
@@ -246,7 +314,8 @@ const HomeSection = () => {
 
             <div className="mb-3">
               <label htmlFor="home_sec_image" className="form-label">
-                Image
+                {/* Image */}
+                {t('form.image')}
               </label>
               <input
                 type="file"
@@ -258,7 +327,7 @@ const HomeSection = () => {
                 onChange={handleChange}
               />
 
-              {data?.home_sec_image &&  <a href={data?.home_sec_image}>  Current Image  </a> }
+              {data?.home_sec_image &&  <a href={data?.home_sec_image}> {t('form.current_image')}  </a> }
              
             </div>
 
@@ -277,19 +346,19 @@ const HomeSection = () => {
                         className="btn btn-primary"
                       >
           
-                      {!submitting ? 'Update' : 'Updating...'}
+                      {!submitting ?  t('form.update') :  t('form.updating')}
                       </button>
 
 
-                        <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  ms-2">
-                          Cancel
+                        <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  mx-2">
+                        {t('form.cancel')} 
                         </button>
 
                       </>
                         :   
 
-                        <button  onClick={handleCanEdit }   className="  btn  btn-secondary">
-                        Edit 
+                        <button  onClick={handleCanEdit }   className="  btn  btn-secondary mx-2">
+                        {t('form.edit')}  
                         </button>
                     }
 
@@ -312,7 +381,7 @@ const HomeSection = () => {
 		id="home_section_modal"
 		handleSubmit={handleSubmit}
 		submitting={submitting}
-		message={"Are you sure you want to update 'home section'Data?"}
+		message={t('form.modal_msg')}
 		showModal={true} 
 		isModalOpen={isModalOpen}
 		setIsModalOpen={setIsModalOpen}

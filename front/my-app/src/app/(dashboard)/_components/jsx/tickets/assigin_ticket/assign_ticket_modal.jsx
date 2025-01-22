@@ -7,7 +7,14 @@ import { toast } from "react-toastify"
  
 
 
+
+import { useTranslations, useLocale } from "next-intl"
+
 const AssignTicketModal = ({assigningTicketId, setAssiningTicketId=null, setReloadComponent , isTicketClosed=false}  ) => {
+
+	const t = useTranslations("dashboard.ticket.Assigne_ticket_modale")
+	const locale = useLocale()
+
 
 	const [isOtherUser, setIsOtherUser] = useState(null)
 	const [userId, setUserId] = useState(null); // Ticket status state
@@ -28,12 +35,9 @@ const AssignTicketModal = ({assigningTicketId, setAssiningTicketId=null, setRelo
  	const handleSubmit = async (e) => {
 		setSubmitting(true);
 		e.preventDefault();
-		
-		console.log('handleSubmit is clicked')
-		console.log('isTicketClosed', isTicketClosed)
+
 		const form = new FormData();
-		console.log('assigningTicketId', assigningTicketId)
-		console.log('userId', userId)
+
 		let url = ''
 
 		if(isOtherUser === false) {
@@ -57,7 +61,14 @@ const AssignTicketModal = ({assigningTicketId, setAssiningTicketId=null, setRelo
 					});
 			  
 					if( response && response.data){
-					  toast.success("the ticket has been assigned successfully ");
+
+						if( locale === "ar"){
+							toast.success("تم إسناد التذكرة بنجاح ");
+
+						}else {
+							toast.success("the ticket has been assigned successfully ");
+
+						}	
 		
 					  if(setAssiningTicketId !== null){
 						setAssiningTicketId(null)
@@ -78,16 +89,33 @@ const AssignTicketModal = ({assigningTicketId, setAssiningTicketId=null, setRelo
 			  
 					} else{
 					  console.log(response)
-					  toast.error("Error submitting form 1.");
+					  if( locale === "ar"){
+						toast.error(" حدث خطأ 1 اثناء المعالجة ");
+					  }else {
+						toast.error("Error 1 submitting .");
+
+					  }
 					}
 			  
 				  } catch (error) {
 					console.error("Error submitting form:", error);
-					toast.error("Error submitting form2.");
+					if( locale === "ar"){
+						toast.error("حدث خطأ 2 أثناء المعالجة");
+
+					}else {
+						toast.error("Error 2 submitting form .");
+
+					}
 				  }
 		
 				} else {
-					toast.error("Error, kindly select one option.");
+					if( locale === "ar"){
+						toast.error("يرجى تحديد أحد الخيارات المتاحة");
+
+					} else {
+						toast.error("Error, kindly select one option.");
+
+					}
 				}
 
 
@@ -95,7 +123,12 @@ const AssignTicketModal = ({assigningTicketId, setAssiningTicketId=null, setRelo
 
 
 		} else {
-			toast.error("the ticket is closed , you have to reopened to assign");
+			if( locale === "ar"){
+				toast.error("التذكرة مغلقة! يرجى إعادة فتح التذكرة قبل محاولة إسنادها");
+			} else {
+				toast.error("the ticket is closed , you have to reopened to assign");
+
+			}
 		}
 
 	  setSubmitting(false);
@@ -129,7 +162,10 @@ const AssignTicketModal = ({assigningTicketId, setAssiningTicketId=null, setRelo
         <div className="modal-dialog   ">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="assign_ticket_to_staffLabel">Assigne Ticket To Staff</h5>
+				<h5 className="modal-title" id="assign_ticket_to_staffLabel">
+					{/* Assigne Ticket To Staff */}
+					{t("title")}
+				</h5>
               <button
                 type="button"
                 className="btn-close"
@@ -141,9 +177,9 @@ const AssignTicketModal = ({assigningTicketId, setAssiningTicketId=null, setRelo
 			<form   className="   modal-body    "     >
 
 
-				<div className="form-check">
+				<div className=" ">
 					<input
-					className="form-check-input"
+					className="form-check-input    "
 					type="radio"
 					name="assign_to"
 					id="assign_to_me"
@@ -151,13 +187,13 @@ const AssignTicketModal = ({assigningTicketId, setAssiningTicketId=null, setRelo
 
 					onChange={() => setIsOtherUser(false)}
 					/>
-					<label className="form-check-label" htmlFor="assign_to_me">
-					Assign Ticket To Me
+					<label className="form-check-label mx-2 " htmlFor="assign_to_me">
+					{t("Assign_To_Me")}
 					</label>
 				</div>
-				<div className="form-check">
+				<div className=" ">
 					<input
-					className="form-check-input"
+					className="form-check-input    "
 					type="radio"
 					name="assign_to"
 					id="assign_to_other"
@@ -166,15 +202,21 @@ const AssignTicketModal = ({assigningTicketId, setAssiningTicketId=null, setRelo
 					ref={assignToOtherRef}
 
 					/>
-					<label className="form-check-label" htmlFor="assign_to_other">
-					Assign Ticket To other users
+					<label className="form-check-label mx-2 " htmlFor="assign_to_other">
+					{t("other_user")}
 					</label>
 				</div>
 
  
 
 				<div className="col-12   ">
-					<StaffUsersSearchInput handleUserIdChange={handleUserIdChange}  userId={userId} isOtherUser={isOtherUser} />  
+					<StaffUsersSearchInput
+						handleUserIdChange={handleUserIdChange}
+						userId={userId}
+						isOtherUser={isOtherUser}
+						input_lable ={t("search_staff_lable")}
+						input_ph = {t("search_staff_lable_ph")}
+					/>  
 				</div>
 
 
@@ -201,7 +243,7 @@ const AssignTicketModal = ({assigningTicketId, setAssiningTicketId=null, setRelo
                 data-bs-dismiss="modal"
 				onClick={handleClose}
               >
-                Close
+                {t("close")}
               </button>
               <button
                 type="button"
@@ -209,7 +251,7 @@ const AssignTicketModal = ({assigningTicketId, setAssiningTicketId=null, setRelo
                 onClick={handleSubmit}
                 data-bs-dismiss="modal"
               >
-				save
+				{t("save")}
               </button>
             </div>
           </div>

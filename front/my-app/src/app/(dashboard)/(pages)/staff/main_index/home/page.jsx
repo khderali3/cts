@@ -6,34 +6,17 @@ const Page = () => {
 
 
 
+ 
+
+
     return (
 
         <div> 
-        <div className="app-content-header">
-
-
-          <div className="container-fluid">
-
-
-            <div className="row">
-              <div className="col-sm-6">
-                <h3 className="mb-0">Main Index Page </h3>
-              </div>
-
-              <div className="col-sm-6">
-                <ol className="breadcrumb float-sm-end">
-                  <li className="breadcrumb-item">
-                    <a href="#">Docs</a>
-                  </li>
-                  <li className="breadcrumb-item active" aria-current="page">
-                    Site Managment
-                  </li>
-                </ol>
-              </div>
-            </div>
+          <div className="app-content-header">
+            
           </div>
 
-        </div>
+ 
 
         <div className="app-content">
 

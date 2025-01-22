@@ -4,13 +4,22 @@ import useResetPassword from '../hooks/use-reset-password';
 import Form from './Form';
 
 
+import { useTranslations } from 'next-intl';
+
 export default function ResetPasswordForm() {
-	const {  email, isLoading, onChange, onSubmit } = useResetPassword();
+	const {  email, isLoading, onChange, onSubmit,
+		ReCAPTCHA,
+		onChangeRecaptcha,
+		recaptchaRef,
+		locale
+
+	 } = useResetPassword();
+  const t = useTranslations('site.account.reset_password.form')
 
 	const config = [
 
 		{
-			labelText: 'input your email address ',
+			labelText: t('input_email'),
 			labelId: 'email',
 			type: 'email',
 			value: email,
@@ -25,9 +34,14 @@ export default function ResetPasswordForm() {
 		<Form
 			config={config}
 			isLoading={isLoading}
-			btnText='Reset Password'
+			btnText={t('btnText')}
 			onChange={onChange}
 			onSubmit={onSubmit}
+			
+			ReCAPTCHA= {ReCAPTCHA}
+			onChangeRecaptcha={onChangeRecaptcha}
+			recaptchaRef={recaptchaRef}
+			locale={locale}
 		/>
 	);
 }

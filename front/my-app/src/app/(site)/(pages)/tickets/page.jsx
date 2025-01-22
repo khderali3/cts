@@ -10,14 +10,50 @@ import { useCustomFetchMutation } from "../../_components/redux/features/siteApi
 import { useRef } from "react";
 
 
+import { useTranslations } from "next-intl";
+
+import { ar, enUS } from "date-fns/locale"; // Import necessary locales
+import { useLocale } from "next-intl"; // Get the current locale from next-intl
+
+
 
 const Page = () => {
 
+  const t = useTranslations('site.ticket')
+  const t_common = useTranslations('common')
+
+
+  // const formatDate = (dateString) => {
+  //   if (dateString) {
+  //       return formatDistanceToNow(parseISO(dateString), { addSuffix: true });
+  //   }
+  // };
+  const locales = { ar, en: enUS }; // Map of supported locales
+  const locale = useLocale(); // Get the current locale
+
+
+
+  const formatNumber = (number) => {
+    const formatter = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US"); // Arabic for "ar", fallback to English
+    return formatter.format(number);
+  };
+
+
+
+
   const formatDate = (dateString) => {
+    const dateFnsLocale = locales[locale] || enUS; // Map to date-fns locale, fallback to English
+ 
     if (dateString) {
-        return formatDistanceToNow(parseISO(dateString), { addSuffix: true });
+      return formatDistanceToNow(parseISO(dateString), {
+        addSuffix: true,
+        locale: dateFnsLocale,
+      });
     }
   };
+
+
+
 
 
   const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/ticket/`
@@ -187,17 +223,27 @@ const Page = () => {
       <div className="container mt-1 mb-5 pb-5 ">
 
       <div className="container mt-2">
-        <h6> <Link href='/tickets'> Tickets </Link>  </h6>
+        <h6> <Link href='/tickets'> 
+        {/* Tickets */}
+        {t('mini_nav.tickets')}
+         </Link>  </h6>
         <hr />
       </div>
 
 
     <div className="row">
       <div className="col-12 col-md-6  ">
-        <h1 className="mb-2">My Requests</h1>
+        <h1 className="mb-2">
+          {/* My Requests */}
+          {t('my_tickets.my_requests_title')}
+        </h1>
       </div>
       <div className="col-12 col-md-6 d-flex justify-content-md-end">
-        <button type="button" onClick={handleAddRequest} className="btn btn-outline-secondary">Add a new Request</button>
+        <button type="button" onClick={handleAddRequest} className="btn btn-outline-secondary">
+          {/* Add a new Request */}
+          {t('my_tickets.add_new_request_button')}
+
+        </button>
       </div>
     </div>
 
@@ -212,19 +258,32 @@ const Page = () => {
               <form className="pb-2">
                 <div className="row ">
                   <div className="col-md-5 col-12 pt-2">
-                    <label htmlFor="search_words"> Search in Subject / Ticket Body </label>
+                    <label htmlFor="search_words"> 
+                      {/* Search in Subject / Ticket Body  */}
+                      {t('my_tickets.search_aria.label_search_words')}
+
+                    </label>
                     <input
                       type="text"
                       className="form-control rounded-pill"
                       id="search_words"
-                      placeholder="search here"
+                      // placeholder="search here"
+                      placeholder= {t('my_tickets.search_aria.placeholder_search_words')}
+
+
                       aria-describedby="search"
                       value={searchQuery}
                       onChange={handleSearchChange}
                     />
                   </div>
                   <div className="col-md-4 col-12 pt-2">
-                  <label htmlFor="search_words"> Search Per Ticket Status </label>
+                  <label htmlFor="search_words"> 
+
+
+                    {/* Search Per Ticket Status  */}
+                    {t('my_tickets.search_aria.label_search_ticket_status')}
+
+                  </label>
 
                     <select
                       className="form-select rounded-pill"
@@ -233,17 +292,42 @@ const Page = () => {
                       onChange={handleStatusChange}
  
                     >
-                      <option value={'all'}>all status</option>
-                      <option value={'open'}>Open</option>
-                      <option value={'wait_customer_reply'}>wait_customer_reply</option>
-                      <option value={'replied_by_staff'}>replied_by_staff</option>
-                      <option value={'replied_by_customer'}>replied_by_customer</option>
-                      <option value={'solved'}>solved</option>
+                      <option value={'all'}>
+                        {/* all status */}
+                        {t_common('ticket_status.all')}
+
+                      </option>
+                      <option value={'open'}>
+                        {/* Open */}
+                        {t_common('ticket_status.open')}
+
+                      </option>
+                      <option value={'wait_customer_reply'}>
+                        {/* wait_customer_reply */}
+                        {t_common('ticket_status.wait_customer_reply')}
+
+                      </option>
+                      <option value={'replied_by_staff'}>
+                        {/* replied_by_staff */}
+                        {t_common('ticket_status.replied_by_staff')}
+
+                      </option>
+                      <option value={'replied_by_customer'}>
+                        {/* replied_by_customer */}
+                        {t_common('ticket_status.replied_by_customer')}
+
+                      </option>
+                      <option value={'solved'}>
+                        {/* solved */}
+                        {t_common('ticket_status.solved')}
+
+                      </option>
                     </select>
                   </div>
                 </div>
 
-                <h4 className="text-muted mt-2">{searchQuery && `results for : ${searchQuery}` }</h4>
+                {/* <h4 className="text-muted mt-2">{searchQuery && `results for : ${searchQuery}` }</h4> */}
+                <h4 className="text-muted mt-2">{searchQuery && `${ t('my_tickets.search_aria.results_label')} : ${searchQuery}` }</h4>
 
 
               </form>
@@ -253,11 +337,29 @@ const Page = () => {
         <table className="table table-striped d-none d-md-table ">
           <thead>
             <tr>
-              <th scope="col">Subject</th>
-              <th scope="col">ID</th>
-              <th scope="col">Created</th>
-              <th scope="col">Latest activity</th>
-              <th scope="col">Status</th>
+              <th scope="col">
+                {t('my_tickets.table_list_items.subject')}
+              </th>
+              <th scope="col">
+                {/* ID */}
+                {t('my_tickets.table_list_items.id')}
+
+              </th>
+              <th scope="col">
+                {/* Created */}
+                {t('my_tickets.table_list_items.created')}
+
+              </th>
+              <th scope="col">
+                {/* Latest activity */}
+                {t('my_tickets.table_list_items.latest_activity')}
+
+              </th>
+              <th scope="col">
+                {/* Status */}
+                {t('my_tickets.table_list_items.status')}
+
+              </th>
               {/* <th scope="col">Actions</th> */}
             </tr>
           </thead>
@@ -277,12 +379,17 @@ const Page = () => {
 
 
                 </td>
-                <td>#{ticket.id}</td>
+                {/* <td>#{ticket.id}</td> */}
+                <td>#{formatNumber(ticket.id)}</td>
+
                 <td>{formatDate(ticket.ticket_created_date)}</td>
                 <td>{formatDate(ticket.latest_activity)}</td>
                 <td>
                   <span className={`badge ${getTicketStatusColor(ticket.ticket_status)}`}>
-                    {ticket.ticket_status}
+                    {/* {ticket.ticket_status} */}
+                    {ticket.ticket_status && t_common(`ticket_status.${ticket.ticket_status}`)}
+
+
                   </span>
                 </td>
                 {/* <td>
@@ -296,7 +403,9 @@ const Page = () => {
         {/* Loading Indicator */}
         {loading && (
           <div className="text-center mt-4">
-            <p>Loading data...</p>
+            <p> 
+            {locale === "ar" ? "جاري تحميل المحتوى..." : " Loading data..." }
+            </p>
           </div>
         )}
 
@@ -308,7 +417,7 @@ const Page = () => {
             <div className="card mb-3" key={`card_${ticket.id}`}>
               <div className="card-body">
                 <p>
-                  <strong>Subject:</strong> 
+                  <strong>{t('my_tickets.table_list_items.subject')} : </strong> 
                   {/* {ticket.ticket_subject} */}
 
                   <Link className="ms-2" href={`/tickets/ticketDetails/${ticket.ticket_slog}`}>
@@ -325,19 +434,20 @@ const Page = () => {
 
                 </p>
                 <p>
-                  <strong>ID:</strong> #{ticket.id}
+                  <strong>{t('my_tickets.table_list_items.id')} :</strong> #{formatNumber(ticket.id)}
                 </p>
                 <p>
-                  <strong>Created:</strong> {formatDate(ticket.ticket_created_date)}
+                  <strong>{t('my_tickets.table_list_items.created')} : </strong> {formatDate(ticket.ticket_created_date)}
                 </p>
                 <p>
-                  <strong>Latest activity:</strong>{" "}
+                  <strong>{t('my_tickets.table_list_items.latest_activity')} : </strong>{" "}
                   {formatDate(ticket.latest_activity)}
                 </p>
                 <p>
-                  <strong>Status:</strong>{" "}
+                  <strong>{t('my_tickets.table_list_items.status')} : </strong>{" "}
                   <span className={`badge ${getTicketStatusColor(ticket.ticket_status)}`}>
-                    {ticket.ticket_status}
+                    {/* {ticket.ticket_status} */}
+                    {ticket.ticket_status && t_common(`ticket_status.${ticket.ticket_status}`)}
                   </span>
                 </p>
 

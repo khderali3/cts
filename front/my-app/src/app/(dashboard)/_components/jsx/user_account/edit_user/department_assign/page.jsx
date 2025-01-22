@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/siteApiSlice";
 import { toast } from "react-toastify";
 
+import { useLocale, useTranslations } from "next-intl";
 
 const DepartmentAasignOrRemoveSection = ({user_id}) => {
 
@@ -16,6 +17,9 @@ const DepartmentAasignOrRemoveSection = ({user_id}) => {
 	const [allDepartments, setAllDepartments] = useState([])
 	const [userDepartment, setUserDepartment] = useState([])
 	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+
+	const locale = useLocale()
+	const t = useTranslations('dashboard.users_managment.users.edit_user_department')
 
 
 	const handleChange = (departmentId, isChecked) => {
@@ -82,18 +86,49 @@ const DepartmentAasignOrRemoveSection = ({user_id}) => {
 			body:form
 		  });	  
 		  if (response && response.data) {	
-			fetchUserDepartments()
-			toast.success("the user Departments has been updated succussfuly!");
+			
+			if( locale === "ar" ){
+				toast.success("تم تعديل البيانات بنجاح");
+			} else {
+				toast.success("the user Departments has been updated succussfuly!");
+			}
+			
 			setCanEdit(false)
- 
+			fetchUserDepartments()
 		  } else {
-			toast.error("Error submitting form.");
+			if( locale === "ar" ){
+				toast.error("حصل خطأ رقم 1 اثناء تعديل البيانات . يرجى المحاولة مجدداً");
+
+			} else {
+				toast.error("Error1 submitting form.");
+
+			}
+			if (response?.error?.data?.detail) {
+				if(response.error.data.detail === "Permission denied for this operation."){
+					if(locale === "ar") {
+						toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+		
+					} else {
+						toast.error(response.error.data.detail);
+					}
+		
+				}
+			}
+
+
+
 			
 			console.log("Failed to update user 1", response);
 		  }
 		} catch (error) {
-			toast.error("Error submitting form.");			
-			console.log("Failed to update user 2");
+			if( locale === "ar" ){
+				toast.error("حصل خطأ رقم2 اثناء تعديل البيانات . يرجى المحاولة مجدداً");
+
+			} else {
+				toast.error("Error2 submitting form.");			
+
+			}
+			console.log("Failed to update user 2", error);
 		} finally{ setIsObjUpdateing(false)}
 	  };
 
@@ -113,7 +148,7 @@ useEffect(() => {
 
 		<div>
 		<hr />
-		<h6> Edit User Departments </h6>
+		<h6> {t('title')} </h6>
 		<div> 	  
 			<form className="  col-md-10 mb-5 "   >
 
@@ -128,9 +163,9 @@ useEffect(() => {
 					{allDepartments.map( (department) => (
 						
 
-						<div key={department.id} className="form-check col-md-2   ms-2">
+						<div key={department.id} className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
 							<input
-								className="form-check-input  "
+								className=" form-check-input  "
 								type="checkbox"
 								name={department?.department_name}
 								id={`${department.id}_department_id`}
@@ -144,8 +179,9 @@ useEffect(() => {
 								disabled={!canEdit}
 		
 							/>
-							<label className="form-check-label small" htmlFor={`${department.id}_department_id`}>
-								{department?.department_name}
+							<label className="form-check-label  small" htmlFor={`${department.id}_department_id`}>
+								 
+								{locale === "ar" ?  department?.department_name_ar : department?.department_name }
 							</label>
 						</div>
 					) )}
@@ -167,25 +203,25 @@ useEffect(() => {
 			<button  
 			// onClick={ handleSubmit }
 			onClick={setIsModalOpen}
-			style={{ width: '75px' }}  className="btn btn-primary btn-sm "
+			className="btn btn-primary btn-sm mx-2 "
 			disabled={isObjUpdateing}
 			
 			>  
-			{isObjUpdateing ? 'Updating..' : 'Update' }     
+			{isObjUpdateing ? t('updating') : t('update') }     
 			</button>
 
 
 
-			<button onClick={()=> setCanEdit(false)} style={{ width: '75px' }}   className="btn btn-secondary btn-sm  ms-2 ">  
-			Cancel
+			<button onClick={()=> setCanEdit(false)}    className="btn btn-secondary btn-sm  mx-2 ">  
+			{t('cancel')}
 			</button>
 			</>
 
 
 			:  
 			
-			<button onClick={()=> setCanEdit(true)} style={{ width: '75px' }}   className="btn btn-outline-primary btn-sm  ">  
-			Edit
+			<button onClick={()=> setCanEdit(true)}    className="btn mx-2 btn-outline-primary btn-sm  ">  
+				{t('edit')}
 			</button>
 
 			}
@@ -200,7 +236,7 @@ useEffect(() => {
 	id="edit_user_department_id"
 	handleSubmit={handleSubmit}
 	submitting={isObjUpdateing}
-	message={"Are you sure you want Update this User Department ?"}
+	message={t('modal_msg')}
 	operationType = "Update"
 	showModal={true} 
 	isModalOpen={isModalOpen}

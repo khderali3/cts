@@ -17,7 +17,7 @@ from .my_serializers import (UsersListSerializer, StaffUsersListSerializer,
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from ticketSystemStaffApp.my_utils import IsStaffOrSuperUser
+from ticketSystemStaffApp.my_utils import IsStaffOrSuperUser, HasUserManagementPermission
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group, Permission 
@@ -42,7 +42,7 @@ from django.contrib.auth.hashers import make_password
 
 
 class SetPasswordAPIView(APIView):
-	permission_classes = [IsAdminUser]  # Only admin can assign/remove groups
+	permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission]  # Only admin can assign/remove groups
 
 	def post(self, request, id):
 		serializer = SetPasswordSerializer(data=request.data)
@@ -63,7 +63,7 @@ class SetPasswordAPIView(APIView):
 
 
 class UserDepartmnetsView(APIView):
-	permission_classes = [IsAdminUser]  # Only admin can assign/remove departments
+	permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission ]  # Only admin can assign/remove departments
 
 	def get(self, request, user_id):
 		try:
@@ -114,7 +114,7 @@ class UserDepartmnetsView(APIView):
 
 
 class GroupPermissionView(APIView):
-    permission_classes = [IsAdminUser]  # Only admin can assign/remove permissions
+    permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission ]  # Only admin can assign/remove groups
 
     def get(self, request, group_id):
         try:
@@ -208,7 +208,7 @@ class GroupPermissionView(APIView):
 
 
 class UserGroupView(APIView):
-	permission_classes = [IsAdminUser]  # Only admin can assign/remove groups
+	permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission ]  # Only admin can assign/remove groups
 
 
 	def get(self, request, user_id):
@@ -257,7 +257,7 @@ class UserGroupView(APIView):
 
 
 class UserPermissionView(APIView):
-	permission_classes = [IsAdminUser]  # Only admin can assign/remove permissions
+	permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission]  # Only admin can assign/remove permissions
 
 
 	def get(self, request, user_id):
@@ -384,6 +384,7 @@ class PermissionAPIView(APIView):
 
 
 class GroupAPIView(APIView):
+	permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission]
 
 	def get(self, request, pk=None):
 		if pk:
@@ -440,7 +441,7 @@ class GroupAPIView(APIView):
 
 # all users
 class UsersView(APIView):
-	permission_classes = [IsStaffOrSuperUser]
+	permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission]
 	parser_classes = [MultiPartParser, FormParser]  # Allow handling of file uploads
 
 	def get(self, request, *args, **kwargs): 
@@ -509,7 +510,7 @@ class UsersView(APIView):
 
 
 class UserobjectView(APIView):
-	permission_classes = [IsStaffOrSuperUser]
+	permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission]
 	parser_classes = [MultiPartParser, FormParser]  # Enable handling of form-data and file uploads
 
 	def get(self, request, *args, **kwargs):

@@ -1,16 +1,33 @@
+'use client'
+
 
 import AuthLinks from "./nav_components/autheLinks";
 import Link from "next/link";
 import ContactUsButton from "./nav_components/contactUs_button";
 
-export const Nav = () => {
+import LanguageSwitcherComponent from "./nav_components/languge_switcher";
 
+
+import { useTranslations, useLocale } from "next-intl";
  
+ 
+
+import { usePathname } from 'next/navigation';
+ 
+ 
+export const Nav =  () => {
+  const t = useTranslations("site.nav"); // this works
+  const locale = useLocale()
+  const mypathname = usePathname(); // Get the current pathname
+ 
+ 
+
+
         return(
             <>
 
   {/* Header-Begin */}
-  <nav className="navbar navbar-expand-lg background-color sticky-top">
+  <nav className="navbar navbar-expand-lg background-color sticky-top"  dir="ltr" >
     <div className="container-fluid">
       <a className="navbar-brand" href="#">
         <img src="/Images/CLOUD TECH sky White horizontal.png" alt="" />
@@ -28,140 +45,73 @@ export const Nav = () => {
       </button>
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
 
-        {/* <button type="button" className="btn btn-primary ps-4 pe-4"
-        onClick={ ()=> {
-          router.push('/#footer_id');
-        }  
-        }
-        >
-          Contact Us
-        </button> */}
-
-
       <ContactUsButton />
 
 
-        <div className="Eng p-2 d-none d-lg-block">
-          <i className="fa-solid fa-globe" />
-          <span>English</span>
-        </div>
+      <LanguageSwitcherComponent />
 
-        <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+
+        <ul className={`navbar-nav   mb-2 mb-lg-0  ms-auto `} >
           <li className="nav-item">
             <Link
               className="nav-link  home p-lg-3 p-4 "
 
               href="/#home"
             >
-              Home
+              {/* Home */}
+              { t('nav_links.home')}
             </Link>
           </li>
-
           <li className="nav-item">
             <Link className="nav-link p-lg-3 p-4 about_us" href="/#about_us" >
-              About us
+              {/* About us */}
+              { t('nav_links.about_us')}
             </Link>
           </li>
           
-          <li className="nav-item ">
-            
-
+          <li className="nav-item ">        
           <Link 
             className="nav-link  p-lg-3 p-4 product "
-          
-          href="/#product"> 
-            Products
+            href="/#product"> 
+            {/* Products */}
+            { t('nav_links.products')}
+
           </Link>
 
           </li>
+
           <li className="nav-item">
             <Link
             className="nav-link  p-lg-3 p-4 services2 "
-
             href="/#services2"
-           
             >
-              Services
+              {/* Services */}
+              { t('nav_links.services')}
+
             </Link>
           </li>
 
+           <li className="nav-item   ">
+            <Link
+            className={`nav-link  p-lg-3 p-4    ${mypathname.includes('/tickets') ? 'active' : ''}`}
+ 
+            href="/tickets"
+            >
 
+                { t('nav_links.tickets')}  
+             
 
-          
-          {/* <li className="nav-item">
-            <Link className="nav-link p-lg-3 p-4" href="/#">
-              Support
-              
             </Link>
           </li>
- */}
-
-
-
-    <li className="  nav-item dropdown">
-    
-    
-      <Link 
-      className="nav-link dropdown-toggle  p-lg-3 p-4" href="/#"
-
-        id="navbarDropdownMenuLink2"
-        role="button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false">
-
-
-          Support
-          
-        </Link>
-
-      <ul
-        className="bg-focus dropdown-menu dropdown-menu-end background-color w-25"
-        aria-labelledby="navbarDropdownMenuLink2"
-      >
-
-        <li>
-
-            <Link className="bg-focus dropdown-item text-light" href="/tickets"> 
-              Tickets
-            </Link>
-
-
-
-        </li>
-        <li>
-          <a className="bg-focus dropdown-item text-light" href="/#">
-              Projects
-            </a>
-        </li>
-
-      </ul>
-    </li>
-
-
-
-
 
 
       <AuthLinks />
 
-
         </ul>
-
-
       </div>
     </div>
-
-
-
   </nav>
-
-
-            
-            
-            </>
-        )
-
-
-}
+      </>
+)}
 
 

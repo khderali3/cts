@@ -1,6 +1,17 @@
+
+
+
+
+
+import { getLocale } from "next-intl/server";
+
+
+
+
 const Page = async ({ params }) => {
 
 
+  const locale = await getLocale()
 
   const { slug } = await params; // No need to use `await` here
 
@@ -59,11 +70,23 @@ const Page = async ({ params }) => {
                     className="image_product_dait "
                   />
                 </div>
-                <div className="text mt-5 mb-5 col-md-10 col-12 text-start">
+                <div className="text mt-5 mb-5 col-md-10 col-12  "  >
                   <h2 className="text-light text-bolder col-12 fs-1  ">
-                    {data?.prod_name} <p>{data?.prod_name_hint}</p>
+                    {/* {data?.prod_name}  */}
+                    {locale === "ar" ? data?.prod_name_ar : data?.prod_name}
+                    <p>
+                      {/* {data?.prod_name_hint} */}
+                      {locale === "ar" ?  data?.prod_name_hint_ar : data?.prod_name_hint }
+
+                    </p>
                   </h2>
-                  <p className="fs-6 text-light" style={{ whiteSpace: 'pre-line' }} >{data?.prod_details}</p>
+                  <p className="fs-6 text-light" style={{ whiteSpace: 'pre-line' }} >
+                  {/* {data?.prod_details} */}
+
+
+                  {locale === "ar" ? data?.prod_details_ar : data?.prod_details}
+
+                  </p>
                 </div>
               </div>
             </div>

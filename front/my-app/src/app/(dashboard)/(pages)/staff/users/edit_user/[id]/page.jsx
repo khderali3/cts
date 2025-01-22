@@ -12,17 +12,24 @@ import DeleteUserButton from "@/app/(dashboard)/_components/jsx/user_account/del
 import { useParams } from 'next/navigation';
 import SetNewUserPassword from "@/app/(dashboard)/_components/jsx/user_account/set_new_password/set_password";
 
-
+ 
+import { useSelector } from "react-redux";
+import { useLocale } from "next-intl";
 
 
 const Page = () =>  {
 
 	const {id} = useParams() 
 
+  const locale = useLocale()
+  const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
 
 
 
-
+  if (!is_superuser && !(permissions?.includes('usersAuthApp.user_managment') && is_staff)) {
+    return;
+  }  
+  
 
 
     return (
@@ -32,26 +39,7 @@ const Page = () =>  {
       <div className="app-content-header  ">
 
 
-        <div className="container-fluid">
-
-
-          <div className="row">
-            <div className="col-sm-6">
-              <h3 className="mb-0">Main Index Page </h3>
-            </div>
-
-            <div className="col-sm-6">
-              <ol className="breadcrumb float-sm-end">
-                <li className="breadcrumb-item">
-                  <a href="#">Docs</a>
-                </li>
-                <li className="breadcrumb-item active" aria-current="page">
-                  Site Managment
-                </li>
-              </ol>
-            </div>
-          </div>
-        </div>
+ 
 
       </div>
 
@@ -62,7 +50,7 @@ const Page = () =>  {
 
 
           <div className="d-flex justify-content-between align-items-center">
-            <h2>User Edit</h2>
+            <h2>  {locale === "ar" ? "تعديل  حساب المستخدم" : "Edit User Account"}  </h2>
             <DeleteUserButton  user_id={id}/>
           </div>
  
@@ -85,18 +73,6 @@ const Page = () =>  {
 
 
           </div>
-
-
-
-
-
-
-
-
-
-
-
-
 
         </div>
     )

@@ -18,15 +18,41 @@ import { useRef } from "react";
 
 import UsersSearchInput from "@/app/(dashboard)/_components/jsx/tickets/input_search_users/page";
 
- 
+  
+import { useTranslations, useLocale } from "next-intl";
+import { ar, enUS } from "date-fns/locale"; // Import necessary locales
+
+
 
 const Page = () => {
 
-  const formatDate = (dateString) => {
-    if (dateString) {
-        return formatDistanceToNow(parseISO(dateString), { addSuffix: true });
-    }
-  };
+  const t = useTranslations('dashboard.ticket')
+  const t_common = useTranslations('common')
+
+
+
+
+ const locales = { ar, en: enUS }; // Map of supported locales
+ const locale = useLocale(); // Get the current locale
+
+ const formatNumber = (number) => {
+  const formatter = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US"); // Arabic for "ar", fallback to English
+  return formatter.format(number);
+};
+
+
+
+
+const formatDate = (dateString) => {
+  const dateFnsLocale = locales[locale] || enUS; // Map to date-fns locale, fallback to English
+
+  if (dateString) {
+    return formatDistanceToNow(parseISO(dateString), {
+      addSuffix: true,
+      locale: dateFnsLocale,
+    });
+  }
+};
 
 
   const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/ticket/my_tickets/`
@@ -234,251 +260,269 @@ useEffect(() => {
 
     return (
 
-        <div> 
-        <div className="app-content-header">
-
-
-          <div className="container-fluid">
-
-
-            <div className="row">
-              <div className="col-sm-6">
-                <h3 className="mb-0">Main Index Page </h3>
-              </div>
-
-              <div className="col-sm-6">
-                <ol className="breadcrumb float-sm-end">
-                  <li className="breadcrumb-item">
-                    <a href="#">Docs</a>
-                  </li>
-                  <li className="breadcrumb-item active" aria-current="page">
-                    Site Managment
-                  </li>
-                </ol>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <div className="app-content">
+      <div> 
+      <div className="app-content-header">
 
 
 
-          <div className="container-fluid  min-vh-150 bg-white p-3 border rounded " >
+
+      </div>
+
+      <div className="app-content">
+
+
+
+        <div className="container-fluid  min-vh-150 bg-white p-3 border rounded " >
 
 
 
 { /*  start  sections   */}
 
 <div className="  mt-1 mb-5 pb-5 ms-2  me-2 ">
- 
- 
+
+
 <div className="row">
 <div className="col-12 col-md-6  ">
-  <h1 className="mb-2">Tickets</h1>
+<h1 className="mb-2">
+  {/* Tickets */}
+  {t('all_tickets.my_requests_title')}
+</h1>
 </div>
 <div className="col-12 col-md-6 d-flex justify-content-md-end">
-  <button type="button" onClick={handleAddRequest} className="btn btn-outline-secondary">Add a new Request</button>
+<button type="button" onClick={handleAddRequest} className="btn btn-outline-secondary">
+  {/* Add a new Request */}
+  {t('all_tickets.add_new_request_button')}
+</button>
 </div>
 </div>
 
 
-  <hr />
-  <div className=" ">
-    <div className="  mb-3">
-      <div
-        className="container-fluid"
-         
-      >
-        <form className="pb-2">
-          <div className="row ">
+<hr />
+<div className=" ">
+  <div className="  mb-3">
+    <div
+      className="container-fluid"
+       
+    >
+      <form className="pb-2">
+        <div className="row ">
 
 
 
 
 
 
-            <div className="col-md-5 col-12 pt-2">
-              <label htmlFor="search_words"> Search in Subject / Ticket Body </label>
-              <input
-                type="text"
-                className="form-control  "
-                id="search_words"
-                placeholder="search here"
-                aria-describedby="search"
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-            </div>
+          <div className="col-md-5 col-12 pt-2">
+            <label htmlFor="search_words"> 
+              {/* Search in Subject / Ticket Body  */}
+              {t('all_tickets.search_aria.label_search_words')}
+            </label>
+            <input
+              type="text"
+              className="form-control  "
+              id="search_words"
+              placeholder={t('all_tickets.search_aria.placeholder_search_words')}  
+              aria-describedby="search"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
 
-            <div className="col-md-5 col-12 pt-2">
-            <label htmlFor="search_words"> Search Per Ticket Status </label>
+          <div className="col-md-5 col-12 pt-2">
+          <label htmlFor="search_words">  
+            {/* Search Per Ticket Status  */}
+            {t('all_tickets.search_aria.label_search_ticket_status')}
+            </label>
 
-              <select
-                className="form-select  "
-                aria-label="Default select example"
-                value={status}
-                onChange={handleStatusChange}
+            <select
+              className="form-select  "
+              aria-label="Default select example"
+              value={status}
+              onChange={handleStatusChange}
 
-              >
-                <option value={'all'}>all status</option>
-                <option value={'open'}>Open</option>
-                <option value={'wait_customer_reply'}>wait_customer_reply</option>
-                <option value={'replied_by_staff'}>replied_by_staff</option>
-                <option value={'replied_by_customer'}>replied_by_customer</option>
-                <option value={'solved'}>solved</option>
-              </select>
-            </div>
+            >
+              <option value={'all'}>
+                {/* all status */}
+                {t_common('ticket_status.all')}
+              </option>
+              <option value={'open'}>{t_common('ticket_status.open')}</option>
+              <option value={'wait_customer_reply'}>{t_common('ticket_status.wait_customer_reply')}</option>
+              <option value={'replied_by_staff'}>{t_common('ticket_status.replied_by_staff')}</option>
+              <option value={'replied_by_customer'}>{t_common('ticket_status.replied_by_customer')}</option>
+              <option value={'solved'}>{t_common('ticket_status.solved')}</option>
+            </select>
+          </div>
 
 
-            <div className="col-md-5 col-12 pt-2">
+          <div className="col-md-5 col-12 pt-2">
 
-              <UsersSearchInput handleUserIdChange={handleUserIdChange} userId={userId}/>
-
-            </div>
+            <UsersSearchInput 
+                handleUserIdChange={handleUserIdChange}
+                  userId={userId}
+                  ph={t('all_tickets.search_aria.label_search_per_uer_ph')}
+                  lable={t('all_tickets.search_aria.label_search_per_uer')}
+             />
 
           </div>
 
-          <h4 className="text-muted mt-2">{searchQuery && `results for : ${searchQuery}` }</h4>
-
-
-        </form>
-      </div>
-    </div>
-  </div>
-
-
-  <table className="table table-striped d-none d-md-table ">
-    <thead>
-      <tr>
-        <th scope="col">Subject</th>
-        <th scope="col">ID</th>
-        <th scope="col">Created</th>
-        <th scope="col">Latest activity</th>
-        <th scope="col">Status</th>
-        <th scope="col"> Assigned </th>
-      </tr>
-    </thead>
-    <tbody>
-      {data?.map((ticket) => (
-        <tr key={`table_${ticket.id}`}>
-          <td>
-            {/* <Link href="/ticket/">{ticket.ticket_subject}</Link> */}
-            <Link href={`/staff/ticket/ticketDetails/${ticket.ticket_slog}`}  >
-              {ticket.ticket_subject.length > 25 
-              ? `${ticket.ticket_subject.slice(0, 25)}...` 
-              : ticket.ticket_subject
-              }
-           </Link>
-
-
-          </td>
-          <td>#{ticket.id}</td>
-          <td>{formatDate(ticket.ticket_created_date)}</td>
-          <td>{formatDate(ticket.latest_activity)}</td>
-          <td>
-            <span className={`badge ${getTicketStatusColor(ticket.ticket_status)}`}>
-              {ticket.ticket_status}
-            </span>
-          </td>
-          <td>
-            {!ticket?.ticket_assigned_to ? 
-              <Link href="/#"
-              
-              data-bs-toggle="modal"
-              data-bs-target="#assign_ticket_to_staff"
-              onClick={ ()=> { setAssiningTicketId( ticket.id  )}   }             
-              >Assign </Link>
-              :
-              ticket?.ticket_assigned_to?.fullname
-            }
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-
-  {/* Loading Indicator */}
-  {loading && (
-    <div className="text-center mt-4">
-      <p>Loading data...</p>
-    </div>
-  )}
-
-
-
-  {/* Card View for smaller screens */}
-    <div className="d-block d-md-none">
-    {data.map((ticket) => (
-      <div className="card mb-3" key={`card_${ticket.id}`}>
-        <div className="card-body">
-          <p>
-            <strong>Subject:</strong> 
-            
-            {/* {ticket.ticket_subject} */}
-            <Link className="ms-2" href={`/staff/ticket/ticketDetails/${ticket.ticket_slog}`}  >
-              {ticket.ticket_subject.length > 25 
-              ? `${ticket.ticket_subject.slice(0, 25)}...` 
-              : ticket.ticket_subject
-              }
-           </Link>
-
-          </p>
-          <p>
-            <strong>ID:</strong> #{ticket.id}
-          </p>
-          <p>
-            <strong>Created:</strong> {formatDate(ticket.ticket_created_date)}
-          </p>
-          <p>
-            <strong>Latest activity:</strong>{" "}
-            {formatDate(ticket.latest_activity)}
-          </p>
-          <p>
-            <strong>Status:</strong>{" "}
-            <span className={`badge ${getTicketStatusColor(ticket.ticket_status)}`}>
-              {ticket.ticket_status}
-            </span>
-          </p>
-          <p>
-          <strong>Assigned: </strong>
-          {!ticket?.ticket_assigned_to ? 
-                <Link href="/#"
-                
-                data-bs-toggle="modal"
-                data-bs-target="#assign_ticket_to_staff"
-                onClick={ ()=> { setAssiningTicketId( ticket.id  )}   }             
-                >Assign </Link>
-                :
-                ticket?.ticket_assigned_to?.fullname
-              }
-           </p>
         </div>
-      </div>
-    ))}
-  </div>
 
-   
+        <h4 className="text-muted mt-2">{searchQuery && `${t('all_tickets.search_aria.results_label')} : ${searchQuery}` }</h4>
+
+
+      </form>
+    </div>
+  </div>
 </div>
+
+
+<table className="table table-striped d-none d-md-table ">
+  <thead>
+    <tr>
+      <th scope="col">{t('all_tickets.table_list_items.subject')}</th>
+      <th scope="col">{t('all_tickets.table_list_items.id')}</th>
+      <th scope="col">{t('all_tickets.table_list_items.created')}</th>
+      <th scope="col">{t('all_tickets.table_list_items.latest_activity')}</th>
+      <th scope="col">{t('all_tickets.table_list_items.status')}</th>
+      <th scope="col"> {t('all_tickets.table_list_items.Assigned')} </th> 
+    </tr>
+  </thead>
+  <tbody>
+    {data?.map((ticket) => (
+      <tr key={`table_${ticket.id}`}>
+        <td>
+          <Link href={`/staff/ticket/ticketDetails/${ticket.ticket_slog}`}  >
+            {ticket.ticket_subject.length > 25 
+            ? `${ticket.ticket_subject.slice(0, 25)}...` 
+            : ticket.ticket_subject
+            }        
+          
+          </Link>
+
+
+        </td>
+        <td>#{formatNumber(ticket.id)}</td>
+        <td>{formatDate(ticket.ticket_created_date)}</td>
+        <td>{formatDate(ticket.latest_activity)}</td>
+        <td>
+          <span className={`badge ${getTicketStatusColor(ticket.ticket_status)}`}>
+            {/* {ticket.ticket_status} */}
+            {ticket.ticket_status && t_common(`ticket_status.${ticket.ticket_status}`)}
+          </span>
+        </td>
+        <td>
+          
+          {!ticket?.ticket_assigned_to ? 
+            <Link href="/#"
+            
+            data-bs-toggle="modal"
+            data-bs-target="#assign_ticket_to_staff"
+            onClick={ ()=> { setAssiningTicketId( ticket.id  )}   }             
+            >{t('all_tickets.table_list_items.Assign')} </Link>
+            :
+            ticket?.ticket_assigned_to?.fullname
+          }
+
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+{/* Loading Indicator */}
+{loading && (
+  <div className="text-center mt-4">
+    <p>
+      {locale === "ar" ? "جاري تحميل المحتوى..." : " Loading data..." }
+     
+    
+    </p>
+  </div>
+)}
+
+
+
+{/* Card View for smaller screens */}
+  <div className="d-block d-md-none">
+  {data.map((ticket) => (
+    <div className="card mb-3" key={`card_${ticket.id}`}>
+      <div className="card-body">
+        <p>
+          <strong>{t('all_tickets.table_list_items.subject')} : </strong>
+           {/* {ticket.ticket_subject} */}
+
+           <Link className="ms-2" href={`/staff/ticket/ticketDetails/${ticket.ticket_slog}`}  >
+            {ticket.ticket_subject.length > 25 
+            ? `${ticket.ticket_subject.slice(0, 25)}...` 
+            : ticket.ticket_subject
+            }        
+          
+          </Link>
+
+        </p>
+        <p>
+          <strong>{t('all_tickets.table_list_items.id')} : </strong> #{formatNumber(ticket.id)}
+        </p>
+        <p>
+          <strong>{t('all_tickets.table_list_items.created')} : </strong> {formatDate(ticket.ticket_created_date)}
+        </p>
+        <p>
+          <strong>{t('all_tickets.table_list_items.latest_activity')} : </strong>{" "}
+          {formatDate(ticket.latest_activity)}
+        </p>
+        <p>
+          <strong>{t('all_tickets.table_list_items.status')} : </strong>{" "}
+          <span className={`badge ${getTicketStatusColor(ticket.ticket_status)}`}>
+            {/* {ticket.ticket_status} */}
+            {ticket.ticket_status && t_common(`ticket_status.${ticket.ticket_status}`)}
+          </span>
+        </p>
+        <p>
+          {/* <strong>Assigned: </strong> re-open */}
+
+
+          <strong>{t('all_tickets.table_list_items.Assigned')} : </strong>
+          {!ticket?.ticket_assigned_to ? 
+            <Link href="/#"
+            
+            data-bs-toggle="modal"
+            data-bs-target="#assign_ticket_to_staff"
+            onClick={ ()=> { setAssiningTicketId( ticket.id  )}   }             
+            >Assign </Link>
+            :
+              ticket?.ticket_assigned_to?.fullname 
+          }
+
+
+
+        </p>
+      </div>
+    </div>
+  ))}
+</div>
+
  
+</div>
+
 
 <AssignTicketModal setReloadComponent={reloadComponentMethod} 
-                  assigningTicketId={assigningTicketId} 
-                  setAssiningTicketId={setAssiningTicketId}   
-                  />
+                assigningTicketId={assigningTicketId} 
+                setAssiningTicketId={setAssiningTicketId}   
+                />
 
 
 { /*  end  sections   */}
 
-          </div>
-          
-
         </div>
+        
+
       </div>
+    </div>
 
 
-    )
+  )
+
+
 }
 
 export default Page

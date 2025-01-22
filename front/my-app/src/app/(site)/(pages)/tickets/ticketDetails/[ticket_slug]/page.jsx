@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams } from 'next/navigation'
 import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/siteApiSlice";
-import { formatDistanceToNow, parseISO, format } from "date-fns";
+import { parseISO, format } from "date-fns";
 import getTicketStatusColor from "@/app/(site)/_components/jsx/tickets/ticket_status_colors";
 import AddNewReplayForm from "@/app/(site)/_components/jsx/tickets/ticketReply/addReplay";
 import Link from "next/link";
@@ -11,23 +11,37 @@ import Link from "next/link";
 import CloseTicketButton from "@/app/(site)/_components/jsx/tickets/close_ticket/closeTicket";
 import ReOpenTicketButton from "@/app/(site)/_components/jsx/tickets/reopen_ticket/reOpenTicket";
 
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl"; // Get the current locale from next-intl
+import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 
 
 const Page = () => {
+    const t = useTranslations('site.ticket')
+    const t_common = useTranslations('common')
+
+    const locale = useLocale(); // Get the current locale
+
+
+
+    const currentLocale = locale === "ar" ? ar : enUS;
+
 
 
     const formatDate = (dateString) => {
+   
         if (dateString) {
-            return format(parseISO(dateString), 'dd/MM/yyyy hh:mm:ss a');
+            return format(parseISO(dateString), 'dd MMM yyyy - h:mm a', { locale: currentLocale });
         }
-      };
+    };
+ 
 
-    const formatDateAgo = (dateString) => {
-        if (dateString) {
-            return formatDistanceToNow(parseISO(dateString), { addSuffix: true });
-        }
+ 
+   
+      const formatNumber = (number) => {
+        const formatter = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US"); // Arabic for "ar", fallback to English
+        return formatter.format(number);
       };
-
 
 
 
@@ -98,35 +112,48 @@ useEffect(() => {
  
 <div> 
         <div className="container mt-2">
-            <h6> <Link href='/tickets'> Tickets </Link>   - Tecket Details </h6>
+            <h6> 
+                <Link href='/tickets'> 
+                    {/* Tickets  */}
+                    {t('mini_nav.tickets')}
+
+                </Link>
+                   {/* - Tecket Details  */}
+                   - {t('mini_nav.ticket_details')}
+            </h6>
             <hr />
         </div>
 
  
 
-    <div className="container ">
+    <div className="container "  >
 
-    <div className=" col-11  border-bottom border-2 text-start my-2  ">
-        <h3 className="text-break mx-2">{ticketDetails?.ticket_subject} </h3>
+    <div className=" col-11  border-bottom border-2   my-2   "    >
+        <h3 className="text-break mx-2   " dir="auto" >{ticketDetails?.ticket_subject} </h3>
     </div>
 
 
     <div className="row d-flex justify-content-between">
 
 
-        <div className="col-lg-4 col-md-10 d-lg-none d-block ms-auto me-auto  ">
+        <div className="col-lg-4 col-md-10 d-lg-none d-block   ">
         <div className="dropdown ">
             <div className="container mt-2">
 
             <button
-                className="d-block d-lg-none border-0 me-auto border-bottom collapse btn  "
+                className="d-block d-lg-none border-0   border-bottom collapse btn  "
+                dir="auto"
                 id="toggleButton"
                 data-bs-toggle="collapse"
                 data-bs-target="#collapseExample"
                 aria-expanded="false"
                 aria-controls="collapseExample"
             >
-                 Ticket Details <i className="fa-solid fa-caret-down fs-3" />
+                 {/* Ticket Details  */}
+                 <i className="fa-solid fa-caret-down fs-3 ms-2 me-2" />
+
+                 {t('ticket_details_msgs.ticket_details_btn')}  
+                 {/* {t('mini_nav.ticket_details')} */}
             </button>
 
 
@@ -137,239 +164,117 @@ useEffect(() => {
 
 
             <hr className="d-block" />
+
+            {/* // ticket details on small screen  */}
             <div
                 id="collapseExample"
-                className="card collapse  toggle-content mt-3 d-md-block"
+                className="card collapse  toggle-content mt-3  "
             >
-                {/* <div className="card-body">
+ 
+                <div className="card-body   "     >
 
-                <div className="d-flex justify-content-between position-relative p-1">
-                    <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">Requester</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                    <p className="p-0 m-0 text-dark">{ticketDetails?.ticket_created_by?.fullname}</p>
-                    </a>
-                </div>
-                
-                <div className="d-flex justify-content-between position-relative p-1">
-                    <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">Created</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                    <p className="p-0 m-0 text-dark fs-6">{formatDate( ticketDetails?.ticket_created_date)} </p>
-                    </a>
-                </div>
+                    <div className="p-1 row col-12 ">
+                        <div className="col-6  text-muted">
+                            {t_common('ticket_card.requester')} 
+                        </div>
+                        <div className="col-6">
+                            {ticketDetails?.ticket_created_by?.fullname}
+                        </div>
+                    </div>
 
-                <div className="d-flex justify-content-between position-relative p-1">
-                    <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">Latest Activity</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                    <p className="p-0 m-0 text-dark">{formatDate( ticketDetails?.ticket_latest_activity)}</p>
-                    </a>
-                </div>
-                <hr />
-                <div className="d-flex justify-content-between position-relative p-1">
-                    <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">Assigned to</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                        <p className="p-0 m-0 text-dark">
-                            {ticketDetails?.ticket_assigned_to ? ticketDetails?.ticket_assigned_to?.fullname : 'Pinding..'}
+
+                    <div className="p-1 row col-12">
+                        <div className="col-6  text-muted">
+                            {t_common('ticket_card.created')} 
+                        </div>
+                        <div className="col-6">
+                            {formatDate( ticketDetails?.ticket_created_date)}
+                        </div> 
+                    </div>
+
+                    <div className="p-1 row col-12 ">
+                        <div className="col-6  text-muted">
+                            {t_common('ticket_card.latest_activity')} 
+                        </div>
+                        <div className="col-6">
+                            {formatDate( ticketDetails?.ticket_latest_activity)}
+                        </div>
+                    </div>
+                    <hr />
+                    <div className="p-1 row col-12 ">
+                        <div className="col-6  text-muted">
+                            {t_common('ticket_card.assigned_to')} 
+                        </div>
+                        <div className="col-6">
+                            {ticketDetails?.ticket_assigned_to ? ticketDetails?.ticket_assigned_to?.fullname : t_common('ticket_card.pending')}
+                        </div>
+                    </div>
+
+
+                    <div className="p-1 row col-12">
+
+                        <div className="col-6  text-muted">
+                            {t_common('ticket_card.id')}
+                        </div>
+                        <div className="col-6">
+                            #{ formatNumber(ticketDetails?.id) }
+                        </div>
+                    </div>
+
+                    <div className="p-1 row col-12">
+                        <div className="col-6  text-muted">
+                            {t_common('ticket_card.status')}
+                        </div>
+                        <div className="col-6">
+                            <p className={`p-0 m-0 text-light badge  p-1  ${getTicketStatusColor(ticketDetails?.ticket_status)}`}  >
+                                { ticketDetails?.ticket_status && t_common(`ticket_status.${ticketDetails.ticket_status}`) }
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <hr />
+                    <div className="p-1 row col-12">
+                        <div className="col-6  text-muted">
+                            {t_common('ticket_card.department')}
+                        </div>
+                        <div className="col-6">
                             
-                        </p>
-                    </a>
-                </div>
-                <div className="d-flex justify-content-between position-relative p-1">
-                    <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">ID</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                    <p className="p-0 m-0 text-dark">#{ticketDetails?.id}</p>
-                    </a>
-                </div>
-                <div className="d-flex justify-content-between position-relative p-1">
-                    <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">Status</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                    <p className={`p-0 m-0 text-light badge  p-1 ${getTicketStatusColor(ticketDetails?.ticket_status)}`}
+                            { locale === "ar" ?  ticketDetails?.ticket_department?.department_name_ar
+                                    :   ticketDetails?.ticket_department?.department_name}
+                        </div>
+                    </div>
+
+
+
+                    <div className="p-1 row col-12">
+                        <div className="col-6  text-muted">
+                            {t_common('ticket_card.priority_support')}
+                        </div>
+                        <div className="col-6">
+                            
+                            {ticketDetails?.ticket_pr_support ? t_common('yes') : t_common('no')}
+                        </div>
+        
+                    </div>
+
                     
-                    >
-                        {ticketDetails?.ticket_status}
-                    </p>
-                    </a>
-                </div>
-                <hr />
-                <div className="d-flex justify-content-between text-center position-relative p-1">
-                    <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">Department</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                    <p className="p-0 m-0 text-dark">{ticketDetails?.ticket_department}</p>
-                    </a>
-                </div>
-                <div className="d-flex justify-content-between position-relative p-1">
-                    <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">
-                        Priority Support
-                        
-                    </p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                    <p className="text-dark">{ticketDetails?.ticket_pr_support ? 'Yes': 'No'}</p>
-                    </a>
-                </div>
-                </div>
-                */}
- 
-                <div className="card-body">
+                    <hr />
+                    <div className="d-flex justify-content-between position-relative p-1">
 
-                <div className="d-flex justify-content-between position-relative p-1 ">
-                    <a href="#" className="text-decoration-none det">
-                        <p className="p-0 m-0 text-muted">Requester</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                        <p className="p-0 m-0 text-dark">{ticketDetails?.ticket_created_by?.fullname}</p>
-                    </a>
-                </div>
+                        { ticketDetails?.ticket_closed_by ?     
 
-                <div className="d-flex justify-content-between position-relative   p-1 pb-2 mb-2">
-                    <a href="#" className="text-decoration-none det">
-                        <p className="p-0 m-0 text-muted">Created</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                        <p className="p-0 m-0 text-dark fs-6">{formatDate( ticketDetails?.ticket_created_date)}</p>
-                    </a>
-                </div>
+                            <ReOpenTicketButton ticket_id={ticketDetails?.id} reloadComponentMethod={reloadComponentMethod}  customflag={'10'} />
+    
+                                : 
 
-                <div className="d-flex justify-content-between position-relative   p-1 p-1 pb-2 mb-2 ">
-                    <a href="#" className="text-decoration-none det">
-                        <p className="p-0 m-0 text-muted">Latest Activity</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                        <p className="p-0 m-0 text-dark">{formatDate( ticketDetails?.ticket_latest_activity)}</p>
-                    </a>
-                </div>
-                <hr />
+                            <CloseTicketButton ticket_id={ticketDetails?.id} reloadComponentMethod={reloadComponentMethod} customflag={'10'}/>  
 
-                <div className="d-flex justify-content-between position-relative p-1">
-                    <a href="#" className="text-decoration-none det">
-                        <p className="p-0 m-0 text-muted">Assigned to</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                        <p className="p-0 m-0 text-dark">
-                            {ticketDetails?.ticket_assigned_to ? ticketDetails?.ticket_assigned_to?.fullname : 'Pinding..'}
-                        </p>
-                    </a>
-                </div>
+                        } 
 
-                <div className="d-flex justify-content-between position-relative p-1">
-                    <a href="#" className="text-decoration-none det">
-                        <p className="p-0 m-0 text-muted">ID</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                        <p className="p-0 m-0 text-dark">#{ticketDetails?.id}</p>
-                    </a>
-                </div>
-                <div className="d-flex justify-content-between position-relative p-1">
-                    <a href="#" className="text-decoration-none det">
-                        <p className="p-0 m-0 text-muted">Status</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                        <p className={`p-0 m-0 text-light badge  p-1  ${getTicketStatusColor(ticketDetails?.ticket_status)}`}  >
-                            {ticketDetails?.ticket_status}
-                        </p>
-                
-                    </a>
-                </div>
-                <hr />
+    
 
-                <div className="d-flex justify-content-between text-center position-relative p-1">
-                    <a href="#" className="text-decoration-none det">
-                        <p className="p-0 m-0 text-muted">Department</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                        <p className="p-0 m-0 text-dark">{ticketDetails?.ticket_department}</p>
-                    </a>
-                </div>
-
-                <div className="d-flex justify-content-between position-relative p-1">
-                    <a href="#" className="text-decoration-none det">
-                        <p className="p-0 m-0 text-muted">Priority Support</p>
-                    </a>
-                    <a
-                    href="#"
-                    className="text-decoration-none det position-absolute start-50"
-                    >
-                        <p className="text-dark">{ticketDetails?.ticket_pr_support ? 'Yes': 'No'}</p>
-                    </a>
-                </div>
-
-
-
-                <hr />
-                <div className="d-flex justify-content-between position-relative p-1">
-
-                    { ticketDetails?.ticket_closed_by ?     
-
-                        <ReOpenTicketButton ticket_id={ticketDetails?.id} reloadComponentMethod={reloadComponentMethod}  customflag={'10'} />
- 
-                            : 
-
-                        <CloseTicketButton ticket_id={ticketDetails?.id} reloadComponentMethod={reloadComponentMethod} customflag={'10'}/>  
-
-                    } 
-
- 
-
-                </div>
+                    </div>
                 
                 </div> 
 
@@ -401,7 +306,7 @@ useEffect(() => {
                 <div className="d-flex flex-column justify-content-center ">
                     <h6 className="m-0 fs-6 text-muted">{ticketDetails?.ticket_user?.fullname}
 
-                    {ticketDetails?.ticket_user?.is_staff &&  <span className="badge bg-light text-dark ms-2">Staff</span> }
+                    {ticketDetails?.ticket_user?.is_staff &&  <span className="badge bg-light text-dark ms-2"> {t_common('staff')} </span> }
 
                     </h6>
                     <p className="m-0 text-muted"> {formatDate( ticketDetails?.ticket_created_date)  }</p> 
@@ -414,7 +319,7 @@ useEffect(() => {
 
 
 
-            <div className="ticket-details-text">
+            <div className="ticket-details-text" dir="auto" >
              {ticketDetails?.ticket_body}
 
                 <div className=" pt-3 mt-3 ">
@@ -453,7 +358,7 @@ useEffect(() => {
                     />
                     <div className="d-flex flex-column justify-content-center">
                         <h4 className="m-0 fs-6 text-muted">{replied?.ticket_replay_from?.fullname}  
-                            {replied?.ticket_replay_from?.is_staff &&  <span className="badge bg-light text-dark ms-2">Staff</span> }
+                            {replied?.ticket_replay_from?.is_staff &&  <span className="badge bg-light text-dark ms-2">{t_common('staff')}</span> }
                             
                         
                         </h4>
@@ -465,7 +370,8 @@ useEffect(() => {
                 </div>
 
 
-                <div className="ticket-details-text" style={{ whiteSpace: 'pre-line' }}>
+                <div dir="auto" className="ticket-details-text" style={{ whiteSpace: 'pre-line' }}>
+
                     {replied?.ticket_replay_body}
 
 
@@ -513,9 +419,14 @@ useEffect(() => {
                 <AddNewReplayForm  ticket_id={ticketDetails?.id} handleReplayAdded={reloadComponentMethod}/>
                 :
                 <div className="mt-5 text-center"> 
-                    <p className="text-info"> you can't reply to this ticket because it is closed. </p>
+                    <p className="text-info"> 
+                        {locale === "ar"   
+                            ? "لا تستطيع الرد على هذه التذكرة لأنها مغلفة" 
+                            : "you can't reply to this ticket because it is closed." 
+                        }
+                    </p>
                 </div>
-            }
+            } 
 
 
 
@@ -529,129 +440,155 @@ useEffect(() => {
 
 
 
-        <div className="col-md-4  d-lg-block d-none">
+        <div className="col-md-4  d-md-block d-none">
+ 
         <div className="card">
-            <div className="card-body">
+ 
 
-            <div className="d-flex justify-content-between position-relative p-1 ">
-                <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">Requester</p>
-                </a>
-                <a
-                href="#"
-                className="text-decoration-none det position-absolute start-50"
-                >
-                    <p className="p-0 m-0 text-dark">{ticketDetails?.ticket_created_by?.fullname}</p>
-                </a>
+
+
+
+
+{/* new  */}
+
+
+
+            <div className="card-body  "     >
+
+ 
+
+
+
+            <div className="p-1 row col-12 ">
+                <div className="col-6  text-muted">
+                    {t_common('ticket_card.requester')} 
+                </div>
+                <div className="col-6">
+                    {ticketDetails?.ticket_created_by?.fullname}
+                </div>
             </div>
 
-            <div className="d-flex justify-content-between position-relative   p-1 pb-2 mb-2">
-                <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">Created</p>
-                </a>
-                <a
-                href="#"
-                className="text-decoration-none det position-absolute start-50"
-                >
-                    <p className="p-0 m-0 text-dark fs-6">{formatDate( ticketDetails?.ticket_created_date)}</p>
-                </a>
+
+
+            <div className="p-1 row col-12">
+                <div className="col-6  text-muted">
+                    {t_common('ticket_card.created')} 
+                </div>
+                <div className="col-6">
+                    {formatDate( ticketDetails?.ticket_created_date)}
+                </div> 
             </div>
 
-            <div className="d-flex justify-content-between position-relative   p-1 p-1 pb-2 mb-2 ">
-                <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">Latest Activity</p>
-                </a>
-                <a
-                href="#"
-                className="text-decoration-none det position-absolute start-50"
-                >
-                    <p className="p-0 m-0 text-dark">{formatDate( ticketDetails?.ticket_latest_activity)}</p>
-                </a>
+            <div className="p-1 row col-12 ">
+                <div className="col-6  text-muted">
+                    {t_common('ticket_card.latest_activity')} 
+                </div>
+                <div className="col-6">
+                    {formatDate( ticketDetails?.ticket_latest_activity)}
+                </div>
             </div>
             <hr />
 
-            <div className="d-flex justify-content-between position-relative p-1">
-                <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">Assigned to</p>
-                </a>
-                <a
-                href="#"
-                className="text-decoration-none det position-absolute start-50"
-                >
-                    <p className="p-0 m-0 text-dark">
-                        {ticketDetails?.ticket_assigned_to ? ticketDetails?.ticket_assigned_to?.fullname : 'Pinding..'}
-                    </p>
-                </a>
+            <div className="p-1 row col-12 ">
+                <div className="col-6  text-muted">
+                    {t_common('ticket_card.assigned_to')} 
+                </div>
+                <div className="col-6">
+                    {ticketDetails?.ticket_assigned_to ? ticketDetails?.ticket_assigned_to?.fullname : t_common('ticket_card.pending')}
+                </div>
             </div>
 
-            <div className="d-flex justify-content-between position-relative p-1">
-                <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">ID</p>
-                </a>
-                <a
-                href="#"
-                className="text-decoration-none det position-absolute start-50"
-                >
-                    <p className="p-0 m-0 text-dark">#{ticketDetails?.id}</p>
-                </a>
+
+
+            <div className="p-1 row col-12">
+
+                <div className="col-6  text-muted">
+                    {t_common('ticket_card.id')}
+                </div>
+                <div className="col-6">
+                    #{ formatNumber(ticketDetails?.id) }
+                </div>
             </div>
-            <div className="d-flex justify-content-between position-relative p-1">
-                <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">Status</p>
-                </a>
-                <a
-                href="#"
-                className="text-decoration-none det position-absolute start-50"
-                >
+
+            <div className="p-1 row col-12">
+                <div className="col-6  text-muted">
+                    {t_common('ticket_card.status')}
+                </div>
+                <div className="col-6">
+
                     <p className={`p-0 m-0 text-light badge  p-1  ${getTicketStatusColor(ticketDetails?.ticket_status)}`}  >
-                        {ticketDetails?.ticket_status}
+                         { ticketDetails?.ticket_status && t_common(`ticket_status.${ticketDetails.ticket_status}`) }
                     </p>
-               
-                </a>
+                    
+                </div>
+
+ 
             </div>
             <hr />
 
-            <div className="d-flex justify-content-between text-center position-relative p-1">
-                <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">Department</p>
-                </a>
-                <a
-                href="#"
-                className="text-decoration-none det position-absolute start-50"
-                >
-                    <p className="p-0 m-0 text-dark">{ticketDetails?.ticket_department}</p>
-                </a>
-            </div>
-
-            <div className="d-flex justify-content-between position-relative p-1">
-                <a href="#" className="text-decoration-none det">
-                    <p className="p-0 m-0 text-muted">Priority Support</p>
-                </a>
-                <a
-                href="#"
-                className="text-decoration-none det position-absolute start-50"
-                >
-                    <p className="text-dark">{ticketDetails?.ticket_pr_support ? 'Yes': 'No'}</p>
-                </a>
+            <div className="p-1 row col-12">
+                <div className="col-6  text-muted">
+                    {t_common('ticket_card.department')}
+                </div>
+                <div className="col-6">
+                    
+                    { locale === "ar" ?  ticketDetails?.ticket_department?.department_name_ar
+                            :   ticketDetails?.ticket_department?.department_name}
+                </div>
+ 
             </div>
 
 
+
+
+            <div className="p-1 row col-12">
+                <div className="col-6  text-muted">
+                    {t_common('ticket_card.priority_support')}
+                </div>
+                <div className="col-6">
+                    
+                    {ticketDetails?.ticket_pr_support ? t_common('yes') : t_common('no')}
+                </div>
+ 
+            </div>
 
             <hr />
             <div className="d-flex justify-content-between position-relative p-1">
+
 
                 { ticketDetails?.ticket_closed_by ?     
 
-                    <ReOpenTicketButton ticket_id={ticketDetails?.id} reloadComponentMethod={reloadComponentMethod}/>
+                    <ReOpenTicketButton ticket_id={ticketDetails?.id} reloadComponentMethod={reloadComponentMethod}  customflag={'11'} />
+
                         : 
 
-                    <CloseTicketButton ticket_id={ticketDetails?.id} reloadComponentMethod={reloadComponentMethod} />  
+                    <CloseTicketButton ticket_id={ticketDetails?.id} reloadComponentMethod={reloadComponentMethod} customflag={'11'}/>  
 
                 } 
-  
+
+
+            
+
+
             </div>
-             
-            </div>
+
+            </div> 
+
+
+
+
+
+
+
+
+
+{/* end new */}
+
+
+
+
+
+            
         </div>
         </div>
     </div>

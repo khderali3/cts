@@ -17,7 +17,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.db.models import BooleanField, Case, Value, When
 
-from .my_utils import IsStaffOrSuperUser
+from .my_utils import IsStaffOrSuperUser, HasUserManagementPermission
 
 
 
@@ -119,7 +119,7 @@ class ReopenTicketStaffView(APIView):
 
 class DepartmentsStaffView(APIView):
 
-	permission_classes = [IsStaffOrSuperUser]
+	permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission]
 
 	def get(self, request, *args, **kwargs):
 		department_id = kwargs.get('id')
@@ -226,25 +226,23 @@ class TicketStaffView(APIView):
 
 	def post(self, request, *args, **kwargs):
 		serializer = CreateTicketStaffSerializer(data=request.data, context={'request': request})
-
 		if serializer.is_valid():
 			ticket = serializer.save()  # This will also save ticket files
-
- 
-
-
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 	def put(self, request, *args, **kwargs):
+			
+			if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.ticket_change'):
+				return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
+
 			ticket_id = kwargs.get('id')
 			try:
 				ticket_object = Ticket.objects.get(id=ticket_id)
 			except Ticket.DoesNotExist:
 				return Response({"detail": "Ticket not found."}, status=status.HTTP_404_NOT_FOUND)
-			
 			serializer = ChangeTicketStaffSerializer(ticket_object, data=request.data, partial=True, context={'request': request})
 			if serializer.is_valid():
 				serializer.save()
@@ -254,6 +252,10 @@ class TicketStaffView(APIView):
 
 	def delete(self, request, *args, **kwargs):
 			ticket_id = kwargs.get('id')
+
+			if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.ticket_delete'):
+				return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
+			
 			try:
 				ticket_object = Ticket.objects.get(id=ticket_id)
 			except Ticket.DoesNotExist:
@@ -281,8 +283,11 @@ class TicketStaffView(APIView):
 				if request.resolver_match.view_name == 'get_my_ticket_list':
 					tickets = Ticket.objects.filter(ticket_assigned_to=request.user)
 				else:
-					tickets = Ticket.objects.all()
-
+					# tickets = Ticket.objects.all()
+					if request.user.is_superuser:
+						tickets = Ticket.objects.all()
+					else:
+						tickets = Ticket.objects.filter(ticket_department__users=request.user)
 
 
 
@@ -339,17 +344,17 @@ class TicketFileStaffView(APIView):
 		serializer = TicketFileStaffSerializer(ticket_files, many=True, context={'request': request})
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
-	def post(self, request, ticket_id, *args, **kwargs):
+	# def post(self, request, ticket_id, *args, **kwargs):
 
-		serializer = TicketFileStaffSerializer(data=request.data, context={'request': request, 'ticket_id': ticket_id})
+	# 	serializer = TicketFileStaffSerializer(data=request.data, context={'request': request, 'ticket_id': ticket_id})
 
-		if serializer.is_valid():
-			created_files = serializer.save()  # Returns the created file instances
-			response_data = TicketFileStaffSerializer(created_files, many=True, context={'request': request}).data
-			return Response(response_data, status=status.HTTP_201_CREATED)
+	# 	if serializer.is_valid():
+	# 		created_files = serializer.save()  # Returns the created file instances
+	# 		response_data = TicketFileStaffSerializer(created_files, many=True, context={'request': request}).data
+	# 		return Response(response_data, status=status.HTTP_201_CREATED)
 
 
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	# 	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -361,6 +366,10 @@ class TicketFileStaffView(APIView):
 		"""
 		Delete a file by its file_id
 		"""
+		if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.ticket_attachment_delete_after_submited'):
+			return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
+
+
 		try:
 			ticket_file = TicketFiles.objects.get(id=file_id)
 			ticket_file.delete()

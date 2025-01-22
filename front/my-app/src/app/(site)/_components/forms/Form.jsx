@@ -8,6 +8,10 @@ export default function Form({
 	btnText,
 	onChange,
 	onSubmit,
+	ReCAPTCHA=null,
+	locale=null,
+	recaptchaRef=null,
+	onChangeRecaptcha=null,
 
 }) {
 	return (
@@ -28,10 +32,21 @@ export default function Form({
 				</Input>
 			))}
 
+ 
+
+			{ReCAPTCHA !== null &&
+				<ReCAPTCHA
+					sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPCHA_SITE_KEY}
+					onChange={onChangeRecaptcha}
+					ref={recaptchaRef}
+					hl={locale}
+				/>
+			}
+
 			<div>
 				<button
 					type='submit'
-					className='w-100 btn btn-lg btn-primary m-0'
+					className='w-100 btn btn-lg btn-primary m-0 mt-2'
 					disabled={isLoading}
 				>
 					{isLoading ? <Spinner />  : `${btnText}`}

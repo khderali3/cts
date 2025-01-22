@@ -224,7 +224,9 @@ class TicketFilesSerializer(serializers.ModelSerializer):
 
 class TicketSerializer(serializers.ModelSerializer):
 
-    ticket_department = serializers.StringRelatedField()   
+    # ticket_department = serializers.StringRelatedField()
+    ticket_department = serializers.SerializerMethodField()
+       
     ticket_user = serializers.SerializerMethodField()   
     ticket_files =   serializers.SerializerMethodField()  
     ticket_replies = serializers.SerializerMethodField()
@@ -357,6 +359,13 @@ class TicketSerializer(serializers.ModelSerializer):
         # Serialize the related TicketFiles objects
         return TicketFilesSerializer(ticket_files, many=True, context=self.context ).data
     
+    def get_ticket_department(self, obj):
+        ticket_department = obj.ticket_department
+        return DepartmentSerializer(ticket_department).data
+
+
+
+
     def get_ticket_replies(self, obj):
         ticket_replies  = TicketReplay.objects.filter(ticket_replay_ticket=obj)
         return TicketReplaySerializer(ticket_replies, many=True, context=self.context ).data

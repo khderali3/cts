@@ -7,7 +7,7 @@ import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 
 import { useRouter } from "next/navigation";
 
-
+import { useTranslations, useLocale } from "next-intl";
 
 
 export default function ListManagerGroups() {
@@ -19,7 +19,8 @@ export default function ListManagerGroups() {
 	name:'',
   });
 
-
+  const locale = useLocale()
+  const t = useTranslations('dashboard.users_managment.groups_managment')
 
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [customFetch] = useCustomFetchMutation()
@@ -57,7 +58,13 @@ export default function ListManagerGroups() {
 		});
   
 		if( response && response.data){
-		  toast.success("your item been Updated ");
+
+			if(locale === "ar"){
+				toast.success("تم تعديل البيانات بنجاح ");
+			} else {
+				toast.success("your item been Updated ");
+			}
+		  
 		  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/usersmanagment/group/`)
 		  setEditingItem({
 					id:null,
@@ -65,16 +72,52 @@ export default function ListManagerGroups() {
 				})
 		} else{
 		  console.log(response)
-		  toast.error("Error submitting form 1.");
+		  if(locale === "ar"){
+			toast.error("حصل خطأ رقم 1 أثناء عملية التعديل . يرجى المحاولة مجدداً");
+
+		  } else {
+			toast.error("Error submitting form 1.");
+
+		  }
+
+		if (response?.error?.data?.detail) {
+			if(response.error.data.detail === "Permission denied for this operation."){
+				if(locale === "ar") {
+					toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+
+				} else {
+					toast.error(response.error.data.detail);
+				}
+
+			} 
+		} else {
+			toast.error(JSON.stringify(response?.error?.data));
+		}
+
+
+
+
 		}
   
 	  } catch (error) {
 		console.error("Error submitting form:", error);
-		toast.error("Error submitting form2.");
+		if(locale === "ar"){
+			toast.error("حصل خطأ رقم 2 أثناء عملية التعديل . يرجى المحاولة مجدداً");
+
+		} else {
+			toast.error("Error submitting form2.");
+
+		}
 	  } finally{setIditingItemId(null)}
 
   } else {
-	toast.error("Error. all fields are required ");
+	if(locale === "ar") {
+		toast.error("جميع الحقول مطلوبة ");
+
+	} else {
+		toast.error("Error. all fields are required ");
+
+	}
 
   }
 
@@ -161,23 +204,66 @@ const handleaddItem = async (e) => {
 		});
   
 		if( response && response.data){
-		  toast.success("your group has been Added ");
+		
+			if(locale === "ar"){
+				toast.success(" تمت إضافة المجموعة بنجاح ");
+
+			} else {
+				toast.success("your group has been Added ");
+
+			}
 		  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/usersmanagment/group/`)
 			setNewItem({
 				name:'',
 			})
 		} else{
 		  console.log(response)
-		  toast.error("Error submitting form 1.");
+		  if(locale === "ar"){
+			toast.error("حصل خطأ رقم 1 أثناء عملية الإضافة . يرجى المحاولة مجدداً");
+
+		  } else {
+			toast.error("Error submitting form 1.");
+
+		  }
+
+			if (response?.error?.data?.detail) {
+				if(response.error.data.detail === "Permission denied for this operation."){
+					if(locale === "ar") {
+						toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+
+					} else {
+						toast.error(response.error.data.detail);
+					}
+
+				} 
+			} else {
+			toast.error(JSON.stringify(response?.error?.data));
+			}
+
+
+
+
 		}
   
 	  } catch (error) {
 		console.error("Error submitting form:", error);
-		toast.error("Error submitting form2.");
+		if(locale === "ar"){
+			toast.error("حصل خطأ رقم2 أثناء عملية الإضافة . يرجى المحاولة مجدداً");
+
+		} else {
+			toast.error("Error submitting form2.");
+
+		}
 	  } finally{ setAddingItem(false);}
 
   } else {
-	toast.error("Error. all fields are required ");
+	if(locale === "ar"){
+		toast.error("كافة الحقول مطلوبة ");
+
+	} else {
+		toast.error("Error. all fields are required ");
+
+	}
 
   }
 
@@ -199,7 +285,33 @@ const handleaddItem = async (e) => {
 	  });
  
 	  if( response && response.data) {
+		if(locale === "ar"){
+			toast.success(" تمت حذف المجموعة بنجاح ");
+
+		} else {
+			toast.success("your group has been deleted ");
+
+		}
+
 		fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/usersmanagment/group/`);
+
+	  } else {
+
+		if (response?.error?.data?.detail) {
+			if(response.error.data.detail === "Permission denied for this operation."){
+				if(locale === "ar") {
+					toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+
+				} else {
+					toast.error(response.error.data.detail);
+				}
+
+			} 
+		} else {
+		toast.error(JSON.stringify(response?.error?.data));
+		}
+
+
 
 	  }
 
@@ -209,16 +321,16 @@ const handleaddItem = async (e) => {
   return (
     <div className="container  ">
 		<hr />
-      <h6>Manage List Items Groups</h6>
+      <h6>{t('title')}</h6>
 
       {/* Table Display */}
       <table className="table table-bordered mt-4">
         <thead className="table-light">
           <tr>
 				<th style={{ width: '5%' }}>#</th>
-				<th style={{ width: '35%' }}>Group Name</th>
+				<th style={{ width: '35%' }}>{t('group_list.group_Name')}</th>
  
-				<th style={{ width: '25%' }}>Actions</th>
+				<th style={{ width: '25%' }}>{t('group_list.Actions')}</th>
           </tr>
         </thead>
         <tbody>
@@ -244,7 +356,7 @@ const handleaddItem = async (e) => {
 				  style={{ minWidth: '90px' }}
 				  >
                   
-				  {editingItemId === item.id ? "Editing..." : "Edit"}
+				  {editingItemId === item.id ? t('group_list.Editing') : t('group_list.Edit')}
                 </button>
 
 
@@ -261,7 +373,7 @@ const handleaddItem = async (e) => {
 				  disabled={deletingItemId === item.id}
 				  style={{ minWidth: '90px' }}
 				  >
-                   {deletingItemId === item.id ? "Deleting " : "Delete"} 
+                   {deletingItemId === item.id ?  t('group_list.Deleting') : t('group_list.Delete')} 
 
                  </button>
 
@@ -272,7 +384,7 @@ const handleaddItem = async (e) => {
 				  onClick={() => router.push(`/staff/groups/${item?.id}`)}
 
                 >
-                   Permissions
+                   {t('group_list.permissions')}
 
                  </button>
 
@@ -293,14 +405,14 @@ const handleaddItem = async (e) => {
            
 		<div className="mb-3">
 			<label htmlFor="name" className="form-label">
-			Group Name
+			{t('group_list.group_Name')}
 			</label>
 			<input
 				type="text"
 				className="form-control"
 				id="name"
 				name="name"
-				value={newItem?.name }
+				value={newItem?.name}
 				onChange={handleChange}
 			/>
 		</div>
@@ -319,7 +431,7 @@ const handleaddItem = async (e) => {
 			disabled={isButtonDisabled || addingItem }
 		>
 
-			{addingItem ? 'adding...' : 'Add Item'}
+			{addingItem ? t('form_add.adding') : t('form_add.add_item')}
 		</button>
 
 
@@ -346,7 +458,7 @@ const handleaddItem = async (e) => {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="editModal_groupLabel">Edit Item</h5>
+              <h5 className="modal-title" id="editModal_groupLabel">{t('form_edit.title')}</h5>
               <button
                 type="button"
                 className="btn-close"
@@ -364,7 +476,7 @@ const handleaddItem = async (e) => {
 					
 				<div className="  ">
 				<label htmlFor="name" className="form-label">
-				Group Name
+				{t('group_list.group_Name')}
 				</label>
 				<input
 					type="text"
@@ -398,7 +510,7 @@ const handleaddItem = async (e) => {
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
-                Close
+               { t('form_edit.cancel')}
               </button>
               <button
                 type="button"
@@ -406,7 +518,7 @@ const handleaddItem = async (e) => {
                 onClick={handleEditingItem}
                 data-bs-dismiss="modal"
               >
-				{editingItemId  ? "Saveing.." : "Save Changes"}
+				{editingItemId  ? t('form_edit.saving')  : t('form_edit.save_changes')  }
                </button>
             </div>
           </div>
@@ -419,7 +531,7 @@ const handleaddItem = async (e) => {
 		id="list_manager_group_delete"
 		handleSubmit={ () =>   deleteItem(itemIdToDelete)}
 		submitting={deletingItemId}
-		message={"Are you sure you want to Delete this group ?"}
+		message={t('group_list.modal_del_msg')}
 		operationType = "Delete"
 		showModal={true} 
 		isModalOpen={isModalOpen}

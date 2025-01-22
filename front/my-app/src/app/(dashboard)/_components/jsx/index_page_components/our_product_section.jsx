@@ -7,6 +7,10 @@ import { toast } from "react-toastify";
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 import ListManagerProduct from "./our_product_section_component/ListManager_product";
 
+import { useTranslations, useLocale } from "next-intl";
+
+import { useSelector } from "react-redux";
+
 
 
 const OurProductSection = () => {
@@ -14,6 +18,12 @@ const OurProductSection = () => {
 	const [customFetch] = useCustomFetchMutation()
 	const [submitting, setSubmitting] = useState(false)
 	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+
+  const t = useTranslations('dashboard.site_managment.our_product')
+  const locale = useLocale()
+
+  const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
+
 
 
 	const [data, setData] = useState({
@@ -55,18 +65,51 @@ const OurProductSection = () => {
 	  
 			if( response && response.data){
 			  setCanEdit(false)
-			  toast.success("your data has been updated ");
+        if(locale === "ar"){
+          toast.success("تم تعديل البيانات بنجاح ");
+
+        } else {
+          toast.success("your data has been updated ");
+
+        }
 			  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/product_sec/`)
 			  setIsModalOpen(false)
 	  
 			} else{
 			  console.log(response)
-			  toast.error("Error submitting form 1.");
+        if(locale === "ar"){
+          toast.error("حصل خطأ رقم 1 أثناء تعديل البيانات . يرجى المحاولة لاحقاً");
+
+        } else {
+          toast.error("Error submitting form 1.");
+
+        }
+
+        if (response?.error?.data?.detail) {
+          if(response.error.data.detail === "Permission denied for this operation."){
+            if(locale === "ar") {
+              toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+
+            } else {
+              toast.error(response.error.data.detail);
+            }
+
+          } 
+        } else {
+          toast.error(JSON.stringify(response?.error?.data));
+        }
+
 			}
 	  
 		  } catch (error) {
 			console.error("Error submitting form:", error);
-			toast.error("Error submitting form2.");
+      if(locale === "ar"){
+        toast.error("حصل خطأ رقم 2 أثناء تعديل البيانات . يرجى المحاولة لاحقاً");
+
+      } else {
+        toast.error("Error submitting form2.");
+
+      }
 		  }finally{setSubmitting(false)}
 
 	  } else {
@@ -136,12 +179,23 @@ const OurProductSection = () => {
   
     }, []);
 
+
+
+    if (!is_superuser && !(permissions?.includes('usersAuthApp.site_managment') && is_staff)) {
+      return;
+    } 
+
+
+
+
+
     return (
 
             
         <div className="container mt-2">
-        <h6>Product Section (Fourth Section)  
-
+        <h6>
+          {/* Product Section (Fourth Section)   */}
+          {t('title')}
         </h6>
         {/* Row for Search Form */}
         <div className="row my-4 py-4 px-4 border">
@@ -154,7 +208,7 @@ const OurProductSection = () => {
            
             <div className="mb-3">
               <label htmlFor="prd_sec_title" className="form-label">
-                Title
+              {t('form.title')}
               </label>
               <input
                 type="text"
@@ -164,6 +218,7 @@ const OurProductSection = () => {
                 readOnly={!canEdit}
                 value={data?.prd_sec_title  || ""}
                 onChange={handleChange}
+                dir='ltr'
 
 
               />
@@ -172,7 +227,8 @@ const OurProductSection = () => {
 
             <div className="mb-3">
               <label htmlFor="prd_sec_hint" className="form-label">
-                Details
+                
+                {t('form.Details')}
               </label>
               <input
                 type="text"
@@ -182,6 +238,7 @@ const OurProductSection = () => {
                 readOnly={!canEdit}
                 value={data?.prd_sec_hint  || ""}
                 onChange={handleChange}
+                dir='ltr'
 
 
               />
@@ -190,7 +247,8 @@ const OurProductSection = () => {
 
             <div className="mb-3">
               <label htmlFor="prd_sec_title_ar" className="form-label">
-                Title (Ar)
+                 
+                {t('form.title_ar')}
               </label>
               <input
                 dir="rtl"
@@ -209,7 +267,7 @@ const OurProductSection = () => {
 
             <div className="mb-3">
               <label htmlFor="prd_sec_hint_ar" className="form-label">
-                Details  (Ar)
+              {t('form.Details_ar')}
               </label>
               <input
                 dir="rtl"
@@ -239,17 +297,18 @@ const OurProductSection = () => {
                               className="btn btn-primary"
                               >
 
-                         {!submitting ? 'Update' : 'Updating...'}
+                         {!submitting ? t('form.update') :  t('form.updating')}
                       </button>
 
-                          <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  ms-2">
-                          Cancel
+                          <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  mx-2">
+                           
+                          {t('form.cancel')}
                           </button>
                           </>
                         :   
 
-                        <button  onClick={handleCanEdit }   className="  btn  btn-secondary">
-                        Edit 
+                        <button  onClick={handleCanEdit }   className="  btn mx-2  btn-secondary">
+                        {t('form.edit')} 
                         </button>
                     }
 
@@ -271,7 +330,7 @@ const OurProductSection = () => {
 		id="our_product_section"
 		handleSubmit={handleSubmit}
 		submitting={submitting}
-		message={"Are you sure you want to update 'Our Product Section' Data?"}
+		message={t('form.modal_msg')}
 		showModal={true} 
 		isModalOpen={isModalOpen}
 		setIsModalOpen={setIsModalOpen}

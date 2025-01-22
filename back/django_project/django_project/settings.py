@@ -86,12 +86,19 @@ DJOSER = {
     'SOCIAL_AUTH_TOKEN_STRATEGY': "usersAuthApp.myutils.custom_serializers.CustomProviderTokenStrategy",
 
     'SERIALIZERS': {
+
         'user': 'usersAuthApp.myutils.custom_serializers.CustomUserSerializer',  # Update with the path to your CustomUserSerializer
         'current_user': 'usersAuthApp.myutils.custom_serializers.CustomUserSerializer',
+        'password_reset': 'usersAuthApp.myutils.custom_serializers.CustomPasswordResetSerializer',  # Path to your custom serializer
+
     }
 
 }
 
+
+
+GOOGLE_RECAPCHA_SECRET_KEY = config("GOOGLE_RECAPCHA_SECRET_KEY")
+GOOGLE_RECAPCHA_CHECK_URL = config("GOOGLE_RECAPCHA_CHECK_URL")
 
 
 

@@ -15,14 +15,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import BasePermission
 from rest_framework import status
 
-class IsStaffOrSuperUser(BasePermission):
-    def has_permission(self, request, view):
-        return request.user and (request.user.is_staff or request.user.is_superuser)
+# class IsStaffOrSuperUser(BasePermission):
+#     def has_permission(self, request, view):
+#         return request.user and (request.user.is_staff or request.user.is_superuser)
     
-
+from ticketSystemStaffApp.my_utils import IsStaffOrSuperUser, HasSiteManagementPermission
 
 class HomeSectionView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request):
         home_section_obj, created = HomeSection.objects.get_or_create(id=1)
@@ -39,7 +39,7 @@ class HomeSectionView(APIView):
     
 
 class AboutUsSectionView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request):
         home_section_obj, created = AboutUs.objects.get_or_create(id=1)
@@ -56,7 +56,7 @@ class AboutUsSectionView(APIView):
     
 
 class WhyUsSectionView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request):
         why_us_section_obj, created = WhyUs.objects.get_or_create(id=1)
@@ -76,7 +76,7 @@ class WhyUsSectionView(APIView):
 
 
 class FeatureWhyUsSectionView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request, pk=None):
 
@@ -125,7 +125,7 @@ class FeatureWhyUsSectionView(APIView):
 
 
 class ProductSectionView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request):
         product_section_obj, created = ProductSection.objects.get_or_create(id=1)
@@ -151,7 +151,7 @@ class ProductSectionView(APIView):
 
 
 class ProductView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request, pk=None):
 
@@ -201,7 +201,7 @@ class ProductView(APIView):
 
 
 class OurServicesSectionView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request):
         our_services_sec_obj, created = OurServicesSection.objects.get_or_create(id=1)
@@ -224,7 +224,7 @@ class OurServicesSectionView(APIView):
 
 
 class ServiceView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request, pk=None):
 
@@ -271,7 +271,7 @@ class ServiceView(APIView):
 
 
 class OurVisionSectionView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request):
         our_vision_obj, created = OurVision.objects.get_or_create(id=1)
@@ -291,7 +291,7 @@ class OurVisionSectionView(APIView):
 
 
 class FocusSecView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request):
         focus_obj, created = Focus.objects.get_or_create(id=1)
@@ -310,7 +310,7 @@ class FocusSecView(APIView):
 
 
 class OurClientSectionView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request):
         our_client_sec_obj, created = OurClientSection.objects.get_or_create(id=1)
@@ -335,7 +335,7 @@ class OurClientSectionView(APIView):
 
 
 class OurClientView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request, pk=None):
 
@@ -385,7 +385,7 @@ class OurClientView(APIView):
 
 
 class CompnayIfRightSectionView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request):
         company_if_right_sec_obj, created = CompnayIfRight.objects.get_or_create(id=1)
@@ -403,7 +403,7 @@ class CompnayIfRightSectionView(APIView):
 
 
 class FooterSectionView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request):
         footer_obj, created = Footer.objects.get_or_create(id=1)
@@ -423,7 +423,7 @@ class FooterSectionView(APIView):
 
 
 class SocialMediaFooterView(APIView):
-    permission_classes = [IsStaffOrSuperUser]
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
 
     def get(self, request):
         social_media_obj, created = SocialMedia.objects.get_or_create(id=1)

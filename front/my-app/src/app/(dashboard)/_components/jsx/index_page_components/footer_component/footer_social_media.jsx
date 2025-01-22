@@ -6,12 +6,18 @@ import { useState, useEffect } from "react"
 import { toast } from "react-toastify";
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 
+import { useTranslations, useLocale } from "next-intl";
+
 
 const FooterSocialUrls = () => {
 	const [canEdit, setCanEdit] = useState(false)
 	const [customFetch] = useCustomFetchMutation()
 	const [submitting, setSubmitting] = useState(false)
 	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+
+
+  const t = useTranslations('dashboard.site_managment.footer_section.social_media')
+  const locale = useLocale()
 
 	const [data, setData] = useState({
 		facebook_url: "",
@@ -53,22 +59,62 @@ const FooterSocialUrls = () => {
 	  
 			if( response && response.data){
 			  setCanEdit(false)
-			  toast.success("your data has been updated ");
+        if(locale === "ar"){
+          toast.success("تم تعديل البيانات بنجاح ");
+        } else {
+          toast.success("your data has been updated ");
+        }
+			  
 			  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/footer_social_media/`)
 			  setIsModalOpen(false)
 	  
 			} else{
 			  console.log(response)
-			  toast.error("Error submitting form 1.");
+        if(locale === "ar"){
+          toast.error("حدث خطأ رقم 1 أثناء عملية التعديل يرجى المحاولة لاحقاً");
+
+        } else {
+          toast.error("Error submitting form 1.");
+
+        }
+        if (response?.error?.data?.detail) {
+          if(response.error.data.detail === "Permission denied for this operation."){
+            if(locale === "ar") {
+              toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+
+            } else {
+              toast.error(response.error.data.detail);
+            }
+
+          } 
+        } else {
+          toast.error(JSON.stringify(response?.error?.data));
+        }
+
+
+
+
 			}
 	  
 		  } catch (error) {
 			console.error("Error submitting form:", error);
-			toast.error("Error submitting form2.");
+      if(locale === "ar"){
+        toast.error("حدث خطأ رقم 2 أثناء عملية التعديل يرجى المحاولة لاحقاً");
+      } else {
+        toast.error("Error submitting form2.");
+      }
+			
 		  } finally{setSubmitting(false);}
 
 	  } else {
-		toast.error("Error. all fields are required ");
+      if(locale === "ar"){
+        toast.error("كافة الحقول مطلوبة ");
+
+      } else {
+        toast.error("Error. all fields are required ");
+
+      }
+      
 	  setSubmitting(false);
 
 	  }
@@ -140,7 +186,7 @@ const FooterSocialUrls = () => {
         <div className="container mt-2">
           		<hr   />
 
-        <h6> Footer social media   
+        <h6> {t('title')}  
 
         </h6>
         {/* Row for Search Form */}
@@ -154,7 +200,8 @@ const FooterSocialUrls = () => {
            
             <div className="mb-3">
               <label htmlFor="facebook_url" className="form-label">
-                Facebook Page Url 
+                {/* Facebook Page Url  */}
+                {t('form.Facebook_Page_Url')} 
               </label>
               <input
                 type="text"
@@ -164,13 +211,15 @@ const FooterSocialUrls = () => {
                 readOnly={!canEdit}
                 value={data?.facebook_url  || ""}
                 onChange={handleChange}
+                dir='ltr'
+
               />
             </div>
 
 
             <div className="mb-3">
               <label htmlFor="youtube_url" className="form-label">
-                Youtube Page Url 
+              {t('form.Youtube_Page_Url')} 
               </label>
               <input
                 type="text"
@@ -180,6 +229,8 @@ const FooterSocialUrls = () => {
                 readOnly={!canEdit}
                 value={data?.youtube_url  || ""}
                 onChange={handleChange}
+                dir='ltr'
+
               />
             </div>
 
@@ -188,7 +239,7 @@ const FooterSocialUrls = () => {
 
             <div className="mb-3">
               <label htmlFor="instagram_url" className="form-label">
-                instagram Page Url 
+              {t('form.instagram_Page_Url')} 
               </label>
               <input
                 type="text"
@@ -198,13 +249,15 @@ const FooterSocialUrls = () => {
                 readOnly={!canEdit}
                 value={data?.instagram_url  || ""}
                 onChange={handleChange}
+                dir='ltr'
+
               />
             </div>
 
 
             <div className="mb-3">
               <label htmlFor="linkedIn_url" className="form-label">
-                linkedin Page Url 
+              {t('form.linkedin_Page_Url')} 
               </label>
               <input
                 type="text"
@@ -214,13 +267,15 @@ const FooterSocialUrls = () => {
                 readOnly={!canEdit}
                 value={data?.linkedIn_url  || ""}
                 onChange={handleChange}
+                dir='ltr'
+
               />
             </div>
 
 
             <div className="mb-3">
               <label htmlFor="twitter_url" className="form-label">
-                Twitter Page Url 
+              {t('form.Twitter_Page_Url')} 
               </label>
               <input
                 type="text"
@@ -230,6 +285,8 @@ const FooterSocialUrls = () => {
                 readOnly={!canEdit}
                 value={data?.twitter_url  || ""}
                 onChange={handleChange}
+                dir='ltr'
+
               />
             </div>
 
@@ -245,17 +302,17 @@ const FooterSocialUrls = () => {
                               className="btn btn-primary"
                               >
 
-                         {!submitting ? 'Update' : 'Updating...'}
+                         {!submitting ? t('form.update') : t('form.updating')}
                       </button>
 
-                          <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  ms-2">
-                          Cancel
+                          <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  mx-2">
+                          {t('form.cancel')} 
                           </button>
                           </>
                         :   
 
-                        <button  onClick={handleCanEdit }   className="  btn  btn-secondary">
-                        Edit 
+                        <button  onClick={handleCanEdit }   className="  btn mx-2  btn-secondary">
+                        {t('form.edit')}  
                         </button>
                     }
 
@@ -276,7 +333,7 @@ const FooterSocialUrls = () => {
 		id="footer_social_section"
 		handleSubmit={handleSubmit}
 		submitting={submitting}
-		message={"Are you sure you want to update 'social URLs' Data?"}
+		message={t('form.modal_msg')} 
 		showModal={true} 
 		isModalOpen={isModalOpen}
 		setIsModalOpen={setIsModalOpen}

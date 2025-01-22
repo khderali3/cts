@@ -3,7 +3,7 @@
 
 import { useRouter } from 'next/navigation';
 
-const ProductButton = ({ slug }) => {
+const ProductButton = ({ slug , text_button="" }) => {
   const router = useRouter();
 
 
@@ -19,7 +19,8 @@ const ProductButton = ({ slug }) => {
   }
   return (
     <button onClick={handleMoreDetails} className="btn btn-primary">
-      More Detailse
+      {/* More Detailse */}
+      {text_button}
     </button>
   );
 };

@@ -5,7 +5,17 @@ import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/
 import { toast } from "react-toastify";
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
+
+
+import { useTranslations, useLocale } from "next-intl";
+
+
+
+
 const Page = () =>  {
+
+  const t = useTranslations('site.ticket.add_new_ticket')
+  const locale = useLocale()
 
   const [customFetch] = useCustomFetchMutation();
   const [departments, setDepartments] = useState([])
@@ -103,21 +113,47 @@ const Page = () =>  {
           if (input) input.value = ""; // Reset file input value
         });
 
-        toast.success("Your replay was added successfully!");
+        if(locale === "ar"){
+          toast.success("تم إنشاء التذكرة بنجاح");
+
+        } else{
+          toast.success("Your ticket has been created successfully!");
+        }
         router.push('/tickets');  
       } else {
-        toast.error("Failed to submit the request.");
+        if(locale === "ar"){
+          toast.error("خطأ1 في انشاء التذكرة يرجى المحاولة مجدداً");
+
+        } else{
+          toast.error("Failed 1 to submit the request.");
+
+        }
+        console.log(response)
       }
     } catch (error) {
+      if(locale === "ar"){
+        toast.error("خطأ2  في انشاء التذكرة يرجى المحاولة مجدداً");
+
+      } else {
+        toast.error("Failed 2 to submit the request.");
+
+      }
+
       console.error("Error submitting form:", error);
-      toast.error("Error submitting form.");
     }
 
       
       console.log("Form is valid");
     } else {
 
-      toast.error("Please fill out department - subject and Description  ");
+      if(locale === "ar"){
+        toast.error("يرجى ملئ كافة الحقول ");
+
+      } else{
+        toast.error("Please fill out department - subject and Description  ");
+
+      }
+
     }
 
 
@@ -185,11 +221,15 @@ useEffect(() => {
 
 
 
-          <h2>Submit a request</h2>
+          <h2>
+            {/* Submit a request */}
+            {t('form_title')}
+          </h2>
           <form className="col-md-8 col-12 mb5 " onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="requestType" className="form-label">
-                Please select target department
+                {/* Please select target department */}
+                {t('department_label')}
               </label>
 
 
@@ -201,10 +241,13 @@ useEffect(() => {
                   defaultValue="" 
                 >
 
-                <option disabled   value=''> Select Department</option>
+                <option disabled   value=''> 
+                  {/* Select Department */}
+                  {t('department_default_option')}
+                  </option>
                   {departments?.map((item) => (
                     <option key={item.id} value={item.id}>
-                      {item.department_name}
+                      { locale ==="ar"  ? item.department_name_ar :  item.department_name}
                     </option>
                   ))}
                 </select>
@@ -216,7 +259,9 @@ useEffect(() => {
 
             <div className="mb-3">
               <label htmlFor="subject" className="form-label">
-                Subject <span className="text-danger">*</span>
+                {/* Subject  */}
+                {t('subject')}
+                <span className="text-danger">*</span>
               </label>
               <input  
               name="ticket_subject" 
@@ -232,13 +277,18 @@ useEffect(() => {
 
             <div className="mb-3">
               <label htmlFor="description" className="form-label">
-                Description <span className="text-danger">*</span>
+                {/* Description  */}
+                {t('description')}
+                <span className="text-danger">*</span>
               </label>
               <textarea
                 className="form-control"
                 id="description"
                 rows={6}
-                placeholder="Please enter the details of your request, and our staff will respond as soon as possible."
+                // placeholder="Please enter the details of your request, and our staff will respond as soon as possible."
+                placeholder={t('description_placeholder')}
+
+
                 required=""
                 // onChange={handleChange}
                 name="ticket_body"
@@ -259,7 +309,9 @@ useEffect(() => {
                 htmlFor={`fileInput-${fileInput.id}`} 
                 className="form-label fw-bold me-2"
                 >
-                Upload File {index + 1}
+                {/* Upload File {index + 1} */}
+                {t('upload_file') } {index + 1}
+
                 </label>
                 <input
                 type="file"
@@ -281,7 +333,9 @@ useEffect(() => {
                         onClick={handleAddMore}
                         >
                         <i className="fa fa-plus me-2"></i> {/* Font Awesome icon */}
-                        Add More
+                        {/* Add More */}
+                        {t('btn_add_More_file')}
+
                         </button>
                     </div>
                     <div className="col-12 col-md-auto">
@@ -292,7 +346,9 @@ useEffect(() => {
                         disabled={files.length <= 1} // Disable if only one input left
                         >
                         <i className="fa fa-trash me-2"></i> {/* Font Awesome icon */}
-                        Delete
+                        {/* Delete */}
+                        {t('btn_remove_file')}
+
                         </button>
                     </div>
 
@@ -329,7 +385,9 @@ useEffect(() => {
 
 
             <button type="submit" className="btn btn-primary">
-              Submit
+              {/* Submit */}
+              {t('submit')}
+
             </button>
           </form>
         </div>

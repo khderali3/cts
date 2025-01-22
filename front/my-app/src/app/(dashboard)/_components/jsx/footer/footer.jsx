@@ -1,21 +1,29 @@
 
 
+import { getLocale } from "next-intl/server"
 
 
 
-const Footer = () => {
+const Footer = async () => {
+
+  const locale = await getLocale()
 
     return (
         <footer className="app-footer">
-        <div className="float-end d-none d-sm-inline">For ICT </div>{" "}
+        <div className={`${ locale ==="ar" ? "float-start" : "float-end" } d-none d-sm-inline`}>
+          {/* For ICT  */}
+          {locale === "ar" ? "لتكنولوجيا الإتصالات والمعلومات" : 'For ICT'}
+        </div> 
         <strong className="pe-2">
-          Copyright © 2024 &nbsp;
+        {locale === "ar" ? "© 2024 حقوق الطبع والنشر " : 'Copyright © 2024'}
+          {/* Copyright © 2024 &nbsp; */}
           <a href="http://cloudtech-it.com" className="text-decoration-none ">
             CloudTech Sky
           </a>
           .
         </strong>
-        All rights reserved.
+        {locale === "ar" ? 'جميع الحقوق محفوظة' : 'All rights reserved.'}
+        
       </footer>
   
     )

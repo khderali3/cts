@@ -14,7 +14,7 @@ from .myutils.custom_serializers import ProfileSerializer
 from .models import Profile
 from rest_framework.parsers import MultiPartParser, FormParser
 
-
+from .myutils.public_utils import verify_recaptcha
 
 
 # Create your views here.
@@ -24,6 +24,40 @@ AUTH_COOKIE_SECURE =  'True'
 AUTH_COOKIE_HTTP_ONLY = True
 AUTH_COOKIE_PATH = '/'
 AUTH_COOKIE_SAMESITE = 'None'
+
+
+from rest_framework.exceptions import ValidationError
+from djoser.views import UserViewSet
+from djoser.serializers import SendEmailResetSerializer
+ 
+
+
+class CustomUserViewSet(UserViewSet):
+    def perform_create(self, serializer):
+        # Extract the reCAPTCHA response from the request data
+        recaptcha_value = self.request.data.get('recaptcha_value')
+        if not recaptcha_value:
+            raise ValidationError({'recaptcha': 'reCAPTCHA value is required.'})
+
+
+        # Verify reCAPTCHA
+        if not verify_recaptcha(recaptcha_value):
+            raise ValidationError({'recaptcha': 'Invalid reCAPTCHA. Please try again. custom view'})
+
+        # If reCAPTCHA is valid, proceed with user creation
+        super().perform_create(serializer)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -90,6 +124,17 @@ class CustomProviderAuthView(ProviderAuthView):
 class CustomTokenObtainPairView(TokenObtainPairView):
 
     def post(self, request, *args, **kwargs):
+
+
+        recaptcha_value = request.data.get("recaptcha_value")
+        if not recaptcha_value or not verify_recaptcha(recaptcha_value):
+            return Response({"detail": "Invalid reCAPTCHA. Please try again."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
         response = super().post(request, *args, **kwargs)
 
         if response.status_code == 200:

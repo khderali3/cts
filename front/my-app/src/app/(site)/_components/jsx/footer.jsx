@@ -1,12 +1,15 @@
 
 import Link from "next/link";
 
+import {getLocale, getTranslations} from 'next-intl/server';
 
 
 export const Footer = async () => {
 
 	let social_data = ''
 	let footer_data = ''
+  const local = await getLocale()
+  const t = await getTranslations("site.footer"); // this works
 
 	try {
 
@@ -57,7 +60,10 @@ export const Footer = async () => {
   <div className="container">
     <div className="row">
       <div className="col-md-2 mx-auto ">
-        <h5>About Us</h5>
+        <h5>
+          {/* About Us */}
+          { t('about_us')}
+        </h5>
         <p>
 		 
 		 {/*  
@@ -65,56 +71,81 @@ export const Footer = async () => {
           business needs.
 		*/  }
 
-		  {footer_data?.about_us_content}
+		  {/* {footer_data?.about_us_content} */}
+
+      {local === "ar"  ? footer_data?.about_us_content_ar : footer_data?.about_us_content}
+
 
 
 
         </p>
       </div>
       <div className="col-md-2 mx-auto">
-        <h5>Quick Links</h5>
+        <h5>
+          {/* Quick Links */}
+          {/* quick_links_name */}
+          {t('quick_links_name')}
+        </h5>
         <ul className="footer-links ps-2">
           <li>
             <Link className="text-light" href="/#home">
-              Home
+              {/* Home */}
+              {t('quick_links.home')}
             </Link>
           </li>
 
           <li>
             <Link className="text-light" href="/#about_us">
-              About us
+              {/* About us */}
+              {t('quick_links.about_us')}
+
             </Link>
           </li>
 
 
           <li>
             <Link className="text-light" href="/#product">
-              Products
+              {/* Products */}
+              {t('quick_links.products')}
+
             </Link>
           </li>
           <li>
             <Link className="text-light" href="/#services2">
-              Services
+              {/* Services */}
+              {t('quick_links.services')}
+
             </Link>
           </li>
 
           <li>
             <a className="text-light" href="/tickets">
-              Support
+              {/* Support */}
+              {t('quick_links.tickets')}
+
             </a>
           </li>
         </ul>
       </div>
       <div className="col-md-2 mx-auto">
-        <h5>Contact Us</h5>
+        <h5>
+          {/* Contact Us */}
+          { t('contact_us')}
+
+        </h5>
        {/*  <p>Email: info@cloudtechsky.com</p>  */  }
 
 
-	   <p>Email:  {footer_data?.contact_us_email} </p> 
+	   <p>
+      {/* Email:   */}
+      { t('email')} : {footer_data?.contact_us_email} 
+      </p> 
 
        { /*  <p>Phone: +123 456 7890  </p> */  } 
 
-	   <p>Phone:{footer_data?.contact_us_phone}  </p>
+	   <p>
+      {/* Phone: */}
+      {t('phone')} : {footer_data?.contact_us_phone}  </p>
 
         <ul className="footer-social">
           <li>
@@ -154,7 +185,11 @@ export const Footer = async () => {
     className="text-center p-3"
     style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
   >
-    © 2020 Copyright:
+    {/* © 2020 Copyright  */}
+    {/* © 2020 CloudeTech Sky. All rights reserved. */}
+
+    {t('copyright')}
+
     <a className="text-white" href="https://mdbootstrap.com/" />
   </div>
 </footer>

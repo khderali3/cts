@@ -6,15 +6,16 @@ import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/
 import { toast } from "react-toastify";
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
  
-
+import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 
 
 const MainUserEditInfoSection = ({user_id}) => {
 
 	const [customFetch] = useCustomFetchMutation();
  
- 
- 
+	const t = useTranslations('dashboard.users_managment.users.edit_user_info')
+	const locale = useLocale()
 	
 	const [canEdit, setCanEdit] = useState(false)
   
@@ -27,6 +28,10 @@ const MainUserEditInfoSection = ({user_id}) => {
   
 	const [isProfileImageDelete, setIsProfileImageDelete] = useState(false)
   
+
+	const router = useRouter()
+
+
 	const [data, setData] = useState({
   
    
@@ -117,7 +122,8 @@ const MainUserEditInfoSection = ({user_id}) => {
    
 		} else {
 		   console.log(response) 
-		   toast.error('no data')
+		//    toast.error('no data')
+		   router.push('/404')
 		  //  throw new Error('404');  // This will trigger the custom 404 page
   
 		  }
@@ -183,21 +189,60 @@ const MainUserEditInfoSection = ({user_id}) => {
 		  setSelectedFile(null)
 		  setIsProfileImageDelete(false)
 		  reloadComponentMethod()  
-		  toast.success("the user has been updated succussfuly!");
+
+		  if( locale==="ar" ){
+			toast.success("تم تعديل البيانات بنجاح");
+
+		  } else {
+			toast.success("the user has been updated succussfuly!");
+
+		  }
    
 		} else {
-		  toast.error("Failed to submit the request.");
+			if( locale==="ar" ){
+				toast.error("حصل خطأ رقم 1 في تعديل البيانات . يرجى المحاولة لاحقاً");
+
+			} else{
+				toast.error("Failed to submit the request.");
+
+			}
+			if (response?.error?.data?.detail) {
+				if(response.error.data.detail === "Permission denied for this operation."){
+					if(locale === "ar") {
+						toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+		
+					} else {
+						toast.error(response.error.data.detail);
+					}
+		
+				}
+			}
+
+
 		  console.log('response', response)
 		}
 	  } catch (error) {
 		console.error("Error submitting form:", error);
-		toast.error("Error submitting form.");
+		if( locale==="ar" ){
+			toast.error("حصل خطأ رقم 2 في تعديل البيانات . يرجى المحاولة لاحقاً");
+
+		} else {
+			toast.error("Error submitting form.");
+
+		}
 	  } finally{ setIsObjUpdateing(false)  }
    
 		console.log("Form is valid");
 	  } else {
+
+		if( locale==="ar" ){
+			toast.error("بعض الحقول الضرورية فارغة!");
+
+		} else {
+			toast.error("some mandatory fields or empty");
+
+		}
   
-		toast.error("some mandatory fields or empty");
 	  }
   
    
@@ -221,14 +266,14 @@ return (
 
 	<div>
 		<hr />
-		<h6> Edit Basic info </h6>
+		<h6> {t('title')} </h6>
 		<div> 	  
 			<form className="  col-md-10 mb-5 "   >
 
 			<div className="row">
 				<div className="mb-3 col-md-4">
 				<label htmlFor="email" className="form-label small">
-					Email Address <span className="text-danger">*</span>
+				{t('Email')} <span className="text-danger">*</span>
 				</label>
 				<input
 					name="user.email"
@@ -245,7 +290,7 @@ return (
 
 				<div className="mb-3 col-md-4">
 				<label htmlFor="first_name" className="form-label small">
-					First Name <span className="text-danger">*</span>
+				{t('First_Name')} <span className="text-danger">*</span>
 				</label>
 				<input
 					name="user.first_name"
@@ -263,7 +308,7 @@ return (
 
 				<div className="mb-3 col-md-4">
 				<label htmlFor="last_name" className="form-label small">
-					Last Name <span className="text-danger">*</span>
+				{t('Last_Name')} <span className="text-danger">*</span>
 				</label>
 				<input
 					name="user.last_name"
@@ -286,7 +331,7 @@ return (
 
 				<div className="mb-3 col-md-4">
 				<label htmlFor="Company" className="form-label small">
-					Company  
+				{t('Company')}  
 				</label>
 				<input
 					name="profile.PRF_company"
@@ -305,7 +350,7 @@ return (
 
 				<div className="mb-3 col-md-4">
 				<label htmlFor="country" className="form-label small">
-					Country  
+				{t('Country')}  
 				</label>
 				<input
 					name="profile.PRF_country"
@@ -321,26 +366,26 @@ return (
 				</div>
 
 				<div className="mb-3 col-md-4">
-				<label htmlFor="country" className="form-label small">
-					City  
-				</label>
-				<input
-					name="profile.PRF_city"
-					onChange={handleChange}
-					value={data?.profile?.PRF_city ?? ""} // Controlled input
-					disabled={!canEdit}
+					<label htmlFor="country" className="form-label small">
+						{t('City')}   
+					</label>
+					<input
+						name="profile.PRF_city"
+						onChange={handleChange}
+						value={data?.profile?.PRF_city ?? ""} // Controlled input
+						disabled={!canEdit}
 
-					type="text"
-					className="form-control form-control-sm" // Added 'form-control-sm' for smaller input
-					id="City"
-					maxLength="50"
-				/>
+						type="text"
+						className="form-control form-control-sm" // Added 'form-control-sm' for smaller input
+						id="City"
+						maxLength="50"
+					/>
 				</div>
 
 
 				<div className="mb-3 col-md-4">
 				<label htmlFor="address" className="form-label small">
-					Address  
+					{t('Address')}   
 				</label>
 				<input
 					name="profile.PRF_address"
@@ -357,7 +402,7 @@ return (
 
 				<div className="mb-3 col-md-4">
 				<label htmlFor="phone_number" className="form-label small">
-					Phone Number  
+				{t('Phone_Number')}  
 				</label>
 				<input
 					name="profile.PRF_phone_number"
@@ -377,9 +422,9 @@ return (
 
 				<div className="col-12"></div>
 				<div className="row mt-2 "> 
-					<div className="form-check   col-md-2  ms-2">
+					<div className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
 					<input
-						className="form-check-input  "
+						className=" form-check-input "
 						type="checkbox"
 						name='user.is_staff'
 						id="is_staff"
@@ -388,15 +433,15 @@ return (
 						disabled={!canEdit}
 
 					/>
-					<label className="form-check-label small" htmlFor="is_staff">
-						Is Staff
+					<label className="form-check-label mx-2 small" htmlFor="is_staff">
+						{t('Is_Staff')} 
 					</label>
 					</div>
 
 
-					<div className="form-check col-md-2   ms-2">
+					<div  className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `} >
 					<input
-						className="form-check-input  "
+						className=" form-check-input  "
 						type="checkbox"
 						name='user.is_active'
 						id="is_active"
@@ -405,15 +450,15 @@ return (
 						disabled={!canEdit}
 
 					/>
-					<label className="form-check-label small" htmlFor="is_active">
-						Is Active
+					<label className="form-check-label mx-2 small" htmlFor="is_active">
+					{t('is_active')}
 					</label>
 					</div>
 
 
-					<div className="form-check col-md-2   ms-2">
+					<div  className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `} >
 					<input
-						className="form-check-input  "
+						className="  form-check-input  "
 						type="checkbox"
 						name='user.is_superuser'
 						id="is_superuser"
@@ -422,8 +467,9 @@ return (
 						disabled={!canEdit}
 
 					/>
-					<label className="form-check-label small" htmlFor="is_superuser">
-						Is SuperUser
+					<label className="form-check-label mx-2 small" htmlFor="is_superuser">
+						{/* Is SuperUser */}
+						{t('Is_SuperUser')}
 					</label>
 					</div>
 
@@ -431,9 +477,9 @@ return (
 
 
 
-					<div className="form-check col-md-2   ms-2">
+					<div  className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `} >
 					<input
-						className="form-check-input  "
+						className="  form-check-input  "
 						type="checkbox"
 						name='user.is_ticket_priority_support'
 						id="is_ticket_priority_support"
@@ -442,8 +488,9 @@ return (
 						disabled={!canEdit}
 
 					/>
-					<label className="form-check-label small" htmlFor="is_ticket_priority_support">
-						Is High Ticket Priority 
+					<label className="form-check-label small mx-2" htmlFor="is_ticket_priority_support">
+						{/* Is High Ticket Priority  */}
+						{t('Is_High_Ticket_Priority')}
 					</label>
 					</div>
 
@@ -459,7 +506,7 @@ return (
 			<div > 
 				<div className="mt-3 col-md-4 ">
 				<label htmlFor="prod_image" className="form-label small">
-					Image
+				{t('image')}
 				</label>
 				<input
 					type="file"
@@ -475,11 +522,11 @@ return (
 				{data.profile.PRF_image	 &&
 				
 				<div>
-					<a href={data.profile.PRF_image} target="_blank" >  Current Image  </a> 
+					<a href={data.profile.PRF_image} target="_blank" >  {t('current_image')}  </a> 
 					
 					<div className="form-check   mt-2  ">
 						<input
-						className="form-check-input  "
+						className="   "
 						type="checkbox"
 						name='PRF_image_delete'
 						id="PRF_image_delete"
@@ -488,8 +535,8 @@ return (
 						disabled={!canEdit}
 
 						/>
-						<label className="form-check-label small" htmlFor="PRF_image_delete">
-						Delete Image 
+						<label className="form-check-label mx-2 small" htmlFor="PRF_image_delete">
+							{t('Delete_Image')} 
 						</label>
 					</div>
 					</div>
@@ -508,25 +555,25 @@ return (
 			<button  
 			// onClick={ handleSubmit }
 			onClick={setIsModalOpen}
-			style={{ width: '75px' }}  className="btn btn-primary btn-sm "
+			  className="btn btn-primary btn-sm  mx-2"
 			disabled={isObjUpdateing}
 			
 			>  
-			{isObjUpdateing ? 'Updating..' : 'Update' }     
+			{isObjUpdateing ? t('updating') : t('update') }     
 			</button>
 
 
 
 
-			<button onClick={()=> setCanEdit(false)} style={{ width: '75px' }}   className="btn btn-secondary btn-sm  ms-2 ">  
-			Cancel
+			<button onClick={()=> setCanEdit(false)}     className="btn btn-secondary btn-sm  mx-2 ">  
+				{t('cancel')}  
 			</button>
 			</>
 
 			:  
 			
-			<button onClick={()=> setCanEdit(true)} style={{ width: '75px' }}   className="btn   btn-outline-primary btn-sm  ">  
-			Edit
+			<button onClick={()=> setCanEdit(true)}     className="btn   btn-outline-primary mx-2  btn-sm  ">  
+				{t('edit')}
 			</button>
 
 			}
@@ -541,7 +588,7 @@ return (
 	id="edit_user_id"
 	handleSubmit={handleSubmit}
 	submitting={isObjUpdateing}
-	message={"Are you sure you want Update this User ?"}
+	message={t('modal_msg')}
 	operationType = "Update"
 	showModal={true} 
 	isModalOpen={isModalOpen}

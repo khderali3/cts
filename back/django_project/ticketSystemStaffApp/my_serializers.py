@@ -478,12 +478,20 @@ class GetTicketByIdStaffSerializer(serializers.ModelSerializer):
         return TicketFilesSerializer(ticket_files, many=True, context=self.context ).data
 
 
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = '__all__'
+
 
 
 
 class TicketStaffSerializer(serializers.ModelSerializer):
 
-    ticket_department = serializers.StringRelatedField()  # Display the department name instead of ID
+    # ticket_department = serializers.StringRelatedField()  # Display the department name instead of ID
+    ticket_department = serializers.SerializerMethodField()
+
+
     ticket_user = serializers.SerializerMethodField()  # Custom field to show both first and last names
     ticket_files =   serializers.SerializerMethodField() # Use a method to get the related files
     ticket_replies = serializers.SerializerMethodField()
@@ -525,6 +533,14 @@ class TicketStaffSerializer(serializers.ModelSerializer):
 
         ]    
         read_only_fields = ['id', 'ticket_user', 'ticket_assigned_to', 'ticket_status', 'ticket_created_by','ticket_closed_by', 'ticket_slog', 'ticket_replies']  # Set id as read-only
+
+
+
+    def get_ticket_department(self, obj):
+        ticket_department = obj.ticket_department
+        return DepartmentSerializer(ticket_department).data
+
+
 
     def get_ticket_pr_support(self, obj):
         if obj.ticket_user:

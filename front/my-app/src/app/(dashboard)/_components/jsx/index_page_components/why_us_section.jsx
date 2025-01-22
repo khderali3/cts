@@ -8,7 +8,8 @@ import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 import ListManagerFeatureWhyUs from "./whyus_section_component/ListManager_fiature_why_us";
 
 
-
+import { useTranslations, useLocale } from "next-intl";
+import { useSelector } from "react-redux";
 
 const WyeUsSection = () => {
 	const [canEdit, setCanEdit] = useState(false)
@@ -16,6 +17,16 @@ const WyeUsSection = () => {
 	const [submitting, setSubmitting] = useState(false)
 	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 	const [selectedFile, setSelectedFile] = useState(null)
+
+
+  const t = useTranslations('dashboard.site_managment.why_us')
+  const locale = useLocale()
+
+  const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
+
+
+
+
 
 	const [data, setData] = useState({
 		why_us_title: "",
@@ -61,18 +72,54 @@ const WyeUsSection = () => {
 	  
 			if( response && response.data){
 			  setCanEdit(false)
-			  toast.success("your data has been updated ");
+        if(locale ==="ar"){
+          toast.success("تم تعديل البيانات بنجاح");
+
+        } else {
+          toast.success("your data has been updated ");
+
+        }
 			  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/why_us/`)
 			  setIsModalOpen(false)
 	  
 			} else{
 			  console.log(response)
-			  toast.error("Error submitting form 1.");
+        if(locale ==="ar"){
+          toast.error("حصل خطأ رقم 1 أثناء محاولة تعديل البيانات يرجى المحاولة مجدداً");
+
+        } else {
+          toast.error("Error submitting form 1.");
+
+        }
+
+        if (response?.error?.data?.detail) {
+          if(response.error.data.detail === "Permission denied for this operation."){
+            if(locale === "ar") {
+              toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+
+            } else {
+              toast.error(response.error.data.detail);
+            }
+
+          } 
+        } else {
+          toast.error(JSON.stringify(response?.error?.data));
+        }
+
+
+
+
 			}
 	  
 		  } catch (error) {
 			console.error("Error submitting form:", error);
-			toast.error("Error submitting form2.");
+      if(locale ==="ar"){
+        toast.error("حصل خطأ رقم 2 أثناء محاولة تعديل البيانات يرجى المحاولة مجدداً");
+
+      } else {
+        toast.error("Error submitting form2.");
+
+      }
 		  } finally{ setSubmitting(false);}
 
 	  } else {
@@ -148,12 +195,23 @@ const WyeUsSection = () => {
   
     }, []);
 
+
+
+    if (!is_superuser && !(permissions?.includes('usersAuthApp.site_managment') && is_staff)) {
+      return;
+    } 
+
+
+
+
+
     return (
 
             
         <div className="container mt-2">
-        <h6>Why Us (Third Section)  
-
+        <h6>
+          {/* Why Us (Third Section)   */}
+          {t('title')}
         </h6>
         {/* Row for Search Form */}
         <div className="row my-4 py-4 px-4 border">
@@ -166,7 +224,7 @@ const WyeUsSection = () => {
            
             <div className="mb-3">
               <label htmlFor="why_us_title" className="form-label">
-                Title
+                {t('form.title')}
               </label>
               <input
                 type="text"
@@ -176,6 +234,7 @@ const WyeUsSection = () => {
                 readOnly={!canEdit}
                 value={data?.why_us_title  || ""}
                 onChange={handleChange}
+                dir='ltr'
 
 
               />
@@ -184,7 +243,7 @@ const WyeUsSection = () => {
 
             <div className="mb-3">
               <label htmlFor="why_us_details" className="form-label">
-                Details
+              {t('form.Details')}
               </label>
               <input
                 type="text"
@@ -194,6 +253,7 @@ const WyeUsSection = () => {
                 readOnly={!canEdit}
                 value={data?.why_us_details  || ""}
                 onChange={handleChange}
+                dir='ltr'
 
 
               />
@@ -202,7 +262,7 @@ const WyeUsSection = () => {
 
             <div className="mb-3">
               <label htmlFor="why_us_title_ar" className="form-label">
-                Title (Ar)
+              {t('form.title_ar')}
               </label>
               <input
                 dir="rtl"
@@ -221,7 +281,8 @@ const WyeUsSection = () => {
 
             <div className="mb-3">
               <label htmlFor="why_us_details_ar" className="form-label">
-                Details  (Ar)
+                {/* Details  (Ar) */}
+                {t('form.Details_ar')}
               </label>
               <input
                 dir="rtl"
@@ -240,7 +301,8 @@ const WyeUsSection = () => {
 
             <div className="mb-3">
               <label htmlFor="why_us_image" className="form-label">
-                Image
+                 
+                {t('form.image')}
               </label>
               <input
                 type="file"
@@ -252,7 +314,7 @@ const WyeUsSection = () => {
                 onChange={handleChange}
               />
 
-              {data?.why_us_image &&  <a href={data?.why_us_image}>  Current Image  </a> }
+              {data?.why_us_image &&  <a href={data?.why_us_image} target="_blank">  {t('form.current_image')}  </a> }
              
             </div>
 
@@ -276,17 +338,17 @@ const WyeUsSection = () => {
                               className="btn btn-primary"
                               >
 
-                         {!submitting ? 'Update' : 'Updating...'}
+                         {!submitting ? t('form.update') : t('form.updating')}
                       </button>
 
-                          <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  ms-2">
-                          Cancel
+                          <button type="button"  onClick={ () => setCanEdit(false)}    className="  btn  btn-secondary  mx-2">
+                            {t('form.cancel')}
                           </button>
                           </>
                         :   
 
-                        <button  onClick={handleCanEdit }   className="  btn  btn-secondary">
-                        Edit 
+                        <button  onClick={handleCanEdit }   className="  btn mx-2 btn-secondary">
+                        {t('form.edit')} 
                         </button>
                     }
 
@@ -308,7 +370,7 @@ const WyeUsSection = () => {
 		id="why_us_modal"
 		handleSubmit={handleSubmit}
 		submitting={submitting}
-		message={"Are you sure you want to update 'Why us section' Data?"}
+		message={t('form.modal_msg')}
 		showModal={true} 
 		isModalOpen={isModalOpen}
 		setIsModalOpen={setIsModalOpen}

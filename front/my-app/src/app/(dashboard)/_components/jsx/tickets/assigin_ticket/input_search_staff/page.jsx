@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Select from 'react-select';
 
 
-const StaffUsersSearchInput = ({ handleUserIdChange, userId, isOtherUser }) => {
+const StaffUsersSearchInput = ({ handleUserIdChange, userId, isOtherUser, input_lable='',  input_ph=''}) => {
   const [staffUsers, setStaffUsers] = useState([]); // store clients list
   const [customFetch] = useCustomFetchMutation();
 
@@ -53,7 +53,7 @@ const StaffUsersSearchInput = ({ handleUserIdChange, userId, isOtherUser }) => {
  
     <> 
 
-    <label htmlFor="staff-select">Search Staff Members:</label>
+    <label htmlFor="staff-select">{input_lable} : </label>
     
     <Select
       inputId="staff-select" // Links the label to the input for accessibility
@@ -61,7 +61,7 @@ const StaffUsersSearchInput = ({ handleUserIdChange, userId, isOtherUser }) => {
       onChange={(selected) => handleUserIdChange(selected?.value)} // Pass the selected value or `null` to the handler
       value={selectedOption} // Ensure that the selected value is highlighted
       isSearchable
-      placeholder="Search staff"
+      placeholder={input_ph}
       isClearable={true}
       isDisabled={!isOtherUser}
     />

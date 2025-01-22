@@ -10,8 +10,11 @@ import { jwtDecode} from 'jwt-decode';
 
 import { Suspense } from 'react'
 
+import { useLocale } from 'next-intl';
 
  function LoadPage() {
+
+	const locale = useLocale()
 	const [googleAuthenticate] = useGoogleMutation();
 
 	const dispatch = useDispatch();
@@ -38,11 +41,24 @@ import { Suspense } from 'react'
 
 
 					dispatch(setAuth());
-					toast.success('Logged in succusfuly with google account');
+
+					if(locale === "ar"){
+						toast.success('تم تسجيل الدخول بحساب جوجل بنجاح');
+
+					}else {
+						toast.success('Logged in succusfuly with google account');
+
+					}
 					router.push('/');
 				})
 				.catch(() => {
-					toast.error('Failed to log in with google ');
+					if(locale === "ar"){
+						toast.error('فشل في تسجيل الدخول بحساب جوجل');
+
+					} else {
+						toast.error('Failed to log in with google ');
+
+					}
 					router.push('/account/login');
 				});
 		}
@@ -55,7 +71,14 @@ import { Suspense } from 'react'
 
 	return (
 		<div className=" d-flex align-items-center justify-content-center background-color   " style={{ height: "100vh" }}>
-			<h1 className='text-light'> Logging in with google account ....  </h1>
+			<h1 className='text-light'> 
+				{locale === "ar" ?
+				'جاري تسجيل الدخول بحساب جوجل....'
+				:
+				'Logging in with google account ....'  
+
+				}
+			</h1>
 		</div>
 
 

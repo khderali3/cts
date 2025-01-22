@@ -202,6 +202,8 @@ class CompnayIfRight(models.Model):
 
 class Footer (models.Model):
     about_us_content = models.CharField( max_length=255, null=True, blank=True)
+    about_us_content_ar = models.CharField( max_length=255, null=True, blank=True)
+    
     contact_us_email = models.EmailField(  null=True, blank=True  )
     contact_us_phone = models.CharField( max_length=255, null=True, blank=True)
 

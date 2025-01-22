@@ -5,6 +5,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from ticketSystemApp.views import ProtectedMediaView
 
+
+
+# added by khder
+from rest_framework.routers import DefaultRouter
+from usersAuthApp.views import CustomUserViewSet
+router = DefaultRouter()
+router.register(r'users', CustomUserViewSet, basename='user')
+# end added by khder
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/staff/auth/', include('staffAuthApp.urls')),
@@ -13,11 +22,11 @@ urlpatterns = [
     path('api/staff/usersmanagment/', include('usersManagmentStaffApp.urls')),
 
 
+    # path('api/', include('djoser.urls')),
 
 
+    path('api/', include(router.urls)),
 
-
-    path('api/', include('djoser.urls')),
     path('api/', include('usersAuthApp.urls')),
     path('api/site/', include('siteusersApp.urls')),
     path('api/ticket/', include('ticketSystemApp.urls')),

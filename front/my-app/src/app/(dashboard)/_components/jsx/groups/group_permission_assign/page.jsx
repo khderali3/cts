@@ -7,7 +7,11 @@ import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/
 import { toast } from "react-toastify";
 
 
+import { useTranslations, useLocale } from "next-intl";
+import { useSelector } from "react-redux";
+
 const GroupPermissionAasignOrRemoveSection = ({group_id}) => {
+	const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
 
 	const [customFetch] = useCustomFetchMutation();
 	
@@ -17,6 +21,10 @@ const GroupPermissionAasignOrRemoveSection = ({group_id}) => {
 	const [allPermissions, setAllPermissions] = useState([])
 	const [groupPermissions, setGroupPermissions] = useState([])
 	const [groupName, setGroupName] = useState('')
+	const t = useTranslations('dashboard.users_managment.group_permissoins')
+	const locale = useLocale()
+	const t_permissions = useTranslations('dashboard.users_managment.permissions')
+
 
 
 	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
@@ -87,16 +95,53 @@ const GroupPermissionAasignOrRemoveSection = ({group_id}) => {
 		  });	  
 		  if (response && response.data) {	
 			fetchGroupPermissions()
-			toast.success("the group permissions has been updated succussfuly!");
+			
 			setCanEdit(false)
- 
+			if(locale === "ar"){
+				toast.success("تم تعديل صلاحيات المجموعة بنجاح");
+
+			} else {
+				toast.success("the group permissions has been updated succussfuly!");
+
+			}
 		  } else {
-			toast.error("Error submitting form.");
+			if(locale === "ar"){
+				toast.error("حصل خطأ رقم 1 أثناء تعديل صلاحيات المجموعة . يرجى المحاولة مجدداً");
+
+			} else {
+				toast.error("Error 1 submitting form.");
+
+			}
+
+
+			if (response?.error?.data?.detail) {
+				if(response.error.data.detail === "Permission denied for this operation."){
+					if(locale === "ar") {
+						toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+	
+					} else {
+						toast.error(response.error.data.detail);
+					}
+	
+				} 
+			} else {
+				toast.error(JSON.stringify(response?.error?.data));
+			}
+
+
+
+
 			
 			console.log("Failed to update group 1", response);
 		  }
 		} catch (error) {
-			toast.error("Error submitting form.");			
+			if(locale === "ar"){
+				toast.error("حصل خطأ رقم 2 أثناء تعديل صلاحيات المجموعة . يرجى المحاولة مجدداً");
+
+			} else {
+				toast.error("Error 2 submitting form.");			
+
+			}
 			console.log("Failed to update group 2");
 		} finally{ setIsObjUpdateing(false)}
 	  };
@@ -112,14 +157,20 @@ useEffect(() => {
 
 
 
+if (!is_superuser && !(permissions?.includes('usersAuthApp.user_managment') && is_staff)) {
+	return;
+  } 
 
 	return(
 
 		<div>
 		<hr />
-		<h6> Edit Group Permissions (Group Name: {groupName})   </h6>
+		{/* <h6> Edit Group Permissions (Group Name: {groupName})   </h6> */}
+		<h6> {t('title.main_title')} ( {t('title.group_name')} {groupName} )   </h6>
+
+
 		<div> 	  
-			<form className="  col-md-10 mb-5 "   >
+			<form className="  col-md-12 mb-5 "   >
 
 			<div className="row">
  
@@ -132,19 +183,22 @@ useEffect(() => {
 					{allPermissions.map( (permission) => (
 						
 
-						<div key={permission.id} className="form-check col-md-2   ms-2">
+						<div    key={permission.id} className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
 							<input
-								className="form-check-input"
+							  
+								className="form-check-input "
 								type="checkbox"
 								name={permission?.name}
 								id={`${permission?.id}_permission_id`}
 								checked={groupPermissions.includes(permission.id)} // Check if ID is in the list
 								onChange={(e) => handleChange(permission.id, e.target.checked)}
 								disabled={!canEdit}
+								 
 		
 							/>
-							<label className="form-check-label small" htmlFor={`${permission?.id}_permission_id`}>
-								{permission?.name}
+							<label    className="form-check-label mx-2   small" htmlFor={`${permission?.id}_permission_id`}>
+								 
+								{t_permissions(permission.codename)}
 							</label>
 						</div>
 					) )}
@@ -166,25 +220,25 @@ useEffect(() => {
 			<button  
 			// onClick={ handleSubmit }
 			onClick={setIsModalOpen}
-			style={{ width: '75px' }}  className="btn btn-primary btn-sm "
+			  className="btn btn-primary btn-sm "
 			disabled={isObjUpdateing}
 			
 			>  
-			{isObjUpdateing ? 'Updating..' : 'Update' }     
+			{isObjUpdateing ? t('updating') : t('update') }     
 			</button>
 
 
 
-			<button onClick={()=> setCanEdit(false)} style={{ width: '75px' }}   className="btn btn-secondary btn-sm  ms-2 ">  
-			Cancel
+			<button onClick={()=> setCanEdit(false)}     className="btn btn-secondary btn-sm  mx-2 ">  
+			{t('cancel')}
 			</button>
 			</>
 
 
 			:  
 			
-			<button onClick={()=> setCanEdit(true)} style={{ width: '75px' }}   className="btn btn-outline-primary btn-sm  ">  
-			Edit
+			<button onClick={()=> setCanEdit(true)}    className="btn btn-outline-primary mx-2 btn-sm  ">  
+			{t('edit')}
 			</button>
 
 			}
@@ -199,7 +253,7 @@ useEffect(() => {
 	id="edit_Group_permission_id"
 	handleSubmit={handleSubmit}
 	submitting={isObjUpdateing}
-	message={"Are you sure you want Update this User Permissions ?"}
+	message={t('modal_msg')}
 	operationType = "Update"
 	showModal={true} 
 	isModalOpen={isModalOpen}

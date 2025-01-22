@@ -31,7 +31,7 @@ export default function useVerify() {
 			if (data?.first_name) {
 				dispatch(setloginFirstName(data?.first_name))
 			}
-			if(data?.profile.PRF_image){
+			if(data?.profile?.PRF_image){
 				dispatch(setprofileImage(data?.profile.PRF_image))
 			}
 

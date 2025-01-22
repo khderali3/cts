@@ -4,12 +4,18 @@ import { useEffect, useState, useRef} from "react"
 import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/siteApiSlice";
 import { toast } from "react-toastify";
 import { useRouter } from 'next/navigation';
-import Link from "next/link";
 
 import NewTicketUsersSearchInput from "@/app/(dashboard)/_components/jsx/tickets/new_ticket/input_search_users/page";
 
+import { useTranslations, useLocale } from "next-intl";
+
 
 const Page = () =>  {
+
+
+  const t = useTranslations('dashboard.ticket.add_new_ticket')
+  const locale = useLocale()
+
 
   const [customFetch] = useCustomFetchMutation();
   const [departments, setDepartments] = useState([])
@@ -127,22 +133,54 @@ const Page = () =>  {
           if (input) input.value = ""; // Reset file input value
         });
 
-        toast.success("Your ticket has been added successfully!");
+
+        if(locale === "ar"){
+          toast.success("تم إنشاء التذكرة بنجاح");
+
+        }else {
+          toast.success("Your ticket has been added successfully!");
+
+        }
+
+
+
+
+
+
         router.push('/staff/ticket');  
       } else {
-        toast.error("Failed to submit the request.");
+        if(locale === "ar"){
+          toast.error("حصل خطأ رقم 1 في إنشاء التذكرة");
+
+        } else {
+          toast.error("Failed 1 to submit the request.");
+
+        }
+
+
         console.log('response', response)
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Error submitting form.");
+      if(locale === "ar"){
+        toast.error("حصل خطأ رقم 2 في إنشاء التذكرة");
+
+      } else {
+        toast.error("Error 2 submitting form.");
+
+      }
     }
 
       
       console.log("Form is valid");
     } else {
+      if(locale === "ar"){
+        toast.error("جميع الحقول مطلوبة ");
 
-      toast.error("all fields are required ");
+      } else {
+        toast.error("all fields are required ");
+
+      }
     }
 
 
@@ -201,26 +239,7 @@ useEffect(() => {
       <div className="app-content-header">
 
 
-        <div className="container-fluid">
 
-
-          <div className="row">
-            <div className="col-sm-6">
-              <h3 className="mb-0">Main Index Page </h3>
-            </div>
-
-            <div className="col-sm-6">
-              <ol className="breadcrumb float-sm-end">
-                <li className="breadcrumb-item">
-                  <a href="#">Docs</a>
-                </li>
-                <li className="breadcrumb-item active" aria-current="page">
-                  Site Managment
-                </li>
-              </ol>
-            </div>
-          </div>
-        </div>
 
       </div>
 
@@ -231,17 +250,17 @@ useEffect(() => {
         <div className="container-fluid  min-vh-150 bg-white p-3 border rounded " >
 
 
-          <h2>Submit a request</h2>
+          <h2>{t('form_title')}</h2>
           <form className="col-md-8 col-12 mb5 " onSubmit={handleSubmit}>
 
 
 
-          <NewTicketUsersSearchInput  handleUserIdChange={handleUserIdChange} userId={userId} />
+          <NewTicketUsersSearchInput label={ t('Search_Per_User_label') } handleUserIdChange={handleUserIdChange} userId={userId} />
 
 
             <div className="mb-3">
               <label htmlFor="requestType" className="form-label">
-                Please select target department
+              {t('department_label')}
               </label>
 
 
@@ -253,10 +272,10 @@ useEffect(() => {
                   defaultValue="" 
                 >
 
-                <option disabled   value=''> Select Department</option>
+                <option disabled   value=''> {t('department_default_option')}</option>
                   {departments?.map((item) => (
                     <option key={item.id} value={item.id}>
-                      {item.department_name}
+                       { locale ==="ar"  ? item.department_name_ar :  item.department_name}
                     </option>
                   ))}
                 </select>
@@ -268,7 +287,7 @@ useEffect(() => {
 
             <div className="mb-3">
               <label htmlFor="subject" className="form-label">
-                Subject <span className="text-danger">*</span>
+              {t('subject')} <span className="text-danger">*</span>
               </label>
               <input  
               name="ticket_subject" 
@@ -284,13 +303,13 @@ useEffect(() => {
 
             <div className="mb-3">
               <label htmlFor="description" className="form-label">
-                Description <span className="text-danger">*</span>
+              {t('description')} <span className="text-danger">*</span>
               </label>
               <textarea
                 className="form-control"
                 id="description"
                 rows={6}
-                placeholder="Please enter the details of your request, and our staff will respond as soon as possible."
+                placeholder={t('description_placeholder')}
                 required=""
                 // onChange={handleChange}
                 name="ticket_body"
@@ -311,11 +330,11 @@ useEffect(() => {
                 htmlFor={`fileInput-${fileInput.id}`} 
                 className="form-label fw-bold me-2"
                 >
-                Upload File {index + 1}
+                {t('upload_file') } {index + 1}
                 </label>
                 <input
                 type="file"
-                className="form-control-file"
+                className="form-control-file mx-2"
                 id={`fileInput-${fileInput.id}`}
                 onChange={(e) => handleFileChange(e, fileInput.id)}
                 name="ticket_files[]"
@@ -333,7 +352,7 @@ useEffect(() => {
                         onClick={handleAddMore}
                         >
                         <i className="fa fa-plus me-2"></i> {/* Font Awesome icon */}
-                        Add More
+                          {t('btn_add_More_file')}
                         </button>
                     </div>
                     <div className="col-12 col-md-auto">
@@ -344,7 +363,7 @@ useEffect(() => {
                         disabled={files.length <= 1} // Disable if only one input left
                         >
                         <i className="fa fa-trash me-2"></i> {/* Font Awesome icon */}
-                        Delete
+                          {t('btn_remove_file')}
                         </button>
                     </div>
 
@@ -381,7 +400,7 @@ useEffect(() => {
 
 
             <button type="submit" className="btn btn-primary">
-              Submit
+              {t('submit')}
             </button>
           </form>
           </div>

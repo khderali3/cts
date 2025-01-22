@@ -115,3 +115,31 @@ class CustomUserSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         model = UserAccount
         fields = list(UserSerializer.Meta.fields) + ['profile']
+
+
+
+
+from djoser.serializers import SendEmailResetSerializer
+from rest_framework.exceptions import ValidationError
+from .public_utils import verify_recaptcha 
+
+class CustomPasswordResetSerializer(SendEmailResetSerializer):
+    def validate(self, attrs):
+        # Extract reCAPTCHA value from the request data
+        recaptcha_value = self.context.get('request').data.get('recaptcha_value')
+        if not recaptcha_value:
+            raise ValidationError({'recaptcha': 'reCAPTCHA value is required.'})
+
+        # Verify the reCAPTCHA
+        if not verify_recaptcha(recaptcha_value):
+            raise ValidationError({'recaptcha': 'Invalid reCAPTCHA. Please try again.'})
+
+        # Proceed with the original validation
+        return super().validate(attrs)
+
+
+
+
+
+
+

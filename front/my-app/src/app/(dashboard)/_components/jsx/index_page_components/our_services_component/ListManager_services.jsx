@@ -7,6 +7,7 @@ import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 
 
 
+import { useTranslations, useLocale } from "next-intl";
 
 
 
@@ -17,6 +18,9 @@ export default function ListManagerServices() {
 	service_name:'',
 	service_name_ar:'',
   });
+
+  const t = useTranslations('dashboard.site_managment.our_services.list_manager')
+  const locale = useLocale()
 
 
 
@@ -59,7 +63,20 @@ export default function ListManagerServices() {
 		});
   
 		if( response && response.data){
-		  toast.success("your item been Updated ");
+			if(locale === "ar"){
+				
+			}
+		
+			if(locale === "ar"){
+				toast.success("تم تعديل البيانات بنجاح");
+	  
+			  }else {
+				toast.success("your data has been updated ");
+	  
+			  }
+
+
+
 		  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/service/`)
 		  setEditingItem({
 					id:null,
@@ -68,16 +85,55 @@ export default function ListManagerServices() {
 				})
 		} else{
 		  console.log(response)
-		  toast.error("Error submitting form 1.");
+		  if(locale === "ar"){
+			toast.error("حصل خطأ رقم 1 أثناء عملية التعديل . يرجى المحاولة مجدداً");
+  
+		  } else {
+			toast.error("Error submitting form 1.");
+  
+		  }
+
+
+		  if (response?.error?.data?.detail) {
+			if(response.error.data.detail === "Permission denied for this operation."){
+			  if(locale === "ar") {
+				toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+  
+			  } else {
+				toast.error(response.error.data.detail);
+			  }
+  
+			} 
+		  } else {
+			toast.error(JSON.stringify(response?.error?.data));
+		  }		  
+
+
+
+
+
+
 		}
   
 	  } catch (error) {
 		console.error("Error submitting form:", error);
-		toast.error("Error submitting form2.");
+		if(locale === "ar"){
+			toast.error("حصل خطأ رقم 2 أثناء عملية التعديل . يرجى المحاولة مجدداً");
+	
+		  } else {
+			toast.error("Error submitting form2.");
+	
+		}
 	  }
 
   } else {
-	toast.error("Error. all fields are required ");
+	if(locale === "ar"){
+        toast.error("جميع الحقول مطلوبة");
+
+      } else {
+        toast.error("Error. all fields are required ");
+
+      }
 
   }
 
@@ -180,7 +236,19 @@ const handleaddItem = async (e) => {
 		});
   
 		if( response && response.data){
-		  toast.success("your item been Added ");
+		  
+
+		  if(locale === "ar"){
+			toast.success("تم إضافة البيانات بنجاح");
+  
+		  }else {
+			toast.success("your item been Added ");
+  
+		  }
+
+
+
+
 		  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/service/`)
 			setNewItem({
 				service_name:'',
@@ -188,16 +256,47 @@ const handleaddItem = async (e) => {
 			})
 		} else{
 		  console.log(response)
-		  toast.error("Error submitting form 1.");
-		}
+		  if(locale === "ar"){
+			toast.error("حصل خطأ رقم 1 أثناء عملية الإضافة . يرجى المحاولة مجدداً");
   
+		  } else {
+			toast.error("Error submitting form 1.");  
+		  }
+		  if (response?.error?.data?.detail) {
+			if(response.error.data.detail === "Permission denied for this operation."){
+			  if(locale === "ar") {
+				toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");  
+			  } else {
+				toast.error(response.error.data.detail);
+			  }  
+			} 
+		  } else {
+			toast.error(JSON.stringify(response?.error?.data));
+		  }
+		}  
 	  } catch (error) {
 		console.error("Error submitting form:", error);
-		toast.error("Error submitting form2.");
+		if(locale === "ar"){
+			toast.error("حصل خطأ رقم 2 أثناء عملية الإضافة . يرجى المحاولة مجدداً");
+  
+		  } else {
+			toast.error("Error submitting form 2.");
+  
+		  }
+
+
+
+
 	  } finally{ setAddingItem(false);}
 
   } else {
-	toast.error("Error. all fields are required ");
+	if(locale === "ar"){
+        toast.error("جميع الحقول مطلوبة");
+
+      } else {
+        toast.error("Error. all fields are required ");
+
+      }
 
   }
 
@@ -219,9 +318,45 @@ const handleaddItem = async (e) => {
 	  });
  
 	  if( response && response.data) {
+
+		if(locale === "ar"){
+			toast.success("تم حذف العنصر بنجاح");
+  
+		  }else {
+			toast.success("your item been deleted ");
+  
+		  }
+
+
+
 		fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/service/`);
 
+	} else{
+		console.log(response)
+		if(locale === "ar"){
+		  toast.error("حصل خطأ رقم 1 أثناء عملية الإضافة . يرجى المحاولة مجدداً");
+
+		} else {
+		  toast.error("Error submitting form 1.");  
+		}
+		if (response?.error?.data?.detail) {
+		  if(response.error.data.detail === "Permission denied for this operation."){
+			if(locale === "ar") {
+			  toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");  
+			} else {
+			  toast.error(response.error.data.detail);
+			}  
+		  } 
+		} else {
+		  toast.error(JSON.stringify(response?.error?.data));
+		}
 	  }
+
+
+
+
+
+
 
 	  setDeletingItemId(null)
 
@@ -231,25 +366,23 @@ const handleaddItem = async (e) => {
 
   return (
     <div className="container mt-5">
-      <h6>Manage List Items Services</h6>
+      <h6>{t('title')}</h6>
 
       {/* Table Display */}
       <table className="table table-bordered mt-4">
         <thead className="table-light">
           <tr>
 				<th style={{ width: '5%' }}>#</th>
-				<th style={{ width: '35%' }}>Content</th>
-				<th style={{ width: '35%' }}  >
-				Content (Ar)
-				</th>
-				<th style={{ width: '25%' }}>Actions</th>
+				<th style={{ width: '35%' }}>{t('content')}</th>
+				<th style={{ width: '35%' }}  > {t('content_ar')}  </th>
+				<th style={{ width: '25%' }}>{t('actions')}</th>
           </tr>
         </thead>
         <tbody>
           {data?.map((item, index) => (
             <tr key={item.id}>
               <td>{index +1}</td>
-              <td>{item.service_name}</td>
+              <td  dir='ltr'   >{item.service_name}</td>
               <td className="text-end" >{item.service_name_ar}</td>
               <td>
                 <button
@@ -268,7 +401,9 @@ const handleaddItem = async (e) => {
 				  style={{ minWidth: '75px' }}
                 >
                   
-				  {editingItemId === item.id ? "Editing..." : "Edit"}
+				  {editingItemId === item.id ? t('editing') : t('edit')}
+
+
                 </button>
 
 
@@ -285,7 +420,7 @@ const handleaddItem = async (e) => {
 				  disabled={deletingItemId === item.id}
 				  style={{ minWidth: '75px' }}
                 >
-                  {deletingItemId === item.id ? "Deleting " : "Delete"}
+                  {deletingItemId === item.id ? t('deleting') : t('delete')}
                 </button>
               </td>
             </tr>
@@ -303,7 +438,7 @@ const handleaddItem = async (e) => {
            
 		<div className="mb-3">
 			<label htmlFor="service_name" className="form-label">
-			Content
+			{t('form_add.Content')}
 			</label>
 			<input
 				type="text"
@@ -312,13 +447,15 @@ const handleaddItem = async (e) => {
 				name="service_name"
 				value={newItem?.service_name  || ""}
 				onChange={handleChange}
+				dir='ltr'
+
 			/>
 		</div>
 
 
 		<div className="mb-3">
 			<label htmlFor="service_name_ar" className="form-label">
-			Content (Ar)
+			{t('form_add.Content_ar')}
 			</label>
 			<input
 				type="text"
@@ -343,7 +480,7 @@ const handleaddItem = async (e) => {
 			disabled={isButtonDisabled || addingItem }
 		>
 
-			{addingItem ? 'adding...' : 'Add Item'}
+			{addingItem ? t('form_add.adding_item') : t('form_add.add_item')}
 			
 		</button>
 
@@ -371,7 +508,7 @@ const handleaddItem = async (e) => {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="editModal_servicesLabel">Edit Item</h5>
+              <h5 className="modal-title" id="editModal_servicesLabel"> {t('form_edit.title')}</h5>
               <button
                 type="button"
                 className="btn-close"
@@ -389,7 +526,7 @@ const handleaddItem = async (e) => {
 					
 				<div className="  ">
 				<label htmlFor="service_name" className="form-label">
-				Content
+				 {t('form_edit.Content')}
 				</label>
 				<input
 					type="text"
@@ -398,6 +535,7 @@ const handleaddItem = async (e) => {
 					name="service_name"
 					value={editingItem?.service_name  || ""}
 					onChange={handleChangeEditingItem}
+					dir='ltr'
 
 
 				/>
@@ -406,7 +544,7 @@ const handleaddItem = async (e) => {
 
 				<div className="mb-3">
 				<label htmlFor="service_name_ar" className="form-label">
-				Content (Ar)  
+				  {t('form_edit.Content_ar')}
 				</label>
 				<input
 					type="text"
@@ -444,7 +582,7 @@ const handleaddItem = async (e) => {
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
-                Close
+                  {t('form_edit.cancel')}
               </button>
               <button
                 type="button"
@@ -452,7 +590,7 @@ const handleaddItem = async (e) => {
                 onClick={handleEditingItem}
                 data-bs-dismiss="modal"
               >
-				{editingItemId  ? "Saveing.." : "Save Changes"}
+				{editingItemId  ? t('form_edit.updating') : t('form_edit.update') }
               </button>
             </div>
           </div>
@@ -465,7 +603,7 @@ const handleaddItem = async (e) => {
 		id="list_manager_services"
 		handleSubmit={ () =>   deleteItem(itemIdToDelete)}
 		submitting={deletingItemId}
-		message={"Are you sure you want to Delete this item ?"}
+		message={t('modal_del_msg')}
 		operationType = "Delete"
 		showModal={true} 
 		isModalOpen={isModalOpen}

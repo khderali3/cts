@@ -6,7 +6,13 @@ import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/
 import { toast } from "react-toastify";
 import { useDispatch } from 'react-redux';
 import { setprofileImage } from "@/app/(site)/_components/redux/features/authSlice";
+
+
+import { useTranslations, useLocale } from "next-intl";
 const Page = () => {
+
+        const t = useTranslations('site.account.edit_profile.form')
+        const locale = useLocale()
 
         const [canEdit, setCanEdit] = useState(false)
 
@@ -34,11 +40,11 @@ const Page = () => {
     // Append text fields to form data
     form.append("first_name", data.first_name);
     form.append("last_name", data.last_name);
-    form.append("PRF_company", data.PRF_company);
-    form.append("PRF_country", data.PRF_country);
-    form.append("PRF_city", data.PRF_city);
-    form.append("PRF_address", data.PRF_address);
-    form.append("PRF_phone_number", data.PRF_phone_number);
+    form.append("PRF_company", data.PRF_company || "");
+    form.append("PRF_country", data.PRF_country || "");
+    form.append("PRF_city", data.PRF_city || "");
+    form.append("PRF_address", data.PRF_address || "");
+    form.append("PRF_phone_number", data.PRF_phone_number || "");
 
 
     if(selectedFile instanceof File  ) {
@@ -60,7 +66,15 @@ const Page = () => {
 
       if( response && response.data){
         setCanEdit(false)
-        toast.success("your profile has been updated ");
+
+        if(locale === "ar") {
+          toast.success("تم تحديث الملف الشخصي بنجاح");
+
+        } else {
+          toast.success("your profile has been updated ");
+
+        }
+
         dispatch(setprofileImage(response?.data?.PRF_image))
         setPRF_image_delete(false)
         fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/jwt/profile/`)
@@ -68,12 +82,26 @@ const Page = () => {
 
       } else{
         console.log(response)
-        toast.error("Error submitting form 1.");
+
+        if(locale === "ar"){
+          toast.error("خطأ1 في تحديث الملف الشخصي");
+
+        } else {
+          toast.error("Error submitting form 1.");
+
+        }
       }
 
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Error submitting form2.");
+
+      if(locale === "ar"){
+        toast.error("خطأ 2 في تحديث الملف الشخصي");
+
+      } else {
+        toast.error("Error submitting form2.");
+
+      }
     }
       
   };
@@ -141,12 +169,13 @@ useEffect(() => {
 
 
 
-<div className="  form d-flex align-items-center justify-content-center background-color   ">
+<div className="  form d-flex align-items-center justify-content-center background-color pb-5  ">
   
 
     <form className="col-lg-4 col-md-6 col-11  " onSubmit={handleSubmit}>
     <h1 className="h3 mt-5 mb-3 fw-normal text-light text-center">
-      Update Profile
+      {/* Update Profile */}
+      {t('form_title')}
     </h1>
 
     {/* Current Profile Image Section */}
@@ -170,7 +199,10 @@ useEffect(() => {
         value={data?.first_name  || ""}
         onChange={handleChange}
       />
-      <label  htmlFor="first_name">First Name</label>
+      <label  htmlFor="first_name">
+        {/* First Name */}
+        {t('first_name')}
+      </label>
     </div>
 
     <div className="form-floating pb-1">
@@ -185,7 +217,10 @@ useEffect(() => {
         onChange={handleChange}
 
       />
-      <label htmlFor="last_name">Last Name</label>
+      <label htmlFor="last_name">
+        {/* Last Name */}
+        {t('Last_Name')}
+      </label>
     </div>
 
     <div className="form-floating pb-1">
@@ -200,7 +235,10 @@ useEffect(() => {
         onChange={handleChange}
 
       />
-      <label htmlFor="PRF_country">Country</label>
+      <label htmlFor="PRF_country">
+        {/* Country */}
+        {t('Country')}
+      </label>
     </div>
 
     <div className="form-floating pb-1">
@@ -215,7 +253,11 @@ useEffect(() => {
         onChange={handleChange}
 
       />
-      <label htmlFor="PRF_city">City</label>
+      <label htmlFor="PRF_city">
+        {/* City */}
+        {t('City')}
+
+      </label>
     </div>
 
 
@@ -232,7 +274,10 @@ useEffect(() => {
         onChange={handleChange}
 
       />
-      <label htmlFor="PRF_city">Address </label>
+      <label htmlFor="PRF_city">
+        {/* Address  */}
+        {t('Address')}
+      </label>
     </div>
 
 
@@ -250,7 +295,11 @@ useEffect(() => {
         onChange={handleChange}
 
       />
-      <label htmlFor="PRF_company">Company</label>
+      <label htmlFor="PRF_company">
+        {/* Company */}
+        {t('Company')}
+
+      </label>
     </div>
 
     <div className="form-floating pb-1">
@@ -265,13 +314,17 @@ useEffect(() => {
         onChange={handleChange}
 
       />
-      <label htmlFor="PRF_phone_number">Phone Number</label>
+      <label htmlFor="PRF_phone_number">
+        {/* Phone Number */}
+        {t('Phone_Number')}
+      </label> 
     </div>
 
     {/* Upload Image Section */}
     <div className="pb-3 mb-2">
       <label htmlFor="PRF_image" className="form-label text-light">
-       Upload New Profile Image
+       {/* Upload New Profile Image */}
+       {t('upload_img')}
       </label>
       <input
         type="file"
@@ -283,50 +336,41 @@ useEffect(() => {
         onChange={handleChange}
       />
 
-
-
-
-
-
-
-
     </div>
 
 
-    <div className="pb-3">
-      <div>
-        <div className="form-check">
+    <div className="pb-3" >
+        <div className=" form-check  ">
           <input
             type="checkbox"
-            className="form-check-input"
+            // className="form-check-input"
             id="Delete-Image"
             name="Delete-Image"
-            // disabled={!canEdit && !data.PRF_image }
-            // disabled={!canEdit || !data.PRF_image}
             disabled={canEdit === true && data.PRF_image != null ? false : true}
-
-
             checked={PRF_image_delete}
             onChange={() => setPRF_image_delete(!PRF_image_delete)}
-            
           />
-          <label className="form-check-label text-light" htmlFor="Delete-Image">
-            Delete Currnet Profile Image
+          <label className="form-check-label ms-2 me-2   text-light  " htmlFor="Delete-Image">
+            {/* Delete Currnet Profile Image */}
+            {t('delete_current_img')}
           </label>
         </div>
-      </div>
     </div> 
 
 
     { canEdit === true ?
         <button  className="w-100 btn btn-lg btn-primary" type="submit">
-            Update Profile
+            {/* Update Profile */}
+            {t('update_profile')}
+
         </button>    
     
     :   
 
     <button  onClick={handleCanEdit }   className="w-100 btn btn-lg btn-danger">
-      Edit Profile
+      {/* Edit Profile */}
+      {t('edit_profile')}
+
     </button>
     
     }
@@ -334,7 +378,6 @@ useEffect(() => {
 
 
 
-    <p className="mt-3 mb-3 text-muted">© CloudTech</p>
   </form>
 
 

@@ -2,10 +2,19 @@
 import { useState, useEffect } from "react"
 import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staff/features/authApiSlice"
  import { useRouter } from "next/navigation"
-
+import { toast } from "react-toastify"
 
 import { useRef } from "react"
+
+import { useTranslations } from "next-intl"
+import Link from "next/link"
+
+import { useSelector } from "react-redux";
+
+import {useLocale} from "next-intl"
+
 const Page = () => {
+    const locale = useLocale()
 
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
@@ -14,6 +23,12 @@ const Page = () => {
     const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/usersmanagment/users/` 
     const isInitialLoad = useRef(true);
     const router = useRouter()
+
+    const t = useTranslations('dashboard.users_managment.users')
+
+    const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
+
+
 
    const  handleSearchChange = (e) => {
     setSearchQuery(e.target.value)
@@ -39,13 +54,13 @@ const Page = () => {
 	 
       if (response && response.data ) {
           setData(response.data)
-          setLoading(false)
-      }
+           
+      } 
 
 	
 		} catch (error) {
 		  console.error("Error fetching data:", error);
-		} 
+		} finally{setLoading(false)}
 	  };
 
 
@@ -83,6 +98,9 @@ const Page = () => {
 
     }, []);
 
+    if (!is_superuser && !(permissions?.includes('usersAuthApp.user_managment') && is_staff)) {
+      return;
+    }    
 
     return (
 
@@ -90,26 +108,7 @@ const Page = () => {
         <div className="app-content-header">
 
 
-          <div className="container-fluid">
-
-
-            <div className="row">
-              <div className="col-sm-6">
-                <h3 className="mb-0">Main Index Page </h3>
-              </div>
-
-              <div className="col-sm-6">
-                <ol className="breadcrumb float-sm-end">
-                  <li className="breadcrumb-item">
-                    <a href="#">Docs</a>
-                  </li>
-                  <li className="breadcrumb-item active" aria-current="page">
-                    Site Managment
-                  </li>
-                </ol>
-              </div>
-            </div>
-          </div>
+ 
 
         </div>
 
@@ -130,10 +129,13 @@ const Page = () => {
  
 <div className="row">
 <div className="col-12 col-md-6  ">
-  <h1 className="mb-2">Users Managmnet</h1>
+  <h1 className="mb-2">{t('title')}</h1>
 </div>
 <div className="col-12 col-md-6 d-flex justify-content-md-end">
-  <button type="button" onClick={ () => router.push('/staff/users/add_user')  }    className="btn btn-outline-secondary">Add a new User</button>
+  <button type="button" onClick={ () => router.push('/staff/users/add_user')  }    className="btn btn-outline-secondary"> 
+ 
+    {t( "add_new_user_btn") }
+    </button>
 </div>
 </div>
 
@@ -154,17 +156,19 @@ const Page = () => {
 
 
             <div className="col-md-5 col-12 pt-2">
-              <label htmlFor="search_words"> Search for users </label>
+              <label htmlFor="search_words"> {t('Search_for_users')} </label>
               <input
                 type="text"
                 className="form-control  "
                 id="search_words"
-                placeholder="search here"
+                placeholder={t('search_here')}
                 aria-describedby="search"
                 value={searchQuery}
                 onChange={handleSearchChange}
               />
-                  <div id="search_wordsHelp" className="form-text">{searchQuery.trim() && `results for : ${searchQuery}` }</div>
+                  <div id="search_wordsHelp" className="form-text">{searchQuery.trim() && `${ t('results_for') } : ${searchQuery}` }
+
+                  </div>
 
             </div>
 
@@ -188,12 +192,12 @@ const Page = () => {
   <table className="table table-striped d-none d-md-table ">
     <thead>
       <tr>
-        <th scope="col">Email</th>
-        <th scope="col">First Name</th>
-        <th scope="col">Last Name</th>
-        <th scope="col">Is Staff</th>
-        <th scope="col">Is Super User</th>
-        <th scope="col"> Edit </th>
+        <th scope="col">{t('Email')}</th>
+        <th scope="col">{t('First_Name')}</th>
+        <th scope="col">{t('Last_Name')}</th>
+        <th scope="col">{t('Is_Staff')}</th>
+        <th scope="col">{t('Is_Super_User')}</th>
+        <th scope="col"> {t('Edit')} </th>
       </tr>
     </thead>
     <tbody>
@@ -206,13 +210,13 @@ const Page = () => {
           </td>
           <td> {user_obj.first_name}</td>
           <td> {user_obj.last_name} </td>
-          <td>{user_obj.is_staff ? 'Yes' : 'No'}</td>
-          <td>{user_obj.is_superuser ? 'Yes' : 'No'}</td>
+          <td>{user_obj.is_staff ? t('yes') : t('no') }</td>
+          <td>{user_obj.is_superuser ? t('yes') : t('no') }</td>
           <td>    
             <a
                 href="#"
                 className="text-primary "
-                title="Edit"
+                title={t('Edit')}
                 onClick={(e) => {
                     e.preventDefault(); 
                     handleEditUser(user_obj.id)
@@ -232,49 +236,60 @@ const Page = () => {
   {/* Loading Indicator */}
   {loading && (
     <div className="text-center mt-4">
-      <p>Loading data...</p>
+      <p>{t('Loading_more')}</p>
     </div>
   )}
 
 
 
+ 
   {/* Card View for smaller screens */}
-    <div className="d-block d-md-none">
-
-{/*       
-    {data.map((ticket) => (
-      <div className="card mb-3" key={`card_${ticket.id}`}>
+  <div className="d-block d-md-none">
+    {data.map((user_obj) => (
+      <div className="card mb-3" key={`card_${user_obj.id}`}>
         <div className="card-body">
+
           <p>
-            <strong>Subject:</strong> {ticket.ticket_subject}
+            <strong>{t('Email')} : </strong> {user_obj.email}
           </p>
           <p>
-            <strong>ID:</strong> #{ticket.id}
+            <strong>{t('First_Name')} : </strong> {user_obj.first_name}
           </p>
           <p>
-            <strong>Created:</strong> {formatDate(ticket.ticket_created_date)}
+            <strong>{t('Last_Name')} : </strong> {t('Last_Name')}
+            
           </p>
           <p>
-            <strong>Latest activity:</strong>{" "}
-            {formatDate(ticket.latest_activity)}
+            <strong>{t('Is_Staff')} : </strong> {user_obj.is_staff ? t('yes') : t('no') }
           </p>
           <p>
-            <strong>Status:</strong>{" "}
-            <span className={`badge ${getTicketStatusColor(ticket.ticket_status)}`}>
-              {ticket.ticket_status}
-            </span>
+            <strong>{t('Is_Super_User')} : </strong> {user_obj.is_superuser ? t('yes') : t('no') }
           </p>
           <p>
-            <strong>Actions:</strong> re-open
+            <strong>{t('Edit')} : </strong>
+           
+
+            <Link
+                href="#"
+                className="text-primary "
+                title={t('Edit')}
+                onClick={(e) => {
+                    e.preventDefault(); 
+                    handleEditUser(user_obj.id)
+                }}
+              
+                >
+                <i className="bi bi-pencil-fill"></i>
+            </Link> 
+
+
           </p>
+ 
         </div>
       </div>
     ))}
- */}
-
-
-
   </div>
+
 
    
 </div>

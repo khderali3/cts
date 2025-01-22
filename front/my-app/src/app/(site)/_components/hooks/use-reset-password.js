@@ -1,16 +1,29 @@
 
 
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useResetPasswordMutation } from "@/app/(site)/_components/redux/features/authApiSlice";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
+import ReCAPTCHA from "react-google-recaptcha";
+import { useLocale } from "next-intl";
 
 
 export default function useResetPassword() {
 
+    const locale = useLocale()
     const router = useRouter()
+
+    const [recaptchaValue, setRecaptchaValue] = useState('')
+    const recaptchaRef = useRef(null);
+    
+    function onChangeRecaptcha(value) { 
+      setRecaptchaValue(value)
+    }
+
+
+
 
     const [resetPassword, {isLoading} ] = useResetPasswordMutation()
 
@@ -24,17 +37,47 @@ export default function useResetPassword() {
 
     const onSubmit = (event) => {
         event.preventDefault()
-        resetPassword(email)
+
+
+        if (!recaptchaValue) {
+          if(locale === "ar"){
+            toast.error("يرجى الضغط على انا لست روبوت");
+      
+          } else{
+            toast.error("Please complete the CAPTCHA.");
+      
+          }
+     
+     
+          return;
+        }
+
+        resetPassword({email, recaptcha_value : recaptchaValue})
         .unwrap()
         .then((data) => {
           console.log(data)
           console.log('kindly check your mailbox')
           router.push('/account/login')
-          toast.success('kindly check your mailbox')
+
+          if(locale === "ar"){
+            toast.success('تم ارسال ايميل لعنوان بريدك الإلكتروني يرجى التحقق')
+
+          } else {
+            toast.success('kindly check your mailbox')
+
+          }
+
         })
         .catch( (error) => {
+          if(locale === "ar"){
+            toast.error('حدث خطأ في طلب إعادة ضبط كلمة المرور')
+
+          } else {
+            toast.error('error with reset password')
+
+          }
           console.log('reset password failed', error)
-          toast.error('error with reset password')
+          recaptchaRef.current.reset();
 
         })
 
@@ -47,5 +90,9 @@ export default function useResetPassword() {
 		isLoading,
 		onChange,
 		onSubmit,
+    ReCAPTCHA,
+		onChangeRecaptcha,
+		recaptchaRef,
+		locale
 	};
 }

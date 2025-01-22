@@ -21,6 +21,10 @@ from .my_custom_serializer import (CustomTokenObtainPairSerializer,
                                     )
 from django.contrib.auth import get_user_model
 
+from usersAuthApp.myutils.public_utils import verify_recaptcha
+
+
+
 
 User = get_user_model()
 
@@ -98,6 +102,14 @@ class StffProfileView(APIView):
 
 class StaffCustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
+
+        recaptcha_value = request.data.get("recaptcha_value")
+        if not recaptcha_value or not verify_recaptcha(recaptcha_value):
+            return Response({"detail": "Invalid reCAPTCHA. Please try again."}, status=status.HTTP_400_BAD_REQUEST)
+ 
+
+
+
         # Manually instantiate the custom serializer with request data
         serializer = CustomTokenObtainPairSerializer(data=request.data, context={'request': request})
 

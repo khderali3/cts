@@ -5,6 +5,10 @@ import { useState } from "react"
 import { toast } from "react-toastify";
 
 
+
+
+import { useTranslations, useLocale } from "next-intl";
+
 const SetNewUserPassword = ({user_id}) => {
 
 	const [customFetch] = useCustomFetchMutation();
@@ -13,12 +17,8 @@ const SetNewUserPassword = ({user_id}) => {
 	const [password, setPassword] = useState('')
 	const [confirmPassword, setConfirmPassword] = useState('')
 
-
-	const isNotEmpty = (value) => value && value.trim() !== '';
-
-
-
-
+	const t = useTranslations('dashboard.users_managment.users.set_new_password')
+	const locale = useLocale()
 	  const handleSubmit = async (e) => {
 		e.preventDefault();
 		setIsObjUpdateing(true)
@@ -41,17 +41,50 @@ const SetNewUserPassword = ({user_id}) => {
 					body:form
 				});	  
 				if (response && response.data) {	
-					toast.success("the user password has been updated successfully");
+					if(locale ==="ar"){
+						toast.success("تم تعديل كلمة المرور بنجاح");
+
+					} else {
+						toast.success("the user password has been updated successfully");
+
+					}
 					setPassword('')
 					setConfirmPassword('')
 
 				} else {
-					toast.error("Error set password.");
+					if(locale ==="ar"){
+						toast.error("حصل خطأ رقم 1 في تعيين كلمة المرور يرجى المحاولة مجدداً");
+
+					} else {
+						toast.error("Error1 set new password.");
+
+					}
 					
+					if (response?.error?.data?.detail) {
+						if(response.error.data.detail === "Permission denied for this operation."){
+							if(locale === "ar") {
+								toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+				
+							} else {
+								toast.error(response.error.data.detail);
+							}
+				
+						}
+					}
+
+
+
+
 					console.log("Failed  1", response);
 				}
 				} catch (error) {
-					toast.error("Error set password.");
+					if(locale ==="ar"){
+						toast.error("حصل خطأ رقم 2 في تعيين كلمة المرور يرجى المحاولة مجدداً");
+
+					} else {
+						toast.error("Error 2 set new password.");
+
+					}
 					console.log("Failed   2", error);
 				} finally{ setIsObjUpdateing(false)}
 
@@ -59,12 +92,25 @@ const SetNewUserPassword = ({user_id}) => {
 
 
 			} else{
-				toast.error("the two Passwords did not match!");
+				if(locale ==="ar"){
+					toast.error("كلمة المرور وتأكيد كلمة المرور غير متطابقتين");
+
+				} else {
+					toast.error("the two Passwords did not match!");
+
+				}
 
 			}
 
 		}else{
-			toast.error("Passwords must be at least 8 characters long!");
+			if(locale ==="ar"){
+				toast.error("يجب على الأقل أن تكون كلمة المرور مكونة من 8 أحرف");
+
+			} else {
+				toast.error("Passwords must be at least 8 characters long!");
+
+			}
+
 
 		}
 
@@ -77,6 +123,7 @@ const SetNewUserPassword = ({user_id}) => {
 		}
 		setPassword('')
 		setConfirmPassword('')
+		setIsObjUpdateing(false)
 
 	  };
 
@@ -97,8 +144,12 @@ const SetNewUserPassword = ({user_id}) => {
 				className="btn btn-outline-secondary"
 				data-bs-toggle="modal"
 				data-bs-target="#SetNewPasswordModal_id" 
+				disabled={isObjUpdateing}
 				>
-				Set New Password
+				{/* Set New Password */}
+				{isObjUpdateing ? t('btn_name_submitting')  : t('btn_name')} 
+		 
+
 				</button>
 
 			</div>
@@ -118,7 +169,7 @@ const SetNewUserPassword = ({user_id}) => {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="SetNewPasswordModal_idLabel">Set New Password</h5>
+              <h5 className="modal-title" id="SetNewPasswordModal_idLabel">{t('modal_title')}</h5>
               <button
                 type="button"
                 className="btn-close"
@@ -131,7 +182,7 @@ const SetNewUserPassword = ({user_id}) => {
 				
 				<div className="  ">
 				<label htmlFor="password" className="form-label">
-				Password
+				{t('password')}
 				</label>
 				<input
 					type="password"
@@ -145,7 +196,7 @@ const SetNewUserPassword = ({user_id}) => {
 
 				<div className="  ">
 				<label htmlFor="confirm_password" className="form-label">
-				Confirm Password
+				{t('confirm_password')}
 				</label>
 				<input
 					type="password"
@@ -165,16 +216,18 @@ const SetNewUserPassword = ({user_id}) => {
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
-                Close
+                {t('cancel')}
               </button>
               <button
                 type="button"
                 className="btn btn-primary"
                 onClick={handleSubmit}
                 data-bs-dismiss="modal"
+				disabled={isObjUpdateing}
               >
 				{/* {editingItemId  ? "Saveing.." : "Save Changes"} */}
-				Save
+				{isObjUpdateing ? t('saving') : t('save')}
+			 
                </button>
             </div>
           </div>

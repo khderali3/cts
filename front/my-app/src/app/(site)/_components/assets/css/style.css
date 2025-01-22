@@ -57,7 +57,7 @@ body {
 .navbar-nav .nav-link {
   color: var(--secondary-text-color);
   transition: 0.1s;
-  height: 55px;
+  /* height: 55px; // removed by khder after border buttom on active linke problem */ 
 }
 .navbar-nav .nav-link:hover {
   color: var(--main-font-color);
@@ -69,17 +69,25 @@ body {
  
 } */
 
-
-.active {
+.active_nav_link {
   color: var(--main-font-color) !important;
-  border-bottom: 1px solid var(--main-font-color); 
+  border-bottom: 1px solid var(--main-font-color);
  
 }
 
-.active_nav_link {
+
+
+.active {
   color: var(--main-font-color) !important;
-  border-bottom: 1px solid var(--main-font-color); 
-}
+  border-bottom: 1px solid var(--main-font-color) !important; 
+}  
+
+ 
+
+ 
+ 
+
+
 
 button.btn.btn-primary {
   background-color: var(--main-font-color);

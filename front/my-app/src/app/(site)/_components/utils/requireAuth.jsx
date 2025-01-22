@@ -6,10 +6,15 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
 
+import { useLocale } from 'next-intl';
 
 export default function RequireAuthTicket({ children }) {
   const { isLoading, isAuthenticated } = useSelector(state => state.auth);
   const [shouldRender, setShouldRender] = useState(false);
+
+  const locale = useLocale()
+
+
 
   useEffect(() => {
     if (!isLoading) {
@@ -29,7 +34,10 @@ export default function RequireAuthTicket({ children }) {
  
     return(
       <div className="form account_form d-flex align-items-center justify-content-center background-color  min-vh-100  ">
-        <h1 className='text-light'> kindly wait ....  </h1>
+        <h1 className='text-light'> 
+          {locale === "ar" ? "يرجى الإنتظار..." : "kindly wait ...." }
+          {/* kindly wait ....   */}
+        </h1>
       </div>
     )
  

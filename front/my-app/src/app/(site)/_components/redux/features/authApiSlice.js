@@ -19,17 +19,17 @@ const authApiSlice = apiSlice.injectEndpoints({
         })
      }),
      login: builder.mutation({
-        query: ({email, password}) => ({
+        query: ({email, password, recaptcha_value}) => ({
             url: '/jwt/create/',
             method: 'POST',
-            body: {email, password}
+            body: {email, password, recaptcha_value}
         })
      }),
      register: builder.mutation({
-        query: ({first_name, last_name, email, password, re_password}) => ({
+        query: ({first_name, last_name, email, password, re_password, recaptcha_value}) => ({
             url: '/users/',
             method: 'POST',
-            body: {first_name, last_name, email, password, re_password}
+            body: {first_name, last_name, email, password, re_password, recaptcha_value}
         })
      }),
      verify: builder.mutation({
@@ -52,10 +52,10 @@ const authApiSlice = apiSlice.injectEndpoints({
         })
      }),   
      resetPassword: builder.mutation({
-        query: (email) => ({
+        query: ({email, recaptcha_value}) => ({
             url: '/users/reset_password/',
             method: 'POST',
-            body: { email }
+            body: { email, recaptcha_value }
         })
      }),     
      resetPasswordConfirm: builder.mutation({

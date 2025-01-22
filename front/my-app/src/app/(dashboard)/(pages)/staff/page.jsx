@@ -1,6 +1,10 @@
 
 
+
+import { useLocale } from "next-intl"
+
  const HomeStaff = () => {
+  const locale = useLocale()
 
     return ( 
 
@@ -9,27 +13,7 @@
         <div> 
         <div className="app-content-header">
 
-
-          <div className="container-fluid">
-
-
-            <div className="row">
-              <div className="col-sm-6">
-                <h3 className="mb-0">index page </h3>
-              </div>
-
-              <div className="col-sm-6">
-                <ol className="breadcrumb float-sm-end">
-                  <li className="breadcrumb-item">
-                    <a href="#">Docs</a>
-                  </li>
-                  <li className="breadcrumb-item active" aria-current="page">
-                    Main Sidebar Component
-                  </li>
-                </ol>
-              </div>
-            </div>
-          </div>
+ 
 
         </div>
 
@@ -44,7 +28,10 @@
 
 
               <div className="container mt-2">
-                <div> my content dfdfdfdf</div>
+                <div>  
+                  {locale === "ar" ? "إدارة تطبيق الويب - شركة كلاود تك سكاي" : " CloudTech Sky - Web Application Managment System"}
+                   
+                </div>
                 {/* Row for Search Form */}
                 <div className="row mb-4">
                   <div className="col-12">

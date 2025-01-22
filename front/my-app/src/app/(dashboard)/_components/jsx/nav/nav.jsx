@@ -5,10 +5,14 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import LogoutLink from './nav_component/logoutComponent';
 
+
+import { useLocale } from "next-intl";
+
+
 const Nav = () => {
   const { isAuthenticated,loginFirstName, profileImage } = useSelector(state => state.staff_auth);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
- 
+  const locale = useLocale()
 
   
 
@@ -91,7 +95,7 @@ const Nav = () => {
 
           <li className="nav-item d-none d-md-block">
  
-            <Link href="/staff/ticket" className="nav-link">
+            <Link href="/staff" className="nav-link">
               Home
             </Link>
           </li>
@@ -99,7 +103,7 @@ const Nav = () => {
 
         </ul>
 
-        <ul className="navbar-nav ms-auto">
+        <ul className={`navbar-nav   ${locale === "ar" ? 'me-auto' : 'ms-auto'} `}>
 
 
  
@@ -118,7 +122,7 @@ const Nav = () => {
               />{" "}
               <span className="d-none d-md-inline">{loginFirstName}</span>{" "}
             </a>
-            <ul className="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+            <ul className={`dropdown-menu dropdown-menu-lg   ${locale === "ar" ? 'dropdown-menu-start' : 'dropdown-menu-end'}`}>
  
 
               <li className="user-header text-bg-primary">
@@ -140,7 +144,7 @@ const Nav = () => {
 
                 <div className="row">
                   <div className=" text-center">
-                    <a href="#">Change Password</a>
+                    <Link href="/staff/account/change_password">Change Password</Link>
                   </div>
 
 
@@ -149,9 +153,9 @@ const Nav = () => {
               </li>
    
               <li className="user-footer">
-                <a href="#" className="btn btn-default btn-flat">
+                <Link href="/staff/account/edit_profile" className="btn btn-default btn-flat">
                   Edit Profile
-                </a>
+                </Link>
                 {/* <a href="#" className="btn btn-default btn-flat float-end">
                   Sign out
                 </a> */}

@@ -2,11 +2,18 @@
 'use client'
  
  import ListManagerGroups from "@/app/(dashboard)/_components/jsx/groups/ListManager_groups"
- 
+ import { useSelector } from "react-redux";
 
 const Page = () =>  {
+	const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
 
- 
+  if (!is_superuser && !(permissions?.includes('usersAuthApp.user_managment') && is_staff)) {
+    return;
+    } 
+
+
+
+    
     return (
  
 
@@ -14,37 +21,14 @@ const Page = () =>  {
       <div className="app-content-header  ">
 
 
-        <div className="container-fluid">
-
-
-          <div className="row">
-            <div className="col-sm-6">
-              <h3 className="mb-0">Main Index Page </h3>
-            </div>
-
-            <div className="col-sm-6">
-              <ol className="breadcrumb float-sm-end">
-                <li className="breadcrumb-item">
-                  <a href="#">Docs</a>
-                </li>
-                <li className="breadcrumb-item active" aria-current="page">
-                  Site Managment
-                </li>
-              </ol>
-            </div>
-          </div>
-        </div>
-
       </div>
 
       <div className="app-content  ">
  
 
-        <div className="     min-vh-150 bg-white p-3 border rounded  " >
+        <div className=" min-vh-150 bg-white p-3 border rounded  " >
 
 
-          <h2>Manage Permission Groups</h2>
- 
 
           {/* start section */}
  

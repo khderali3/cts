@@ -6,7 +6,13 @@ import { toast } from "react-toastify";
 import { useRouter, useParams } from 'next/navigation';
 import FileList from "@/app/(dashboard)/_components/jsx/tickets/edit_ticket/files_list";
 
+import { useTranslations, useLocale } from "next-intl";
+
 const Page = () =>  {
+
+  const t = useTranslations('dashboard.ticket.edit_ticket')
+  const locale = useLocale()
+
 
   const [customFetch] = useCustomFetchMutation();
   const [departments, setDepartments] = useState([])
@@ -46,6 +52,7 @@ const Page = () =>  {
       } else {
         // Handle the error case if there's no data or an error in the response
         console.log("Failed to get ticket details ", response);
+        router.push('/404')
       }
     } catch (error) {
       // Catch any errors during the fetch operation
@@ -180,25 +187,68 @@ const Page = () =>  {
           if (input) input.value = ""; // Reset file input value
         });
 
-        toast.success("Your ticket has been added successfully!");
+
+        if(locale === "ar"){
+          toast.success(" تم تحديث التذكرة بنجاح");
+
+        } else {
+          toast.success(" ticket has been updated successfully ");
+
+        }
 
         console.log('ticket_slog', response.data.ticket_slog)
         // router.push('/staff/ticket');  
         router.push(`/staff/ticket/ticketDetails/${response.data.ticket_slog}`)
       } else {
-        toast.error("Failed to submit the request.");
+        if(locale === "ar"){
+          toast.error("حصل خطأ رقم 1 خلال التحديث . يرجى إعادة المحاولة");
+
+        } else {
+          toast.error("Failed to submit the request. try again.");
+
+        }
+
+        if (response?.error?.data?.detail) {
+          if(response.error.data.detail === "Permission denied for this operation."){
+            if(locale === "ar") {
+              toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+      
+            } else {
+              toast.error(response.error.data.detail);
+            }
+  
+          }
+        }
+
+
+
+
+
+
         console.log('response', response)
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Error submitting form.");
+
+      if(locale === "ar"){
+        toast.error("حصل خطأ رقم 2 خلال التحديث . يرجى إعادة المحاولة");
+
+      } else {
+        toast.error("Error submitting form.");
+
+      }
     } finally{    setIsSubmittin(false) }
 
       
       console.log("Form is valid");
     } else {
+      if(locale === "ar"){
+        toast.error("جميع الحقول مطلوبة  ");
 
-      toast.error("all fields are required ");
+      } else {
+        toast.error("all fields are required ");
+
+      }
       setIsSubmittin(false)
     }
 
@@ -234,26 +284,7 @@ useEffect(() => {
       <div className="app-content-header">
 
 
-        <div className="container-fluid">
-
-
-          <div className="row">
-            <div className="col-sm-6">
-              <h3 className="mb-0">Main Index Page </h3>
-            </div>
-
-            <div className="col-sm-6">
-              <ol className="breadcrumb float-sm-end">
-                <li className="breadcrumb-item">
-                  <a href="#">Docs</a>
-                </li>
-                <li className="breadcrumb-item active" aria-current="page">
-                  Site Managment
-                </li>
-              </ol>
-            </div>
-          </div>
-        </div>
+ 
 
       </div>
 
@@ -264,12 +295,12 @@ useEffect(() => {
         <div className="container-fluid  min-vh-150 bg-white p-3 border rounded " >
 
 
-          <h2>Edit Ticket</h2>
+          <h2>{t('form_title')}</h2>
           <form className="col-md-8 col-12 mb5 " >
 
             <div className="mb-3">
               <label htmlFor="requestType" className="form-label">
-                Please select target department
+              {t('department_label')}
               </label>
 
 
@@ -282,11 +313,11 @@ useEffect(() => {
 
                 >
 
-                <option disabled   value=''> Select Department</option>
+                <option disabled   value=''> {t('department_default_option')}</option>
                   {departments?.map((item) => (
                     <option key={item.id} value={item.id}>
-                      {item.department_name}
-                    </option>
+                       { locale ==="ar"  ? item.department_name_ar :  item.department_name}
+                      </option>
                   ))}
                 </select>
 
@@ -297,7 +328,7 @@ useEffect(() => {
 
             <div className="mb-3">
               <label htmlFor="subject" className="form-label">
-                Subject <span className="text-danger">*</span>
+              {t('subject')} <span className="text-danger">*</span>
               </label>
               <input  
               name="ticket_subject" 
@@ -314,7 +345,7 @@ useEffect(() => {
 
             <div className="mb-3">
               <label htmlFor="description" className="form-label">
-                Description <span className="text-danger">*</span>
+                {t('description')} <span className="text-danger">*</span>
               </label>
               <textarea
                 className="form-control"
@@ -335,7 +366,7 @@ useEffect(() => {
 
 
 
-                  <FileList ticket_id={ticket_id}/>
+                  <FileList ticket_id={ticket_id} attached_files_title= {t('attached_files_title')} />
 
 
 
@@ -352,11 +383,11 @@ useEffect(() => {
                 htmlFor={`fileInput-${fileInput.id}`} 
                 className="form-label fw-bold me-2"
                 >
-                Upload File {index + 1}
+                {t('upload_file') } {index + 1}
                 </label>
                 <input
                 type="file"
-                className="form-control-file"
+                className="form-control-file mx-2"
                 id={`fileInput-${fileInput.id}`}
                 onChange={(e) => handleFileChange(e, fileInput.id)}
                 name="ticket_files[]"
@@ -374,7 +405,7 @@ useEffect(() => {
                         onClick={handleAddMore}
                         >
                         <i className="fa fa-plus me-2"></i> {/* Font Awesome icon */}
-                        Add More
+                          {t('btn_add_More_file')}
                         </button>
                     </div>
                     <div className="col-12 col-md-auto">
@@ -385,7 +416,7 @@ useEffect(() => {
                         disabled={files.length <= 1} // Disable if only one input left
                         >
                         <i className="fa fa-trash me-2"></i> {/* Font Awesome icon */}
-                        Delete
+                          {t('btn_remove_file')}
                         </button>
                     </div>
 
@@ -401,14 +432,15 @@ useEffect(() => {
 
             <div className="pt-2">
 
-              <button  className="btn btn-outline-primary " onClick={handleSubmit}>
+              <button  className="btn btn-outline-primary mx-2 " onClick={handleSubmit}>
                 { isSubmiting && ( <span className="spinner-border spinner-border-sm me-2"></span> ) }  
 
-                  Submit
-                </button>
-                <button   className="btn btn-outline-secondary ms-2" onClick={handleCancel}>
-                  Cancel
-                </button>
+                  {t('submit')}
+              </button>
+
+              <button   className="btn btn-outline-secondary mx-2" onClick={handleCancel}>
+                {t('calcel')}
+              </button>
 
             </div>
 

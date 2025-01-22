@@ -157,16 +157,23 @@ textarea[readonly] {
  
 
 
- .active_class {
+[dir="ltr"] .active_class {
   background-color: transparent; /* Keep background transparent */
   border-left: 4px solid #007bff; /* Active border on the left */
   color: #007bff !important; /* Match the active color to the theme */
   font-weight: bold; /* Make the active link more prominent */
   padding-left: 1.5rem; /* Adjust padding to accommodate the border */
-  
-
 }
- 
+
+[dir="rtl"] .active_class {
+  background-color: transparent; /* Keep background transparent */
+  border-right: 4px solid #007bff; /* Active border on the left */
+  color: #007bff !important; /* Match the active color to the theme */
+  font-weight: bold; /* Make the active link more prominent */
+  padding-right: 1.5rem; /* Adjust padding to accommodate the border */
+}
+
+
 .btn-flexible {
   min-width: 120px;
   padding: 0.5rem 1rem;
@@ -185,5 +192,75 @@ textarea[readonly] {
   overflow-y: auto !important; /* Allow vertical scrolling */
   height: 100vh; /* Ensure full viewport height */
 }
+
+ 
+
+
+
+/* start for account forms pages on site users  */
+[dir="rtl"] .form-floating > label {
+  right: 0;
+  left: auto;
+  text-align: right;
+}
+
+[dir="ltr"] .form-floating > label {
+  left: 0;
+  right: auto;
+  text-align: left;
+}
+
+  /* end for account forms pages on site users  */
+
+
+ 
+
+[dir="rtl"] .modal-header {
+    flex-direction: row-reverse !important;  
+
+}
+
+ /* test khder  */
+
+ [dir="rtl"]  .sidebar-menu   {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+
+[dir="rtl"]  .sidebar-menu > li   {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+
+[dir="rtl"]  ul  {
+  padding-right: 0.5rem !important;
+  margin-right: 0.5rem !important;
+}     
+
+/* next text  */
+
+ 
+/* [dir="rtl"] .form-check-reverse {
+  padding-left: 0;
+  padding-right: 1.5rem;
+}
+
+[dir="rtl"] .form-check-input {
+  float: right;
+  margin-right: 0;
+  margin-left: 0.5rem;
+} */
+
+select.form-select {
+  box-shadow: none !important;
+}
+select.form-select:focus,
+select.form-select:hover {
+  box-shadow: none !important;
+  outline: none !important;  
+}
+
+ 
+
 
  

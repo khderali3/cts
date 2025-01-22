@@ -6,7 +6,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
+import { useLocale } from "next-intl";
+
+
+
+
 const Setup = () => {
+
+    const locale = useLocale()
 
     const pathname = usePathname()
     useEffect( () => {
@@ -31,10 +38,10 @@ const Setup = () => {
     
     },[pathname] )  
 
-
+    const isRTL =  locale === 'ar' ? true : false  
 
     useVerify();
-    return < ToastContainer/>
+    return < ToastContainer rtl={isRTL}  />
 } 
 
 export default Setup

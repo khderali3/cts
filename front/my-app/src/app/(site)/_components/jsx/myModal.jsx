@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import { useTranslations, useLocale } from "next-intl";
 
 const CustomModal = ( { id, handleSubmit, submitting,
      message="Are you sure you want to update Data?",
@@ -9,8 +10,10 @@ const CustomModal = ( { id, handleSubmit, submitting,
      } ) => {
 
 
+      const t = useTranslations('common.custom_modal')
 
- 
+      const locale = useLocale()
+      
 
 
       useEffect(() => {
@@ -57,7 +60,8 @@ const CustomModal = ( { id, handleSubmit, submitting,
 
 
 
-        <div
+        <div      
+   
         className="modal fade"
         // id="confirmationModal"
         id={id}
@@ -66,26 +70,31 @@ const CustomModal = ( { id, handleSubmit, submitting,
         aria-labelledby={`${id}Label`}
 
         aria-hidden="true"
+        dir="auto"
+    
       >
         <div className="modal-dialog">
           <div className="modal-content">
-            <div className="modal-header">
+            <div className="modal-header ">
             {/* <h5 className="modal-title" id="confirmationModalLabel"> */}
             <h5 className="modal-title" id={`${id}Label`}>
 
 
 
-                Confirm Submission
+                {/* Confirm Submission */}
+                {t('title')}
+
               </h5>
               <button
+ 
                 type="button"
-                className="btn-close"
+                className="btn-close  "
                 data-bs-dismiss="modal"
                 aria-label="Close"
                 onClick={()=> setIsModalOpen(false)}
               />
             </div>
-            <div className="modal-body">
+            <div className={`modal-body ${locale === "ar" ? "ms-auto" : "me-auto" }`}>
                 {message}
               
             </div>
@@ -96,7 +105,8 @@ const CustomModal = ( { id, handleSubmit, submitting,
                 data-bs-dismiss="modal"
                 onClick={()=> setIsModalOpen(false)}
               >
-                Cancel
+                {/* Cancel */}
+                {t('cancel')}
               </button>
  
               <button
@@ -118,9 +128,9 @@ const CustomModal = ( { id, handleSubmit, submitting,
     
                 {
                   operationType === "Delete" 
-                  ? ( !submitting ? 'Yes' : 'Deleting...') 
+                  ? ( !submitting ? t('yes') : t('deleting')) 
                   
-                  : ( !submitting ? 'Yes' : 'Updating...')
+                  : ( !submitting ? t('yes') : t('updating'))
                 }
              
               </button>

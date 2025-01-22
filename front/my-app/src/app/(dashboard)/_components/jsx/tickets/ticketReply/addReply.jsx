@@ -4,9 +4,13 @@ import { toast } from 'react-toastify';
 import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/siteApiSlice";
 
 
+import { useTranslations, useLocale } from "next-intl";
 
 
 const  AddNewReplyForm = ({ticket_id, handleReplayAdded }) => {
+
+    const t = useTranslations('dashboard.ticket.ticket_details_msgs.ticket_reply_form')
+    const locale = useLocale()
 
     const [customFetch] = useCustomFetchMutation();
 
@@ -94,7 +98,16 @@ const  AddNewReplyForm = ({ticket_id, handleReplayAdded }) => {
       
       
           if (response && response.data) {
-              toast.success("Your Replay added successfully");
+
+              if(locale === "ar"){
+                toast.success("تم إضافة ردك بنجاح");
+
+              } else {
+                toast.success("Your Replay added successfully");
+
+              }
+
+
               setTicketReplayBody("");
               setFiles([{ id: 1, file: null }]);
               setWaitCustomerReply(false)
@@ -107,14 +120,27 @@ const  AddNewReplyForm = ({ticket_id, handleReplayAdded }) => {
               handleReplayAdded();
             } else {
               // Handle the error case if there's no data or an error in the response
-              toast.error("Failed to add replay. Please try again.");
+              if(locale === "ar"){
+                toast.error("حدث خطأ رقم 1 أثناء إضافة الرد , يرجى المحاولة مجدداً");
+
+              } else {
+                toast.error("Failed to add replay. Please try again.");
+
+              }
               console.error("Error submitting data: response is:", response);
 
             }
       
           } catch (error) {
+            
             console.error("Error submitting data:", error);
-            toast.error('Error submitting data');
+            if(locale === "ar"){
+              toast.error('حدث خطأ رقم 2 أثناء محاولة إضافة الرد , يرجى المحاولة مجدداً');
+
+            } else {
+              toast.error('Error submitting data');
+
+            }
           } finally{ setLoading(false);}
 
          
@@ -122,7 +148,16 @@ const  AddNewReplyForm = ({ticket_id, handleReplayAdded }) => {
       
     } else {
 
-      toast.error("your replay can't be empty !");
+      if(locale === "ar"){
+        toast.error("لا يمكن أن يكون الرد فارغ");
+
+      } else {
+        toast.error("your replay can't be empty !");
+
+      }
+
+
+
       setLoading(false);
     }
 
@@ -141,7 +176,7 @@ const  AddNewReplyForm = ({ticket_id, handleReplayAdded }) => {
  
 <form className="mt-5 mb-5" onSubmit={handleSubmit}>
       <div className="form-group">
-        <label htmlFor="exampleFormControlTextarea1" className="mb-2">Add A New Replay</label>
+        <label htmlFor="exampleFormControlTextarea1" className="mb-2">{t('add_a_new_reply')}</label>
         <textarea
           className="form-control"
           id="exampleFormControlTextarea1"
@@ -153,7 +188,7 @@ const  AddNewReplyForm = ({ticket_id, handleReplayAdded }) => {
       </div>
       
 
-  <div className="form-check mb-3">
+  <div className="  mb-3">
     <input
     className="form-check-input"
     type="checkbox"
@@ -164,8 +199,9 @@ const  AddNewReplyForm = ({ticket_id, handleReplayAdded }) => {
 
 
     />
-    <label className="form-check-label" htmlFor="wait_customer_reply">
-    Mark as "wait_customer_reply" status
+    <label className="form-check-label mx-2" htmlFor="wait_customer_reply">
+    {/* Mark as "wait_customer_reply" status */}
+      {t('mark_wait_customer_reply')}
     </label>
   </div>
 
@@ -182,9 +218,10 @@ const  AddNewReplyForm = ({ticket_id, handleReplayAdded }) => {
             <div className="mb-3">
                 <label 
                 htmlFor={`fileInput-${fileInput.id}`} 
-                className="form-label fw-bold me-2"
+                className="form-label fw-bold mx-2"
                 >
-                Upload File {index + 1}
+                {t('upload_file') } {index + 1}
+
                 </label>
                 <input
                 type="file"
@@ -206,7 +243,7 @@ const  AddNewReplyForm = ({ticket_id, handleReplayAdded }) => {
                         onClick={handleAddMore}
                         >
                         <i className="fa fa-plus me-2"></i> {/* Font Awesome icon */}
-                        Add More
+                        {t('btn_add_More_file')}
                         </button>
                     </div>
                     <div className="col-12 col-md-auto">
@@ -217,7 +254,7 @@ const  AddNewReplyForm = ({ticket_id, handleReplayAdded }) => {
                         disabled={files.length <= 1} // Disable if only one input left
                         >
                         <i className="fa fa-trash me-2"></i> {/* Font Awesome icon */}
-                        Delete
+                        {t('btn_remove_file')}
                         </button>
                     </div>
 
@@ -235,7 +272,7 @@ const  AddNewReplyForm = ({ticket_id, handleReplayAdded }) => {
       {/* {loading ? "Submitting..." : "Submit"} */}
 
       { loading && ( <span className="spinner-border spinner-border-sm me-2"></span> ) }  
-      Submit
+        {t('btn_submit')}
       </button>
     </form>
  

@@ -13,7 +13,7 @@ export default function Input({
 
 
 	return (
-		<div className="form-floating pb-1">
+		<div className="form-floating    pb-1"  >
 				<input
 					id={labelId}
 					name={labelId}
@@ -24,12 +24,14 @@ export default function Input({
 					className="form-control"
 					placeholder={labelId}
 				/>
-				<label	htmlFor={labelId}>
+				<label	htmlFor={labelId} className='text-end '  >
 					{children}
 				</label>
 
 				{link && (
-					<p className='text-end'>
+					// <p className='text-end'>
+						<p className=' '>
+
 						<Link
 							className='text-light'
 							href={link.linkUrl}

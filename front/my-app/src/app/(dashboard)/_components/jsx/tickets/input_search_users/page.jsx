@@ -6,7 +6,7 @@ import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staf
 import Select from 'react-select';
 
 
-const UsersSearchInput = ({ handleUserIdChange, userId }) => {
+const UsersSearchInput = ({ handleUserIdChange, userId, lable, ph }) => {
   const [users, setUsers] = useState([]); // store clients list
   const [customFetch] = useCustomFetchMutation();
 
@@ -46,7 +46,10 @@ const UsersSearchInput = ({ handleUserIdChange, userId }) => {
   return (
   <> 
 
-<label htmlFor="users-select">Search Users Members:</label>
+<label htmlFor="users-select">
+  {/* Search Users Members: */}
+{lable}
+</label>
 
 <Select
   inputId="users-select" // Links the label to the input for accessibility
@@ -54,7 +57,9 @@ const UsersSearchInput = ({ handleUserIdChange, userId }) => {
   onChange={(selected) => handleUserIdChange(selected?.value)} // Pass the selected value or `null` to the handler
   value={selectedOption} // Ensure that the selected value is highlighted
   isSearchable
-  placeholder="Search Users"
+  // placeholder="Search Users"
+  placeholder={ph}
+
   isClearable 
 />
 

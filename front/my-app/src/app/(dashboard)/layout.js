@@ -24,7 +24,8 @@ import StaffSetup from "@/app/(dashboard)/_components/utils/setup";
 import RequireAuthStaff from "./_components/utils/requireAuth";
 
 
-
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 
 
 export const metadata = {
@@ -32,40 +33,47 @@ export const metadata = {
   description: 'AdminLTE v4 Dashboard Template',
 };
 
-export default function Layout({ children }) {
+export default async function Layout({ children }) {
 
-
+  const locale = await getLocale();
+  const messages = await getMessages();
 
   return (
-    <html lang="en">
-      <Head>
+    <html 
+    
+    // lang="en"
+    lang={locale}
+    dir={ locale === "ar" ? "rtl" : "ltr"}
+    >
+      <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-       
+ 
+        {/* <script src="https://www.google.com/recaptcha/api.js" async defer></script> */}
 
 
 
-      </Head>
+      </head>
 
 
   <body className="layout-fixed   sidebar-expand-lg bg-body-tertiary">
+  <NextIntlClientProvider messages={messages}>
+    <CustomProviderStaff> 
+      <StaffSetup />
 
-  <CustomProviderStaff> 
-    <StaffSetup />
+      <div className="app-wrapper">
+            <Nav />
+            <SideBar />
+          <main className="app-main ">
+          <RequireAuthStaff > 
+            {children}
+          </RequireAuthStaff>
+          </main>
+            <Footer />
+      </div>
 
-    <div className="app-wrapper">
-          <Nav />
-          <SideBar />
-        <main className="app-main ">
-        <RequireAuthStaff > 
-          {children}
-        </RequireAuthStaff>
-        </main>
-          <Footer />
-    </div>
-
-  </CustomProviderStaff>
- 
+    </CustomProviderStaff>
+  </NextIntlClientProvider>
  
       <Script src="/js/bootstrap.bundle.min.js"  strategy="afterInteractive"/>
 

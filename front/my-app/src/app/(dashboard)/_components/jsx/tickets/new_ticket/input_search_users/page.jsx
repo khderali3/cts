@@ -2,9 +2,17 @@ import { useEffect, useState } from "react";
 import ReactDropdownSelect from "react-dropdown-select";
 import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staff/features/authApiSlice";
 
-const NewTicketUsersSearchInput = ({ handleUserIdChange, userId }) => {
+
+import { useLocale } from "next-intl";
+
+
+const NewTicketUsersSearchInput = ({ handleUserIdChange, userId, label=""}) => {
   const [clients, setClients] = useState([]); // store clients list
   const [customFetch] = useCustomFetchMutation();
+
+
+  const locale = useLocale()
+
 
   // Fetch clients data from API
   const fetchClientsList = async () => {
@@ -31,8 +39,10 @@ const NewTicketUsersSearchInput = ({ handleUserIdChange, userId }) => {
   const options = clients.map(client => ({
     value: client.id,
     // label: client.email,
-    label: `${client.email} ${ (client.is_staff || client.is_superuser) ? '- staff' : '' }`,
-
+    // label: `${client.email} ${ (client.is_staff || client.is_superuser) ? '- staff' : '' }`,
+    label: `${client.email} ${client.is_staff || client.is_superuser ? 
+      (locale === "ar" ? '- طاقم العمل' : '- staff') 
+      : ''}`,
 
   }));
 
@@ -41,13 +51,15 @@ const NewTicketUsersSearchInput = ({ handleUserIdChange, userId }) => {
 
   return (
     <div className="mb-3">
-      <label htmlFor="user_filter">Search Per User</label>
+      <label htmlFor="user_filter">{label}</label>
       <ReactDropdownSelect
          id="user_filter"
         options={options}
         onChange={selected => handleUserIdChange(selected[0]?.value)} // Pass the selected value to the handler
         values={selectedOption} // Ensure that the selected value is highlighted
-        placeholder="Select a user"
+        // placeholder="Select a user"
+        placeholder={locale === "ar" ? "إختر مستخدم"  :  "Select a user" }
+
         clearable={false} // Optional: set to true if you want to allow clearing the selection
       />
     </div>

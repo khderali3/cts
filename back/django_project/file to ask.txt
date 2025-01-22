@@ -1,99 +1,53 @@
-hi i have the follwing view for assing permission to group , how to return also group name and with permission , for example :
+from djoser.serializers import UserCreateSerializer
+from rest_framework import serializers
+from .public_utils import verify_recaptcha  # Import your verify_recaptcha function
+
+class CustomUserCreateSerializer(UserCreateSerializer):
+    recaptcha = serializers.CharField(write_only=True, required=True)  # Add a field for reCAPTCHA
+
+    def validate(self, attrs):
+        print('this class is called')
+        # Extract the reCAPTCHA token
+        recaptcha_value = attrs.pop('recaptcha_value', None)
+
+        # # Verify the reCAPTCHA
+        # if not verify_recaptcha(recaptcha_value):
+        #     raise serializers.ValidationError({'recaptcha': 'Invalid reCAPTCHA. Please try again.'})
 
 
-{
-    group_name : group name,
-    permissions : []
+        if not recaptcha_value or not verify_recaptcha(recaptcha_value):
+            raise serializers.ValidationError({'recaptcha': 'Invalid reCAPTCHA. Please try again.'})
+
+
+
+
+        # Continue with the default validation
+        return super().validate(attrs)
+
+
+
+
+in settings.py
+DJOSER = {
+
+
+    'PASSWORD_RESET_CONFIRM_URL': 'account/password-reset/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': False,
+    'ACTIVATION_URL': 'account/activation/{uid}/{token}',
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'TOKEN_MODEL': None,
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS':['http://localhost:3000/account/google'],
+    'SOCIAL_AUTH_TOKEN_STRATEGY': "usersAuthApp.myutils.custom_serializers.CustomProviderTokenStrategy",
+
+    'SERIALIZERS': {
+        'user_create': 'usersAuthApp.myutils.Custom_Create_Serializer.CustomUserCreateSerializer',   
+
+        'user': 'usersAuthApp.myutils.custom_serializers.CustomUserSerializer',  # Update with the path to your CustomUserSerializer
+        'current_user': 'usersAuthApp.myutils.custom_serializers.CustomUserSerializer',
+
+    }
+
 }
 
-
-
-
-class GroupPermissionView(APIView):
-    permission_classes = [IsAdminUser]  # Only admin can assign/remove permissions
-
-    def get(self, request, group_id):
-        try:
-            group = Group.objects.get(id=group_id)
-            permissions = group.permissions.all()
-            serializer = AssignOrRemovePermissionSerializer(permissions, many=True)
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        except Group.DoesNotExist:
-            return Response({'error': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    def post(self, request, group_id):
-        try:
-            permission_ids = request.data.getlist('permission[]', [])
-        except:
-            permission_ids = []
-
-        if not permission_ids:
-            try:
-                group = Group.objects.get(id=group_id)
-                group.permissions.clear()  # Clear all permissions
-                permissions = group.permissions.all()
-                serializer = AssignOrRemovePermissionSerializer(permissions, many=True)
-                return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-            except Group.DoesNotExist:
-                return Response({'error': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
-            except Exception as e:
-                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        # Initialize a list for valid permission IDs
-        valid_permission_ids = []
-        for permission_id in permission_ids:
-            if permission_id:
-                valid_permission_ids.append(permission_id)
-
-        try:
-            # Get the group by ID
-            group = Group.objects.get(id=group_id)
-            
-            # Get the ContentType for CustomPermission model
-            custom_permission_content_type = ContentType.objects.get_for_model(CustomPermission)
-            
-            # If no valid permission IDs, clear the group's permissions
-            if not valid_permission_ids:
-                group.permissions.clear()
-                permissions = group.permissions.filter(content_type=custom_permission_content_type)
-                serializer = AssignOrRemovePermissionSerializer(permissions, many=True)
-                return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-
-            # Get the permissions from valid_permission_ids that belong to the CustomPermission model
-            permissions = Permission.objects.filter(
-                id__in=valid_permission_ids,
-                content_type=custom_permission_content_type
-            )
-
-            # If no permissions are found or they don't belong to CustomPermission, return an error
-            if not permissions.exists():
-                return Response({'error': 'One or more permissions not found or do not belong to the CustomPermission model.'}, 
-                                status=status.HTTP_404_NOT_FOUND)
-
-            # Set the permissions for the group
-            group.permissions.set(permissions)
-
-            # Fetch the updated list of permissions for the group
-            permissions = group.permissions.filter(content_type=custom_permission_content_type)
-            serializer = AssignOrRemovePermissionSerializer(permissions, many=True)
-            
-            # Return the updated permissions in the response
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        
-        except Group.DoesNotExist:
-            return Response({'error': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
-        except Permission.DoesNotExist:
-            return Response({'error': 'One or more permissions not found.'}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
- 
-
-
-
-
+the user_create class not called.

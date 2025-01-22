@@ -6,28 +6,41 @@ import { toast } from "react-toastify";
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 
 
+import { useTranslations, useLocale } from "next-intl";
 
 
 
 
 export default function ListManagerFeatureWhyUs() {
-  const [data, setdata] = useState([]);
-  const [editingItem, setEditingItem] = useState({
-	id:null,
-	feat_whyus_title:'',
-	feat_whyus_title_ar:''
-  });
+	const [data, setdata] = useState([]);
+	const [editingItem, setEditingItem] = useState({
+		id:null,
+		feat_whyus_title:'',
+		feat_whyus_title_ar:''
+	});
 
 
+	const t = useTranslations('dashboard.site_managment.why_us.list_manager')
+	const locale = useLocale()
 
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+
+	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
 
-  const [addingItem, setAddingItem] = useState(false)
-  const [deletingItemId, setDeletingItemId] = useState(null); // Track which item is being deleted
+	const [addingItem, setAddingItem] = useState(false)
+	const [deletingItemId, setDeletingItemId] = useState(null); // Track which item is being deleted
 
-  const [editingItemId, setIditingItemId] = useState(null);  
-  const [itemIdToDelete, setItemIdToDelete] = useState(null)
+	const [editingItemId, setIditingItemId] = useState(null);  
+	const [itemIdToDelete, setItemIdToDelete] = useState(null)
+	const [customFetch] = useCustomFetchMutation()
+		const [newItem, setNewItem] = useState({
+			feat_whyus_title: '',
+			feat_whyus_title_ar:''
+		})
+
+	const isButtonDisabled = Object.values(newItem).some((value) => value.trim() === "");
+
+
 
 
   const handleEditingItem = async (e) => {
@@ -61,7 +74,13 @@ export default function ListManagerFeatureWhyUs() {
 		});
   
 		if( response && response.data){
-		  toast.success("your item been Updated ");
+
+			if(locale === "ar"){
+				toast.success("تم تحديث البيانات بنجاح");
+			}else{
+				toast.success("your item been Updated ");
+			}
+		  
 		  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/feature_why_us/`)
 		  setEditingItem({
 					id:null,
@@ -70,16 +89,52 @@ export default function ListManagerFeatureWhyUs() {
 				})
 		} else{
 		  console.log(response)
-		  toast.error("Error submitting form 1.");
+		  if(locale === "ar"){
+			toast.error("حصل خطأ رقم 1 أثناء تحديث البيانات يرجى المحاولة مجدداً");
+
+		  }else{
+			toast.error("Error submitting form 1.");
+
+		  }
+		  if (response?.error?.data?.detail) {
+			if(response.error.data.detail === "Permission denied for this operation."){
+			  if(locale === "ar") {
+				toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+  
+			  } else {
+				toast.error(response.error.data.detail);
+			  }
+  
+			} 
+		  } else {
+			toast.error(JSON.stringify(response?.error?.data));
+		  }
+
+
+
+
+
 		}
   
 	  } catch (error) {
 		console.error("Error submitting form:", error);
-		toast.error("Error submitting form2.");
+		if(locale === "ar"){
+			toast.error("حصل خطأ رقم 2 أثناء تحديث البيانات يرجى المحاولة مجدداً");
+
+		}else {
+			toast.error("Error submitting form2.");
+
+		}
 	  }
 
   } else {
-	toast.error("Error. all fields are required ");
+	if(locale === "ar"){
+		toast.error("خطأ.جميع الحقول مطلوبة");
+
+	}else {
+		toast.error("Error. all fields are required ");
+
+	}
 
   }
 
@@ -99,13 +154,6 @@ export default function ListManagerFeatureWhyUs() {
 
 
 
-  const [customFetch] = useCustomFetchMutation()
-	const [newItem, setNewItem] = useState({
-		feat_whyus_title: '',
-		feat_whyus_title_ar:''
-	})
-
-	const isButtonDisabled = Object.values(newItem).some((value) => value.trim() === "");
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -179,7 +227,14 @@ const handleaddItem = async (e) => {
 		});
   
 		if( response && response.data){
-		  toast.success("your item been Added ");
+
+			if(locale === "ar"){
+				toast.success("تمت الإضافة بنجاح");
+
+			}else {
+				toast.success("your item been Added ");
+
+			}
 		  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/feature_why_us/`)
 			setNewItem({
 				feat_whyus_title: '',
@@ -187,16 +242,54 @@ const handleaddItem = async (e) => {
 			})
 		} else{
 		  console.log(response)
-		  toast.error("Error submitting form 1.");
+		  if(locale === "ar"){
+			toast.error("حصل خطأ رقم 1 اثناء الإضافة يرجى المحاولة مجدداً");
+
+		  } else {
+			toast.error("Error submitting form 1.");
+
+		  }
+
+		  if (response?.error?.data?.detail) {
+			if(response.error.data.detail === "Permission denied for this operation."){
+			  if(locale === "ar") {
+				toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+  
+			  } else {
+				toast.error(response.error.data.detail);
+			  }
+  
+			} 
+		  } else {
+			toast.error(JSON.stringify(response?.error?.data));
+		  }
+
+
+
+
+
+
 		}
   
 	  } catch (error) {
+		if(locale === "ar"){
+			toast.error("حصل خطأ رقم 2 اثناء الإضافة يرجى المحاولة مجدداً");
+
+		}else{
+			toast.error("Error submitting form2.");
+
+		}
 		console.error("Error submitting form:", error);
-		toast.error("Error submitting form2.");
 	  }
 
   } else {
-	toast.error("Error. all fields are required ");
+	if(locale === "ar"){
+		toast.error("خطأ.جميع الحقول مطلوبة.");
+
+	} else {
+		toast.error("Error. all fields are required ");
+
+	}
 
   }
 
@@ -218,35 +311,65 @@ const handleaddItem = async (e) => {
 	  });
  
 	  if( response && response.data) {
+
+		if(locale === "ar"){
+			toast.success("تم حذف العنصر بنجاح");
+
+		}else {
+			toast.success("your item been deleted ");
+
+		}
+
+
 		fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/feature_why_us/`);
 		setIsModalOpen(false);
+	  } else {
+
+		if (response?.error?.data?.detail) {
+			if(response.error.data.detail === "Permission denied for this operation."){
+			  if(locale === "ar") {
+				toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+  
+			  } else {
+				toast.error(response.error.data.detail);
+			  }
+  
+			} 
+		  } else {
+			toast.error(JSON.stringify(response?.error?.data));
+		  }
+
+
+
+
 	  }
 
 	  setDeletingItemId(null)
 
-  };
+  }
 
   return (
     <div className="container mt-5">
-      <h6>Manage List Items Why us</h6>
+      <h6>{t('title')}</h6>
 
       {/* Table Display */}
       <table className="table table-bordered mt-4">
         <thead className="table-light">
           <tr>
 				<th style={{ width: '5%' }}>#</th>
-				<th style={{ width: '35%' }}>Content</th>
+				<th style={{ width: '35%' }}>{t('content')}</th>
 				<th style={{ width: '35%' }}  >
-				Content (Ar)
+				{t('content_ar')}
 				</th>
-				<th style={{ width: '25%' }}>Actions</th>
+				<th style={{ width: '25%' }}>{t('actions')}</th>
           </tr>
         </thead>
         <tbody>
           {data?.map((item, index) => (
             <tr key={item.id}>
               <td>{index +1}</td>
-              <td>{item.feat_whyus_title}</td>
+              <td                 dir='ltr'
+			  >{item.feat_whyus_title}</td>
               <td className="text-end" >{item.feat_whyus_title_ar}</td>
               <td>
                 <button
@@ -265,7 +388,7 @@ const handleaddItem = async (e) => {
 				  style={{ minWidth: '75px' }}
                 >
                   
-				  {editingItemId === item.id ? "Editing..." : "Edit"}
+				  { editingItemId === item.id ? t('editing') :  t('edit') }
                 </button>
 
 
@@ -282,7 +405,7 @@ const handleaddItem = async (e) => {
 				  disabled={deletingItemId === item.id}
 				  style={{ minWidth: '75px' }}
                 >
-                  {deletingItemId === item.id ? "Deleting " : "Delete"}
+                  {deletingItemId === item.id ? t('deleting') : t('delete')}
                 </button>
               </td>
             </tr>
@@ -300,7 +423,8 @@ const handleaddItem = async (e) => {
            
 		<div className="mb-3">
 		<label htmlFor="feat_whyus_title" className="form-label">
-		Content
+		{/* Content */}
+		{t('form_add.content')}
 		</label>
 		<input
 			type="text"
@@ -309,6 +433,7 @@ const handleaddItem = async (e) => {
 			name="feat_whyus_title"
 			value={newItem?.feat_whyus_title  || ""}
 			onChange={handleChange}
+			dir='ltr'
 
 
 		/>
@@ -317,7 +442,8 @@ const handleaddItem = async (e) => {
 
 		<div className="mb-3">
 		<label htmlFor="feat_whyus_title_ar" className="form-label">
-		Content (Ar)
+		{/* Content (Ar) */}
+		{t('form_add.content_ar')}
 		</label>
 		<input
 			type="text"
@@ -338,7 +464,7 @@ const handleaddItem = async (e) => {
 			disabled={isButtonDisabled || addingItem }
 		>
 
-			{addingItem ? 'adding...' : 'Add Item'}
+			{addingItem ? t('form_add.adding_item') : t('form_add.add_item') }
 			
 		</button>
 
@@ -366,7 +492,7 @@ const handleaddItem = async (e) => {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="editModalLabel">Edit Item</h5>
+              <h5 className="modal-title" id="editModalLabel">{t('form_edit.title')}</h5>
               <button
                 type="button"
                 className="btn-close"
@@ -384,7 +510,8 @@ const handleaddItem = async (e) => {
 					
 				<div className="  ">
 				<label htmlFor="feat_whyus_title" className="form-label">
-				Content
+				{/* Content */}
+				{t('form_edit.content')}
 				</label>
 				<input
 					type="text"
@@ -401,7 +528,7 @@ const handleaddItem = async (e) => {
 
 				<div className="mb-3">
 				<label htmlFor="feat_whyus_title_ar" className="form-label">
-				Content (Ar)  
+				{t('form_edit.content_ar')}  
 				</label>
 				<input
 					type="text"
@@ -439,7 +566,7 @@ const handleaddItem = async (e) => {
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
-                Close
+                {t('form_edit.close')} 
               </button>
               <button
                 type="button"
@@ -447,7 +574,7 @@ const handleaddItem = async (e) => {
                 onClick={handleEditingItem}
                 data-bs-dismiss="modal"
               >
-				{editingItemId  ? "Saveing.." : "Save Changes"}
+				{editingItemId  ? t('form_edit.saving') : t('form_edit.save') }
               </button>
             </div>
           </div>
@@ -460,7 +587,7 @@ const handleaddItem = async (e) => {
 		id="list_manager_why_us"
 		handleSubmit={ () =>   deleteItem(itemIdToDelete)}
 		submitting={deletingItemId}
-		message={"Are you sure you want to Delete this item ?"}
+		message={t('modal_msg')}
 		operationType = "Delete"
 		showModal={true} 
 		isModalOpen={isModalOpen}
