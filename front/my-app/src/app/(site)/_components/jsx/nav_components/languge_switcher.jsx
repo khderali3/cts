@@ -9,7 +9,7 @@ const LanguageSwitcherComponent = () => {
 
 
   const local = useLocale()
-  console.log("Current locale:", local)
+ 
 
 
   const handleChangeLanguage = (e) => {

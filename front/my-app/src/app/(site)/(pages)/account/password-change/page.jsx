@@ -2,7 +2,7 @@
 
 
 import ChangePasswordForm from '@/app/(site)/_components/forms/ChangePasswordForm';
-import "@/app/(site)/_components/assets/css/account.css"
+ 
 
 
 export const metadata = {

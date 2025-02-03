@@ -201,6 +201,9 @@ button.btn.btn-primary {
   max-width: 100%;
   position: relative;
 }
+
+
+
 .why-us-section .container-fluid .img::before {
   content: "";
   position: absolute;
@@ -212,6 +215,41 @@ button.btn.btn-primary {
   width: calc(100% + 68px);
   border-radius: 41px;
 }
+
+
+
+
+/* start khder test image border */
+
+  @media (max-width: 768px) {  
+ .why-us-section .container-fluid .image_border::before {
+  content: "";
+  position: absolute;
+  height: calc(100% + 200px);
+  border: none;
+  top: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% + 68px);
+  border-radius: 41px;
+  } 
+ }  
+
+
+
+
+ 
+
+
+ 
+
+
+
+
+
+/* end test khder image border */
+
+
 .why-us-section .container-fluid .img img {
   max-width: 326px;
 }

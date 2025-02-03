@@ -529,10 +529,11 @@ class TicketStaffSerializer(serializers.ModelSerializer):
             'ticket_latest_activity',
             'ticket_files', 
             'ticket_replies',
+            'ticket_created_ip_address'
 
 
         ]    
-        read_only_fields = ['id', 'ticket_user', 'ticket_assigned_to', 'ticket_status', 'ticket_created_by','ticket_closed_by', 'ticket_slog', 'ticket_replies']  # Set id as read-only
+        read_only_fields = ['id', 'ticket_user', 'ticket_assigned_to', 'ticket_status', 'ticket_created_by','ticket_closed_by', 'ticket_slog', 'ticket_replies', 'ticket_created_ip_address']  # Set id as read-only
 
 
 

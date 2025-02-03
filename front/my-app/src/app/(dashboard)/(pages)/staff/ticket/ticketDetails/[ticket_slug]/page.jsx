@@ -34,10 +34,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 
 
-
-import { notFound } from 'next/navigation';
-
-
+ 
 
 
 const Page = () => {
@@ -219,6 +216,7 @@ const Page = () => {
      
           if(response && response.data) {
             setTcketDetails(response.data)
+            console.log('data', response.data)
 
           } else {
              console.log(response) 
@@ -532,11 +530,17 @@ useEffect(() => {
                             })}
                     </div>
 
-                    {/* <div className="text-end mt-3">
-                        <button type="button" className="btn btn-sm btn-outline-primary  " onClick={handleEditTicket}>Edit</button>
-                    </div> */}
+ 
 
-                    <div className="text-end mt-3">
+                        {ticketDetails?.ticket_created_ip_address &&
+                            <div  className={ `  mt-3 mb-3    w-100 ${locale === "ar" ? "text-end" : "text-start"} `}>
+                                <p className="text-dark text-muted badge bg-light m-0 p-0 fw-light  ">{t_common('ip_address')} :{ticketDetails?.ticket_created_ip_address}</p>
+              
+                            </div>
+                        }
+
+
+                    <div className="text-end mt-2">
                         
                                               
                                                     
@@ -636,7 +640,27 @@ useEffect(() => {
 
 
 
-                        <div className="text-end mt-3">
+
+                        {replied?.ticket_replay_created_ip_address &&
+ 
+
+
+
+<div  className={ `  mt-3 mb-3    w-100 ${locale === "ar" ? "text-end" : "text-start"} `}>
+    <p className="text-dark text-muted badge bg-light m-0 p-0 fw-light  ">{t_common('ip_address')} : {replied?.ticket_replay_created_ip_address}</p>
+
+</div>
+
+
+
+
+
+                        }
+
+
+
+
+                        <div className="text-end mt-2">
                             {/* <button type="button" onClick={() => handleEditTicketReply(replied?.id)} className="btn btn-outline-primary">Edit</button> */}
                         
                                               

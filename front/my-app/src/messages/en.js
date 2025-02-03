@@ -13,11 +13,20 @@ import users_managment from './main_directory_translations/en/dashboard/users_ma
 
 import sidebar from './main_directory_translations/en/dashboard/sidebar';
 
+import staff_nav from './main_directory_translations/en/dashboard/staff_nav';
+
+
+
 import account_staff from './main_directory_translations/en/dashboard/account';
+
+
+
+
 
 export default {
 
 	common : {
+		ip_address: "IP Address",
 		staff : "Staff",
 
 		ticket_status : {
@@ -88,6 +97,7 @@ export default {
 		site_managment,
 		users_managment,
 		sidebar,
-		account: account_staff
+		account: account_staff,
+		nav : staff_nav
 	}
 }

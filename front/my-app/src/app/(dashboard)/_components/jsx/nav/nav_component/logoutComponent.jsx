@@ -9,8 +9,11 @@ import { useLogoutMutation } from '@/app/(dashboard)/_components/redux_staff/fea
 import {setLogout } from '@/app/(dashboard)/_components/redux_staff/features/authSlice';
 
 
-const LogoutLink = () => {
+import { useLocale } from "next-intl";
 
+const LogoutLink = ({link_name="logout"}) => {
+
+    const locale = useLocale()
     const router = useRouter()
     const [logout] = useLogoutMutation();
     const dispatch = useDispatch();
@@ -22,12 +25,24 @@ const LogoutLink = () => {
           .then(() => {
             console.log('log out clicked')
             dispatch(setLogout());
-            toast.success('you have loged out succusfuly')
+            if(locale === "ar"){
+              toast.success('تم تسجيل الخروج بنجاح')
+
+            } else{
+              toast.success('you have loged out succusfuly')
+
+            }
             router.push('/staff/account/login')
           })
           .catch( () => {
             console.log('logout failed')
-            toast.error('field to logout!')
+            if(locale === "ar"){
+              toast.error('فشل في تسجيل الخروج')
+
+            } else {
+              toast.error('field to logout!')
+
+            }
           })
       };
 
@@ -37,8 +52,8 @@ const LogoutLink = () => {
 
         return(
           <>
-        <a className="btn btn-default btn-flat float-end" href="#" onClick={handleLogout}>
-          logout
+        <a className="btn mt-2   w-100" href="#" onClick={handleLogout}>
+          {link_name}
         </a>
           </>
         )

@@ -225,7 +225,7 @@ const LoginPageComponent = () => {
               <div className="col-8">
 
               </div>
-              <div className="col-4">
+              <div className=" ">
                 <div className={locale === "ar" ? 'float-start' : 'float-end' }>
                   <button type="submit"
                    className="btn btn-primary"

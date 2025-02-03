@@ -24,6 +24,9 @@ const Page = () =>  {
   const [files, setFiles] = useState([{ id: 1, file: null }]);
   const router = useRouter()
 
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+
   const [formData, setFormData] = useState({
     ticket_department: "",
     ticket_subject: "",
@@ -70,6 +73,7 @@ const Page = () =>  {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true)
     const form = new FormData();
 
     // Append text fields to form data
@@ -140,7 +144,7 @@ const Page = () =>  {
       }
 
       console.error("Error submitting form:", error);
-    }
+    } finally{    setIsSubmitting(false)  }
 
       
       console.log("Form is valid");
@@ -153,6 +157,7 @@ const Page = () =>  {
         toast.error("Please fill out department - subject and Description  ");
 
       }
+      setIsSubmitting(false) 
 
     }
 
@@ -364,27 +369,12 @@ useEffect(() => {
 
 
 
+ 
 
 
-            {/* <div className="mb-3">
-              <label htmlFor="formFile" className="form-label">
-                Attachments
-              </label>
-              <input className="form-control"  id="formFile" 
-              
-              type="file"
-              name="files" 
-              onChange={handleChange}             
-              
-              />
-              <small className="form-text text-muted">
-                Add file or drop files here
-              </small>
-            </div> */}
-
-
-
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary"
+            disabled={isSubmitting}
+            >
               {/* Submit */}
               {t('submit')}
 

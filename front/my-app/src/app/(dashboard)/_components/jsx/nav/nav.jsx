@@ -6,14 +6,14 @@ import { useEffect, useState } from 'react';
 import LogoutLink from './nav_component/logoutComponent';
 
 
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 
 const Nav = () => {
   const { isAuthenticated,loginFirstName, profileImage } = useSelector(state => state.staff_auth);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const locale = useLocale()
-
+  const t = useTranslations("dashboard.nav")
   
 
   useEffect(() => {
@@ -96,7 +96,8 @@ const Nav = () => {
           <li className="nav-item d-none d-md-block">
  
             <Link href="/staff" className="nav-link">
-              Home
+              {/* Home */}
+              {t('home')}
             </Link>
           </li>
 
@@ -113,6 +114,9 @@ const Nav = () => {
               className="nav-link dropdown-toggle"
               data-bs-toggle="dropdown"
             >
+
+            <span className="d-none d-md-inline">{t('hello')}, {loginFirstName}</span>{" "}
+
               <img
                 // src="/Images/user2-160x160.jpg"
                 src={profileImage ? profileImage : "/Images/def_prof_image.jpg"}
@@ -120,8 +124,8 @@ const Nav = () => {
                 className="user-image rounded-circle shadow"
                 alt="User Image"
               />{" "}
-              <span className="d-none d-md-inline">{loginFirstName}</span>{" "}
             </a>
+
             <ul className={`dropdown-menu dropdown-menu-lg   ${locale === "ar" ? 'dropdown-menu-start' : 'dropdown-menu-end'}`}>
  
 
@@ -136,7 +140,7 @@ const Nav = () => {
                 />
                 <p>
                   {loginFirstName}
-                  <small>Staff</small>
+                  <small>{t('staff')}</small>
                 </p>
               </li>{" "}
 
@@ -144,7 +148,7 @@ const Nav = () => {
 
                 <div className="row">
                   <div className=" text-center">
-                    <Link href="/staff/account/change_password">Change Password</Link>
+                    <Link href="/staff/account/change_password">{t('Change_Password')}</Link>
                   </div>
 
 
@@ -153,19 +157,11 @@ const Nav = () => {
               </li>
    
               <li className="user-footer">
-                <Link href="/staff/account/edit_profile" className="btn btn-default btn-flat">
-                  Edit Profile
+                <Link href="/staff/account/edit_profile" className="btn btn-default  w-100">
+                {t('Edit_Profile')}
                 </Link>
-                {/* <a href="#" className="btn btn-default btn-flat float-end">
-                  Sign out
-                </a> */}
-
-
-                <LogoutLink />
-
-
-
-
+ 
+                <LogoutLink link_name={t('logout')} />
 
 
               </li>{" "}

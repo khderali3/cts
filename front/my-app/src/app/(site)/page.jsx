@@ -167,7 +167,7 @@ const Home = async () => {
 
    {data?.why_us?.why_us_image ?   
    
-    <div className="img text-center">
+    <div className="img image_border text-center">
       <img src={data?.why_us?.why_us_image} alt="" />
     </div>
    
@@ -176,7 +176,7 @@ const Home = async () => {
 
 
 
-    <div className="text d-flex flex-column align-items-center justify-content-center">
+    <div className="text d-flex flex-column align-items-center justify-content-center mx-2 px-2">
       <h2 className="mb-4 pb-4">
         {/* {data?.why_us?.why_us_title} */}
        { local === "ar" ? data?.why_us?.why_us_title_ar : data?.why_us?.why_us_title}
@@ -188,10 +188,10 @@ const Home = async () => {
 
       </h4>
 
-      <ul className=" tog1 row ">
+      <ul className="  row  justify-content-center ">
            { data?.feature_whayus?.map( i =>  
-           <li key={i.id} className="  col-md-6 col-12">
-             {/* {i.feat_whyus_title} */}
+           <li key={i.id} className="  col-md-5 col-12 m-2  ">
+ 
              {local === "ar" ? i.feat_whyus_title_ar : i.feat_whyus_title }
 
             </li>)} 
@@ -262,7 +262,7 @@ const Home = async () => {
           <div className="row justify-content-center row-cols-auto">
           { data?.products?.map( i => 
 
-            <div  key={i.id}  className="col-lg-3 col-md-4 col-sm-10 mt-3 col-8 ">
+            <div  key={i.id}  className="col-lg-3 col-md-4   mt-3 col-10 ">
               <div className="product-1 p-3  h-100  card ">
               {/* <img src="/Images/services.png" alt="" /> */}
               <img src={i.prod_image} alt=""  className='  card-img-top   img-fluid' 
@@ -337,7 +337,7 @@ const Home = async () => {
 
   <section id="services2"> 
     <div className="services" >
-      <div className="container d-flex justify-content-center align-items-center pt-5">
+      <div className="container d-flex justify-content-center align-items-center pt-5 mx-2 pb-2">
         <div className="row d-flex align-items-center text-light">
           <div className="text col-lg-6 text-center">
             <h2>
@@ -353,7 +353,7 @@ const Home = async () => {
             </p>
           </div>
           <div className="col-lg-6">
-            <p className="fs-5 pb-4">
+            <p className="fs-5 pb-4 text-center">
             {/* {data?.our_services_section?.servic_sec_hint } */}
 
 
@@ -361,9 +361,9 @@ const Home = async () => {
 
             </p>
             <div className=" mb-5">
-              <ul className="row">
+              <ul className="row  px-2 mx-2 justify-content-center">
               { data?.services?.map( i =>  
-                <li key={i.id} className=" mb-2  col-md-6 col-12"> 
+                <li key={i.id} className="   col-md-5 col-12 m-2"> 
                   {/* {i.service_name} */}
                   {local === "ar" ? i.service_name_ar  : i.service_name }
 

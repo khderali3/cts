@@ -54,6 +54,7 @@ export default {
 	},
 
 	ticket_details_msgs : {
+		
 		mini_nav: {
 			tickets: "Tickets",
 			ticket_details : "Ticket Details"
@@ -73,18 +74,7 @@ export default {
 		modal_del_msg : "Are you sure you want to delete this reply ?",
 	},
 
-	// add_new_ticket : {
-	// 	form_title : "Submit a request",
-	// 	department_label : "Please select target department",
-	// 	department_default_option : "Select Department",
-	// 	subject : "Subject",
-	// 	description : "Description",
-	// 	description_placeholder : "Please enter the details of your request, and our staff will respond as soon as possible.",
-	// 	submit: "Submit",
-	// 	upload_file : "Upload File",
-	// 	btn_add_More_file : "Add More",
-	// 	btn_remove_file : "Delete"
-	// },
+ 
 	add_new_ticket : {
 		Search_Per_User_label : "please select related  user",
 

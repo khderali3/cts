@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import LoginForm from "@/app/(site)/_components/forms/LoginForm";
 import LogingWithGoogle from "@/app/(site)/_components/jsx/loginpage/loginwithgooglebutton";
-import "@/app/(site)/_components/assets/css/account.css"
+ 
 
 
 

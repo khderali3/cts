@@ -127,7 +127,7 @@ export const Footer = async () => {
           </li>
         </ul>
       </div>
-      <div className="col-md-2 mx-auto">
+      <div className="col-md-4 mx-auto">
         <h5>
           {/* Contact Us */}
           { t('contact_us')}

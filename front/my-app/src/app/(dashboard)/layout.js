@@ -1,13 +1,13 @@
 
 
 
-import Head from "next/head";
+ 
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
-// import "@/app/(site)/_components/assets/css/all.min.css"
-import '@/app/(dashboard)/_components/assets/css/adminlte.css'; // AdminLTE CSS
+ 
+import '@/app/(dashboard)/_components/assets/css/adminlte.css';  
 
-// import "@/app/(site)/_components/assets/css/bootstrap.min.css"
+ 
 
 import "@/app/globals.css";
 
@@ -41,7 +41,7 @@ export default async function Layout({ children }) {
   return (
     <html 
     
-    // lang="en"
+ 
     lang={locale}
     dir={ locale === "ar" ? "rtl" : "ltr"}
     >
@@ -49,10 +49,7 @@ export default async function Layout({ children }) {
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
  
-        {/* <script src="https://www.google.com/recaptcha/api.js" async defer></script> */}
-
-
-
+  
       </head>
 
 
