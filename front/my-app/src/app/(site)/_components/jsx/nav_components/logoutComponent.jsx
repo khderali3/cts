@@ -7,10 +7,10 @@ import { logout as setLogout } from '@/app/(site)/_components/redux/features/aut
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-
+import Link from "next/link";
  
 
-const LogoutLink = () => {
+const LogoutLink = ({handleNavLinkClick}) => {
 
     const locale = useLocale()
     const router = useRouter()
@@ -19,7 +19,7 @@ const LogoutLink = () => {
     const t = useTranslations("site.nav"); // this works
 
       const handleLogout = (event) => {
-        event.preventDefault()
+        // event.preventDefault()
         logout()
           .unwrap()
           .then(() => {
@@ -52,11 +52,17 @@ const LogoutLink = () => {
 
         return(
           <>
-        <a className="bg-focus dropdown-item text-light" href="#" onClick={handleLogout}>
+        <Link className="bg-focus dropdown-item text-light" href="#" 
+        onClick={() => {
+          handleLogout()
+          if (handleNavLinkClick) handleNavLinkClick();
+        }}
+        
+        >
           {/* logout */}
           { t('nav_links.logout')}
 
-        </a>
+        </Link>
           </>
         )
 }

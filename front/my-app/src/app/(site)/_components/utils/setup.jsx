@@ -8,6 +8,7 @@ import { useEffect } from "react";
 
 import { useLocale } from "next-intl";
 
+import InstallPromptPWA from "./pwa";
 
 
 
@@ -41,7 +42,16 @@ const Setup = () => {
     const isRTL =  locale === 'ar' ? true : false  
 
     useVerify();
-    return < ToastContainer rtl={isRTL}  />
+    // return < ToastContainer rtl={isRTL}  />
+
+    return(
+      <>
+        < ToastContainer rtl={isRTL}  />
+
+        <InstallPromptPWA /> 
+      </>
+    )
+
 } 
 
 export default Setup

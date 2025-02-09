@@ -8,10 +8,17 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 
-const AuthLinks = () => {
+import { useRouter } from "next/navigation";
+
+const AuthLinks = ({handleNavLinkClick}) => {
 
   const local = useLocale()
+  const router = useRouter()
 
+  const handleLoginClick = () => {
+    if (handleNavLinkClick) handleNavLinkClick();
+    router.push("/account/login");
+  };
 
     const { isAuthenticated, loginFirstName, profileImage } = useSelector(state => state.auth);
     const t = useTranslations("site.nav"); // this works
@@ -61,22 +68,31 @@ const AuthLinks = () => {
     
   >
     <li>
-      <a className="bg-focus dropdown-item text-light" href="/account/editProfile">
+      <Link className="bg-focus dropdown-item text-light" href="/account/editProfile"
+          onClick={() => {
+            if (handleNavLinkClick) handleNavLinkClick();
+          }}
+      
+      >
         {/* Edit Profile */}
         { t('nav_links.edit_profile')}
 
-      </a>
+      </Link>
     </li>
     <li>
-      <a className="bg-focus dropdown-item text-light" href="/account/password-change">
+      <Link className="bg-focus dropdown-item text-light" href="/account/password-change"
+          onClick={() => {
+            if (handleNavLinkClick) handleNavLinkClick();
+          }}
+      >
           {/* Change Password */}
           { t('nav_links.change_password')}
 
-        </a>
+        </Link>
     </li>
     <li>
 
-      <LogoutLink />
+      <LogoutLink   handleNavLinkClick={handleNavLinkClick} />
     </li>
   </ul>
 </li>
@@ -84,7 +100,12 @@ const AuthLinks = () => {
 
    :
    <li className="nav-item">
-    <Link className="nav-link p-lg-3 p-4" href="/account/login">
+    <Link className="nav-link p-lg-3 p-4" href="/account/login" 
+    onClick={() => {
+      if (handleNavLinkClick) handleNavLinkClick();
+    }}
+    
+    >
       {/* Login */}
       { t('nav_links.login')}
 

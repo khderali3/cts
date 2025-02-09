@@ -19,7 +19,7 @@ from .myutils.public_utils import verify_recaptcha
 
 # Create your views here.
 AUTH_COOKIE = 'access'  # not used 
-AUTH_COOKIE_MAX_AGE = 60 * 60 * 24
+AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 * 2
 AUTH_COOKIE_SECURE =  'True'
 AUTH_COOKIE_HTTP_ONLY = True
 AUTH_COOKIE_PATH = '/'

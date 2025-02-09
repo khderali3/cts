@@ -28,6 +28,20 @@ export default {
 	common : {
 		ip_address: "IP Address",
 		staff : "Staff",
+		
+		pwa_prompt_msg : "Install CloudTechSky App on your device for a better experience.",
+		pwa_prompt_btn_install : "Install",
+		pwa_prompt_btn_Dismiss : "Dismiss",
+
+
+		offline_page : {
+			You_are_offline : "You are offline",
+			Check_your_internet : "Check your internet connection and try again.",
+			CloudTechSKY : "CloudTechSKY",
+			back_to_home : "Back To Home",
+
+		},
+
 
 		ticket_status : {
 			all: 'all status',

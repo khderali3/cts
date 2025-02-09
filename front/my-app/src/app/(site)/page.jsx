@@ -337,7 +337,7 @@ const Home = async () => {
 
   <section id="services2"> 
     <div className="services" >
-      <div className="container d-flex justify-content-center align-items-center pt-5 mx-2 pb-2">
+      <div className="container d-flex justify-content-center align-items-center pt-5   pb-2">
         <div className="row d-flex align-items-center text-light">
           <div className="text col-lg-6 text-center">
             <h2>

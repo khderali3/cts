@@ -21,7 +21,13 @@ export const Nav =  () => {
   const mypathname = usePathname(); // Get the current pathname
  
  
-
+  // Function to close navbar on link click
+  const handleNavLinkClick = () => {
+    const navbar = document.querySelector(".navbar-collapse");
+    if (navbar.classList.contains("show")) {
+      new bootstrap.Collapse(navbar).hide();
+    }
+  };
 
         return(
             <>
@@ -45,17 +51,17 @@ export const Nav =  () => {
       </button>
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
 
-      <ContactUsButton />
+      <ContactUsButton handleNavLinkClick={handleNavLinkClick} />
 
 
-      <LanguageSwitcherComponent />
+      <LanguageSwitcherComponent   handleNavLinkClick={handleNavLinkClick} />
 
 
         <ul className={`navbar-nav   mb-2 mb-lg-0  ms-auto `} >
           <li className="nav-item">
             <Link
               className="nav-link  home p-lg-3 p-4 "
-
+              onClick={handleNavLinkClick}
               href="/#home"
             >
               {/* Home */}
@@ -63,7 +69,7 @@ export const Nav =  () => {
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link p-lg-3 p-4 about_us" href="/#about_us" >
+            <Link className="nav-link p-lg-3 p-4 about_us" href="/#about_us"   onClick={handleNavLinkClick} >
               {/* About us */}
               { t('nav_links.about_us')}
             </Link>
@@ -72,7 +78,9 @@ export const Nav =  () => {
           <li className="nav-item ">        
           <Link 
             className="nav-link  p-lg-3 p-4 product "
+            onClick={handleNavLinkClick}
             href="/#product"> 
+             
             {/* Products */}
             { t('nav_links.products')}
 
@@ -84,6 +92,7 @@ export const Nav =  () => {
             <Link
             className="nav-link  p-lg-3 p-4 services2 "
             href="/#services2"
+            onClick={handleNavLinkClick}
             >
               {/* Services */}
               { t('nav_links.services')}
@@ -94,7 +103,7 @@ export const Nav =  () => {
            <li className="nav-item   ">
             <Link
             className={`nav-link  p-lg-3 p-4    ${mypathname.includes('/tickets') ? 'active' : ''}`}
- 
+            onClick={handleNavLinkClick}
             href="/tickets"
             >
 
@@ -105,7 +114,7 @@ export const Nav =  () => {
           </li>
 
 
-      <AuthLinks />
+      <AuthLinks  handleNavLinkClick={handleNavLinkClick} />
 
         </ul>
       </div>

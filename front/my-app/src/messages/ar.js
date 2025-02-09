@@ -26,7 +26,21 @@ export default {
 		ip_address: "عنوان الأي بي",
 
 		staff : "فريق العمل",
+
+		pwa_prompt_msg : "قم بتنصيب تطبيق كلاود تك سكاي على جهازك لأداء أفضل.",
+		pwa_prompt_btn_install : "تنصيب",
+		pwa_prompt_btn_Dismiss : "رفض",
 	
+		offline_page : {
+			You_are_offline : "أنت غير متصل بالإنترنت",
+			Check_your_internet : "يرجى التحقق من إتصالك بالإنترنت والمحاولة مجدداً.",
+			CloudTechSKY : " كلاودتك سكاي",
+			back_to_home : "العودة للرئيسية",
+
+		},
+
+
+
 		ticket_status : {
 			all: 'كافة الحالات',
 			open: 'مفتوحة',
