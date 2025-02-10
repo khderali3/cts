@@ -119,7 +119,23 @@ class ReopenTicketStaffView(APIView):
 
 class DepartmentsStaffView(APIView):
 
-	permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission]
+	# permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission]
+
+
+	def get_permissions(self):
+		"""
+		Override this method to customize permissions based on the HTTP method.
+		"""
+		if self.request.method != 'GET':
+			# Apply HasUserManagementPermission for all methods except GET
+			return [IsStaffOrSuperUser(), HasUserManagementPermission()]
+		# For GET, only use IsStaffOrSuperUser
+		return [IsStaffOrSuperUser()]
+
+
+
+
+
 
 	def get(self, request, *args, **kwargs):
 		department_id = kwargs.get('id')

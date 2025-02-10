@@ -441,8 +441,21 @@ class GroupAPIView(APIView):
 
 # all users
 class UsersView(APIView):
-	permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission]
+	# permission_classes = [IsStaffOrSuperUser, HasUserManagementPermission]
 	parser_classes = [MultiPartParser, FormParser]  # Allow handling of file uploads
+
+
+	def get_permissions(self):
+		"""
+		Override this method to customize permissions based on the HTTP method.
+		"""
+		if self.request.method != 'GET':
+			# Apply HasUserManagementPermission for all methods except GET
+			return [IsStaffOrSuperUser(), HasUserManagementPermission()]
+		# For GET, only use IsStaffOrSuperUser
+		return [IsStaffOrSuperUser()]
+
+
 
 	def get(self, request, *args, **kwargs): 
 		# users_list = User.objects.all() 

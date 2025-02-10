@@ -336,7 +336,7 @@ return (
 				<input
 					name="profile.PRF_company"
 					onChange={handleChange}
-					value={data.profile.PRF_company ?? ""} // Controlled input
+					value={data?.profile?.PRF_company ?? ""} // Controlled input
 					disabled={!canEdit}
 
 					type="text"
@@ -519,7 +519,7 @@ return (
 					disabled={!canEdit}
 
 				/>
-				{data.profile.PRF_image	 &&
+				{data?.profile?.PRF_image	 &&
 				
 				<div>
 					<a href={data.profile.PRF_image} target="_blank" >  {t('current_image')}  </a> 

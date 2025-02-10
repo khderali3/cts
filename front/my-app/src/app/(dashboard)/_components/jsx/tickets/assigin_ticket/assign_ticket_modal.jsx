@@ -17,7 +17,7 @@ const AssignTicketModal = ({assigningTicketId, setAssiningTicketId=null, setRelo
 
 
 	const [isOtherUser, setIsOtherUser] = useState(null)
-	const [userId, setUserId] = useState(null); // Ticket status state
+	const [userId, setUserId] = useState(null);  
 	const [customFetch] = useCustomFetchMutation()
 	const [submitting, setSubmitting] = useState(false)
 
@@ -141,6 +141,7 @@ const AssignTicketModal = ({assigningTicketId, setAssiningTicketId=null, setRelo
  		if (assignToMeRef.current) assignToMeRef.current.checked = false; // Uncheck "Assign To Me"
 		if (assignToOtherRef.current) assignToOtherRef.current.checked = false; // Uncheck "Assign To Other"
 		setUserId(null)
+		setIsOtherUser(null)
  	  };
 
 
