@@ -156,6 +156,17 @@ const Page = () =>  {
           toast.error("Failed 1 to submit the request.");
 
         }
+        if (response?.error?.data?.detail) {
+          if(response.error.data.detail === "Permission denied for this operation."){
+            if(locale === "ar") {
+              toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+      
+            } else {
+              toast.error(response.error.data.detail);
+            }
+  
+          }
+        }
 
 
         console.log('response', response)

@@ -74,6 +74,7 @@ export default {
 		ticket_reply_change: "تعديل الردود على التذاكر",
 		ticket_reply_delete : "حذف الردود على التذاكر",
 		user_managment: "إدارة المستخدمين",
+		ticket_create_behalf_client: 'إنشاء تذكرة بالنيابة عن العميل',
 	 },
 	users : {
 		title: "إدارة المستخدمين",

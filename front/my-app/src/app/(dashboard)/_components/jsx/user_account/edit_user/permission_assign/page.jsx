@@ -98,7 +98,7 @@ const PermissionAasignOrRemoveSection = ({user_id}) => {
 				toast.success("تم تعديل صلاحيات المستخدم بنجاح");
 
 			} else {
-				toast.success("the user Groups has been updated succussfuly!");
+				toast.success("the user permissions has been updated succussfuly!");
 
 			}
 			setCanEdit(false)

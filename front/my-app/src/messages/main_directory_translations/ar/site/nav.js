@@ -14,5 +14,6 @@ export default {
 		logout : "تسجيل الخروج",
 		edit_profile : "تعديل الملف الشخصي",
 		change_password : "تغيير كلمة المرور",
+		DashBoard: "لوحة التحكم",
 	},
 }

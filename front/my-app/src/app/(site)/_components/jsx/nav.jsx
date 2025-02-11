@@ -58,6 +58,10 @@ export const Nav =  () => {
 
 
         <ul className={`navbar-nav   mb-2 mb-lg-0  ms-auto `} >
+
+ 
+
+
           <li className="nav-item">
             <Link
               className="nav-link  home p-lg-3 p-4 "
@@ -68,6 +72,8 @@ export const Nav =  () => {
               { t('nav_links.home')}
             </Link>
           </li>
+
+
           <li className="nav-item">
             <Link className="nav-link p-lg-3 p-4 about_us" href="/#about_us"   onClick={handleNavLinkClick} >
               {/* About us */}

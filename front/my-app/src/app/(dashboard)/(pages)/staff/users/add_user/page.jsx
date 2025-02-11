@@ -68,17 +68,45 @@ const Page = () =>  {
 
     ) {
       
-      if(formData.password !== formData.confirm_password){
-        if(locale === "ar"){
-          toast.error("كلمة المرور وتأكيد كلمة المرور غير متطابقتين . يرجى المحاولة مجدداً.");
+      // if(formData.password !== formData.confirm_password){
+      //   if(locale === "ar"){
+      //     toast.error("كلمة المرور وتأكيد كلمة المرور غير متطابقتين . يرجى المحاولة مجدداً.");
 
+      //   } else {
+      //     toast.error("Passwords do not match. Please try again!");
+
+      //   }
+      //   setIsSubmiting(false)
+      //   return;
+      // }
+
+		
+      if (formData.password.length < 8) {
+        if( locale === "ar" ){
+          toast.error(`يجب على الأقل ان تكون كلمة المرور 8 أحرف`);
+  
         } else {
-          toast.error("Passwords do not match. Please try again!");
+          toast.error(`Password must be at least 8 characters long`);
+  
+        }
+        setIsSubmiting(false)
+        return;
 
+      } else if (formData.password !== formData.confirm_password) {
+        if( locale === "ar" ){
+          toast.error('كلمة المرور و تأكيد كلمة المرور غير متطابقتين');
+  
+        } else{
+          toast.error('Password and confirm password do not match');
+  
         }
         setIsSubmiting(false)
         return;
       }
+
+
+
+
 
 
     try {

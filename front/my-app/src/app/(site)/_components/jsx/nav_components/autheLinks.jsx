@@ -20,7 +20,7 @@ const AuthLinks = ({handleNavLinkClick}) => {
     router.push("/account/login");
   };
 
-    const { isAuthenticated, loginFirstName, profileImage } = useSelector(state => state.auth);
+    const { isAuthenticated, loginFirstName, profileImage, is_staff, is_superuser   } = useSelector(state => state.auth);
     const t = useTranslations("site.nav"); // this works
 
     useEffect(() => {
@@ -67,6 +67,26 @@ const AuthLinks = ({handleNavLinkClick}) => {
     aria-labelledby="navbarDropdownMenuLink"
     
   >
+
+    { ( is_staff || is_superuser ) &&
+    <> 
+      <li>
+        <Link className="bg-focus dropdown-item text-light " href="/staff"
+      
+        >
+  
+        {t('nav_links.DashBoard')}
+
+        </Link>
+      </li>
+      <hr className="text-light m-0 mb-1"/>
+    </>
+
+    }
+
+
+
+
     <li>
       <Link className="bg-focus dropdown-item text-light" href="/account/editProfile"
           onClick={() => {
@@ -79,6 +99,8 @@ const AuthLinks = ({handleNavLinkClick}) => {
 
       </Link>
     </li>
+
+
     <li>
       <Link className="bg-focus dropdown-item text-light" href="/account/password-change"
           onClick={() => {

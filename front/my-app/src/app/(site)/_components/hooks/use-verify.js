@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 
-import { setAuth, finishIntialLoad, setloginFirstName, setprofileImage } from '@/app/(site)/_components/redux/features/authSlice';
+import { setAuth, finishIntialLoad, setloginFirstName, setprofileImage, setIs_staff, setIs_superuser } from '@/app/(site)/_components/redux/features/authSlice';
 
 import { useVerifyMutation, useRetrieveUserQuery } from '@/app/(site)/_components/redux/features/authApiSlice';
 
@@ -34,6 +34,15 @@ export default function useVerify() {
 			if(data?.profile?.PRF_image){
 				dispatch(setprofileImage(data?.profile.PRF_image))
 			}
+			if(data?.is_staff){
+				dispatch(setIs_staff(data?.is_staff))
+			}
+
+			if(data?.is_superuser){
+				dispatch(setIs_superuser(data?.is_superuser))
+			}
+ 
+
 
 		  } else {
 			console.log('error response', response.data)

@@ -14,6 +14,7 @@ export default {
 		logout : "Logout",
 		edit_profile : "Edit Profile",
 		change_password : "Change Password",
+		DashBoard: "DashBoard",
 
 	},
 }

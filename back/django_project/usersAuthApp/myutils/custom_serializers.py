@@ -70,7 +70,11 @@ class CustomProviderTokenStrategy:
         refresh = RefreshToken.for_user(user)
 
         refresh['first_name'] = user.first_name
+        refresh['is_staff'] = user.is_staff
+        refresh['is_superuser'] = user.is_superuser
 
+
+ 
         return {
             "access": str(refresh.access_token),
             "refresh": str(refresh),
@@ -86,7 +90,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         token['first_name'] = user.first_name
         token['last_name'] = user.last_name
-          
+        token['is_staff'] = user.is_staff
+        token['is_superuser'] = user.is_superuser
+
+
+ 
+
 
         if hasattr(user, 'profile_prf_user_relaed_useraccount'):
             PRF_image = user.profile_prf_user_relaed_useraccount.PRF_image.url if user.profile_prf_user_relaed_useraccount.PRF_image else None
@@ -112,9 +121,12 @@ class ProfileImageSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(UserSerializer):
     profile = ProfileImageSerializer(source='profile_prf_user_relaed_useraccount', read_only=True)
 
+    is_staff = serializers.BooleanField(read_only=True)  # Make is_staff read-only
+    is_superuser = serializers.BooleanField(read_only=True)  # Make is_superuser read-only
+
     class Meta(UserSerializer.Meta):
         model = UserAccount
-        fields = list(UserSerializer.Meta.fields) + ['profile']
+        fields = list(UserSerializer.Meta.fields) + ['profile'] + ['is_staff'] + ['is_superuser']
 
 
 

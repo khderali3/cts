@@ -119,17 +119,13 @@ class CustomPermission(models.Model):
 
             ('ticket_change', 'Ticket Change'), 
             ('ticket_delete', 'Ticket Delete'),
-
-            # ('ticket_attachment_add_after_submited', 'Ticket Attachment Add After Submited'), 
+            ('ticket_create_behalf_client', 'Ticket Create Behalf Client'),
             ('ticket_attachment_delete_after_submited', 'Ticket Attachment Delete After Submited'), 
             
             ('ticket_reply_change', 'Ticket Reply Change'), 
             ('ticket_reply_delete', 'Ticket Reply Delete'),
-
-            # ('ticket_reply_attachment_add_after_submited', 'Ticket Reply Attachment Add After Submited'), 
+ 
             ('ticket_reply_attachment_delete_after_submited', 'Ticket Reply Attachment Delete After Submited'), 
-
-
         )
 
 

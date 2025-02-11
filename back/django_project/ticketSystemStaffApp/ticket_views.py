@@ -241,6 +241,11 @@ class TicketStaffView(APIView):
 	permission_classes = [IsStaffOrSuperUser]
 
 	def post(self, request, *args, **kwargs):
+		if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.ticket_create_behalf_client'):
+			return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
+
+
+
 		serializer = CreateTicketStaffSerializer(data=request.data, context={'request': request})
 		if serializer.is_valid():
 			ticket = serializer.save()  # This will also save ticket files

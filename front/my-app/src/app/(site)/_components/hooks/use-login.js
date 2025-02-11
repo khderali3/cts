@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 
 import { useDispatch } from 'react-redux';
 import { useLoginMutation } from '../redux/features/authApiSlice';
-import { setAuth, setloginFirstName, setprofileImage } from '../redux/features/authSlice';
+import { setAuth, setloginFirstName, setprofileImage, setIs_staff, setIs_superuser } from '../redux/features/authSlice';
 import { toast } from 'react-toastify';
 import { jwtDecode} from 'jwt-decode';
 
@@ -78,6 +78,11 @@ export default function useLogin() {
 					dispatch(setloginFirstName(user_first_name))
 					const profileImage = token_info?.PRF_image
 					dispatch(setprofileImage(profileImage)) 
+					dispatch(setIs_staff(token_info?.is_staff)) 
+					dispatch(setIs_superuser(token_info?.is_superuser)) 
+
+					
+
 
 					if(locale === "ar"){
 						toast.success('تم تسجيل الدخول بنجاح');

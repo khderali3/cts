@@ -22,12 +22,14 @@ import UsersSearchInput from "@/app/(dashboard)/_components/jsx/tickets/input_se
 import { useTranslations, useLocale } from "next-intl";
 import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 
+import { useSelector } from "react-redux";
 
 
 const Page = () => {
 
   const t = useTranslations('dashboard.ticket')
   const t_common = useTranslations('common')
+  const { permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
 
 
 
@@ -41,7 +43,13 @@ const Page = () => {
 };
 
 
+const hasPermissionToCreateTicketBelalfClient = () => {
+  if (is_superuser || (permissions?.includes('usersAuthApp.ticket_create_behalf_client') && is_staff)) {
+      return true
+  }
 
+  return false
+}
 
 const formatDate = (dateString) => {
   const dateFnsLocale = locales[locale] || enUS; // Map to date-fns locale, fallback to English
@@ -288,12 +296,20 @@ useEffect(() => {
   {t('all_tickets.my_requests_title')}
 </h1>
 </div>
-<div className="col-12 col-md-6 d-flex justify-content-md-end">
-<button type="button" onClick={handleAddRequest} className="btn btn-outline-secondary">
-  {/* Add a new Request */}
-  {t('all_tickets.add_new_request_button')}
-</button>
-</div>
+
+{ hasPermissionToCreateTicketBelalfClient() && 
+
+  <div className="col-12 col-md-6 d-flex justify-content-md-end">
+    <button type="button" onClick={handleAddRequest} className="btn btn-outline-secondary">
+      {/* Add a new Request */}
+      {t('all_tickets.add_new_request_button')}
+    </button>
+  </div>
+
+}
+
+
+
 </div>
 
 

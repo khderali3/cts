@@ -3,7 +3,7 @@
 import { useGoogleMutation } from '@/app/(site)/_components/redux/features/authApiSlice';
 import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { setAuth, setloginFirstName } from '@/app/(site)/_components/redux/features/authSlice';
+import { setAuth, setloginFirstName, setIs_staff, setIs_superuser } from '@/app/(site)/_components/redux/features/authSlice';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { jwtDecode} from 'jwt-decode';
@@ -37,7 +37,9 @@ import { useLocale } from 'next-intl';
 					const user_first_name = token_info.first_name
 
 					dispatch(setloginFirstName(user_first_name))  
-					
+					dispatch(setIs_staff(token_info?.is_staff))  
+					dispatch(setIs_superuser(token_info?.is_superuser))  
+
 
 
 					dispatch(setAuth());
