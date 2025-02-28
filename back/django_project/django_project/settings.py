@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'sitestaffApp',
 	'ticketSystemStaffApp',
 	'usersManagmentStaffApp',
+    'projectFlowApp',
 ]
 
 
@@ -137,7 +138,9 @@ CORS_ALLOW_CREDENTIALS = True
 SIMPLE_JWT = {
 
   "TOKEN_OBTAIN_SERIALIZER": "usersAuthApp.myutils.custom_serializers.MyTokenObtainPairSerializer",
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    # "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(weeks=104),
+
     "REFRESH_TOKEN_LIFETIME": timedelta(weeks=104),
 }
 
@@ -280,3 +283,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root_dir/')
 MEDIA_URL = '/media_url/'
 
 MY_SITE_URL = 'http://localhost:8000'  # Replace with your domain in production
+
+RECAPTCHA_ENABLED = False

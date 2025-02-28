@@ -97,16 +97,21 @@ class StffProfileView(APIView):
 
 
 
-
+from django.conf import settings
 
 
 class StaffCustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
 
-        recaptcha_value = request.data.get("recaptcha_value")
-        if not recaptcha_value or not verify_recaptcha(recaptcha_value):
-            return Response({"detail": "Invalid reCAPTCHA. Please try again."}, status=status.HTTP_400_BAD_REQUEST)
+        # recaptcha_value = request.data.get("recaptcha_value")
+        # if not recaptcha_value or not verify_recaptcha(recaptcha_value):
+        #     return Response({"detail": "Invalid reCAPTCHA. Please try again."}, status=status.HTTP_400_BAD_REQUEST)
  
+        if getattr(settings, "RECAPTCHA_ENABLED", True):  # Default to True if not found
+            recaptcha_value = request.data.get("recaptcha_value")
+            if not recaptcha_value or not verify_recaptcha(recaptcha_value):
+                return Response({"detail": "Invalid reCAPTCHA. Please try again."}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 

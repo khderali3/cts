@@ -30,6 +30,11 @@ urlpatterns = [
     path('api/', include('usersAuthApp.urls')),
     path('api/site/', include('siteusersApp.urls')),
     path('api/ticket/', include('ticketSystemApp.urls')),
+
+
+    path('api/', include('projectFlowApp.urls')), # projects urls "/staff/project/ or /project/"
+
+
     path('media_url/ticket/ticket_files/<str:file_name>/', ProtectedMediaView.as_view(), name='protected_media'),
     path('media_url/ticket/ticket_replay_files/<str:file_name>/', ProtectedMediaView.as_view(), name='protected_media')
 
