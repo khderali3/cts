@@ -99,14 +99,12 @@ class StepTemplate(models.Model):
     ]
 
     show_status_log_to_client_options = [
-        ('inherit_from_project_flow_template', 'inherit_from_project_flow_template'),
+        ('inherit_from_project_flow', 'inherit_from_project_flow'),
         ('yes', 'yes'),
         ('no', 'no'),
     ]
 
-    show_status_log_to_client = models.CharField(max_length=128, choices=show_status_log_to_client_options, default='inherit_from_project_flow_template')
-
-
+    show_status_log_to_client = models.CharField(max_length=128, choices=show_status_log_to_client_options, default='inherit_from_project_flow')
 
 
     project_flow_template = models.ForeignKey(ProjectFlowTemplate, related_name='StepTemplate_project_flow_template_related_ProjectFlowTemplate', on_delete=models.CASCADE, null=True, blank=True)
@@ -200,13 +198,13 @@ class SubStepTemplate(models.Model):
     ]
 
     show_status_log_to_client_options = [
-        ('inherit_from_project_flow_template', 'inherit_from_project_flow_template'),
+        ('inherit_from_project_flow', 'inherit_from_project_flow'),
         ('yes', 'yes'),
         ('no', 'no'),
     ]
 
 
-    show_status_log_to_client = models.CharField(max_length=128, choices=show_status_log_to_client_options, default='inherit_from_project_flow_template')
+    show_status_log_to_client = models.CharField(max_length=128, choices=show_status_log_to_client_options, default='inherit_from_project_flow')
 
 
 

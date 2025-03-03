@@ -30,64 +30,50 @@ class ProjectType(models.Model):
     updated_date = models.DateTimeField(auto_now=True)
 
     def save(self , *args , **kwargs):
-        if not self.project_slog:
-            time_now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
-            data_to_slug = f"{time_now}_{self.project_name}"
+        if not self.id:  
+            super().save(*args, **kwargs)  # Save first to get the ID
+
+        if not self.project_slog:  
+            data_to_slug = f"{self.id}-{self.project_name}"  # Use "-" instead of "_" for better readability
             self.project_slog = slugify(data_to_slug)
-        super(ProjectType , self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        # Check if file exists before deleting
-        if self.main_image:
-            if os.path.isfile(self.main_image.path):
-                os.remove(self.main_image.path)
-
-        for attachment in self.ProjectTypeExtraImages_project_type_related_ProjectType.all():
-            attachment.delete()
+            super().save(update_fields=["project_slog"]) 
 
 
-        super().delete(*args, **kwargs)  # Call the parent class's delete method
 
  
     def __str__(self):
-        return f"{self.project_name}"
+        return f"{self.id , self.project_name}"
+
 
 
 class ProjectTypeExtraImages(models.Model):
     project_type = models.ForeignKey(ProjectType, related_name='ProjectTypeExtraImages_project_type_related_ProjectType', on_delete=models.CASCADE, blank=True, null=True)
-    project_flow_extra_image = models.FileField(upload_to='ProjectType/ProjectTypeExtraImages/', validators=[validate_image])
-    project_flow_extra_image_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
+    file = models.FileField(upload_to='ProjectType/ProjectTypeExtraImages/', validators=[validate_image])
+    file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
     created_data = models.DateTimeField(auto_now_add=True) 
 
     def save(self, *args, **kwargs):
-        if self.project_flow_extra_image :
-            self.project_flow_extra_image_name = basename(self.project_flow_extra_image.name)
+        if self.file :
+            self.file_name = basename(self.file.name)
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.id}, {self.project_flow_extra_image_name}" 
-
-    def delete(self, *args, **kwargs):
-        # Check if file exists before deleting
-        if self.project_flow_extra_image:
-            if os.path.isfile(self.project_flow_extra_image.path):
-                os.remove(self.project_flow_extra_image.path)
+        return f"{self.id}, {self.file_name}" 
  
-        super().delete(*args, **kwargs) 
 
 
 
 class ProjectTypeAttachment(models.Model):
     project_type = models.ForeignKey(ProjectType, related_name='ProjectTypeAttachment_project_name', on_delete=models.CASCADE, blank=True, null=True)
-    file_path = models.FileField(upload_to='ProjectType/attachment/', validators=[validate_file_or_image])
+    file = models.FileField(upload_to='ProjectType/attachment/', validators=[validate_file_or_image])
     file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
     created_data = models.DateTimeField(auto_now_add=True) 
 
     def save(self, *args, **kwargs):
-        if self.file_path :
-            self.file_name = basename(self.file_path.name)
+        if self.file :
+            self.file_name = basename(self.file.name)
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.id}, {self.project_name} , {self.file_name}" 
+        return f"{self.id}, {self.project_type} , {self.file_name}" 
 

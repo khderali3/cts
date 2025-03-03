@@ -2,7 +2,7 @@
  
  
 from rest_framework.serializers import ModelSerializer
-from ..models import ProjectType, ProjectTypeExtraImages, ProjectFlow, ProjectFlowAttachment
+from ..models import ProjectType, ProjectTypeExtraImages, ProjectFlow, ProjectFlowAttachment, ProjectTypeAttachment, ProjectFlowNote, ProjectFlowNoteAttachment
 
 from rest_framework import serializers
 
@@ -28,6 +28,63 @@ def get_user_data(obj, user_attr_name, request=None):
 
 
 
+
+class ProjectFlowNoteAttachmentSerializer(serializers.ModelSerializer):
+   file = serializers.FileField(required=False)
+   class Meta:
+      model = ProjectFlowNoteAttachment
+      fields = "__all__"
+      read_only_fields = ['id']
+
+   def validate(self, attrs):
+      request = self.context.get('request')
+      files = request.FILES.getlist('file[]')
+      if not files:
+         raise serializers.ValidationError({"file[]" : "this field can't be empty!"})
+      return attrs
+ 
+
+   def create(self, valatated_data):
+      request = self.context.get('request')
+      files = request.FILES.getlist('file[]')
+
+      attachments = []
+      for file in files:
+         obj = ProjectFlowNoteAttachment.objects.create(**valatated_data, file=file)
+         attachments.append(obj)
+
+      return attachments
+
+
+
+
+class ProjectFlowNoteSerializer(serializers.ModelSerializer):
+   files = ProjectFlowNoteAttachmentSerializer(many=True, read_only=True, source="ProjectFlowNoteAttachment_project_flow_note_related_ProjectFlowNote")
+   class Meta:
+      model = ProjectFlowNote
+      fields = "__all__"
+      read_only_fields = ["id"]
+
+   def create(self, validated_data):
+      obj = super().create(validated_data)  # Create StepTemplateNote instance
+      request = self.context.get("request")
+      
+      files = request.FILES.getlist("file[]") if request else []
+
+      attachments = []
+      for file in files:
+         attachment = ProjectFlowNoteAttachment.objects.create(
+               project_flow_note=obj, file=file
+         )
+         attachments.append(attachment)
+
+      obj.files = attachments  # Attach created files
+      return obj
+
+
+
+
+
 class ProjectFlowAttachmentSerializer(ModelSerializer):
 
    class Meta:
@@ -42,11 +99,23 @@ class ProjectFlowSerializer(ModelSerializer):
 
    project_user = serializers.SerializerMethodField()
    project_created_user = serializers.SerializerMethodField()
+   project_type = serializers.SerializerMethodField()
 
    class Meta:
       model = ProjectFlow
-      fields = ["id", "project_user", "project_created_user",   "project_type", "project_flow_status", "created_date", "updated_date", "project_flow_slug", "show_steps_to_client"]
- 
+      fields = "__all__"
+
+   def get_project_type(self, obj):
+      if obj.project_type:  # Directly access the ForeignKey field
+         return {
+               "id" : obj.project_type.id,
+               "project_name": obj.project_type.project_name,  # Direct access
+               "project_name_ar": obj.project_type.project_name_ar,  # Direct access
+         }
+      return None 
+
+
+
    def get_project_user(self, obj): 
         request = self.context.get("request")  
         return get_user_data(obj, "project_user", request)  
@@ -54,6 +123,10 @@ class ProjectFlowSerializer(ModelSerializer):
    def get_project_created_user(self, obj):
         request = self.context.get("request")  
         return get_user_data(obj, "project_created_user", request)  
+
+
+
+
 
 
 class CreateProjectFlowSerializer(ModelSerializer):
@@ -95,19 +168,29 @@ class ProjectTypeExtraImagesSerializer(ModelSerializer):
 
 
 
+class ProjectTypeAttachmentSerializer(serializers.ModelSerializer):
+
+   class Meta:
+      model = ProjectTypeAttachment
+      fields = "__all__"
+      read_only_fields = ["id"]
 
 
 
 class ProjectTypeObjectSerializer(ModelSerializer):
-   extra_images = serializers.SerializerMethodField()
+   extra_images =  ProjectTypeExtraImagesSerializer( source="ProjectTypeExtraImages_project_type_related_ProjectType",  many=True  ) 
+   files = ProjectTypeAttachmentSerializer(many=True, source="ProjectTypeAttachment_project_name")
+   
    class Meta:
       model = ProjectType
       fields = '__all__'
       read_only_fields = ['id', 'created_date', 'updated_date']  
 
-   def get_extra_images(self, obj):
-      extra_images = ProjectTypeExtraImages.objects.filter(project_type=obj)
-      return ProjectTypeExtraImagesSerializer( extra_images,  many=True, context=self.context).data
+
+
+
+
+
 
 
 class ProjectTypeListSerializer(ModelSerializer):

@@ -14,5 +14,6 @@ urlpatterns = [
 
     path('staff/', include('projectFlowApp.urls_module.staff_projectFlow_urls')),
 
+    path('staff/', include('projectFlowApp.urls_module.staff_projectType_urls')),
 
 ]

@@ -54,7 +54,10 @@ class ProjectFlow(models.Model):
     is_template_mounted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.project_type.project_name} , {self.project_flow_status}"
+        if self.project_type:
+            return f"{self.project_type.project_name} , {self.project_flow_status}"
+        return f"{self.id}"
+
 
 
     def save(self , *args , **kwargs):
@@ -82,6 +85,7 @@ class ProjectFlowAttachment(models.Model):
     file = models.FileField(upload_to='project_flow/ProjectFlowAttachment/', validators=[validate_file_or_image])
     file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
     created_data = models.DateTimeField(auto_now_add=True) 
+    obj_type = models.CharField(max_length=255, blank=True, null=True, default="normal", db_index=True)
 
     def save(self, *args, **kwargs):
         if self.file :
@@ -98,6 +102,7 @@ class ProjectFlowNote(models.Model):
     project_flow = models.ForeignKey(ProjectFlow, related_name='ProjectFlowNote_project_flow_related_ProjectFlow', on_delete=models.CASCADE )
     created_user = models.ForeignKey(User, related_name='ProjectFlowNote_created_user_related_User', on_delete=models.PROTECT, blank=True, null=True)
     note = models.TextField()
+    note_type = models.CharField(max_length=255, blank=True, null=True, default="normal", db_index=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
@@ -226,6 +231,7 @@ class ProjectFlowStepNote(models.Model):
     project_step = models.ForeignKey(ProjectFlowStep, related_name='ProjectFlowStepNote_project_step_related_ProjectFlowStep', on_delete=models.CASCADE, null=True, blank=True)
     step_note_user = models.ForeignKey(User, related_name='ProjectFlowStepNote_step_note_user_related_ProjectFlowStep', on_delete=models.PROTECT, blank=True, null=True)
     note = models.TextField()
+    note_type = models.CharField(max_length=255, blank=True, null=True, default="normal")
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
@@ -368,6 +374,7 @@ class ProjectFlowSubStepNote(models.Model):
     sub_step = models.ForeignKey(ProjectFlowSubStep, related_name='ProjectFlowSubStepNote_sub_step_related_ProjectFlowSubStep', on_delete=models.CASCADE, null=True, blank=True)
     sub_step_note_user = models.ForeignKey(User, related_name='ProjectFlowSubStepNote_sub_step_note_user_related_User', on_delete=models.PROTECT, blank=True, null=True)
     note = models.TextField()
+    note_type = models.CharField(max_length=255, blank=True, null=True, default="normal")
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
@@ -389,11 +396,4 @@ class ProjectFlowSubStepNoteAttachment(models.Model):
     def __str__(self):
         return f"{self.id}, {self.file_name}" 
 
-    # def delete(self, *args, **kwargs):
-    #     # Check if file exists before deleting
-    #     if self.file:
-    #         if os.path.isfile(self.file.path):
-    #             os.remove(self.file.path)
-    #     super().delete(*args, **kwargs)  # Call the parent class's delete method
-
- 
+  

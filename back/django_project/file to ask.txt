@@ -1,34 +1,10 @@
-is my logic and syntax  code is currect for signal to call .delete() method to deleete the file from os directory ?: 
 
 
+i have backend django application , "Work flow app" . and i am using DRF, 
 
-@receiver(pre_delete, sender=ProjectFlowAttachment)
-def delete_attachments_project_flow_direct (sender, instance, **kwargs):
-    instance.delete()
+i wana sale this app by monthly or yearly licanse . 
 
-
-
-class ProjectFlowAttachment(models.Model):
-    project_flow = models.ForeignKey(ProjectFlow, related_name='ProjectFlowAttachment_project_flow_related_ProjectFlow', on_delete=models.CASCADE, null=True, blank=True)
-    file = models.FileField(upload_to='project_flow/ProjectFlowAttachment/', validators=[validate_file_or_image])
-    file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
-    created_data = models.DateTimeField(auto_now_add=True) 
-
-    def save(self, *args, **kwargs):
-        if self.file :
-            self.file_name = basename(self.file.name)
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.id}, {self.project_flow}" 
-
-    def delete(self, *args, **kwargs):
-        # Check if file exists before deleting
-        if self.file:
-            if os.path.isfile(self.file.path):
-                os.remove(self.file.path)
-        super().delete(*args, **kwargs)  # Call the parent class's delete method
+but i wanna protect my code , the user should not be able to read my code . , and also i wanna protect my app to work only if the customer hi buy a license key from me . 
 
 
-
-
+and i don't know how to do that , what pro developer do for that ?

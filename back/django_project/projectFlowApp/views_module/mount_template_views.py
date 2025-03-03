@@ -38,8 +38,11 @@ def mount_project_flow_template(request, template_id, projectflow_id, is_force_m
                     return Response({"message": "Workflow template already mounted."}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     try:
-                        
-                        projectflow.ProjectFlowNote_project_flow_related_ProjectFlow.all().delete()
+
+                        projectflow.ProjectFlowAttachment_project_flow_related_ProjectFlow.filter(obj_type="cloned_from_template").delete()
+
+                        projectflow.ProjectFlowNote_project_flow_related_ProjectFlow.filter(note_type="cloned_from_template").delete()
+ 
                         projectflow.ProjectFlowStep_ProjectFlow_related_ProjectFlow.all().delete()
 
                     except Exception as e:
@@ -56,7 +59,7 @@ def mount_project_flow_template(request, template_id, projectflow_id, is_force_m
                 if attachment.file:
                     file_name = os.path.basename(attachment.file.name)
                     with attachment.file.open('rb') as f:
-                        new_attachment = ProjectFlowAttachment(project_flow=projectflow)                      
+                        new_attachment = ProjectFlowAttachment(project_flow=projectflow, obj_type="cloned_from_template")                      
                         new_attachment.file.save(file_name, File(f), save=True)
 
 
@@ -64,6 +67,7 @@ def mount_project_flow_template(request, template_id, projectflow_id, is_force_m
             for note in project_flow_template_notes:
                 new_note = ProjectFlowNote(project_flow=projectflow)
                 new_note.note = note.note
+                new_note.note_type = "cloned_from_template"
                 new_note.save()
 
                 note_template_attachments = ProjectFlowTemplateNoteAttachment.objects.filter(project_flow_template_note=note)
@@ -105,7 +109,9 @@ def mount_project_flow_template(request, template_id, projectflow_id, is_force_m
                 step_templates_notes = StepTemplateNote.objects.filter(step_template=step_template)
                 for step_template_note_obj in step_templates_notes:
                     new_step_note_obj = ProjectFlowStepNote(project_step=new_step_obj)
+                    new_step_note_obj.note_type = "cloned_from_template"
                     new_step_note_obj.note = step_template_note_obj.note
+               
                     new_step_note_obj.save()
 
                     step_templates_note_attachments = StepTemplateNoteAttachment.objects.filter(step_template_note=step_template_note_obj)
@@ -145,6 +151,7 @@ def mount_project_flow_template(request, template_id, projectflow_id, is_force_m
                     for template_sub_step_note in template_sub_step_notes:
                         new_sub_step_obj = ProjectFlowSubStepNote(sub_step=new_sub_step_obj)
                         new_sub_step_obj.note = template_sub_step_note.note
+                        new_sub_step_obj.note_type = "cloned_from_template"
                         new_sub_step_obj.save()
 
 

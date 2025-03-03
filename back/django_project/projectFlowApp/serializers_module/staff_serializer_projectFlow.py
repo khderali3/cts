@@ -49,11 +49,12 @@ class ProjectFlowSubStepNoteAttachmentSerializer(serializers.ModelSerializer):
             attachment = ProjectFlowSubStepNoteAttachment.objects.create(**validated_data, file=file)
             attachments.append(attachment)
 
-        attachment_ids = []
-        for attachment in attachments:
-            attachment_ids.append(attachment.id)
+        return attachments
+        # attachment_ids = []
+        # for attachment in attachments:
+        #     attachment_ids.append(attachment.id)
 
-        return ProjectFlowSubStepNoteAttachment.objects.filter(id__in=attachment_ids)
+        # return ProjectFlowSubStepNoteAttachment.objects.filter(id__in=attachment_ids)
 
 
 
@@ -125,11 +126,12 @@ class ProjectFlowSubStepAttachmentSerializer(serializers.ModelSerializer):
             attachment = ProjectFlowSubStepAttachment.objects.create(**validated_data, file=file)
             attachments.append(attachment)
 
-        attachment_ids = []
-        for attachment in attachments:
-            attachment_ids.append(attachment.id)
+        return attachments
+        # attachment_ids = []
+        # for attachment in attachments:
+        #     attachment_ids.append(attachment.id)
 
-        return ProjectFlowSubStepAttachment.objects.filter(id__in=attachment_ids)
+        # return ProjectFlowSubStepAttachment.objects.filter(id__in=attachment_ids)
  
 
 
@@ -198,11 +200,12 @@ class ProjectFlowStepNoteAttachmentSerializer(serializers.ModelSerializer):
             attachment = ProjectFlowStepNoteAttachment.objects.create(**validated_data, file=file)
             attachments.append(attachment)
 
-        attachment_ids = []
-        for attachment in attachments:
-            attachment_ids.append(attachment.id)
+        return attachments
+        # attachment_ids = []
+        # for attachment in attachments:
+        #     attachment_ids.append(attachment.id)
 
-        return ProjectFlowStepNoteAttachment.objects.filter(id__in=attachment_ids)
+        # return ProjectFlowStepNoteAttachment.objects.filter(id__in=attachment_ids)
 
     def to_representation(self, instance):
         request = self.context.get("request")  # Get request safely
@@ -285,11 +288,12 @@ class ProjectFlowStepAttachmentSerializer(serializers.ModelSerializer):
             attachment = ProjectFlowStepAttachment.objects.create(**validated_data, file=file)
             attachments.append(attachment)
 
-        attachment_ids = []
-        for attachment in attachments:
-            attachment_ids.append(attachment.id)
+        return attachments
+        # attachment_ids = []
+        # for attachment in attachments:
+        #     attachment_ids.append(attachment.id)
 
-        return ProjectFlowStepAttachment.objects.filter(id__in=attachment_ids)
+        # return ProjectFlowStepAttachment.objects.filter(id__in=attachment_ids)
 
     def to_representation(self, instance):
         request = self.context.get("request")  # Get request safely
@@ -373,11 +377,12 @@ class ProjectFlowNoteAttachmentSerializer(serializers.ModelSerializer):
             attachment = ProjectFlowNoteAttachment.objects.create(**validated_data, file=file)
             attachments.append(attachment)
 
-        attachment_ids = []
-        for attachment in attachments:
-            attachment_ids.append(attachment.id)
+        return attachments
+        # attachment_ids = []
+        # for attachment in attachments:
+        #     attachment_ids.append(attachment.id)
 
-        return ProjectFlowNoteAttachment.objects.filter(id__in=attachment_ids)
+        # return ProjectFlowNoteAttachment.objects.filter(id__in=attachment_ids)
 
     def to_representation(self, instance):
         request = self.context.get("request")  # Get request safely
@@ -516,11 +521,12 @@ class CreateProjectFlowAttachmentSerializer(serializers.ModelSerializer):
             attachment = ProjectFlowAttachment.objects.create(**validated_data, file=file)
             attachments.append(attachment)
 
-        attachment_ids = []
-        for attachment in attachments:
-            attachment_ids.append(attachment.id)
+        return attachments
+        # attachment_ids = []
+        # for attachment in attachments:
+        #     attachment_ids.append(attachment.id)
 
-        return ProjectFlowAttachment.objects.filter(id__in=attachment_ids)
+        # return ProjectFlowAttachment.objects.filter(id__in=attachment_ids)
 
     def to_representation(self, instance):
         request = self.context.get("request")  # Get request safely

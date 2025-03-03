@@ -5,7 +5,6 @@ class ProjectflowappConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'projectFlowApp'
 
-    def ready(self):
-        # import projectFlowApp.models.signals.project_flow_signals
+    def ready(self): 
         import projectFlowApp.models.signals
 

@@ -40,11 +40,12 @@ class CreateSubStepTemplateNoteAttachmentSerializer(ModelSerializer):
             attachment = SubStepTemplateNoteAttachment.objects.create(**validated_data, file=file)
             attachments.append(attachment)
 
-        attachment_ids = []
-        for attachment in attachments:
-            attachment_ids.append(attachment.id)
+        return attachments
+        # attachment_ids = []
+        # for attachment in attachments:
+        #     attachment_ids.append(attachment.id)
 
-        return SubStepTemplateNoteAttachment.objects.filter(id__in=attachment_ids)
+        # return SubStepTemplateNoteAttachment.objects.filter(id__in=attachment_ids)
 
     def to_representation(self, instance):
         request = self.context.get("request")  # Get request safely
@@ -149,11 +150,12 @@ class CreateSubStepTemplateAttachmentSerializer(ModelSerializer):
             attachment = SubStepTemplateAttachment.objects.create(**validated_data, file=file)
             attachments.append(attachment)
 
-        attachment_ids = []
-        for attachment in attachments:
-            attachment_ids.append(attachment.id)
+        return attachments
+        # attachment_ids = []
+        # for attachment in attachments:
+        #     attachment_ids.append(attachment.id)
 
-        return SubStepTemplateAttachment.objects.filter(id__in=attachment_ids)
+        # return SubStepTemplateAttachment.objects.filter(id__in=attachment_ids)
 
     def to_representation(self, instance):
         request = self.context.get("request")  # Get request safely
@@ -270,11 +272,12 @@ class CreateProjectFlowTemplateNoteAttachmentSerializer(ModelSerializer):
             attachment = ProjectFlowTemplateNoteAttachment.objects.create(**validated_data, file=file)
             attachments.append(attachment)
 
-        attachment_ids = []
-        for attachment in attachments:
-            attachment_ids.append(attachment.id)
+        return attachments
+        # attachment_ids = []
+        # for attachment in attachments:
+        #     attachment_ids.append(attachment.id)
 
-        return ProjectFlowTemplateNoteAttachment.objects.filter(id__in=attachment_ids)
+        # return ProjectFlowTemplateNoteAttachment.objects.filter(id__in=attachment_ids)
 
     def to_representation(self, instance):
         request = self.context.get("request")  # Get request safely
@@ -379,8 +382,8 @@ class CreateProjectFlowTemplateAttachmentSerializer(ModelSerializer):
             ProjectFlowTemplateAttachment.objects.create(**validated_data, file=file)
             for file in files
         ]
-
-        return ProjectFlowTemplateAttachment.objects.filter(id__in=[a.id for a in attachments])  # Return queryset
+        return attachments
+        # return ProjectFlowTemplateAttachment.objects.filter(id__in=[a.id for a in attachments])  # Return queryset
 
     def to_representation(self, instance):
         request = self.context.get("request")  # Get request safely
@@ -439,7 +442,8 @@ class CreateStepTemplateNoteAttachmentSerializer(ModelSerializer):
             for file in files
         ]
 
-        return StepTemplateNoteAttachment.objects.filter(id__in=[a.id for a in attachments])  # Return queryset
+        return attachments
+        # return StepTemplateNoteAttachment.objects.filter(id__in=[a.id for a in attachments])  # Return queryset
 
 
     def to_representation(self, instance):
@@ -590,11 +594,12 @@ class createStepTemplateAttachmentSerializer(ModelSerializer):
             attachment = StepTemplateAttachment.objects.create(**validated_data, file=file)
             attachments.append(attachment)
 
-        attachment_ids = []
-        for attachment in attachments:
-            attachment_ids.append(attachment.id)
+        return attachments
+        # attachment_ids = []
+        # for attachment in attachments:
+        #     attachment_ids.append(attachment.id)
 
-        return StepTemplateAttachment.objects.filter(id__in=attachment_ids)
+        # return StepTemplateAttachment.objects.filter(id__in=attachment_ids)
 
     def to_representation(self, instance):
         request = self.context.get("request")  # Get request safely
