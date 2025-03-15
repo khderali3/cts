@@ -13,6 +13,9 @@ def validate_file_or_image(value):
     if not value.name.endswith(('.png', '.jpg', '.jpeg', '.gif', '.pdf', '.docx')):
         raise ValidationError("Only image files (.png, .jpg, .jpeg, .gif) and document files (.pdf, .docx) are allowed.")
 
+
+
+
 class Department(models.Model):
     department_name = models.CharField(max_length=255, unique=True)
     department_name_ar = models.CharField(max_length=255,   unique=True)

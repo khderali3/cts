@@ -163,23 +163,20 @@ class TicketView(APIView):
             else:
                 tickets = Ticket.objects.filter(ticket_user=user)
 
-                # Retrieve search and status parameters from the query string
+ 
                 search_query = request.query_params.get('search', None)
-                status_query = request.query_params.get('status', None)
-
-                # Apply filtering based on search query (if provided)
+                status_query = request.query_params.get('status', None) 
                 if search_query:
                     tickets = tickets.filter(
                         Q(ticket_subject__icontains=search_query) |
                         Q(ticket_body__icontains=search_query)
-                    )
-
-                # Apply filtering based on status (if provided)
+                    ) 
                 if status_query and status_query != 'all':
                     tickets = tickets.filter(ticket_status=status_query)
 
                 paginator = MyCustomPagination()
                 page = paginator.paginate_queryset(tickets, request)
+
                 serializer = TicketListSerializer(page, many=True)
                 return paginator.get_paginated_response(serializer.data)            
             

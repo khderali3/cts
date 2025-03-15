@@ -23,11 +23,6 @@ const Page = () => {
   const t_common = useTranslations('common')
 
 
-  // const formatDate = (dateString) => {
-  //   if (dateString) {
-  //       return formatDistanceToNow(parseISO(dateString), { addSuffix: true });
-  //   }
-  // };
   const locales = { ar, en: enUS }; // Map of supported locales
   const locale = useLocale(); // Get the current locale
 

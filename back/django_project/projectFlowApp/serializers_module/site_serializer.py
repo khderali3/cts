@@ -2,9 +2,14 @@
  
  
 from rest_framework.serializers import ModelSerializer
-from ..models import ProjectType, ProjectTypeExtraImages, ProjectFlow, ProjectFlowAttachment, ProjectTypeAttachment, ProjectFlowNote, ProjectFlowNoteAttachment
+from ..models import (ProjectType, ProjectTypeExtraImages, ProjectFlow,
+                     ProjectFlowAttachment, ProjectTypeAttachment, ProjectFlowNote, ProjectFlowNoteAttachment,
+                     ProjectFlowSubStep, ProjectFlowStep,ProjectFlowStepNote,ProjectFlowStepNoteAttachment,
+                     ProjectFlowSubStepNote, ProjectFlowSubStepNoteAttachment )
 
 from rest_framework import serializers
+
+
 
 
 def get_user_data(obj, user_attr_name, request=None):
@@ -25,6 +30,108 @@ def get_user_data(obj, user_attr_name, request=None):
             "PRF_image": PRF_image,
         }
     return None
+
+
+
+ 
+
+class ProjectFlowSubStepNoteAttachmentSerializer(serializers.ModelSerializer):
+
+   class Meta:
+      model = ProjectFlowSubStepNoteAttachment
+      fields = "__all__"
+      read_only_fields = ['id']
+
+
+
+
+
+class ProjectFlowSubStepNoteSerializer(serializers.ModelSerializer):
+   files = ProjectFlowSubStepNoteAttachmentSerializer(many=True, read_only=True, source='ProjectFlowSubStepNoteAttachment_sub_step_note_related_ProjectFlowSubStepNote')
+
+   class Meta:
+      model = ProjectFlowSubStepNote
+      fields = "__all__"
+      read_only_fields = ['id']
+
+   def create(self, validated_data):
+      obj = super().create(validated_data)  # Create StepTemplateNote instance
+      request = self.context.get("request")
+      
+      files = request.FILES.getlist("file[]") if request else []
+
+      attachments = []
+      for file in files:
+         attachment = ProjectFlowSubStepNoteAttachment.objects.create(
+               sub_step_note=obj, file=file
+         )
+         attachments.append(attachment)
+
+      obj.files = attachments  # Attach created files
+      return obj
+
+class GetProjectFlowSubStepNoteSerializer(serializers.ModelSerializer):
+   files = ProjectFlowSubStepNoteAttachmentSerializer(many=True, read_only=True, source='ProjectFlowSubStepNoteAttachment_sub_step_note_related_ProjectFlowSubStepNote')
+   sub_step_note_user = serializers.SerializerMethodField(required=False)
+
+   class Meta:
+      model = ProjectFlowSubStepNote
+      fields = "__all__"
+      read_only_fields = ['id']
+
+   def get_sub_step_note_user(self, obj):
+      request = self.context.get("request")  
+      return get_user_data(obj, "sub_step_note_user", request) 
+
+
+class ProjectFlowStepNoteAttachmentSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = ProjectFlowStepNoteAttachment
+      fields = "__all__"
+      read_only_fields = ['id']
+
+
+
+
+class ProjectFlowStepNoteSerializer(serializers.ModelSerializer):
+   files = ProjectFlowStepNoteAttachmentSerializer(many=True, read_only=True, source='ProjectFlowStepNoteAttachment_project_flow_step_note_related_ProjectFlowStepNote')
+
+   class Meta:
+      model =ProjectFlowStepNote
+      fields = "__all__"
+      read_only_field = ['id']
+
+   def create(self, validated_data):
+      obj = super().create(validated_data)  # Create StepTemplateNote instance
+      request = self.context.get("request")
+      
+      files = request.FILES.getlist("file[]") if request else []
+
+      attachments = []
+      for file in files:
+         attachment = ProjectFlowStepNoteAttachment.objects.create(
+               project_flow_step_note=obj, file=file
+         )
+         attachments.append(attachment)
+
+      obj.files = attachments  # Attach created files
+      return obj
+
+
+
+
+class GetProjectFlowStepNoteSerializer(serializers.ModelSerializer):
+   step_note_user = serializers.SerializerMethodField(required=False)
+   files = ProjectFlowStepNoteAttachmentSerializer(many=True, read_only=True, source='ProjectFlowStepNoteAttachment_project_flow_step_note_related_ProjectFlowStepNote')
+
+   class Meta:
+      model =ProjectFlowStepNote
+      fields = "__all__"
+      read_only_field = ['id']
+
+   def get_step_note_user(self, obj):
+      request = self.context.get("request")  
+      return get_user_data(obj, "step_note_user", request) 
 
 
 
@@ -58,8 +165,26 @@ class ProjectFlowNoteAttachmentSerializer(serializers.ModelSerializer):
 
 
 
+
+class GetListProjectFlowNoteSerializer(serializers.ModelSerializer):
+   files = ProjectFlowNoteAttachmentSerializer(many=True, read_only=True, source="ProjectFlowNoteAttachment_project_flow_note_related_ProjectFlowNote")
+   
+   created_user = serializers.SerializerMethodField()
+   
+   
+   class Meta:
+      model = ProjectFlowNote
+      fields = "__all__"
+      read_only_fields = ["id"]
+
+   def get_created_user(self, obj):
+      request = self.context.get("request")  
+      return get_user_data(obj, "created_user", request) 
+   
+
 class ProjectFlowNoteSerializer(serializers.ModelSerializer):
    files = ProjectFlowNoteAttachmentSerializer(many=True, read_only=True, source="ProjectFlowNoteAttachment_project_flow_note_related_ProjectFlowNote")
+   
    class Meta:
       model = ProjectFlowNote
       fields = "__all__"
@@ -84,7 +209,6 @@ class ProjectFlowNoteSerializer(serializers.ModelSerializer):
 
 
 
-
 class ProjectFlowAttachmentSerializer(ModelSerializer):
 
    class Meta:
@@ -94,12 +218,16 @@ class ProjectFlowAttachmentSerializer(ModelSerializer):
 
 
 
+from django.db.models import Max
+from django.db.models.functions import Coalesce
+
 
 class ProjectFlowSerializer(ModelSerializer):
 
    project_user = serializers.SerializerMethodField()
    project_created_user = serializers.SerializerMethodField()
    project_type = serializers.SerializerMethodField()
+   latest_activity = serializers.SerializerMethodField()  # Add the new field
 
    class Meta:
       model = ProjectFlow
@@ -113,6 +241,25 @@ class ProjectFlowSerializer(ModelSerializer):
                "project_name_ar": obj.project_type.project_name_ar,  # Direct access
          }
       return None 
+
+
+
+
+
+   def get_latest_activity(self, obj):
+
+      latest_step = ProjectFlowStep.objects.filter(project_flow=obj).aggregate(
+            latest=Coalesce(Max('end_date_process'), Max('start_date_process'))
+      )['latest']
+
+      latest_sub_step = ProjectFlowSubStep.objects.filter(step__project_flow=obj).aggregate(
+            latest=Coalesce(Max('end_date_process'), Max('start_date_process'))
+      )['latest']
+
+      if not latest_step and not latest_sub_step:
+            return obj.created_date
+
+      return max(filter(None, [latest_step, latest_sub_step]))
 
 
 

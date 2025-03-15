@@ -14,6 +14,11 @@ from rest_framework import status
 from .my_serializer import (FooterSerializer, SocialMediaSerializer)
 
 
+from projectFlowApp.models.project_type_models import ProjectType
+from siteusersApp.models import ProjectTypeSection
+
+
+
 
 class FooterView(APIView):
     permission_classes = []
@@ -60,7 +65,9 @@ Timeline = namedtuple('Timeline', ('home_section',
                                     'focus_section',
                                     'our_clients',
                                     'our_client_sec',
-                                    'comp_if_right', 
+                                    'comp_if_right',
+                                    'projects_type_section', 
+                                    'projects_type_list',
                                     ))
 
 
@@ -81,6 +88,9 @@ class Index(viewsets.ViewSet):
         our_client_sec_obj , created = OurClientSection.objects.get_or_create(id=1)
         our_clients_list = OurClient.objects.all()
         comp_if_right_obj , created = CompnayIfRight.objects.get_or_create(id=1)
+        projects_type_section_obj , created = ProjectTypeSection.objects.get_or_create(id=1)
+        projects_type_list_qs = ProjectType.objects.filter(is_published=True)
+
         timeline = Timeline(
             home_section=home_section_obj,    
             about_us=about_us_obj,            
@@ -95,6 +105,8 @@ class Index(viewsets.ViewSet):
             our_client_sec = our_client_sec_obj,
             our_clients = our_clients_list,
             comp_if_right = comp_if_right_obj,
+            projects_type_section = projects_type_section_obj,
+            projects_type_list = projects_type_list_qs,
         )
         serializer = TimelineSerializer(timeline, context={'request': request})
         return Response(serializer.data)

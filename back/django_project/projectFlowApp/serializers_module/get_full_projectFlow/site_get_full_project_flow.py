@@ -8,6 +8,9 @@ from ...models.project_flow_models import (
     ProjectFlowSubStep,  ProjectFlowSubStepAttachment, ProjectFlowSubStepNote, ProjectFlowSubStepNoteAttachment, ProjectFlowSubStepStatusLog
     )
 
+from django.db.models import Max
+from django.db.models.functions import Coalesce
+
 
 def get_user_data(obj, user_attr_name, request=None):
     user = getattr(obj, user_attr_name, None)
@@ -75,10 +78,32 @@ class ProjectFlowSubStepSerializer(serializers.ModelSerializer):
     notes = ProjectFlowSubStepNoteSerializer(many=True, read_only=True , source="ProjectFlowSubStepNote_sub_step_related_ProjectFlowSubStep")
 
     status_logs = serializers.SerializerMethodField()
+
+    can_handle_by_requester = serializers.SerializerMethodField(read_only=True)
+    can_add_note_by_requester = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = ProjectFlowSubStep
         fields = "__all__"
         read_only_fields = ["id"]
+
+
+    def get_can_handle_by_requester(self, obj):
+        if obj.allowed_process_by == "client":
+            return True
+        else:
+            return False
+
+    def get_can_add_note_by_requester(self, obj):
+        request = self.context.get('request')
+        if obj.allowed_process_by == "client" and obj.handler_user == request.user and obj.start_date_process != None:
+            return True
+        return False
+
+
+
+
+
 
     def get_status_logs(self, obj):
         is_projectFlow_show_status_log = self.context.get("projectFlow_show_steps_or_sub_steps_status_log_to_client")
@@ -142,12 +167,18 @@ class ProjectFlowStepAttachmentSerializer(serializers.ModelSerializer):
         read_only_fields = ["id"]
 
 
+
+
 class ProjectFlowStepSerializer(serializers.ModelSerializer):
     files = ProjectFlowStepAttachmentSerializer(read_only=True, many=True, source="ProjectFlowStepAttachment_step_related_ProjectFlowStep")
     notes = ProjectFlowStepNoteSerializer(many=True, read_only=True, source="ProjectFlowStepNote_project_step_related_ProjectFlowStep")
     status_logs = serializers.SerializerMethodField(read_only=True)
     sub_steps = serializers.SerializerMethodField()
-    sub_steps_completed_percentage = serializers.SerializerMethodField()
+    step_completed_percentage = serializers.SerializerMethodField()
+
+    can_handle_by_requester = serializers.SerializerMethodField(read_only=True)
+    can_add_note_by_requester = serializers.SerializerMethodField(read_only=True)
+
 
     class Meta:
         model = ProjectFlowStep
@@ -155,17 +186,39 @@ class ProjectFlowStepSerializer(serializers.ModelSerializer):
         read_only_fields = ["id"]
 
 
-    def get_sub_steps_completed_percentage(self, obj):
+
+    def get_can_handle_by_requester(self, obj):
+        if obj.allowed_process_by == "client":
+            return True
+        else:
+            return False
+
+    def get_can_add_note_by_requester(self, obj):
+        request = self.context.get('request')
+        if obj.allowed_process_by == "client" and obj.handler_user == request.user and obj.start_date_process != None:
+            return True
+        return False
+
+
+
+
+    def get_step_completed_percentage(self, obj):
         sub_steps = obj.ProjectFlowSubStep_step_related_ProjectFlowStep.filter(show_to_client=True)
         total_sub_steps = sub_steps.count()
 
-        if total_sub_steps == 0:
+        if total_sub_steps == 0 and obj.project_flow_step_status != "completed":
             return 0  # Avoid division by zero
+        elif total_sub_steps == 0 and obj.project_flow_step_status == "completed":
+            return 100
 
         completed_sub_steps = sub_steps.filter(project_flow_sub_step_status="completed").count()
 
         percentage = (completed_sub_steps * 100) // total_sub_steps  # Integer division
         return percentage  # No decimal, returns an integer
+
+
+
+
 
 
  
@@ -242,13 +295,27 @@ class SiteGetFullProjectFlowSerializer(serializers.ModelSerializer):
     project_type = serializers.SerializerMethodField()
     steps = serializers.SerializerMethodField()
     files = ProjectFlowAttachmentSerializer(many=True, read_only=True, source="ProjectFlowAttachment_project_flow_related_ProjectFlow")
-    notes = ProjectFlowNoteSerializer(many=True, read_only=True, source="ProjectFlowNote_project_flow_related_ProjectFlow")
+    # notes = ProjectFlowNoteSerializer(many=True, read_only=True, source="ProjectFlowNote_project_flow_related_ProjectFlow")
+
+    notes = serializers.SerializerMethodField()
+
     steps_completion_percentage = serializers.SerializerMethodField()
+    latest_activity = serializers.SerializerMethodField()  # Add the new field
 
     class Meta:
         model = ProjectFlow
         fields = "__all__"
  
+
+    def get_notes(self, obj):
+        context = self.context.copy()  # Preserve existing context (including `request`)
+
+        return ProjectFlowNoteSerializer(
+            obj.ProjectFlowNote_project_flow_related_ProjectFlow.filter(show_to_client=True),  # Filter steps
+            many=True,
+            context=context
+        ).data
+
 
     def get_project_type(self, obj):
         if obj.project_type:  # Directly access the ForeignKey field
@@ -285,10 +352,52 @@ class SiteGetFullProjectFlowSerializer(serializers.ModelSerializer):
         steps = obj.ProjectFlowStep_ProjectFlow_related_ProjectFlow.filter(show_to_client=True)
         total_steps = steps.count()
 
-        if total_steps == 0:
-            return 0  # Avoid division by zero
-
+        # Count completed steps
         completed_steps = steps.filter(project_flow_step_status="completed").count()
 
-        percentage = (completed_steps * 100) // total_steps  # Integer division
-        return percentage  # No decimal, returns an integer
+        # Get all substeps related to the steps, filtering by show_to_client=True
+        substeps = ProjectFlowSubStep.objects.filter(step__in=steps, show_to_client=True)
+        total_substeps = substeps.count()
+
+        # Count completed substeps
+        completed_substeps = substeps.filter(project_flow_sub_step_status="completed").count()
+
+        # Total elements to consider (steps + substeps)
+        total_elements = total_steps + total_substeps
+
+        if total_elements == 0:
+            return 0  # Avoid division by zero
+
+        # Completed elements (steps + substeps)
+        completed_elements = completed_steps + completed_substeps
+
+        # Calculate percentage
+        percentage = (completed_elements * 100) // total_elements  # Integer division
+        return percentage
+
+    def get_latest_activity(self, obj):
+
+        latest_step = ProjectFlowStep.objects.filter(project_flow=obj).aggregate(
+            latest=Coalesce(Max('end_date_process'), Max('start_date_process'))
+        )['latest']
+
+        latest_sub_step = ProjectFlowSubStep.objects.filter(step__project_flow=obj).aggregate(
+            latest=Coalesce(Max('end_date_process'), Max('start_date_process'))
+        )['latest']
+
+        if not latest_step and not latest_sub_step:
+            return obj.created_date
+
+        return max(filter(None, [latest_step, latest_sub_step]))
+
+
+
+    def get_project_user(self, obj): 
+        request = self.context.get("request")  
+        return get_user_data(obj, "project_user", request)  
+
+    def get_project_created_user(self, obj):
+        request = self.context.get("request")  
+        return get_user_data(obj, "project_created_user", request)  
+
+

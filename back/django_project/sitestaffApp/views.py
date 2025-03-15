@@ -2,13 +2,13 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from siteusersApp.models import (HomeSection, AboutUs,WhyUs, FeatureWhyUs, ProductSection, Product,
                                   OurServicesSection, Service, OurVision, Focus, OurClientSection, OurClient, CompnayIfRight,
-                                  Footer, SocialMedia
+                                  Footer, SocialMedia, ProjectTypeSection
                                   )
 from .my_serializers import (HomeSectionSerializer, AboutUsSectionSerializer,
                               WhyUsSectionSerializer, FeatureWhyUsSectionSerializer, 
                               ProductSectionSerializer, ProductSerializer, OurServicesSectionSerializer, ServiceSerializer,
                               OurVisionSerializer, FocusSecSerializer, OurClientSectionSerializer, OurClientSerializer,
-                              CompnayIfRightSecSerializer, FooterSectionSerializer, SocialMediaSerializer
+                              CompnayIfRightSecSerializer, FooterSectionSerializer, SocialMediaSerializer, ProjectTypeSectionSerializer
                                 )
 
 from rest_framework.response import Response
@@ -20,6 +20,26 @@ from rest_framework import status
 #         return request.user and (request.user.is_staff or request.user.is_superuser)
     
 from ticketSystemStaffApp.my_utils import IsStaffOrSuperUser, HasSiteManagementPermission
+
+
+
+class ProjectTypeSectionView(APIView):
+    permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]
+
+    def get(self, request):
+        project_type_sec_obj, created = ProjectTypeSection.objects.get_or_create(id=1)
+        serializer = ProjectTypeSectionSerializer(project_type_sec_obj, context={'request':request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        project_type_sec_obj, created = ProjectTypeSection.objects.get_or_create(id=1)
+        serializer = ProjectTypeSectionSerializer(project_type_sec_obj,data=request.data, context={'request':request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class HomeSectionView(APIView):
     permission_classes = [IsStaffOrSuperUser, HasSiteManagementPermission]

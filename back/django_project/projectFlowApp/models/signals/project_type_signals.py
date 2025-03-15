@@ -13,16 +13,16 @@ from ..project_type_models import  ProjectTypeExtraImages , ProjectTypeAttachmen
 
 def delete_attachment_file(sender, instance, **kwargs):
  
-    file_path = None  # Initialize file path variable
+    file_path = None  
 
-    if sender == ProjectType and instance.main_image:  
+    if isinstance(instance, ProjectType) and instance.main_image:
         file_path = instance.main_image.path  # Delete `main_image` for ProjectType
-    elif instance.file:  
+
+    elif hasattr(instance, 'file') and instance.file:  
         file_path = instance.file.path  # Delete `file` for other models
 
     if file_path and os.path.isfile(file_path):  # Ensure file exists before deleting
         os.remove(file_path)
-
 
 
 

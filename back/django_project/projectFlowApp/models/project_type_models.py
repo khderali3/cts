@@ -28,17 +28,17 @@ class ProjectType(models.Model):
     main_image = models.FileField(upload_to='ProjectType/image/', validators=[validate_image], null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+    is_published = models.BooleanField(default=False)  # Field for showing on site
+
+
+
 
     def save(self , *args , **kwargs):
-        if not self.id:  
-            super().save(*args, **kwargs)  # Save first to get the ID
-
-        if not self.project_slog:  
-            data_to_slug = f"{self.id}-{self.project_name}"  # Use "-" instead of "_" for better readability
+        if not self.project_slog:
+            time_now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+            data_to_slug = f"{time_now}_{self.project_name}"
             self.project_slog = slugify(data_to_slug)
-            super().save(update_fields=["project_slog"]) 
-
-
+        super().save(*args, **kwargs)
 
  
     def __str__(self):

@@ -1,9 +1,19 @@
 
 from siteusersApp.models import (  HomeSection, AboutUs, WhyUs, FeatureWhyUs, ProductSection,
 								  Product, OurServicesSection, Service, OurVision , Focus, OurClientSection, OurClient,
-								  CompnayIfRight, Footer, SocialMedia
+								  CompnayIfRight, Footer, SocialMedia, ProjectTypeSection
 								  )
 from rest_framework import serializers
+
+
+
+
+
+class ProjectTypeSectionSerializer(serializers.ModelSerializer):
+	class Meta:
+		model =ProjectTypeSection
+		fields = "__all__"
+		read_only_fields = ['id']
 
 
 

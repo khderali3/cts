@@ -19,12 +19,29 @@ from django.conf import settings
 
 
 # Create your views here.
-AUTH_COOKIE = 'access'  # not used 
-AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 * 2
-AUTH_COOKIE_SECURE =  'True'
-AUTH_COOKIE_HTTP_ONLY = True
-AUTH_COOKIE_PATH = '/'
-AUTH_COOKIE_SAMESITE = 'None'
+# AUTH_COOKIE = 'access'  # not used 
+# AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 * 2
+# AUTH_COOKIE_SECURE =  'True'
+# AUTH_COOKIE_HTTP_ONLY = True
+# AUTH_COOKIE_PATH = '/'
+# AUTH_COOKIE_SAMESITE = 'None'
+
+
+# AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 * 2 
+# AUTH_COOKIE_SECURE =  True
+# AUTH_COOKIE_HTTP_ONLY = True
+# AUTH_COOKIE_PATH = '/'
+# AUTH_COOKIE_SAMESITE = 'None'
+
+ 
+
+AUTH_COOKIE_MAX_AGE = settings.AUTH_COOKIE_MAX_AGE
+AUTH_COOKIE_SECURE =  settings.AUTH_COOKIE_SECURE
+AUTH_COOKIE_HTTP_ONLY = settings.AUTH_COOKIE_HTTP_ONLY
+AUTH_COOKIE_PATH = settings.AUTH_COOKIE_PATH
+AUTH_COOKIE_SAMESITE = settings.AUTH_COOKIE_SAMESITE
+
+
 
 
 from rest_framework.exceptions import ValidationError
@@ -33,33 +50,19 @@ from djoser.serializers import SendEmailResetSerializer
  
 
 
+# use for register new site user on main urls.py "router.register(r'users', CustomUserViewSet, basename='user')""
 class CustomUserViewSet(UserViewSet):
-    def perform_create(self, serializer):
-        # Extract the reCAPTCHA response from the request data
-        recaptcha_value = self.request.data.get('recaptcha_value')
-        if not recaptcha_value:
-            raise ValidationError({'recaptcha': 'reCAPTCHA value is required.'})
+    def create(self, request, *args, **kwargs):
+            if getattr(settings, "RECAPTCHA_ENABLED", True):
+                recaptcha_value = request.data.get("recaptcha_value")
+                if not recaptcha_value or not verify_recaptcha(recaptcha_value):
 
+                    return Response({"detail": "Invalid reCAPTCHA. Please try again."}, status=status.HTTP_400_BAD_REQUEST)
+ 
+            return super().create(request, *args, **kwargs)
 
-        # Verify reCAPTCHA
-        if not verify_recaptcha(recaptcha_value):
-            raise ValidationError({'recaptcha': 'Invalid reCAPTCHA. Please try again. custom view'})
-
-        # If reCAPTCHA is valid, proceed with user creation
-        super().perform_create(serializer)
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
+ 
 
 
 
@@ -127,17 +130,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
 
 
-        # recaptcha_value = request.data.get("recaptcha_value")
-        # if not recaptcha_value or not verify_recaptcha(recaptcha_value):
-        #     return Response({"detail": "Invalid reCAPTCHA. Please try again."}, status=status.HTTP_400_BAD_REQUEST)
-
         if getattr(settings, "RECAPTCHA_ENABLED", True):  # Default to True if not found
             recaptcha_value = request.data.get("recaptcha_value")
             if not recaptcha_value or not verify_recaptcha(recaptcha_value):
                 return Response({"detail": "Invalid reCAPTCHA. Please try again."}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 
         response = super().post(request, *args, **kwargs)
 

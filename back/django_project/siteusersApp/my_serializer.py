@@ -3,7 +3,30 @@ from .models import (HomeSection, AboutUs, WhyUs, FeatureWhyUs, ProductSection,
 					  OurClient, OurClientSection, CompnayIfRight, Footer, SocialMedia 
                       )
 
+
+from siteusersApp.models import ProjectTypeSection
+from projectFlowApp.models.project_type_models import ProjectType
+
+
 from rest_framework import serializers
+
+
+
+class ProjectTypeSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = ProjectType
+		fields = "__all__"
+		read_only_fields = ['id']
+
+
+
+class ProjectTypeSectionSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = ProjectTypeSection
+		fields = "__all__"
+		read_only_fields = ['id']
+
 
 
 
@@ -114,8 +137,8 @@ class TimelineSerializer(serializers.Serializer):
 	our_client_sec = OurClientSectionSerializer(many=False)
 	our_clients = OurClientSerializer(many=True)
 	comp_if_right = CompnayIfRightSerializer(many=False)
-
-
+	projects_type_section = ProjectTypeSectionSerializer(many=False)
+	projects_type_list = ProjectTypeSerializer(many=True)
 
 
 

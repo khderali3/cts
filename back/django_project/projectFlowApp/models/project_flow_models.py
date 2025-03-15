@@ -47,7 +47,7 @@ class ProjectFlow(models.Model):
     show_steps_to_client = models.BooleanField(default=True)
     show_steps_or_sub_steps_status_log_to_client = models.BooleanField(default=True)
 
-    project_flow_slug =  models.SlugField(max_length=100, blank=True, null=True, db_index=True, unique=True) 
+    project_flow_slug =  models.SlugField(max_length=255, blank=True, null=True, db_index=True, unique=True) 
 
     default_start_process_step_or_sub_step_strategy = models.CharField(max_length=30, choices=default_start_process_step_or_sub_step_strategy_options, default='auto')
 
@@ -58,7 +58,8 @@ class ProjectFlow(models.Model):
             return f"{self.project_type.project_name} , {self.project_flow_status}"
         return f"{self.id}"
 
-
+    class Meta:
+        ordering = ('-id',)
 
     def save(self , *args , **kwargs):
         if not self.project_flow_slug:
@@ -105,6 +106,8 @@ class ProjectFlowNote(models.Model):
     note_type = models.CharField(max_length=255, blank=True, null=True, default="normal", db_index=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+    show_to_client = models.BooleanField(default=False)
+ 
 
 class ProjectFlowNoteAttachment(models.Model):
     project_flow_note = models.ForeignKey(ProjectFlowNote, related_name='ProjectFlowNoteAttachment_project_flow_note_related_ProjectFlowNote', on_delete=models.CASCADE, blank=True, null=True)
@@ -254,10 +257,7 @@ class ProjectFlowStepNoteAttachment(models.Model):
         return f"{self.id}, {self.project_flow_step_note}, {self.file_name}" 
 
 
- 
 
-
- 
 class ProjectFlowSubStep(models.Model):
 
     ProjectFlow_Sub_Step_status_options = [

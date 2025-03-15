@@ -155,7 +155,15 @@ class ProjectTypeView(APIView):
         else:
             list_obj = ProjectType.objects.all()
             serializer = GetListProjectTypeSerializer(list_obj, many=True, context={'request': request})
+
+
+            # serializer = ProjectTypeSerializer(list_obj, many=True, context={'request': request})
+
+
             return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 
     def put(self, request, project_type):
         try:

@@ -70,12 +70,18 @@ export default function useResetPassword() {
         })
         .catch( (error) => {
           if(locale === "ar"){
-            toast.error('حدث خطأ في طلب إعادة ضبط كلمة المرور')
+  
+            toast.error('حدث خطأ في طلب إعادة ضبط كلمة المرور') 
+            toast.error(JSON.stringify(error.data))
 
           } else {
+
             toast.error('error with reset password')
+            toast.error(JSON.stringify(error.data))
+
 
           }
+         
           console.log('reset password failed', error)
           recaptchaRef.current.reset();
 

@@ -93,14 +93,12 @@ const Home = async () => {
             />
           </div>
           <div 
-          // className="content d-lg-flex justify-content-around flex-lg-row flex-md-column align-items-end"
           className="content d-lg-flex justify-content-around flex-lg-row flex-md-column align-items-center"
           
           >
             <div className="text d-flex flex-column">
               <h3 className="mb-lg-1 mb-4">
                 
-                {/* {data?.about_us?.about_us_title} */}
                 
                 {local === "ar" ? 
                 
@@ -112,27 +110,19 @@ const Home = async () => {
 
                 </h3>
               <p className="mb-3 w-100">
-                {/* <span>{data?.about_us?.about_us_company_name} </span>  */}
                 <span>{ local === "ar" ?  data?.about_us?.about_us_company_name_ar : data?.about_us?.about_us_company_name } </span> 
 
-
-
-                {/* {data?.about_us?.about_us_hint} */}
 
                 { local === "ar" ? data?.about_us?.about_us_hint_ar : data?.about_us?.about_us_hint}
               </p>
 
-
              { data?.about_us?.about_us_youtube_url && 
                               <iframe
                                src={data.about_us.about_us_youtube_url}
-                  
                                title="YouTube video player"
                                style={{ border: "none" }}
                                frameBorder="0"
-                               // allowFullScreen
                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                               // referrerPolicy="strict-origin-when-cross-origin"
                                referrerPolicy="no-referrer"
                              />
             
@@ -147,7 +137,6 @@ const Home = async () => {
             </div>
             <div className="pargh text-light fs-5">
               <p>
-                {/* {data?.about_us?.about_us_details} */}
                 {local === "ar" ? data?.about_us?.about_us_details_ar : data?.about_us?.about_us_details }
 
               </p>
@@ -161,80 +150,175 @@ const Home = async () => {
 
 
 
-<div className="why-us-section">
-  <div className="container-fluid d-lg-flex align-items-lg-center flex-column justify-content-lg-evenly flex-lg-row d-flex justify-content-evenly">
-   
+  <div className="why-us-section">
+    <div className="container-fluid d-lg-flex align-items-lg-center flex-column justify-content-lg-evenly flex-lg-row d-flex justify-content-evenly">
+    
 
-   {data?.why_us?.why_us_image ?   
-   
-    <div className="img image_border text-center">
-      <img src={data?.why_us?.why_us_image} alt="" />
-    </div>
-   
-   :  "" }
-
-
+    {data?.why_us?.why_us_image ?   
+    
+      <div className="img image_border text-center">
+        <img src={data?.why_us?.why_us_image} alt="" />
+      </div>
+    
+    :  "" }
 
 
-    <div className="text d-flex flex-column align-items-center justify-content-center mx-2 px-2">
-      <h2 className="mb-4 pb-4">
-        {/* {data?.why_us?.why_us_title} */}
-       { local === "ar" ? data?.why_us?.why_us_title_ar : data?.why_us?.why_us_title}
 
-      </h2>
-      <h4 className="mb-4 pb-4">
-      {/* {data?.why_us?.why_us_details} */}
-      {local === "ar" ? data?.why_us?.why_us_details_ar  : data?.why_us?.why_us_details }
 
-      </h4>
+      <div className="text d-flex flex-column align-items-center justify-content-center mx-2 px-2">
+        <h2 className="mb-4 pb-4">
+          {/* {data?.why_us?.why_us_title} */}
+        { local === "ar" ? data?.why_us?.why_us_title_ar : data?.why_us?.why_us_title}
 
-      <ul className="  row  justify-content-center ">
-           { data?.feature_whayus?.map( i =>  
-           <li key={i.id} className="  col-md-5 col-12 m-2  ">
- 
-             {local === "ar" ? i.feat_whyus_title_ar : i.feat_whyus_title }
+        </h2>
+        <h4 className="mb-4 pb-4">
+        {/* {data?.why_us?.why_us_details} */}
+        {local === "ar" ? data?.why_us?.why_us_details_ar  : data?.why_us?.why_us_details }
 
-            </li>)} 
-      </ul>
+        </h4>
 
-      <div className=" but text-center mt-5     ">
+        <ul className="  row  justify-content-center ">
+            { data?.feature_whayus?.map( i =>  
+            <li key={i.id} className="  col-md-5 col-12 m-2  ">
+  
+              {local === "ar" ? i.feat_whyus_title_ar : i.feat_whyus_title }
 
-        {local === "ar" ?
+              </li>)} 
+        </ul>
 
-          
+        <div className=" but text-center mt-5     ">
+
+          {local === "ar" ?
+
+            
+                  <> 
+                  {/* <button>
+                  كن على تواصل  
+                </button> */}
+                
+                <Link href={'/tickets'} className='text-light btn   border-0 p-0   '   > 
+                كن على تواصل  
+                <i className="fa-solid fa-arrow-left text-light  pe-2 " />
+                </Link>
+              
+
+                </>
+              : 
                 <> 
+                
                 {/* <button>
-                 كن على تواصل  
-              </button> */}
-              
-              <Link href={'/tickets'} className='text-light btn   border-0 p-0   '   > 
-              كن على تواصل  
-              <i className="fa-solid fa-arrow-left text-light  pe-2 " />
-              </Link>
-             
+                  GET IN TOUCH   
+                </button>
+                <i className="fa-solid fa-arrow-right text-light" /> */}
+                <Link href={'/tickets'} className='text-light btn   border-0      '   > 
+                GET IN TOUCH  
+                <i className="fa-solid fa-arrow-right text-light  ps-2" />
+                </Link>
 
-              </>
-            : 
-              <> 
-              
-              {/* <button>
-                GET IN TOUCH   
-              </button>
-              <i className="fa-solid fa-arrow-right text-light" /> */}
-              <Link href={'/tickets'} className='text-light btn   border-0      '   > 
-              GET IN TOUCH  
-              <i className="fa-solid fa-arrow-right text-light  ps-2" />
-              </Link>
-
-              </>
-        
-        }
+                </>
+          
+          }
 
 
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+
+
+  <section id="project_type"> 
+
+    <div className="projects-section" id="Products">
+      <div className="container">
+        <div className="text text-center">
+          <h3 className="fs-1 fw-bolder">
+            {/* {data?.produc_sec?.prd_sec_title} */}
+            {local === "ar" ? data?.projects_type_section?.title_ar  : data?.projects_type_section?.title }
+
+          </h3>
+          <p className="fw-bold text-light">
+            {/* {data?.produc_sec?.prd_sec_hint } */}
+            {local === "ar" ? data?.projects_type_section?.title_hint_ar  : data?.projects_type_section?.title_hint }
+
+          </p>
+        </div>
+
+
+        <div className="row justify-content-center row-cols-auto">
+        { data?.projects_type_list?.map( i => 
+
+          <div  key={i.id}  className="col-lg-3 col-md-4   mt-3 col-10 ">
+            <div className="product-1 p-3  h-100  card ">
+            {/* <img src="/Images/services.png" alt="" /> */}
+            <img src={i.main_image } alt=""  className='  card-img-top   img-fluid' 
+            style={{ objectFit: "contain", height: "200px" }}
+            />
+
+
+              <div className="  card-body  flex-grow-1 ">
+                <h2 className="text-light fs-4 card-title">
+                {/* {i.prod_name }  */}
+
+                  {local === "ar" ? i.project_name_ar : i.project_name}
+                
+                <br />
+                {/* {i.prod_name_hint} */}
+
+                {local === "ar" ? i.project_name_hint_ar : i.project_name_hint}
+
+
+                </h2>
+                {/* <p className="fs-6">
+                {i.prod_details}
+                </p> */}
+                <p className="fs-6 card-text ">
+                  
+
+                  {local === "ar"  ? 
+
+                  i?.project_description_ar?.length > 50 
+                  ? `${i.project_description_ar.slice(0, 50)}...` 
+                  : i.project_description_ar
+                  
+                  : 
+                  
+                  i?.project_description?.length > 50 
+                    ? `${i.project_description.slice(0, 50)}...` 
+                    : i.project_description
+
+                  }
+
+                  {/* {i.prod_details.length > 50 
+                    ? `${i.prod_details.slice(0, 50)}...` 
+                    : i.prod_details} */}
+
+
+                </p>
+
+
+
+              </div>
+            <div className="but  text-center mt-auto card-footer  ">
+              <ProductButton slug={i.id} text_button={local === "ar" ? "تفاصيل أكثر" : "More Detailse" } />
+            </div>
+            </div>
+          </div>
+            )} 
+
+
+        </div>
+
+
+        
+      </div>
+    </div>
+
+
+
+  </section>
+
+
 
 
 

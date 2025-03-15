@@ -83,6 +83,8 @@ class ProjectTypeExtraImagesSerializer(serializers.ModelSerializer):
         # return  ProjectTypeExtraImages.objects.filter(id__in=attachment_ids)
 
 
+from django.core.exceptions import ValidationError
+from django.db import transaction
 
 
 class ProjectTypeSerializer(serializers.ModelSerializer):
@@ -95,46 +97,116 @@ class ProjectTypeSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "project_slog", "created_date", "updated_date"]
 
 
+
+
+
     def create(self, validated_data):
-        obj = super().create(validated_data)
-
         request = self.context.get('request')
-        extra_image_files = request.FILES.getlist('extra_images[]')  if request else []
-        
-        extra_images_list = []
-        for extra_image in extra_image_files:
-            extra_image_obj = ProjectTypeExtraImages.objects.create( project_type=obj, file=extra_image)
-            extra_images_list.append(extra_image_obj)
-
-
+        extra_image_files = request.FILES.getlist('extra_images[]') if request else []
         attachment_files = request.FILES.getlist("attachment[]") if request else []
 
-        attachment_list = []
+        try:
+            with transaction.atomic():  # Ensures all operations are either committed or rolled back
+                obj = super().create(validated_data)
+                
+                extra_images_list = []
+                for extra_image in extra_image_files:
+                    extra_image_obj = ProjectTypeExtraImages(project_type=obj, file=extra_image)
+                    extra_image_obj.full_clean()  # Validate before saving
+                    extra_image_obj.save()
+                    extra_images_list.append(extra_image_obj)
 
-        for attachment in attachment_files:
-            attachment_obj = ProjectTypeAttachment.objects.create(file=attachment, project_type=obj)
-            attachment_list.append(attachment_obj)
+                attachment_list = []
+                for attachment in attachment_files:
+                    attachment_obj = ProjectTypeAttachment(file=attachment, project_type=obj)
+                    attachment_obj.full_clean()  # Validate before saving
+                    attachment_obj.save()
+                    attachment_list.append(attachment_obj)
+
+                obj.attachments = attachment_list  # Use set() for ManyToMany fields
+                obj.extra_images = extra_images_list
+
+                return obj  # Successfully return object after all operations
+
+        except ValidationError as e:
+            raise serializers.ValidationError({'error': str(e)})  # Return error to serializer instead of raising 500 error
+        
+
+        # def create(self, validated_data):
+        #     obj = super().create(validated_data)
+        #     request = self.context.get('request')
+        #     extra_image_files = request.FILES.getlist('extra_images[]')  if request else []
+        #     extra_images_list = []
+        #     for extra_image in extra_image_files:
+        #         # extra_image_obj = ProjectTypeExtraImages.objects.create( project_type=obj, file=extra_image)
+        #         extra_image_obj = ProjectTypeExtraImages(project_type=obj, file=extra_image)
+        #         try:
+        #             extra_image_obj.full_clean()
+        #         except ValidationError as e:
+        #             raise serializers.ValidationError({'extra_images': str(e)})
+        #         extra_image_obj.save()
+        #         extra_images_list.append(extra_image_obj)
+
+        #     attachment_files = request.FILES.getlist("attachment[]") if request else []
+        #     attachment_list = []
+        #     for attachment in attachment_files:
+        #         attachment_obj = ProjectTypeAttachment(file=attachment, project_type=obj)
+        #         try:
+        #             attachment_obj.full_clean()
+        #         except ValidationError as e:
+        #             raise serializers.ValidationError({'extra_images': str(e)})
+        #         attachment_obj.save()
+        #         attachment_list.append(attachment_obj)
+        #     obj.attachments = attachment_list
+        #     obj.extra_images = extra_images_list
+        #     return obj
 
 
-        obj.attachments = attachment_list
-        obj.extra_images = extra_images_list
-        return obj
-    
+
 
     def update(self, obj, validated_data):
-        obj = super().update(obj, validated_data)  # Update StepTemplateNote instance
-        request = self.context.get("request")
+        # obj = super().update(obj, validated_data)  # Update StepTemplateNote instance
+        # request = self.context.get("request")
 
-        extra_image_files = request.FILES.getlist('extra_images[]')  if request else []
-        for extra_image in extra_image_files:
-            ProjectTypeExtraImages.objects.create( project_type=obj, file=extra_image)
+        # extra_image_files = request.FILES.getlist('extra_images[]')  if request else []
+        # for extra_image in extra_image_files:
+        #     ProjectTypeExtraImages.objects.create( project_type=obj, file=extra_image)
 
+        # attachment_files = request.FILES.getlist("attachment[]") if request else []
+        # for attachment in attachment_files:
+        #     ProjectTypeAttachment.objects.create(file=attachment, project_type=obj)
+
+        # return obj
+        request = self.context.get('request')
+        extra_image_files = request.FILES.getlist('extra_images[]') if request else []
         attachment_files = request.FILES.getlist("attachment[]") if request else []
-        for attachment in attachment_files:
-             ProjectTypeAttachment.objects.create(file=attachment, project_type=obj)
 
-        return obj
-    
+        try:
+            with transaction.atomic():  # Ensures all operations are either committed or rolled back
+                obj = super().update(obj, validated_data)
+                
+                extra_images_list = []
+                for extra_image in extra_image_files:
+                    extra_image_obj = ProjectTypeExtraImages(project_type=obj, file=extra_image)
+                    extra_image_obj.full_clean()  # Validate before saving
+                    extra_image_obj.save()
+                    extra_images_list.append(extra_image_obj)
+
+                attachment_list = []
+                for attachment in attachment_files:
+                    attachment_obj = ProjectTypeAttachment(file=attachment, project_type=obj)
+                    attachment_obj.full_clean()  # Validate before saving
+                    attachment_obj.save()
+                    attachment_list.append(attachment_obj)
+
+                obj.attachments = attachment_list  # Use set() for ManyToMany fields
+                obj.extra_images = extra_images_list
+
+                return obj  # Successfully return object after all operations
+
+        except ValidationError as e:
+            raise serializers.ValidationError({'error': str(e)})  # Return error to serializer instead of raising 500 error
+           
 
 
     

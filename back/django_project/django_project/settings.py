@@ -138,7 +138,7 @@ CORS_ALLOW_CREDENTIALS = True
 SIMPLE_JWT = {
 
   "TOKEN_OBTAIN_SERIALIZER": "usersAuthApp.myutils.custom_serializers.MyTokenObtainPairSerializer",
-    # "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+
     "ACCESS_TOKEN_LIFETIME": timedelta(weeks=104),
 
     "REFRESH_TOKEN_LIFETIME": timedelta(weeks=104),
@@ -284,4 +284,15 @@ MEDIA_URL = '/media_url/'
 
 MY_SITE_URL = 'http://localhost:8000'  # Replace with your domain in production
 
+
 RECAPTCHA_ENABLED = False
+
+#auth cookie settings 
+AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 * 2 
+AUTH_COOKIE_SECURE =  True
+AUTH_COOKIE_HTTP_ONLY = True
+AUTH_COOKIE_PATH = '/'
+AUTH_COOKIE_SAMESITE = 'None'
+
+
+

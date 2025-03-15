@@ -289,11 +289,6 @@ class ProjectFlowStepAttachmentSerializer(serializers.ModelSerializer):
             attachments.append(attachment)
 
         return attachments
-        # attachment_ids = []
-        # for attachment in attachments:
-        #     attachment_ids.append(attachment.id)
-
-        # return ProjectFlowStepAttachment.objects.filter(id__in=attachment_ids)
 
     def to_representation(self, instance):
         request = self.context.get("request")  # Get request safely

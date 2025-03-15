@@ -287,3 +287,61 @@ select.form-select:hover {
 
  
 
+
+
+ /* start timeline */
+ /* .timeline {
+  position: relative;
+  border-left: 3px solid #dee2e6;
+} */
+
+
+
+
+ .timeline {
+  position: relative;
+  border-left: 3px solid #dee2e6;
+}
+
+  
+
+
+
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}  
+
+
+ /* .timeline-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  position: absolute;
+  left: -10px;
+} */
+
+
+
+
+
+
+.sub-timeline {
+  position: relative;
+  border-left: 2px solid #dee2e6;
+}
+
+.sub-timeline-item {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+/* .small-timeline-icon {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: absolute;
+  left: -6px;
+}     */
+ 

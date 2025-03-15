@@ -70,9 +70,6 @@ class FeatureWhyUs(models.Model):
 
 class ProductSection(models.Model):
     prd_sec_title = models.CharField( null=True, db_index=True, unique=True, max_length=255 )
-
-
-
     prd_sec_hint = models.CharField( null=True, db_index=True,  max_length=255)
     prd_sec_title_ar = models.CharField(null=True, db_index=True,  max_length=255 )
     prd_sec_hint_ar = models.CharField(null=True, db_index=True,  max_length=255 ) 
@@ -82,6 +79,21 @@ class ProductSection(models.Model):
     def __str__(self):
         return f"{self.id},{self.prd_sec_title}"
  
+
+
+class ProjectTypeSection(models.Model):
+    title = models.CharField( null=True, db_index=True, unique=True, max_length=255 )
+    title_hint = models.CharField( null=True, db_index=True,  max_length=255)
+    title_ar = models.CharField(null=True, db_index=True,  max_length=255 )
+    title_hint_ar = models.CharField(null=True, db_index=True,  max_length=255 ) 
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.id},{self.title}"
+
+
+
 
 
 class Product(models.Model):

@@ -64,7 +64,7 @@ export const Nav =  () => {
 
           <li className="nav-item">
             <Link
-              className="nav-link  home p-lg-3 p-4 "
+              className="nav-link  home p-lg-3   py-1 "
               onClick={handleNavLinkClick}
               href="/#home"
             >
@@ -75,7 +75,7 @@ export const Nav =  () => {
 
 
           <li className="nav-item">
-            <Link className="nav-link p-lg-3 p-4 about_us" href="/#about_us"   onClick={handleNavLinkClick} >
+            <Link className="nav-link p-lg-3    py-1 about_us    " href="/#about_us"   onClick={handleNavLinkClick} >
               {/* About us */}
               { t('nav_links.about_us')}
             </Link>
@@ -83,7 +83,7 @@ export const Nav =  () => {
           
           <li className="nav-item ">        
           <Link 
-            className="nav-link  p-lg-3 p-4 product "
+            className="nav-link  p-lg-3   product "
             onClick={handleNavLinkClick}
             href="/#product"> 
              
@@ -94,9 +94,9 @@ export const Nav =  () => {
 
           </li>
 
-          <li className="nav-item">
+          <li className="nav-item  ">
             <Link
-            className="nav-link  p-lg-3 p-4 services2 "
+            className="nav-link  p-lg-3  services2 "
             href="/#services2"
             onClick={handleNavLinkClick}
             >
@@ -106,18 +106,64 @@ export const Nav =  () => {
             </Link>
           </li>
 
-           <li className="nav-item   ">
+           {/* <li className="nav-item   ">
             <Link
             className={`nav-link  p-lg-3 p-4    ${mypathname.includes('/tickets') ? 'active' : ''}`}
             onClick={handleNavLinkClick}
             href="/tickets"
             >
-
                 { t('nav_links.tickets')}  
-             
+            </Link>
+          </li> */}
 
+ 
+<li className="  nav-item dropdown  ">
+  <a
+    className="nav-link dropdown-toggle  p-lg-3     "
+    href="#"
+    id="id_support"
+    role="button"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+  >
+
+            support
+  </a>
+
+
+  <ul
+    className={`  dropdown-menu dropdown-menu-end  background-color  mt-md-3 `}
+    aria-labelledby="id_support"
+    
+  >
+ 
+           <li className="nav-item   ">
+            <Link
+            className={`bg-focus dropdown-item text-light `}
+            onClick={handleNavLinkClick}
+            href="/tickets"
+            >
+                { t('nav_links.tickets')}  
             </Link>
           </li>
+
+          <li className="nav-item   ">
+            <Link
+            className={`bg-focus dropdown-item text-light  `}
+            onClick={handleNavLinkClick}
+            href="/projectflow"
+            >
+                ProjectFlow  
+            </Link>
+          </li>
+ 
+ 
+  </ul>
+</li>
+
+
+
+
 
 
       <AuthLinks  handleNavLinkClick={handleNavLinkClick} />

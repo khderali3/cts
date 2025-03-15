@@ -36,7 +36,7 @@ const AuthLinks = ({handleNavLinkClick}) => {
 
   <li className="prof nav-item dropdown">
   <a
-    className="nav-link dropdown-toggle mb-0 pb-0 mt-0 pt-0"
+    className="nav-link dropdown-toggle mb-lg-0 pb-lg-0 mt-lg-0 pt-lg-0  mb-3   "
     href="#"
     id="navbarDropdownMenuLink"
     role="button"
@@ -122,7 +122,7 @@ const AuthLinks = ({handleNavLinkClick}) => {
 
    :
    <li className="nav-item">
-    <Link className="nav-link p-lg-3 p-4" href="/account/login" 
+    <Link className="nav-link p-lg-3  " href="/account/login" 
     onClick={() => {
       if (handleNavLinkClick) handleNavLinkClick();
     }}

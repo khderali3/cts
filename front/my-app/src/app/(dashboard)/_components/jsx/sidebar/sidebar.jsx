@@ -312,6 +312,75 @@ useEffect(() => {
 
  
 
+
+
+          <ul className="nav sidebar-menu flex-column   ">
+            <li className="nav-item">
+                  <a
+                      className="nav-link"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#Project_Managment"
+                      aria-expanded="false"
+                      role="button"
+                    >
+                      <i className="nav-icon bi bi-speedometer" />
+                      <p>
+                        Project Managment
+                        <i className="nav-arrow bi bi-chevron-right  " />
+                      </p>
+                  </a>
+            </li>
+
+                <ul className=" collapse nav ps-2" id="Project_Managment" >
+
+                  <li className="nav-item text-light w-100 ">
+                    <Link href="/staff/projectFlow/projectType" className={` rounded text-light nav-link    ${isActive('/staff/projectFlow/projectType', true) ? ' active_class' : '' }     `}  >
+                    <i className= 'nav-icon bi bi-circle '  />
+                    <p>Project Type</p>
+
+                    </Link>
+                  </li>
+
+
+                  <li className="nav-item text-light w-100 ">
+                    <Link href="/staff/projectFlow/projectFlowTemplate" className={` rounded text-light nav-link    ${isActive('/staff/projectFlow/projectFlowTemplate', true) ? ' active_class' : '' }     `}  >
+                    <i className= 'nav-icon bi bi-circle '  />
+                    <p>Flow Template</p>
+
+                    </Link>
+                  </li>
+
+
+                  <li className="nav-item text-light w-100 ">
+                    <Link href="/staff/projectFlow" className={` rounded text-light nav-link    ${isActive('/staff/projectFlow', true) ? ' active_class' : '' }     `}  >
+                    <i className= 'nav-icon bi bi-circle '  />
+                    <p>ProjectFlow</p>
+                    </Link>
+                  </li>
+
+
+
+                </ul>
+
+ 
+
+
+
+
+
+
+
+          </ul>
+
+ 
+
+
+
+
+
+
+ 
+
         <LanguageSwitcherComponent />
 
 

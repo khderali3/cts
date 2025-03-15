@@ -5,7 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from ..models import Profile
 from rest_framework import serializers
 
-
+from django.conf import settings
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -137,16 +137,19 @@ from .public_utils import verify_recaptcha
 
 class CustomPasswordResetSerializer(SendEmailResetSerializer):
     def validate(self, attrs):
-        # Extract reCAPTCHA value from the request data
-        recaptcha_value = self.context.get('request').data.get('recaptcha_value')
-        if not recaptcha_value:
-            raise ValidationError({'recaptcha': 'reCAPTCHA value is required.'})
+ 
+        # recaptcha_value = self.context.get('request').data.get('recaptcha_value')
+        # if not recaptcha_value:
+        #     raise ValidationError({'recaptcha': 'reCAPTCHA value is required.'})
+        # if not verify_recaptcha(recaptcha_value):
+        #     raise ValidationError({'recaptcha': 'Invalid reCAPTCHA. Please try again.'})
 
-        # Verify the reCAPTCHA
-        if not verify_recaptcha(recaptcha_value):
-            raise ValidationError({'recaptcha': 'Invalid reCAPTCHA. Please try again.'})
 
-        # Proceed with the original validation
+        if getattr(settings, "RECAPTCHA_ENABLED", True):
+            recaptcha_value = self.context.get('request').data.get('recaptcha_value5')
+            if not recaptcha_value or not verify_recaptcha(recaptcha_value):
+                raise ValidationError({'recaptcha': 'Invalid reCAPTCHA. Please try again.'})
+ 
         return super().validate(attrs)
 
 

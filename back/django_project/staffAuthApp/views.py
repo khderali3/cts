@@ -29,11 +29,22 @@ from usersAuthApp.myutils.public_utils import verify_recaptcha
 User = get_user_model()
 
 
-AUTH_COOKIE_MAX_AGE = 60 * 60 * 24
-AUTH_COOKIE_SECURE =  'True'
-AUTH_COOKIE_HTTP_ONLY = True
-AUTH_COOKIE_PATH = '/'
-AUTH_COOKIE_SAMESITE = 'None'
+# AUTH_COOKIE_MAX_AGE = 60 * 60 * 24
+# AUTH_COOKIE_SECURE =  'True'
+# AUTH_COOKIE_HTTP_ONLY = True
+# AUTH_COOKIE_PATH = '/'
+# AUTH_COOKIE_SAMESITE = 'None'
+
+
+from django.conf import settings
+
+AUTH_COOKIE_MAX_AGE = settings.AUTH_COOKIE_MAX_AGE
+AUTH_COOKIE_SECURE =  settings.AUTH_COOKIE_SECURE
+AUTH_COOKIE_HTTP_ONLY = settings.AUTH_COOKIE_HTTP_ONLY
+AUTH_COOKIE_PATH = settings.AUTH_COOKIE_PATH
+AUTH_COOKIE_SAMESITE = settings.AUTH_COOKIE_SAMESITE
+
+
 
 
 
