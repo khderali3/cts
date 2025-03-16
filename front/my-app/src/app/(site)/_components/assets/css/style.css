@@ -914,9 +914,8 @@ footer .container .row > div{
 
 
 /* start project section */
-
-
-/* Start Products-Section */
+ 
+ 
 .projects-section {
   min-height: 80vh;
   background-color: var(--primary-2-color);
@@ -984,7 +983,7 @@ footer .container .row > div{
 .projects-section .container .but{
   background-color: var(--main-font-color);
 }
-/* End Products-Section */
+/* End projects-Section */
 
 
 

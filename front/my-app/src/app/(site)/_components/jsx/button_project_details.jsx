@@ -3,13 +3,13 @@
 
 import { useRouter } from 'next/navigation';
 
-export const ProductButton = ({ slug , text_button="" }) => {
+export const ProjectButton = ({ slug , text_button="" }) => {
   const router = useRouter();
 
 
   const handleMoreDetails = () => {
     if(slug) {
-     router.push(`/product/${slug}`);
+      router.push(`/project/${slug}`);
     } 
 
   }

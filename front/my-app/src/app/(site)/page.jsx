@@ -3,7 +3,8 @@
 
 import React from 'react';
 import ImageSlider from './_components/jsx/cursel';
-import ProductButton from './_components/jsx/button_product_details';
+import {ProductButton} from './_components/jsx/button_product_details';
+import { ProjectButton } from './_components/jsx/button_project_details';
 
 import {getLocale} from 'next-intl/server';
 import Link from 'next/link';
@@ -300,7 +301,7 @@ const Home = async () => {
 
               </div>
             <div className="but  text-center mt-auto card-footer  ">
-              <ProductButton slug={i.id} text_button={local === "ar" ? "تفاصيل أكثر" : "More Detailse" } />
+              <ProjectButton slug={i.project_slog} text_button={local === "ar" ? "تفاصيل أكثر" : "More Detailse" } />
             </div>
             </div>
           </div>
