@@ -584,6 +584,9 @@ class CreateOrPutObjectProjectFlowSerializer(serializers.ModelSerializer):
             )
         return obj
 
+from django.db.models import Max
+from django.db.models.functions import Coalesce
+
 
 class GetObjectProjectFlowSerializer(serializers.ModelSerializer):
 
@@ -591,12 +594,30 @@ class GetObjectProjectFlowSerializer(serializers.ModelSerializer):
     project_user = serializers.SerializerMethodField()
     files = ProjectFlowAttachmentSerializer(many=True, read_only=True, source='ProjectFlowAttachment_project_flow_related_ProjectFlow')
     project_type = serializers.SerializerMethodField()
+    latest_activity = serializers.SerializerMethodField()  # Add the new field
 
     class Meta:
         model = ProjectFlow
         fields = "__all__"
         read_only_fields = ["project_type_name", "project_type_name_ar", "created_date", "updated_date", "project_flow_slug", "project_created_user"  ]
  
+
+
+    def get_latest_activity(self, obj):
+
+        latest_step = ProjectFlowStep.objects.filter(project_flow=obj).aggregate(
+            latest=Coalesce(Max('end_date_process'), Max('start_date_process'))
+        )['latest']
+
+        latest_sub_step = ProjectFlowSubStep.objects.filter(step__project_flow=obj).aggregate(
+            latest=Coalesce(Max('end_date_process'), Max('start_date_process'))
+        )['latest']
+
+        if not latest_step and not latest_sub_step:
+            return obj.created_date
+
+        return max(filter(None, [latest_step, latest_sub_step]))
+
 
 
     def get_project_user(self, obj):
@@ -662,17 +683,38 @@ class GetObjectProjectFlowSerializer(serializers.ModelSerializer):
 
 
 
+
+
+
+
 class GetListProjectFlowSerializer(serializers.ModelSerializer):
 
     project_created_user = serializers.SerializerMethodField()
     project_user = serializers.SerializerMethodField()
     project_type = serializers.SerializerMethodField()
+    latest_activity = serializers.SerializerMethodField()  # Add the new field
 
     class Meta:
         model = ProjectFlow
         fields = "__all__"
         read_only_fields = ["project_type_name", "project_type_name_ar", "created_date", "updated_date", "project_flow_slug", "project_created_user"  ]
- 
+
+    def get_latest_activity(self, obj):
+
+      latest_step = ProjectFlowStep.objects.filter(project_flow=obj).aggregate(
+            latest=Coalesce(Max('end_date_process'), Max('start_date_process'))
+      )['latest']
+
+      latest_sub_step = ProjectFlowSubStep.objects.filter(step__project_flow=obj).aggregate(
+            latest=Coalesce(Max('end_date_process'), Max('start_date_process'))
+      )['latest']
+
+      if not latest_step and not latest_sub_step:
+            return obj.created_date
+
+      return max(filter(None, [latest_step, latest_sub_step]))
+
+
 
     def get_project_user(self, obj):
         if obj.project_user:  # Ensure user exists

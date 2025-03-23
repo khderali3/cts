@@ -19,7 +19,7 @@ const Page = () =>  {
   const t = useTranslations('site.ticket.add_new_ticket')
   const locale = useLocale()
   const [customFetch] = useCustomFetchMutation();
-  const [departments, setDepartments] = useState([])
+  const [projectTypes, setProjectTypes] = useState([])
   const [files, setFiles] = useState([{ id: 1, file: null }]);
   const router = useRouter()
 
@@ -75,70 +75,8 @@ const Page = () =>  {
 
 
 
- 
-
-  // Handle form submission
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault(); 
-//     const isEmpty = (value) => !value || value.trim() === '';
-
-//     if (isEmpty(formData.project_type) || isEmpty(formData.details)) {
-//         toast.error('All fields are required');
-//         return;
-//     }
-
-// 	setIsSubmitting(true)
-
-
-// 	try {
-
-
-// 		const form = new FormData();
-// 		form.append("project_type", formData.project_type);
-// 		form.append("details", formData.details);
-// 		files.forEach((fileInput) => {
-// 			if (fileInput.file) {
-// 			  form.append("file[]", fileInput.file);
-// 			}
-// 		  });
-
-// 		const response = await customFetch({
-// 			url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/site/project_flow/`,
-// 			method: "POST",
-// 			body: form,  
-// 		});
-// 		if(response && response.data){
-// 			toast.success("your prjectFlow has been added successfuly")
-// 			router.push('/projectflow');  
-// 		} else {
-// 			toast.error("Failed 1 to submit the request.");
-// 			if(response?.error?.data){  toast.error( getErrorMessage(response.error.data )); }
-// 		}
- 
-// 	} catch (error){
-//         console.error("Submission Error:", error); // Debugging log
-//         if (error?.data) {
-//             toast.error(getErrorMessage(error.data));
-//         } else {
-//             toast.error(getErrorMessage(error.message) || "Something went wrong");
-//         }
-
-// 	} finally{  setIsSubmitting(false)  }
-
-// };
-
-
-
-
-
-
-
-
-
-
 useEffect(() => {
-  const fetchDepartments = async () => {
+  const fetchProjectTypes = async () => {
     try {
       // Await the customFetch call to get the response
       const response = await customFetch({
@@ -150,7 +88,7 @@ useEffect(() => {
       // Check if response and response.data are available
       if (response && response.data) {
 
-        setDepartments(response.data);
+        setProjectTypes(response.data);
       } else {
         // Handle the error case if there's no data or an error in the response
         console.log("Failed to get project.type" , response);
@@ -161,7 +99,7 @@ useEffect(() => {
     }
   };
   
-  fetchDepartments()
+  fetchProjectTypes()
 
 }, []);
 
@@ -206,7 +144,7 @@ useEffect(() => {
                   Select Project Type
  
                   </option>
-                  {departments?.map((item) => (
+                  {projectTypes?.map((item) => (
                     <option key={item.id} value={item.id}>
                       {item?.project_name}
                       {/* { locale ==="ar"  ? item.department_name_ar :  item.department_name} */}

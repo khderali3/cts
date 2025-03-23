@@ -110,6 +110,7 @@ class CreateOrGetOrPutObjectSubStepTemplateNoteSerializer(ModelSerializer):
 
 class SubStepTemplateNoteSerializer(ModelSerializer):
    
+    files = SubStepTemplateNoteAttachmentSerializer(many=True, read_only=True, source='SubStepTemplateNoteAttachment_sub_step_template_note_related_SubStepTemplateNote')
 
     class Meta:
       model = SubStepTemplateNote
@@ -333,7 +334,8 @@ class CreateOrGetOrPutObjectProjectFlowTemplateNoteSerializer(ModelSerializer):
 
 
 class ProjectFlowTemplateNoteSerializer(ModelSerializer):
-  
+      files = ProjectFlowTemplateNoteAttachmentSerializer(many=True, read_only=True, source='ProjectFlowTemplateNoteAttachment_project_flow_template_note_related_ProjectFlowTemplateNote')
+
       class Meta:
         model = ProjectFlowTemplateNote
         fields = "__all__"
@@ -499,14 +501,12 @@ class CreateOrGetOrPutObjectStepTemplateNoteSerializer(ModelSerializer):
     
 
 class StepTemplateNoteSerializer(ModelSerializer):
+    files = StepTemplateNoteAttachmentSerializer(many=True, read_only=True, source='StepTemplateNoteAttachment_step_template_note_StepTemplateNote')
 
     class Meta:
       model = StepTemplateNote
       fields = "__all__"
       read_only_fields = ['id', "created_date", "updated_date"]
-
-
-
 
 
 

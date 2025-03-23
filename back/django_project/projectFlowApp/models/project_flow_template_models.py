@@ -16,7 +16,7 @@ from .utils import validate_file_or_image, validate_image
 
 class ProjectFlowTemplate(models.Model):
     template_name = models.CharField(max_length=255, db_index=True)
-    template_name_ar = models.CharField(max_length=255, db_index=True, default="", blank=True)
+    # template_name_ar = models.CharField(max_length=255, db_index=True, default="", blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     default_start_process_step_or_sub_step_strategy_options = [
@@ -26,11 +26,23 @@ class ProjectFlowTemplate(models.Model):
     show_steps_to_client = models.BooleanField(default=True)
     show_steps_or_sub_steps_status_log_to_client = models.BooleanField(default=True)
     default_start_process_step_or_sub_step_strategy = models.CharField(max_length=30, choices=default_start_process_step_or_sub_step_strategy_options, default='auto')
+ 
+
+    manual_start_mode_options = [
+        ('serialized', 'serialized'),
+        ('non-serialized', 'non-serialized'),
+    ]
+
+    manual_start_mode = models.CharField(max_length=30, choices=manual_start_mode_options, default='serialized')
+
+    auto_start_first_step_after_clone = models.BooleanField(default=True)
+
 
     def __str__(self):
         return f"{self.id}, {self.template_name}" 
 
-
+    class Meta:
+        ordering = ['-id'] 
 
 class ProjectFlowTemplateAttachment(models.Model):
     project_flow_template = models.ForeignKey(ProjectFlowTemplate, related_name='ProjectFlowTemplateAttachment_project_flow_template_related_ProjectFlowTemplate', on_delete=models.CASCADE, null=True, blank=True )

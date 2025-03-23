@@ -30,6 +30,7 @@ export  const handleTimelineColler = (status) =>{
           else if(status==="wait_customer_action") return "bg-warning"
           else if(status==="completed") return "bg-success"
           else if(status==="completed") return "bg-danger"
+          else return "bg-secondary"
   
       }
   

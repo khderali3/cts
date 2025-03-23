@@ -46,8 +46,7 @@ const Page = () => {
 
   const formatDate = (dateString) => {
     const dateFnsLocale = locales[locale] || enUS; // Map to date-fns locale, fallback to English
- 
-    if (dateString) {
+     if (dateString) {
       return formatDistanceToNow(parseISO(dateString), {
         addSuffix: true,
         locale: dateFnsLocale,

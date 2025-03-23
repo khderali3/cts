@@ -20,6 +20,7 @@ from ..serializers_module.staff_serializer_projectFlow import (
 
 from ..serializers_module.get_full_projectFlow.staff_get_full_project_flow import GetFullProjectFlowSeriallizer
 
+from projectFlowApp.custom_app_utils import MyCustomPagination
 
 
 
@@ -821,7 +822,7 @@ class ProjectFlowNoteView(APIView):
 
 
 
-
+from django.db.models import Q
 
 class ProjectFlowView(APIView):
 
@@ -856,9 +857,20 @@ class ProjectFlowView(APIView):
             
         else:
             list_obj = ProjectFlow.objects.all()
-            serializer = GetListProjectFlowSerializer(list_obj, many=True, context={'request': request})
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        
+
+            ProjectType_Name = request.query_params.get('ProjectType_Name', None)
+            if ProjectType_Name:
+                list_obj = list_obj.filter(
+                    Q(project_type_name__icontains=ProjectType_Name)
+                ) 
+
+            # serializer = GetListProjectFlowSerializer(list_obj, many=True, context={'request': request})
+            # return Response(serializer.data, status=status.HTTP_200_OK)
+            paginator = MyCustomPagination()
+            page = paginator.paginate_queryset(list_obj, request)
+            serializer = GetListProjectFlowSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data) 
+       
 
     def put(self, request, id):
         try:

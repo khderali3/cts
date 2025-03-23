@@ -352,7 +352,7 @@ useEffect(() => {
 
 
                   <li className="nav-item text-light w-100 ">
-                    <Link href="/staff/projectFlow" className={` rounded text-light nav-link    ${isActive('/staff/projectFlow', true) ? ' active_class' : '' }     `}  >
+                    <Link href="/staff/projectFlow/projectFlow" className={` rounded text-light nav-link    ${isActive('/staff/projectFlow', true) ? ' active_class' : '' }     `}  >
                     <i className= 'nav-icon bi bi-circle '  />
                     <p>ProjectFlow</p>
                     </Link>

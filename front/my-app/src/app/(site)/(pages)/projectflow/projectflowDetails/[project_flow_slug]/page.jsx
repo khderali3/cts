@@ -130,7 +130,7 @@ useEffect(() => {
 
  
 
-    <div className="container-fluid   "  >
+    <div className="  container-fluid overflow-hidden text-break w-100 "  >
 
     <div className=" col-11  border-bottom border-2   my-2   "    >
         <h3 className="text-break  " dir="auto" >{projectDetails?.project_type_name} </h3>
@@ -140,121 +140,121 @@ useEffect(() => {
     <div className="row d-flex justify-content-between">
 
 
-        <div className="col-lg-4 col-md-10 d-lg-none d-block   ">
-        <div className="dropdown ">
-            <div className="container mt-2">
+        <div className=" col-md-10 d-md-none d-block  ">
+            <div className="dropdown ">
+                <div className="container mt-2">
 
-            <button
-                className="d-block d-lg-none border-0   border-bottom collapse btn  "
-                dir="auto"
-                id="toggleButton"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseExample"
-                aria-expanded="false"
-                aria-controls="collapseExample"
-            >
-                 {/* Ticket Details  */}
-                 <i className="fa-solid fa-caret-down fs-3 ms-2 me-2" />
+                <button
+                    className="d-block d-md-none border-0   border-bottom collapse btn  "
+                    dir="auto"
+                    id="toggleButton"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseExample"
+                    aria-expanded="false"
+                    aria-controls="collapseExample"
+                >
+                    {/* Ticket Details  */}
+                    <i className="fa-solid fa-caret-down fs-3 ms-2 me-2" />
 
-  
-                ProjectFlow Details
-            </button>
-
-
+    
+                    ProjectFlow Details
+                </button>
 
 
 
 
 
 
-            <hr className="d-block" />
 
-            {/* // ticket details on small screen  */}
 
-            <div
-                id="collapseExample"
-                className="card collapse  toggle-content mt-3  "
-            >
- 
-                <div className="card-body   "     >
+                <hr className="d-block" />
 
-                    <div className="p-1 row col-12 ">
-                        <div className="col-6  text-muted">
-        
-                            Project Requester:
-                        </div>
-                        <div className="col-6">
-                            {projectDetails?.project_created_user?.full_name}
-                        </div>
-                    </div>
+                {/* // ticket details on small screen  */}
 
-                    <div className="p-1 row col-12">
-                        <div className="col-6  text-muted">
-                            Created: 
-                        </div>
-                        <div className="col-6">
-                            {formatDate( projectDetails?.created_date)}
-                        </div> 
-                    </div>
-                    <div className="p-1 row col-12 ">
-                        <div className="col-6  text-muted">
-                            Latest activity: 
-                        </div>
-                        <div className="col-6">
-                            {formatDate( projectDetails?.latest_activity)}
-                        </div>
-                    </div>
-                    <hr />
+                <div
+                    id="collapseExample"
+                    className="card collapse  toggle-content mt-3  "
+                >
+    
+                    <div className="card-body   "     >
 
-        
-
-                    <div className="p-1 row col-12">
-
-                        <div className="col-6  text-muted">
-                            {t_common('ticket_card.id')}
-                        </div>
-                        <div className="col-6">
-                            #{ formatNumber(projectDetails?.id) }
-                        </div>
-                    </div>
-
-                    <div className="p-1 row col-12">
-                        <div className="col-6  text-muted">
-                            {t_common('ticket_card.status')}
-                        </div>
-                        <div className="col-6">
-
-                            <p className={`p-0 m-0    p-1  `}  >
-                                { projectDetails?.project_flow_status  }
-                            </p>
-                            
+                        <div className="p-1 row col-12 ">
+                            <div className="col-6  text-muted">
+            
+                                Project Requester:
+                            </div>
+                            <div className="col-6">
+                                {projectDetails?.project_created_user?.full_name}
+                            </div>
                         </div>
 
-                    </div>
-                    <hr />
-                    <div className="p-1 row col-12 d-flex justify-content-start   align-items-center ">
-                        <div className="col-6  text-muted">
-                            Progress
+                        <div className="p-1 row col-12">
+                            <div className="col-6  text-muted">
+                                Created: 
+                            </div>
+                            <div className="col-6">
+                                {formatDate( projectDetails?.created_date)}
+                            </div> 
                         </div>
-                        <div className="col-6">
-
-                            <ProgressCircleDetailsInfo  targetPercentage={projectDetails?.steps_completion_percentage || 0} animation_speed={100}/>
-        
+                        <div className="p-1 row col-12 ">
+                            <div className="col-6  text-muted">
+                                Latest activity: 
+                            </div>
+                            <div className="col-6">
+                                {formatDate( projectDetails?.latest_activity)}
+                            </div>
                         </div>
-
-                    </div>
- 
-                
-                </div> 
-
-            </div>
-
- 
-
-            </div>
+                        <hr />
 
             
-        </div>
+
+                        <div className="p-1 row col-12">
+
+                            <div className="col-6  text-muted">
+                                {t_common('ticket_card.id')}
+                            </div>
+                            <div className="col-6">
+                                #{ formatNumber(projectDetails?.id) }
+                            </div>
+                        </div>
+
+                        <div className="p-1 row col-12">
+                            <div className="col-6  text-muted">
+                                {t_common('ticket_card.status')}
+                            </div>
+                            <div className="col-6">
+
+                                <p className={`p-0 m-0    p-1  `}  >
+                                    { projectDetails?.project_flow_status  }
+                                </p>
+                                
+                            </div>
+
+                        </div>
+                        <hr />
+                        <div className="p-1 row col-12 d-flex justify-content-start   align-items-center ">
+                            <div className="col-6  text-muted">
+                                Progress
+                            </div>
+                            <div className="col-6">
+
+                                <ProgressCircleDetailsInfo  targetPercentage={projectDetails?.steps_completion_percentage || 0} animation_speed={100}/>
+            
+                            </div>
+
+                        </div>
+    
+                    
+                    </div> 
+
+                </div>
+
+    
+
+                </div>
+
+                
+            </div>
         </div>
 
 
@@ -318,7 +318,7 @@ useEffect(() => {
 
 
 
-<Timeline data={projectDetails} />
+            <Timeline data={projectDetails} />
  
 
             <hr />
@@ -336,17 +336,8 @@ useEffect(() => {
 
         <div className="col-md-5   px-md-2 ">
     
-            <div className="card d-md-block d-none">
+            <div  className="card  d-md-block d-none " >
     
-
-
-
-
-
-
-
-
-
                 <div className="card-body  "     >
 
                     <div className="p-1 row col-12 ">
@@ -432,93 +423,11 @@ useEffect(() => {
     
             </div>
  
-
-
-
             <hr />
-
-            {/* {projectDetails?.notes?.map(  note => {
-                return( 
-                    <div key={note.id} >
-                    
-                    <div  className="  ">
-
-                    <div className="  d-flex  align-items-center mb-5">
-                        <img
-                        src={note?.created_user?.PRF_image ? note.created_user.PRF_image: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJQAswMBIgACEQEDEQH/xAAaAAEAAwEBAQAAAAAAAAAAAAAAAQIDBAUH/8QALBABAAICAAUDAgUFAAAAAAAAAAECAxEEEjFBUSEycZGhEyJSYbEUIzNCgf/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A+4gAAAAAAAAiZ13BIrzx5OevkFhEWiZ9JhIAAAAAAAAAAAAAAAAClrxHyre+/SOigLTaZ+PCoAAAJiZjogBpGTtZeJjswTW01BuIrMTHokAAAAAAAAAABlktv0jovedV/diAAACJmIjczqPIJGFuKpHtibfZEcVH6J+oOgUx5KXj8s7nvC4AAJrPLO20TtgvjtqdA1AAAAAAAABEzqJBled2VAAAETOomZ6Q4cuT8S2+3aHTxVtY4iO8uMABUTE6ncdXbhy/iV9fdHVwtuFtrLEdpRXYAAADes7hLPHPZoAAAAAAArf2yspk9sgyAAABz8X7K/LldvE158Xp2nbiUABBpg/y1+Wbbha82XfgHYAigAL4vdLVjj9zYAAAAAABW3SVgHOExqdAAADjz4ZrO6xM1/h2Im0R1mI+ZB5w7bUw268v/JRGLDHj6g5aUm86rDux0jHXlj6kTSI1E1j4lYAAAAF8XWWqmONVXAAAAAAAABnkjuzbzG40xtHLOgQplyRjruevaPK8zqJmekPPyXnJabSC2TNfJ1nUeIZgqGjQAajwmtppO6zqUAOvDxHPPLedW7T5bvNdvD358fr1j0RWqaxM2iOyGuOuo35BcAAAAAAAAABW1eaFgHHxO64rbcL18uOuWvLbo87Nw98XrPrXzCjEOwIAAAAN+En+5MeYZY6WyW1SJl38NwsYvzWndv4BpSneerUEUAAAAAAAAAAAAABhl4XFkneuW3mGF+Bt/peJ+YdwDzP6TN4ifiSOEzfp+70wHnV4LJPWax92+Pgsce+Zs6gEVrFY1WIiP2SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//Z"}
-
-                        width="40" height="40" 
-                        className="  rounded-circle me-2"
-
-                        />
-                        <div className="d-flex flex-column justify-content-center">
-
-                            {note.note_type === "cloned_from_template" ? "Generated By System" : 
-                            
-                                <h4 className="m-0 fs-6 text-muted">{note?.created_user?.full_name}  
-                                    {note?.created_user?.is_staff &&  <span className="badge bg-light text-dark ms-2">{t_common('staff')}</span> }
-                                    
-                                
-                                </h4>
-                            }
-                        
-
-                            <p className="m-0 text-muted">{formatDate(note?.created_date)}</p>
-                        </div>
-
-                    </div>
-
-
-                    <div dir="auto" className="ticket-details-text" style={{ whiteSpace: 'pre-line' }}>
-
-                        {note?.note}
-
-
-
-
-
-                        <div className=" pt-3 mt-3 ">
-                            {note?.files?.map(file => {
-
-                            return(
-                                <div key={file.id} className=" m-0 p-0 ">
-                                    <Link href={file.file} className="  m-0 p-0" target="_blank">
-                                    <i className="fa fa-file me-2"></i> {file.file_name}
-                                    </Link>
-                                </div>
-
-                            )
-                            })}
-                        </div>
-
-
-
-
-                    
-                    </div>
-                    <hr />
-                    </div>
-                    </div>
-
-
-                )
-            })} */}
-
-        <ProjectFlowNotes notes={projectDetails?.notes || []} project_id={projectDetails?.id} />
-
-
-
-
-
+            <ProjectFlowNotes notes={projectDetails?.notes || []} project_id={projectDetails?.id} />
 
         </div>
 
- 
-
-
-
-
- 
     </div>
     </div>
     {/* End Ticket Details */}

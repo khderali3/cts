@@ -51,7 +51,21 @@ class ProjectFlow(models.Model):
 
     default_start_process_step_or_sub_step_strategy = models.CharField(max_length=30, choices=default_start_process_step_or_sub_step_strategy_options, default='auto')
 
-    is_template_mounted = models.BooleanField(default=False)
+    is_template_cloned = models.BooleanField(default=False)
+
+    manual_start_mode_options = [
+        ('serialized', 'serialized'),
+        ('non-serialized', 'non-serialized'),
+    ]
+
+    manual_start_mode = models.CharField(max_length=30, choices=manual_start_mode_options, default='serialized')
+
+    auto_start_first_step_after_clone = models.BooleanField(default=True)
+
+
+
+
+
 
     def __str__(self):
         if self.project_type:

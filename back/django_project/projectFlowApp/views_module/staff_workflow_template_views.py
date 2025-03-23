@@ -24,6 +24,8 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import status
 from rest_framework.response import Response
+from projectFlowApp.custom_app_utils import MyCustomPagination
+
 
 applied_permissions =  [AllowAny]
 
@@ -872,6 +874,7 @@ class StepTemplateView(APIView):
 
 
 
+from django.db.models import Q
 
 
 class ProjectFlowTemplateView(APIView):
@@ -889,12 +892,33 @@ class ProjectFlowTemplateView(APIView):
       
         else:
             obj_list = ProjectFlowTemplate.objects.all()
-            serializer = ProjectFlowTemplateSeriallizer(obj_list, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+
+            template_name_query = request.query_params.get('template_name', None)
+
+            if template_name_query:
+                obj_list = obj_list.filter(
+                    Q(template_name__icontains=template_name_query)
+                ) 
+
+
+
+            # serializer = ProjectFlowTemplateSeriallizer(obj_list, many=True)
+            # return Response(serializer.data, status=status.HTTP_200_OK)
+            paginator = MyCustomPagination()
+            page = paginator.paginate_queryset(obj_list, request)
+            serializer = ProjectFlowTemplateSeriallizer(page, many=True)
+            return paginator.get_paginated_response(serializer.data) 
+
+
+
+
+
 
 
     def post(self, request):
         serializer = CreateOrGetOrPutObjectProjectFlowTemplateSeriallizer(data=request.data, context={"request": request})
+        # return Response({'message' : 'error from backend'}, status=status.HTTP_400_BAD_REQUEST)
+        print('request.data', request.data)
 
         if serializer.is_valid():
             serializer.save()

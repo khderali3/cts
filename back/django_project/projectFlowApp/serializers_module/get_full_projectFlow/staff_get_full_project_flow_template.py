@@ -8,6 +8,15 @@ from ...models import  (ProjectFlowTemplate,ProjectFlowTemplateAttachment,Projec
                          SubStepTemplate, SubStepTemplateAttachment, SubStepTemplateNote, SubStepTemplateNoteAttachment,
                         
                       )
+from django.contrib.auth.models import Group
+
+
+
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ['id', 'name']  # Returning id and name
+
 
 
 
@@ -45,6 +54,7 @@ class SubStepTemplateSerializer(serializers.ModelSerializer):
    
     files = SubStepTemplateAttachmentSerializer(many=True, read_only=True, source='SubStepTemplateAttachment_sub_step_template_related_SubStepTemplate')
     notes = SubStepTemplateNoteSerializer(many=True, read_only=True, source='SubStepTemplateNote_sub_step_template_related_SubStepTemplate')
+    allowed_process_groups = GroupSerializer(many=True, read_only=True)  # Use GroupSerializer
 
 
 
@@ -93,11 +103,18 @@ class StepTemplateSerializer(serializers.ModelSerializer):
     files = StepTemplateAttachmentSerializer(many=True, read_only=True, source='StepTemplateAttachment_step_template_StepTemplate')
     notes = StepTemplateNoteSerializer(many=True, read_only=True, source='StepsTemplateNote_step_template_related_StepTemplate')
     sub_steps = SubStepTemplateSerializer(many=True, read_only=True, source='SubStepTemplate_step_template_StepTemplate')
+    allowed_process_groups = GroupSerializer(many=True, read_only=True)  # Use GroupSerializer
 
     class Meta:
       model = StepTemplate
       fields = "__all__"
       read_only_fields = ['id', "created_date", "updated_date", "sorted_weight"]
+
+
+
+
+
+
 
 
 class ProjectFlowTemplateNoteAttachmentSerializer(serializers.ModelSerializer):

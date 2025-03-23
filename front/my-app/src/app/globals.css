@@ -293,55 +293,56 @@ select.form-select:hover {
  /* .timeline {
   position: relative;
   border-left: 3px solid #dee2e6;
-} */
+}  */
 
 
-
-
- .timeline {
-  position: relative;
-  border-left: 3px solid #dee2e6;
+.timeline {
+  position: relative !important;
+  border-left: 3px solid #dee2e6 !important;
 }
 
-  
-
-
-
-
 .timeline-item {
-  position: relative;
-  margin-bottom: 20px;
-}  
-
-
- /* .timeline-icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  position: absolute;
-  left: -10px;
-} */
-
-
-
+  position: relative !important;
+  margin-bottom: 20px !important;
+}   
 
 
 
 .sub-timeline {
-  position: relative;
-  border-left: 2px solid #dee2e6;
+  position: relative !important;
+  border-left: 2px solid #dee2e6 !important;
 }
 
 .sub-timeline-item {
-  position: relative;
-  margin-bottom: 15px;
+  position: relative !important;
+  margin-bottom: 15px !important;
 }
 
-/* .small-timeline-icon {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  position: absolute;
-  left: -6px;
-}     */
- 
+
+
+
+
+
+
+.timeline-dash {
+  position: relative !important;
+  border-left: 3px solid #dee2e6 !important;
+}
+
+.timeline-item-dash {
+  position: relative !important;
+  margin-bottom: 20px !important;
+}   
+
+
+
+.sub-timeline-dash {
+  position: relative !important;
+  border-left: 2px solid #dee2e6 !important;
+}
+
+.sub-timeline-item-dash {
+  position: relative !important;
+  margin-bottom: 15px !important;
+}
+

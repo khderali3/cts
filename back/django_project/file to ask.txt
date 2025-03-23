@@ -1,58 +1,81 @@
-
-hi i have :
-
-from django.core.exceptions import ValidationError
-
-def validate_image(value):
-    if not value.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
-        raise ValidationError("Only image files (.png, .jpg, .jpeg, .gif) are allowed.")
+i am using django 
+hi i have the follwing model :
 
 
+class StepTemplate(models.Model):
+    allow_process_by_options = [
+        ('any_staff', 'any_staff'),
+        ('specific_staff_group', 'specific_staff_group'),
+        ('client', 'client')
+
+    ]
+
+    start_process_step_strategy_options = [
+        ('inherit_from_project_flow', 'inherit_from_project_flow'),
+        ('auto', 'auto'),
+        ('manual', 'manual'),
+    ]
+
+    show_status_log_to_client_options = [
+        ('inherit_from_project_flow', 'inherit_from_project_flow'),
+        ('yes', 'yes'),
+        ('no', 'no'),
+    ]
+
+    show_status_log_to_client = models.CharField(max_length=128, choices=show_status_log_to_client_options, default='inherit_from_project_flow')
 
 
+    project_flow_template = models.ForeignKey(ProjectFlowTemplate, related_name='StepTemplate_project_flow_template_related_ProjectFlowTemplate', on_delete=models.CASCADE, null=True, blank=True)
+    step_name = models.CharField(max_length=255, db_index=True)
+    step_description = models.TextField()
+    step_name_ar = models.CharField(max_length=255, db_index=True)
+    step_description_ar = models.TextField()
+    show_to_client = models.BooleanField(default=True)
+    allowed_process_by =  models.CharField(max_length=30, choices=allow_process_by_options, default='any_staff')
+    allowed_process_groups = models.ManyToManyField(Group, related_name="steps_templates_allowed_groups", blank=True)
+    sorted_weight = models.PositiveIntegerField(db_index=True, blank=True, default=0)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)    
 
-and the follwin model :
 
-class ProjectTypeExtraImages(models.Model):
-    project_type = models.ForeignKey(ProjectType, related_name='ProjectTypeExtraImages_project_type_related_ProjectType', on_delete=models.CASCADE, blank=True, null=True)
-    file = models.FileField(upload_to='ProjectType/ProjectTypeExtraImages/', validators=[validate_image])
-    file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
-    created_data = models.DateTimeField(auto_now_add=True) 
+    start_process_step_strategy = models.CharField(max_length=30, choices=start_process_step_strategy_options, default='inherit_from_project_flow')
 
-    def save(self, *args, **kwargs):
-        if self.file :
-            self.file_name = basename(self.file.name)
-        super().save(*args, **kwargs)
+    step_type = models.CharField(max_length=50, default='default_step_type')
 
     def __str__(self):
-        return f"{self.id}, {self.file_name}" 
+        return f"{self.id}, {self.step_name} , {self.project_flow_template}" 
 
-
-and the follwin serializer :
-
-
-class ProjectTypeSerializer(serializers.ModelSerializer):
-    extra_images = ProjectTypeExtraImagesSerializer(many=True, read_only=True, source="ProjectTypeExtraImages_project_type_related_ProjectType")
-    attachments = ProjectTypeAttachmentSerializer(many=True, read_only=True,  source="ProjectTypeAttachment_project_name")
+  
+    def save(self, *args, **kwargs):
+        if not self.sorted_weight:  # If sorted_weight is None or 0
+            super().save(*args, **kwargs)  # Save first to get an ID
+            self.sorted_weight = self.id
+            super().save(update_fields=['sorted_weight'])  # Update only sorted_weight
+        else:
+            super().save(*args, **kwargs)  # Regular save for updates
 
     class Meta:
-        model = ProjectType
-        fields = "__all__"
-        read_only_fields = ["id", "project_slog", "created_date", "updated_date"]
-
-
-    def create(self, validated_data):
-        obj = super().create(validated_data)
-
-        request = self.context.get('request')
-        extra_image_files = request.FILES.getlist('extra_images[]')  if request else []
-        
-        extra_images_list = []
-        for extra_image in extra_image_files:
-            extra_image_obj = ProjectTypeExtraImages.objects.create( project_type=obj, file=extra_image)
-            extra_images_list.append(extra_image_obj)
+        ordering = ['sorted_weight'] 
 
 
 
 
-why when i use : ProjectTypeExtraImages.objects.create( project_type=obj, file=extra_image) , the "validate_image" not work and accept .pdf file ?
+and the follwin serializer : 
+
+class StepTemplateSerializer(serializers.ModelSerializer):
+
+    files = StepTemplateAttachmentSerializer(many=True, read_only=True, source='StepTemplateAttachment_step_template_StepTemplate')
+    notes = StepTemplateNoteSerializer(many=True, read_only=True, source='StepsTemplateNote_step_template_related_StepTemplate')
+    sub_steps = SubStepTemplateSerializer(many=True, read_only=True, source='SubStepTemplate_step_template_StepTemplate')
+
+    class Meta:
+      model = StepTemplate
+      fields = "__all__"
+      read_only_fields = ['id', "created_date", "updated_date", "sorted_weight"]
+
+
+
+for  allowed_process_groups it return list of IDs , but insted i wana return list of objects {id: id, group name : group name} , how to do that 
+
+
+

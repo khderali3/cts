@@ -291,32 +291,32 @@ const Page = () => {
  
                     >
                       <option value={'all'}>
-                         all status 
+                         All status 
  
 
                       </option>
                       <option value={'pending'}>
-                        pending  
+                        Pending  
  
 
                       </option>
                       <option value={'wait_customer_action'}>
-                        wait_customer_action
+                        wait customer action
  
 
                       </option>
                       <option value={'in_progress'}>
-                        in_progress
+                        in Progress
  
 
                       </option>
                       <option value={'completed'}>
-                        completed
+                        Completed
  
 
                       </option>
                       <option value={'canceled'}>
-                        canceled
+                        Canceled
  
 
                       </option>

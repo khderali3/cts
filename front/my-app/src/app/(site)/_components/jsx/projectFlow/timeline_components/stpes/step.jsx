@@ -54,7 +54,6 @@ export const StepComponent = ({ step={}, index=0 }) =>{
                 left: '-15px', 
                 width: '30px', 
                 height: '30px', 
- 
                 color: 'white', 
                 fontWeight: 'bold' 
                 }}
