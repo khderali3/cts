@@ -15,48 +15,44 @@ from .utils import validate_file_or_image, validate_image
 
 
 class ProjectFlowTemplate(models.Model):
-    template_name = models.CharField(max_length=255, db_index=True)
-    # template_name_ar = models.CharField(max_length=255, db_index=True, default="", blank=True)
-    created_date = models.DateTimeField(auto_now_add=True)
-    updated_date = models.DateTimeField(auto_now=True)
     default_start_process_step_or_sub_step_strategy_options = [
         ('auto', 'auto'),
         ('manual', 'manual'),
     ]
-    show_steps_to_client = models.BooleanField(default=True)
-    show_steps_or_sub_steps_status_log_to_client = models.BooleanField(default=True)
-    default_start_process_step_or_sub_step_strategy = models.CharField(max_length=30, choices=default_start_process_step_or_sub_step_strategy_options, default='auto')
- 
-
     manual_start_mode_options = [
         ('serialized', 'serialized'),
         ('non-serialized', 'non-serialized'),
     ]
-
+    template_name = models.CharField(max_length=255, db_index=True)
+    # template_name_ar = models.CharField(max_length=255, db_index=True, default="", blank=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    show_steps_to_client = models.BooleanField(default=True)
+    show_steps_or_sub_steps_status_log_to_client = models.BooleanField(default=True)
+    default_start_process_step_or_sub_step_strategy = models.CharField(max_length=30, choices=default_start_process_step_or_sub_step_strategy_options, default='auto')
     manual_start_mode = models.CharField(max_length=30, choices=manual_start_mode_options, default='serialized')
-
     auto_start_first_step_after_clone = models.BooleanField(default=True)
-
-
     def __str__(self):
         return f"{self.id}, {self.template_name}" 
-
     class Meta:
         ordering = ['-id'] 
 
-class ProjectFlowTemplateAttachment(models.Model):
-    project_flow_template = models.ForeignKey(ProjectFlowTemplate, related_name='ProjectFlowTemplateAttachment_project_flow_template_related_ProjectFlowTemplate', on_delete=models.CASCADE, null=True, blank=True )
-    file = models.FileField(upload_to='project_flow/ProjectFlowTemplateAttachment/', validators=[validate_file_or_image])
-    file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
-    created_data = models.DateTimeField(auto_now_add=True) 
 
-    def save(self, *args, **kwargs):
-        if self.file :
-            self.file_name = basename(self.file.name)
-        super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f"{self.id}, {self.project_flow_template}" 
+
+# class ProjectFlowTemplateAttachment(models.Model):
+#     project_flow_template = models.ForeignKey(ProjectFlowTemplate, related_name='ProjectFlowTemplateAttachment_project_flow_template_related_ProjectFlowTemplate', on_delete=models.CASCADE, null=True, blank=True )
+#     file = models.FileField(upload_to='project_flow/ProjectFlowTemplateAttachment/', validators=[validate_file_or_image])
+#     file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
+#     created_data = models.DateTimeField(auto_now_add=True) 
+
+#     def save(self, *args, **kwargs):
+#         if self.file :
+#             self.file_name = basename(self.file.name)
+#         super().save(*args, **kwargs)
+
+#     def __str__(self):
+#         return f"{self.id}, {self.project_flow_template}" 
 
 
 
@@ -154,19 +150,19 @@ class StepTemplate(models.Model):
 
 
 
-class StepTemplateAttachment(models.Model):
-    step_template = models.ForeignKey(StepTemplate, related_name='StepTemplateAttachment_step_template_StepTemplate', on_delete=models.CASCADE , null=True, blank=True )
-    file = models.FileField(upload_to='project_flow/StepTemplateAttachment/', validators=[validate_file_or_image])
-    file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
-    created_data = models.DateTimeField(auto_now_add=True) 
+# class StepTemplateAttachment(models.Model):
+#     step_template = models.ForeignKey(StepTemplate, related_name='StepTemplateAttachment_step_template_StepTemplate', on_delete=models.CASCADE , null=True, blank=True )
+#     file = models.FileField(upload_to='project_flow/StepTemplateAttachment/', validators=[validate_file_or_image])
+#     file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
+#     created_data = models.DateTimeField(auto_now_add=True) 
 
-    def save(self, *args, **kwargs):
-        if self.file :
-            self.file_name = basename(self.file.name)
-        super().save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         if self.file :
+#             self.file_name = basename(self.file.name)
+#         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f"{self.id}, {self.step_template}" 
+#     def __str__(self):
+#         return f"{self.id}, {self.step_template}" 
 
 
 
@@ -268,19 +264,19 @@ class SubStepTemplate(models.Model):
         ordering = ['sorted_weight'] 
 
   
-class SubStepTemplateAttachment(models.Model):
-    sub_step_template = models.ForeignKey(SubStepTemplate, related_name='SubStepTemplateAttachment_sub_step_template_related_SubStepTemplate', on_delete=models.CASCADE, null=True, blank=True)
-    file = models.FileField(upload_to='project_flow/SubStepTemplateAttachment/', validators=[validate_file_or_image])
-    file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
-    created_data = models.DateTimeField(auto_now_add=True) 
+# class SubStepTemplateAttachment(models.Model):
+#     sub_step_template = models.ForeignKey(SubStepTemplate, related_name='SubStepTemplateAttachment_sub_step_template_related_SubStepTemplate', on_delete=models.CASCADE, null=True, blank=True)
+#     file = models.FileField(upload_to='project_flow/SubStepTemplateAttachment/', validators=[validate_file_or_image])
+#     file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
+#     created_data = models.DateTimeField(auto_now_add=True) 
 
-    def save(self, *args, **kwargs):
-        if self.file :
-            self.file_name = basename(self.file.name)
-        super().save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         if self.file :
+#             self.file_name = basename(self.file.name)
+#         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f"{self.id}, {self.sub_step_template}" 
+#     def __str__(self):
+#         return f"{self.id}, {self.sub_step_template}" 
 
 
 

@@ -18,10 +18,6 @@ from .project_type_models import ProjectType
 
 
 class ProjectFlow(models.Model):
-    project_type = models.ForeignKey(ProjectType, related_name='ProjectFlow_project_type_related_ProjectType', on_delete=models.SET_NULL, blank=True, null=True)
-    project_type_name = models.CharField(max_length=255, default='',  blank=True )
-    project_type_name_ar = models.CharField(max_length=255, default='',  blank=True)
-
     ProjectFlow_status_options = [
         ('pending', 'pending'),
         ('wait_customer_action', 'wait_customer_action'),
@@ -29,42 +25,33 @@ class ProjectFlow(models.Model):
         ('completed', 'completed'),
         ('canceled', 'canceled'),
     ]
-
     default_start_process_step_or_sub_step_strategy_options = [
         ('auto', 'auto'),
         ('manual', 'manual'),
-        ]
-    
+    ]
+
+    project_type = models.ForeignKey(ProjectType, related_name='ProjectFlow_project_type_related_ProjectType', on_delete=models.SET_NULL, blank=True, null=True)
+    project_type_name = models.CharField(max_length=255, default='',  blank=True )
+    project_type_name_ar = models.CharField(max_length=255, default='',  blank=True)
     details = models.TextField()
-    
     project_user = models.ForeignKey(User, related_name='ProjectFlow_project_user_related_User', on_delete=models.PROTECT, blank=True, null=True)
     project_created_user = models.ForeignKey(User, related_name='ProjectFlow_project_created_user_related_User', on_delete=models.PROTECT, blank=True, null=True)
-
-
     project_flow_status = models.CharField(max_length=30, choices=ProjectFlow_status_options, default='pending')
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     show_steps_to_client = models.BooleanField(default=True)
     show_steps_or_sub_steps_status_log_to_client = models.BooleanField(default=True)
-
     project_flow_slug =  models.SlugField(max_length=255, blank=True, null=True, db_index=True, unique=True) 
-
     default_start_process_step_or_sub_step_strategy = models.CharField(max_length=30, choices=default_start_process_step_or_sub_step_strategy_options, default='auto')
-
     is_template_cloned = models.BooleanField(default=False)
+    template_name_cloned_from = models.CharField(max_length=255, default='')
 
     manual_start_mode_options = [
         ('serialized', 'serialized'),
         ('non-serialized', 'non-serialized'),
     ]
-
     manual_start_mode = models.CharField(max_length=30, choices=manual_start_mode_options, default='serialized')
-
     auto_start_first_step_after_clone = models.BooleanField(default=True)
-
-
-
-
 
 
     def __str__(self):

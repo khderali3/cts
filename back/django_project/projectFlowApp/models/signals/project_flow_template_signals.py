@@ -8,8 +8,8 @@ import os
 
 
 from ..project_flow_template_models import ( 
-    ProjectFlowTemplateAttachment,ProjectFlowTemplateNoteAttachment, StepTemplateAttachment,
-    StepTemplateNoteAttachment, SubStepTemplateAttachment, SubStepTemplateNoteAttachment
+    ProjectFlowTemplateNoteAttachment,
+    StepTemplateNoteAttachment, SubStepTemplateNoteAttachment
     )
 
 
@@ -21,8 +21,8 @@ def delete_attachment_file(sender, instance, **kwargs):
 
 # Attach the signal handler to multiple models
 
-models_to_register = [  ProjectFlowTemplateAttachment,ProjectFlowTemplateNoteAttachment, StepTemplateAttachment,
-    StepTemplateNoteAttachment, SubStepTemplateAttachment, SubStepTemplateNoteAttachment ]
+models_to_register = [  ProjectFlowTemplateNoteAttachment,
+    StepTemplateNoteAttachment, SubStepTemplateNoteAttachment ]
 
 for model in models_to_register:
     pre_delete.connect(delete_attachment_file, sender=model)

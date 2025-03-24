@@ -10,12 +10,12 @@ from ..views_module.staff_workflow_views import (
     )
  
 
-from ..views_module.mount_template_views import MountWorkFlowTemplateView
+from ..views_module.mount_template_views import CloneWorkFlowTemplateView
 
 
 urlpatterns = [
  
-    path("projectflow/mount_project_flow_template/<int:template_id>/<int:projectflow_id>/", MountWorkFlowTemplateView.as_view()),
+    path("projectflow/clone_project_flow_template/<int:template_id>/<int:projectflow_id>/", CloneWorkFlowTemplateView.as_view()),
 
      path('projectflow/projectflow/', ProjectFlowView.as_view()),
      path('projectflow/projectflow/<int:id>/', ProjectFlowView.as_view()),

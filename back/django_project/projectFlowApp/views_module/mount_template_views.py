@@ -9,23 +9,23 @@ from rest_framework import status
 import os
 
 from ..models import   (
-    ProjectFlowTemplate,ProjectFlowTemplateAttachment,ProjectFlowTemplateNote,ProjectFlowTemplateNoteAttachment,
-      StepTemplate,StepTemplateAttachment,  StepTemplateNote,  StepTemplateNoteAttachment,
+    ProjectFlowTemplate,ProjectFlowTemplateNote,ProjectFlowTemplateNoteAttachment,
+      StepTemplate,  StepTemplateNote,  StepTemplateNoteAttachment,
    
-   SubStepTemplate, SubStepTemplateAttachment, SubStepTemplateNote, SubStepTemplateNoteAttachment
+   SubStepTemplate,  SubStepTemplateNote, SubStepTemplateNoteAttachment
   )
 
 
 from ..models.project_flow_models import (
-    ProjectFlow, ProjectFlowAttachment, ProjectFlowNote, ProjectFlowNoteAttachment,
-    ProjectFlowStep, ProjectFlowStepAttachment, ProjectFlowStepNote, ProjectFlowStepNoteAttachment,
-    ProjectFlowSubStep, ProjectFlowSubStepAttachment, ProjectFlowSubStepNote, ProjectFlowSubStepNoteAttachment
+    ProjectFlow,  ProjectFlowNote, ProjectFlowNoteAttachment,
+    ProjectFlowStep,  ProjectFlowStepNote, ProjectFlowStepNoteAttachment,
+    ProjectFlowSubStep,  ProjectFlowSubStepNote, ProjectFlowSubStepNoteAttachment
     )
 
 from django.core.files import File
 
 
-def mount_project_flow_template(request, template_id, projectflow_id, is_force_mount=True):
+def clone_project_flow_template(request, template_id, projectflow_id, is_force_clone=True):
     try:
         # Start a transaction
         with transaction.atomic():
@@ -33,9 +33,9 @@ def mount_project_flow_template(request, template_id, projectflow_id, is_force_m
             template = get_object_or_404(ProjectFlowTemplate, id=template_id)   
             projectflow = get_object_or_404(ProjectFlow, id=projectflow_id)
 
-            if projectflow.is_template_mounted :
-                if not is_force_mount:
-                    return Response({"message": "Workflow template already mounted."}, status=status.HTTP_400_BAD_REQUEST)
+            if projectflow.is_template_cloned :
+                if not is_force_clone:
+                    return Response({"message": "Workflow template already cloned."}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     try:
 
@@ -52,17 +52,20 @@ def mount_project_flow_template(request, template_id, projectflow_id, is_force_m
             projectflow.show_steps_to_client = template.show_steps_to_client
             projectflow.show_steps_or_sub_steps_status_log_to_client = template.show_steps_or_sub_steps_status_log_to_client
             projectflow.default_start_process_step_or_sub_step_strategy = template.default_start_process_step_or_sub_step_strategy
+            projectflow.template_name_cloned_from = template.template_name
+            projectflow.auto_start_first_step_after_clone = template.auto_start_first_step_after_clone
             projectflow.save()
 
-            project_flow_template_attachments = ProjectFlowTemplateAttachment.objects.filter(project_flow_template=template)
-            for attachment in project_flow_template_attachments:
-                if attachment.file:
-                    file_name = os.path.basename(attachment.file.name)
-                    with attachment.file.open('rb') as f:
-                        new_attachment = ProjectFlowAttachment(project_flow=projectflow, obj_type="cloned_from_template")                      
-                        new_attachment.file.save(file_name, File(f), save=True)
+            # project_flow_template_attachments = ProjectFlowTemplateAttachment.objects.filter(project_flow_template=template)
+            # for attachment in project_flow_template_attachments:
+            #     if attachment.file:
+            #         file_name = os.path.basename(attachment.file.name)
+            #         with attachment.file.open('rb') as f:
+            #             new_attachment = ProjectFlowAttachment(project_flow=projectflow, obj_type="cloned_from_template")                      
+            #             new_attachment.file.save(file_name, File(f), save=True)
 
 
+            #projectflow comments and notes
             project_flow_template_notes = ProjectFlowTemplateNote.objects.filter(project_flow_template=template)
             for note in project_flow_template_notes:
                 new_note = ProjectFlowNote(project_flow=projectflow)
@@ -97,13 +100,13 @@ def mount_project_flow_template(request, template_id, projectflow_id, is_force_m
                 new_step_obj.save()
                 new_step_obj.allowed_process_groups.set(step_template.allowed_process_groups.all())
 
-                template_step_attachments = StepTemplateAttachment.objects.filter(step_template=step_template)
-                for attachment in template_step_attachments:
-                    if attachment.file:
-                        file_name = os.path.basename(attachment.file.name)
-                        with attachment.file.open('rb') as f:
-                            new_attachment = ProjectFlowStepAttachment(step=new_step_obj)
-                            new_attachment.file.save(file_name, File(f), save=True)
+                # template_step_attachments = StepTemplateAttachment.objects.filter(step_template=step_template)
+                # for attachment in template_step_attachments:
+                #     if attachment.file:
+                #         file_name = os.path.basename(attachment.file.name)
+                #         with attachment.file.open('rb') as f:
+                #             new_attachment = ProjectFlowStepAttachment(step=new_step_obj)
+                #             new_attachment.file.save(file_name, File(f), save=True)
 
 
                 step_templates_notes = StepTemplateNote.objects.filter(step_template=step_template)
@@ -138,14 +141,14 @@ def mount_project_flow_template(request, template_id, projectflow_id, is_force_m
                     new_sub_step_obj.allowed_process_groups.set(template_sub_step.allowed_process_groups.all())
 
 
-                    template_sub_step_files = SubStepTemplateAttachment.objects.filter(sub_step_template=template_sub_step)
-                    for attachment in template_sub_step_files:
-                        if attachment.file:
-                            file_name = os.path.basename(attachment.file.name)
-                            with attachment.file.open('rb') as f:
-                                new_attachment = ProjectFlowSubStepAttachment(sub_step=new_sub_step_obj)
-                                # Save the file with only the filename
-                                new_attachment.file.save(file_name, File(f), save=True)
+                    # template_sub_step_files = SubStepTemplateAttachment.objects.filter(sub_step_template=template_sub_step)
+                    # for attachment in template_sub_step_files:
+                    #     if attachment.file:
+                    #         file_name = os.path.basename(attachment.file.name)
+                    #         with attachment.file.open('rb') as f:
+                    #             new_attachment = ProjectFlowSubStepAttachment(sub_step=new_sub_step_obj)
+                    #             # Save the file with only the filename
+                    #             new_attachment.file.save(file_name, File(f), save=True)
 
                     template_sub_step_notes = SubStepTemplateNote.objects.filter(sub_step_template=template_sub_step)
                     for template_sub_step_note in template_sub_step_notes:
@@ -163,7 +166,7 @@ def mount_project_flow_template(request, template_id, projectflow_id, is_force_m
                                     new_attachment = ProjectFlowSubStepNoteAttachment(sub_step_note=new_sub_step_obj)
                                     new_attachment.file.save(file_name, File(f), save=True)
 
-            projectflow.is_template_mounted = True
+            projectflow.is_template_cloned = True
             projectflow.save()
 
 
@@ -175,8 +178,8 @@ def mount_project_flow_template(request, template_id, projectflow_id, is_force_m
 
 
 
-class MountWorkFlowTemplateView(APIView):
+class CloneWorkFlowTemplateView(APIView):
     def post(self, request, template_id, projectflow_id): 
-        return mount_project_flow_template(request, template_id, projectflow_id)
+        return clone_project_flow_template(request, template_id, projectflow_id)
 
 

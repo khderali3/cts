@@ -5,7 +5,14 @@ import { useParams } from 'next/navigation'
 
 import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staff/features/authApiSlice";
 
-import { ProjectFlowNotes } from "@/app/(dashboard)/_components/jsx/project_flow_template/project_comments/projectFlowComments";
+// import { ProjectFlowNotes } from "@/app/(dashboard)/_components/jsx/project_flow_template/project_comments/projectFlowComments";
+
+
+import { ProjectFlowNotes } from "@/app/(dashboard)/_components/jsx/project_flow/project_comments/projectFlowComments";
+
+
+
+
 
 import { parseISO, format } from "date-fns";
   
@@ -25,8 +32,9 @@ import { useTranslations, useLocale } from "next-intl";
 
 import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 
-import { Timeline } from "@/app/(dashboard)/_components/jsx/project_flow_template/timeline";
+// import { Timeline } from "@/app/(dashboard)/_components/jsx/project_flow_template/timeline";
 
+import { Timeline } from "@/app/(dashboard)/_components/jsx/project_flow/timeline";
  
 
 
@@ -131,7 +139,7 @@ const Page = () => {
 
 
 useEffect(() => {    
-    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/${id}/get_full_flow/`
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/${id}/get_full_flow/`
     fetchData(url)
 }, [ reloadFlag ]);
 
@@ -152,10 +160,10 @@ useEffect(() => {
     
             
             <div className="   mt-2  ">
-                <h6> <Link href='/staff/projectFlow/projectFlowTemplate/'>
+                <h6> <Link href='/staff/projectFlow/projectFlow'>
                  {/* Tickets */}
-                 Project Flow Template 
-                </Link>   - Template Details </h6>
+                 ProjectFlow  
+                </Link>   - ProjectFlow Details </h6>
                 <hr />
             </div>
 
@@ -166,7 +174,7 @@ useEffect(() => {
  
 
         <div className=" col-11  border-bottom border-2   my-2  ">
-            <h3 className="text-break mx-2 " dir="auto">{data?.template_name} </h3>
+            <h3 className="text-break mx-2 " dir="auto">{data?.project_type_name} </h3>
         </div>
 
         <div className="row d-flex justify-content-between">
@@ -233,10 +241,10 @@ useEffect(() => {
 
                             <div className="p-1 row col-12 ">
                                 <div className="col-6  text-muted">
-                                    Manual Start Mode
+                                    Manual Start Mode 
                                 </div>
                                 <div className="col-6">
-                                    { data?.auto_start_first_step_after_clone   ? 'Yes' : 'No'  }
+                                    { data?.auto_start_first_step_after_mount   ? 'Yes' : 'No'  }
                                 </div>
                             </div>
     
@@ -244,17 +252,73 @@ useEffect(() => {
                         </div>
 
 
-
-
-
-
                     </div>
                     </div>
                 </div>
+
+
+ 
+
+                
             </div>
 
 
             <div className="col-lg-7  ">
+
+
+        <div className="ticket-prof   mt-3  ">
+
+
+            <div className=" d-flex  align-items-center mb-5">
+
+                <img
+
+                src={data?.project_created_user?.PRF_image ? data.project_created_user.PRF_image : "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJQAswMBIgACEQEDEQH/xAAaAAEAAwEBAQAAAAAAAAAAAAAAAQIDBAUH/8QALBABAAICAAUDAgUFAAAAAAAAAAECAxEEEjFBUSEycZGhEyJSYbEUIzNCgf/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A+4gAAAAAAAAiZ13BIrzx5OevkFhEWiZ9JhIAAAAAAAAAAAAAAAAClrxHyre+/SOigLTaZ+PCoAAAJiZjogBpGTtZeJjswTW01BuIrMTHokAAAAAAAAAABlktv0jovedV/diAAACJmIjczqPIJGFuKpHtibfZEcVH6J+oOgUx5KXj8s7nvC4AAJrPLO20TtgvjtqdA1AAAAAAAABEzqJBled2VAAAETOomZ6Q4cuT8S2+3aHTxVtY4iO8uMABUTE6ncdXbhy/iV9fdHVwtuFtrLEdpRXYAAADes7hLPHPZoAAAAAAArf2yspk9sgyAAABz8X7K/LldvE158Xp2nbiUABBpg/y1+Wbbha82XfgHYAigAL4vdLVjj9zYAAAAAABW3SVgHOExqdAAADjz4ZrO6xM1/h2Im0R1mI+ZB5w7bUw268v/JRGLDHj6g5aUm86rDux0jHXlj6kTSI1E1j4lYAAAAF8XWWqmONVXAAAAAAAABnkjuzbzG40xtHLOgQplyRjruevaPK8zqJmekPPyXnJabSC2TNfJ1nUeIZgqGjQAajwmtppO6zqUAOvDxHPPLedW7T5bvNdvD358fr1j0RWqaxM2iOyGuOuo35BcAAAAAAAAABW1eaFgHHxO64rbcL18uOuWvLbo87Nw98XrPrXzCjEOwIAAAAN+En+5MeYZY6WyW1SJl38NwsYvzWndv4BpSneerUEUAAAAAAAAAAAAABhl4XFkneuW3mGF+Bt/peJ+YdwDzP6TN4ifiSOEzfp+70wHnV4LJPWax92+Pgsce+Zs6gEVrFY1WIiP2SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//Z"}
+
+                width="40" height="40" 
+                className="  rounded-circle me-2"
+                />
+
+
+                <div className="d-flex flex-column justify-content-center ">
+                    <h6 className="m-0 fs-6 text-muted">{data?.project_created_user?.full_name}
+
+                    {data?.project_created_user?.is_staff &&  <span className="badge bg-light text-dark ms-2"> {t_common('staff')} </span> }
+
+                    </h6>
+                    <p className="m-0 text-muted"> {formatDate( data?.created_date)  }</p> 
+                </div>
+
+
+            </div>
+
+
+            <div className="ticket-details-text" dir="auto" >
+             {data?.details}
+
+                <div className=" pt-3 mt-3 ">
+                    {data?.files?.map(file => {
+
+                        return(
+                            <div key={file.id} className=" m-0 p-0 ">
+                                <Link href={file.file} className="  m-0 p-0" target="_blank">
+                                    <i className="fa fa-file me-2"></i> {file.file_name}
+                                </Link>
+                            </div>
+                            
+                        )
+                    })}
+                </div>
+
+            </div>
+            <hr   />
+        </div>
+
+
+
+
+
+
                 {/* start template body   */}
                     
 
@@ -275,7 +339,7 @@ useEffect(() => {
 
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
-                                Template ID 
+                                ProjectFlow ID 
                             </div>
                             <div className="col-6">
                                 #{ data?.id }
@@ -286,12 +350,32 @@ useEffect(() => {
 
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
-                                Template Name 
+                                Project Type  
                             </div>
                             <div className="col-6">
-                                { data?.template_name }
+                                { data?.project_type_name }
                             </div>
                         </div>
+
+                        <div className="p-1 row col-12 ">
+                            <div className="col-6  text-muted">
+                                is template cloned 
+                            </div>
+                            <div className="col-6">
+                                { data?.is_template_cloned   ? 'Yes' : 'No'  }
+                            </div>
+                        </div>
+
+                        <div className="p-1 row col-12 ">
+                            <div className="col-6  text-muted">
+                                 template cloned name 
+                            </div>
+                            <div className="col-6">
+                                { data?.template_name_cloned_from ?  data?.template_name_cloned_from : '-'  }
+                            </div>
+                        </div>
+
+
 
 
                         <div className="p-1 row col-12 ">
@@ -364,12 +448,7 @@ useEffect(() => {
             </div>
 
 
-
-
-
-
-
-
+ 
 
 
         </div>

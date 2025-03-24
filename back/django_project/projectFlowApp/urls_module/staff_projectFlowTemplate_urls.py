@@ -4,9 +4,9 @@ from django.urls import path
  
 
 from ..views_module.staff_workflow_template_views import (ProjectFlowTemplateView, StepTemplateView, StepTemplateNoteView,
-                                        StepTemplateNoteAttachmentView,ProjectFlowTemplateAttachmentView,
+                                        StepTemplateNoteAttachmentView,
                                         ProjectFlowTemplateNoteView, ProjectFlowTemplateNoteAttachmentView,
-                                        StepTemplateAttachmentView, SubStepTemplateView, SubStepTemplateAttachmentView, SubStepTemplateNoteView,
+                                         SubStepTemplateView,  SubStepTemplateNoteView,
                                         SubStepTemplateNoteAttachmentView, StepTemplateResortMoveUpOrDownView, StepTemplateResortByAbsolutePositionView,
                                         SubStepTemplateResortMoveUpOrDownView, SubStepTemplateResortByAbsolutePositionView, GetFullProjectFlowTemplateView
                                         )
@@ -21,8 +21,8 @@ urlpatterns = [
      path('project_flow_template/<int:id>/get_full_flow/', GetFullProjectFlowTemplateView.as_view()),
 
 
-     path('project_flow_template/<int:project_flow_template_id>/files/', ProjectFlowTemplateAttachmentView.as_view()),
-     path('project_flow_template/<int:project_flow_template_id>/files/<int:file_id>/', ProjectFlowTemplateAttachmentView.as_view()),
+     # path('project_flow_template/<int:project_flow_template_id>/files/', ProjectFlowTemplateAttachmentView.as_view()),
+     # path('project_flow_template/<int:project_flow_template_id>/files/<int:file_id>/', ProjectFlowTemplateAttachmentView.as_view()),
 
 
      path('project_flow_template/<int:project_flow_template_id>/note/', ProjectFlowTemplateNoteView.as_view()),
@@ -50,8 +50,8 @@ urlpatterns = [
 
 
 
-     path('project_flow_template/steps_template/<int:step_id>/files/', StepTemplateAttachmentView.as_view()),
-     path('project_flow_template/steps_template/<int:step_id>/files/<int:file_id>/', StepTemplateAttachmentView.as_view()),
+     # path('project_flow_template/steps_template/<int:step_id>/files/', StepTemplateAttachmentView.as_view()),
+     # path('project_flow_template/steps_template/<int:step_id>/files/<int:file_id>/', StepTemplateAttachmentView.as_view()),
 
 
 
@@ -82,8 +82,8 @@ urlpatterns = [
 
 
 
-     path('project_flow_template/sub_steps/<int:sub_step_id>/files/', SubStepTemplateAttachmentView.as_view()),
-     path('project_flow_template/sub_steps/<int:sub_step_id>/files/<int:file_id>/', SubStepTemplateAttachmentView.as_view()),
+     # path('project_flow_template/sub_steps/<int:sub_step_id>/files/', SubStepTemplateAttachmentView.as_view()),
+     # path('project_flow_template/sub_steps/<int:sub_step_id>/files/<int:file_id>/', SubStepTemplateAttachmentView.as_view()),
 
 
      path('project_flow_template/sub_steps/<int:sub_step_id>/sub_step_note/', SubStepTemplateNoteView.as_view()),

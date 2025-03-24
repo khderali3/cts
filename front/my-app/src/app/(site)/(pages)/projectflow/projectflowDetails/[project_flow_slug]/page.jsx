@@ -288,9 +288,6 @@ useEffect(() => {
             </div>
 
 
-
-
-
             <div className="ticket-details-text" dir="auto" >
              {projectDetails?.details}
 

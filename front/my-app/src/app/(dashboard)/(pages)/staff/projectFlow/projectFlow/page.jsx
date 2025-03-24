@@ -307,7 +307,7 @@ const handleScroll = () => {
 
 
           <td>
-            <Link href={`/staff/projectFlow/projectFlowTemplate/template_details/${obj.id}`}  >
+            <Link href={`/staff/projectFlow/projectFlow/projectFlowDetails/${obj.id}`}  >
               {obj?.project_type_name.length > 25 
               ? `${obj?.project_type_name.slice(0, 25)}...` 
               : obj?.project_type_name
@@ -322,10 +322,10 @@ const handleScroll = () => {
           <td>{formatDate(obj?.latest_activity)}</td>
           <td>{obj?.project_flow_status}</td>
           <td>
-          {obj?.project_user?.full_name.length > 15 
-            ? `${obj?.project_user?.full_name.slice(0, 15)}...` 
-            : obj?.project_user?.full_name 
-          }
+            {obj?.project_user?.full_name.length > 15 
+              ? `${obj?.project_user?.full_name.slice(0, 15)}...` 
+              : obj?.project_user?.full_name 
+            }
           </td>
 
         </tr>
@@ -355,46 +355,53 @@ const handleScroll = () => {
 
 
     <div className="d-block d-md-none">
-    {/* {data?.map((obj) => (
+      {data?.map((obj) => (
       <div className="card mb-3" key={`card_${obj?.id}`}>
         <div className="card-body">
 
           <p>
-            <strong>ID : </strong> #{formatNumber(obj?.id)}
-          </p>
-
-
-
-
-          <p>
-            <strong>Template Name : </strong>
-              <Link href={`/staff/ticket/ticketDetails/${obj.id}`}  >
-                {obj?.template_name.length > 25 
-                ? `${obj?.template_name.slice(0, 25)}...` 
-                : obj?.template_name
+            <strong>ProjectType Name : </strong> 
+              <Link href={`/staff/projectFlow/projectFlow/projectFlowDetails/${obj.id}`}  >
+                {obj?.project_type_name.length > 25 
+                ? `${obj?.project_type_name.slice(0, 25)}...` 
+                : obj?.project_type_name
                 }        
               
               </Link>
           </p>
+
+
+
+
+          <p>
+            <strong>ID : </strong>  {`#${obj?.id}`}           
+          </p>
           
           <p>
-            <strong>Show Steps To Client : </strong> {obj?.show_steps_to_client ? 'yes' : 'No'}
+            <strong>Created : </strong> {formatDate(obj?.created_date)}
           </p>
  
            
           <p>
-            <strong>steps Process Strategy : </strong> {obj?.default_start_process_step_or_sub_step_strategy}
+            <strong>Latest Activity : </strong> {formatDate(obj?.latest_activity)}
           </p>
  
           <p>
-            <strong>Manual Start Mode : </strong> {obj?.manual_start_mode}
+            <strong>Status : </strong> {obj?.project_flow_status}
           </p>
 
+          <p>
+            <strong>User : </strong>
+              {obj?.project_user?.full_name.length > 15 
+                ? `${obj?.project_user?.full_name.slice(0, 15)}...` 
+                : obj?.project_user?.full_name 
+              }         
+          </p>
 
 
         </div>
       </div>
-    ))} */}
+    ))}  
   </div>
 
    

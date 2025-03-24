@@ -1,11 +1,11 @@
 
 from rest_framework import serializers
 
-from ...models import  (ProjectFlowTemplate,ProjectFlowTemplateAttachment,ProjectFlowTemplateNote,ProjectFlowTemplateNoteAttachment,
+from ...models import  (ProjectFlowTemplate,ProjectFlowTemplateNote,ProjectFlowTemplateNoteAttachment,
                         
-                        StepTemplate, StepTemplateNote,StepTemplateNoteAttachment,StepTemplateAttachment,
+                        StepTemplate, StepTemplateNote,StepTemplateNoteAttachment,
                           
-                         SubStepTemplate, SubStepTemplateAttachment, SubStepTemplateNote, SubStepTemplateNoteAttachment,
+                         SubStepTemplate,  SubStepTemplateNote, SubStepTemplateNoteAttachment,
                         
                       )
 from django.contrib.auth.models import Group
@@ -40,11 +40,11 @@ class SubStepTemplateNoteSerializer(serializers.ModelSerializer):
 
 
 
-class SubStepTemplateAttachmentSerializer(serializers.ModelSerializer):
-    class Meta:
-      model = SubStepTemplateAttachment
-      fields = "__all__"
-      read_only_fields = ['id', "created_date" ]
+# class SubStepTemplateAttachmentSerializer(serializers.ModelSerializer):
+#     class Meta:
+#       model = SubStepTemplateAttachment
+#       fields = "__all__"
+#       read_only_fields = ['id', "created_date" ]
 
 
 
@@ -52,7 +52,7 @@ class SubStepTemplateAttachmentSerializer(serializers.ModelSerializer):
 
 class SubStepTemplateSerializer(serializers.ModelSerializer):
    
-    files = SubStepTemplateAttachmentSerializer(many=True, read_only=True, source='SubStepTemplateAttachment_sub_step_template_related_SubStepTemplate')
+    # files = SubStepTemplateAttachmentSerializer(many=True, read_only=True, source='SubStepTemplateAttachment_sub_step_template_related_SubStepTemplate')
     notes = SubStepTemplateNoteSerializer(many=True, read_only=True, source='SubStepTemplateNote_sub_step_template_related_SubStepTemplate')
     allowed_process_groups = GroupSerializer(many=True, read_only=True)  # Use GroupSerializer
 
@@ -88,19 +88,19 @@ class StepTemplateNoteSerializer(serializers.ModelSerializer):
 
 
 
-class StepTemplateAttachmentSerializer(serializers.ModelSerializer):
+# class StepTemplateAttachmentSerializer(serializers.ModelSerializer):
 
-    class Meta:
-      model = StepTemplateAttachment
-      fields = "__all__"
-      read_only_fields = ['id', "created_date"]
+#     class Meta:
+#       model = StepTemplateAttachment
+#       fields = "__all__"
+#       read_only_fields = ['id', "created_date"]
 
  
 
 
 class StepTemplateSerializer(serializers.ModelSerializer):
 
-    files = StepTemplateAttachmentSerializer(many=True, read_only=True, source='StepTemplateAttachment_step_template_StepTemplate')
+    # files = StepTemplateAttachmentSerializer(many=True, read_only=True, source='StepTemplateAttachment_step_template_StepTemplate')
     notes = StepTemplateNoteSerializer(many=True, read_only=True, source='StepsTemplateNote_step_template_related_StepTemplate')
     sub_steps = SubStepTemplateSerializer(many=True, read_only=True, source='SubStepTemplate_step_template_StepTemplate')
     allowed_process_groups = GroupSerializer(many=True, read_only=True)  # Use GroupSerializer
@@ -134,18 +134,18 @@ class ProjectFlowTemplateNoteSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', "created_date", 'updated_date' ]
 
 
-class ProjectFlowTemplateAttachmentSerializer(serializers.ModelSerializer):
+# class ProjectFlowTemplateAttachmentSerializer(serializers.ModelSerializer):
  
-    class Meta:
-      model = ProjectFlowTemplateAttachment
-      fields = "__all__"
-      read_only_fields = ['id', "created_date" ]
+#     class Meta:
+#       model = ProjectFlowTemplateAttachment
+#       fields = "__all__"
+#       read_only_fields = ['id', "created_date" ]
 
 
 
 
 class GetFullProjectFlowTemplateSeriallizer(serializers.ModelSerializer):
-    files = ProjectFlowTemplateAttachmentSerializer(many=True, read_only=True, source='ProjectFlowTemplateAttachment_project_flow_template_related_ProjectFlowTemplate')
+    # files = ProjectFlowTemplateAttachmentSerializer(many=True, read_only=True, source='ProjectFlowTemplateAttachment_project_flow_template_related_ProjectFlowTemplate')
     notes = ProjectFlowTemplateNoteSerializer(many=True, read_only=True, source='ProjectFlowTemplateNote_project_flow_template_releated_ProjectFlowTemplate')
     steps = StepTemplateSerializer(many=True, read_only=True, source='StepTemplate_project_flow_template_related_ProjectFlowTemplate')
     class Meta:

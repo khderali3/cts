@@ -1,8 +1,8 @@
 
  
 from ..models import   (ProjectFlowTemplate, StepTemplate,  StepTemplateNote,  StepTemplateNoteAttachment,
-                        ProjectFlowTemplateAttachment, ProjectFlowTemplateNote, ProjectFlowTemplateNoteAttachment,
-                        StepTemplateAttachment, SubStepTemplate, SubStepTemplateAttachment, SubStepTemplateNote, SubStepTemplateNoteAttachment
+                         ProjectFlowTemplateNote, ProjectFlowTemplateNoteAttachment,
+                         SubStepTemplate,  SubStepTemplateNote, SubStepTemplateNoteAttachment
                          
                          )
 from rest_framework.views import APIView
@@ -11,10 +11,10 @@ import json
  
 from ..serializers_module.staff_serializer_projectFlow_Template import ( 
     ProjectFlowTemplateSeriallizer, StepTemplateSerializer,CreateOrGetOrPutObjectStepTemplateSerializer,  StepTemplateNoteSerializer, CreateOrGetOrPutObjectStepTemplateNoteSerializer,
-    CreateStepTemplateNoteAttachmentSerializer, StepTemplateNoteAttachmentSerializer, CreateProjectFlowTemplateAttachmentSerializer,
-    ProjectFlowTemplateAttachmentSerializer, CreateOrGetOrPutObjectProjectFlowTemplateSeriallizer, ProjectFlowTemplateNoteSerializer, CreateProjectFlowTemplateNoteAttachmentSerializer,
-    ProjectFlowTemplateNoteAttachmentSerializer, CreateOrGetOrPutObjectProjectFlowTemplateNoteSerializer, StepTemplateAttachmentSerializer, createStepTemplateAttachmentSerializer,
-    SubStepTemplateSerializer, SubStepTemplateAttachmentSerializer, CreateSubStepTemplateAttachmentSerializer, CreateOrGetOrPutObjectSubStepTemplateSerializer, SubStepTemplateNoteSerializer,
+    CreateStepTemplateNoteAttachmentSerializer, StepTemplateNoteAttachmentSerializer, 
+     CreateOrGetOrPutObjectProjectFlowTemplateSeriallizer, ProjectFlowTemplateNoteSerializer, CreateProjectFlowTemplateNoteAttachmentSerializer,
+    ProjectFlowTemplateNoteAttachmentSerializer, CreateOrGetOrPutObjectProjectFlowTemplateNoteSerializer,  
+    SubStepTemplateSerializer,   CreateOrGetOrPutObjectSubStepTemplateSerializer, SubStepTemplateNoteSerializer,
     SubStepTemplateNoteAttachmentSerializer, CreateSubStepTemplateNoteAttachmentSerializer, CreateOrGetOrPutObjectSubStepTemplateNoteSerializer
     )
 
@@ -350,44 +350,44 @@ class SubStepTemplateNoteView(APIView):
 
 
 
-class SubStepTemplateAttachmentView(APIView):
-    def post(self , request, sub_step_id):
-        data = request.data.copy()
-        data['sub_step_template'] = sub_step_id
+# class SubStepTemplateAttachmentView(APIView):
+#     def post(self , request, sub_step_id):
+#         data = request.data.copy()
+#         data['sub_step_template'] = sub_step_id
 
-        serializer = CreateSubStepTemplateAttachmentSerializer(data=data, context={'request': request})
+#         serializer = CreateSubStepTemplateAttachmentSerializer(data=data, context={'request': request})
 
-        if serializer.is_valid():
-            list_obj = serializer.save()
-            return Response(SubStepTemplateAttachmentSerializer(list_obj, many=True,  context={'request': request} ).data , status=status.HTTP_200_OK)
-        else :
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         if serializer.is_valid():
+#             list_obj = serializer.save()
+#             return Response(SubStepTemplateAttachmentSerializer(list_obj, many=True,  context={'request': request} ).data , status=status.HTTP_200_OK)
+#         else :
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-    def get(self, request, sub_step_id, file_id=None):
-        if file_id:
-            try:
-                obj = SubStepTemplateAttachment.objects.get(id=file_id)
-                serializer = SubStepTemplateAttachmentSerializer(obj,  context={'request': request} )
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            except SubStepTemplateAttachment.DoesNotExist:
-                return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
-            except Exception as e :
-                return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            list_obj = SubStepTemplateAttachment.objects.filter(sub_step_template=sub_step_id)
-            serializer = SubStepTemplateAttachmentSerializer(list_obj, many=True,  context={'request': request} )
-            return Response(serializer.data, status=status.HTTP_200_OK)
+#     def get(self, request, sub_step_id, file_id=None):
+#         if file_id:
+#             try:
+#                 obj = SubStepTemplateAttachment.objects.get(id=file_id)
+#                 serializer = SubStepTemplateAttachmentSerializer(obj,  context={'request': request} )
+#                 return Response(serializer.data, status=status.HTTP_200_OK)
+#             except SubStepTemplateAttachment.DoesNotExist:
+#                 return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+#             except Exception as e :
+#                 return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             list_obj = SubStepTemplateAttachment.objects.filter(sub_step_template=sub_step_id)
+#             serializer = SubStepTemplateAttachmentSerializer(list_obj, many=True,  context={'request': request} )
+#             return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def delete(self, request, sub_step_id, file_id=None):
-        try:
-            obj = SubStepTemplateAttachment.objects.get(id=file_id)
-            obj.delete()
-            return Response({'message': "object has been deleted"}, status=status.HTTP_202_ACCEPTED)
-        except SubStepTemplateAttachment.DoesNotExist:
-            return Response({"message": "object not found"}, status=status.HTTP_404_NOT_FOUND)
+#     def delete(self, request, sub_step_id, file_id=None):
+#         try:
+#             obj = SubStepTemplateAttachment.objects.get(id=file_id)
+#             obj.delete()
+#             return Response({'message': "object has been deleted"}, status=status.HTTP_202_ACCEPTED)
+#         except SubStepTemplateAttachment.DoesNotExist:
+#             return Response({"message": "object not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        except Exception as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+#         except Exception as e:
+#             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -570,51 +570,51 @@ class ProjectFlowTemplateNoteView(APIView):
  
 
 
-class ProjectFlowTemplateAttachmentView(APIView):
+# class ProjectFlowTemplateAttachmentView(APIView):
 
-    def post(self, request, project_flow_template_id):
+#     def post(self, request, project_flow_template_id):
 
-        data = request.data.copy()
+#         data = request.data.copy()
         
  
-        data['project_flow_template'] =  project_flow_template_id 
+#         data['project_flow_template'] =  project_flow_template_id 
 
-        serializer = CreateProjectFlowTemplateAttachmentSerializer(data=data, context={'request': request})
+#         serializer = CreateProjectFlowTemplateAttachmentSerializer(data=data, context={'request': request})
 
-        if serializer.is_valid():
-            list_data = serializer.save()
-            return Response(CreateProjectFlowTemplateAttachmentSerializer( list_data, many=True, context={'request': request}).data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         if serializer.is_valid():
+#             list_data = serializer.save()
+#             return Response(CreateProjectFlowTemplateAttachmentSerializer( list_data, many=True, context={'request': request}).data, status=status.HTTP_201_CREATED)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, project_flow_template_id, file_id=None):
+#     def get(self, request, project_flow_template_id, file_id=None):
 
-        if file_id:
-            try:
-                file_obj = ProjectFlowTemplateAttachment.objects.get(id=file_id)
-                serializer = ProjectFlowTemplateAttachmentSerializer(file_obj , context={'request': request})
-                return Response(serializer.data, status=status.HTTP_200_OK)
+#         if file_id:
+#             try:
+#                 file_obj = ProjectFlowTemplateAttachment.objects.get(id=file_id)
+#                 serializer = ProjectFlowTemplateAttachmentSerializer(file_obj , context={'request': request})
+#                 return Response(serializer.data, status=status.HTTP_200_OK)
             
-            except ProjectFlowTemplateAttachment.DoesNotExist:
-                return Response({"message": "object not found"}, status=status.HTTP_400_BAD_REQUEST)
-            except Exception as e:            
-                return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST) 
-        else:
-            files_list = ProjectFlowTemplateAttachment.objects.filter(project_flow_template=project_flow_template_id)
-            serializer = ProjectFlowTemplateAttachmentSerializer(files_list, many=True, context={'request': request})
-            return Response(serializer.data, status=status.HTTP_200_OK)
+#             except ProjectFlowTemplateAttachment.DoesNotExist:
+#                 return Response({"message": "object not found"}, status=status.HTTP_400_BAD_REQUEST)
+#             except Exception as e:            
+#                 return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST) 
+#         else:
+#             files_list = ProjectFlowTemplateAttachment.objects.filter(project_flow_template=project_flow_template_id)
+#             serializer = ProjectFlowTemplateAttachmentSerializer(files_list, many=True, context={'request': request})
+#             return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def delete(self, request,  project_flow_template_id, file_id=None):
+#     def delete(self, request,  project_flow_template_id, file_id=None):
 
-        try:
-            file_obj = ProjectFlowTemplateAttachment.objects.get(id=file_id)
-            file_obj.delete()
-            return Response({"message": "object has been deleted "}, status=status.HTTP_202_ACCEPTED)
+#         try:
+#             file_obj = ProjectFlowTemplateAttachment.objects.get(id=file_id)
+#             file_obj.delete()
+#             return Response({"message": "object has been deleted "}, status=status.HTTP_202_ACCEPTED)
         
-        except ProjectFlowTemplateAttachment.DoesNotExist:
-            return Response({"message": "object not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e :
-            return Response({'messge:' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
+#         except ProjectFlowTemplateAttachment.DoesNotExist:
+#             return Response({"message": "object not found"}, status=status.HTTP_404_NOT_FOUND)
+#         except Exception as e :
+#             return Response({'messge:' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -744,46 +744,46 @@ class StepTemplateNoteView(APIView):
 
 
 
-class StepTemplateAttachmentView(APIView):
+# class StepTemplateAttachmentView(APIView):
 
-    def post(self, request, step_id ):
+#     def post(self, request, step_id ):
 
-        data = request.data.copy()
-        data['step_template'] = step_id
-        serializer = createStepTemplateAttachmentSerializer(data=data, context={'request': request})
-        if serializer.is_valid():
-            list_obj = serializer.save()
-            return Response(StepTemplateAttachmentSerializer(list_obj, many=True, context={'request': request}).data,  status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+#         data = request.data.copy()
+#         data['step_template'] = step_id
+#         serializer = createStepTemplateAttachmentSerializer(data=data, context={'request': request})
+#         if serializer.is_valid():
+#             list_obj = serializer.save()
+#             return Response(StepTemplateAttachmentSerializer(list_obj, many=True, context={'request': request}).data,  status=status.HTTP_201_CREATED)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 
-    def get(self, request, step_id, file_id=None):
-        if file_id:
-            try:
-                file_obj = StepTemplateAttachment.objects.get(id=file_id)
-                serializer = StepTemplateAttachmentSerializer(file_obj, context={'request': request})
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            except StepTemplateAttachment.DoesNotExist:
-                return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
-            except Exception as e :
-                return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+#     def get(self, request, step_id, file_id=None):
+#         if file_id:
+#             try:
+#                 file_obj = StepTemplateAttachment.objects.get(id=file_id)
+#                 serializer = StepTemplateAttachmentSerializer(file_obj, context={'request': request})
+#                 return Response(serializer.data, status=status.HTTP_200_OK)
+#             except StepTemplateAttachment.DoesNotExist:
+#                 return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+#             except Exception as e :
+#                 return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
  
-        else:
-            list_obj = StepTemplateAttachment.objects.filter(step_template=step_id)
-            serializer = StepTemplateAttachmentSerializer(list_obj, many=True, context={'request': request})
-            return Response(serializer.data, status=status.HTTP_200_OK)
+#         else:
+#             list_obj = StepTemplateAttachment.objects.filter(step_template=step_id)
+#             serializer = StepTemplateAttachmentSerializer(list_obj, many=True, context={'request': request})
+#             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-    def delete(self, request, step_id, file_id):
-        try:
-            obj = StepTemplateAttachment.objects.get(id=file_id)
-            obj.delete()
-            return Response({'message': "object has been deleted"}, status=status.HTTP_202_ACCEPTED)
-        except StepTemplateAttachment.DoesNotExist:
-            return Response({"message": "object not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e :
-            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+#     def delete(self, request, step_id, file_id):
+#         try:
+#             obj = StepTemplateAttachment.objects.get(id=file_id)
+#             obj.delete()
+#             return Response({'message': "object has been deleted"}, status=status.HTTP_202_ACCEPTED)
+#         except StepTemplateAttachment.DoesNotExist:
+#             return Response({"message": "object not found"}, status=status.HTTP_404_NOT_FOUND)
+#         except Exception as e :
+#             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

@@ -3,8 +3,8 @@
 from rest_framework.serializers import ModelSerializer
 
 from ..models import  (ProjectFlowTemplate, StepTemplate, StepTemplateNote,
-                        StepTemplateNoteAttachment, ProjectFlowTemplateAttachment, ProjectFlowTemplateNote, ProjectFlowTemplateNoteAttachment,
-                        StepTemplateAttachment, SubStepTemplate, SubStepTemplateAttachment, SubStepTemplateNote, SubStepTemplateNoteAttachment,
+                        StepTemplateNoteAttachment,  ProjectFlowTemplateNote, ProjectFlowTemplateNoteAttachment,
+                         SubStepTemplate,  SubStepTemplateNote, SubStepTemplateNoteAttachment,
                         
                       )
 
@@ -124,63 +124,63 @@ class SubStepTemplateNoteSerializer(ModelSerializer):
 
 
 
-class CreateSubStepTemplateAttachmentSerializer(ModelSerializer):
-    file = serializers.FileField(required=False)
-    class Meta:
-      model = SubStepTemplateAttachment
-      fields = "__all__"
-      read_only_fields = ['id', "created_date" ]
+# class CreateSubStepTemplateAttachmentSerializer(ModelSerializer):
+#     file = serializers.FileField(required=False)
+#     class Meta:
+#       model = SubStepTemplateAttachment
+#       fields = "__all__"
+#       read_only_fields = ['id', "created_date" ]
 
 
-    def validate(self, attrs):
+#     def validate(self, attrs):
 
-      request = self.context.get('request')
-      files = request.FILES.getlist('file[]')
+#       request = self.context.get('request')
+#       files = request.FILES.getlist('file[]')
 
-      if not files:  # Check if no files are provided
-        raise serializers.ValidationError({"file[]": "This field is required and cannot be empty."})
-      return attrs
+#       if not files:  # Check if no files are provided
+#         raise serializers.ValidationError({"file[]": "This field is required and cannot be empty."})
+#       return attrs
 
-    def create(self, validated_data):
-        request = self.context.get('request')
+#     def create(self, validated_data):
+#         request = self.context.get('request')
 
-        files = request.FILES.getlist('file[]')  # Retrieve file list
+#         files = request.FILES.getlist('file[]')  # Retrieve file list
 
-        attachments = []
-        for file in files:
-            attachment = SubStepTemplateAttachment.objects.create(**validated_data, file=file)
-            attachments.append(attachment)
+#         attachments = []
+#         for file in files:
+#             attachment = SubStepTemplateAttachment.objects.create(**validated_data, file=file)
+#             attachments.append(attachment)
 
-        return attachments
-        # attachment_ids = []
-        # for attachment in attachments:
-        #     attachment_ids.append(attachment.id)
+#         return attachments
+#         # attachment_ids = []
+#         # for attachment in attachments:
+#         #     attachment_ids.append(attachment.id)
 
-        # return SubStepTemplateAttachment.objects.filter(id__in=attachment_ids)
+#         # return SubStepTemplateAttachment.objects.filter(id__in=attachment_ids)
 
-    def to_representation(self, instance):
-        request = self.context.get("request")  # Get request safely
-        representation = super().to_representation(instance)
+#     def to_representation(self, instance):
+#         request = self.context.get("request")  # Get request safely
+#         representation = super().to_representation(instance)
 
-        if instance.file:
-            file_url = instance.file.url
-            if request:
-                file_url = request.build_absolute_uri(file_url)
+#         if instance.file:
+#             file_url = instance.file.url
+#             if request:
+#                 file_url = request.build_absolute_uri(file_url)
 
-            representation["file"] = file_url  # Ensure full URL
+#             representation["file"] = file_url  # Ensure full URL
 
-        return representation
-
-
-
+#         return representation
 
 
 
-class SubStepTemplateAttachmentSerializer(ModelSerializer):
-    class Meta:
-      model = SubStepTemplateAttachment
-      fields = "__all__"
-      read_only_fields = ['id', "created_date" ]
+
+
+
+# class SubStepTemplateAttachmentSerializer(ModelSerializer):
+#     class Meta:
+#       model = SubStepTemplateAttachment
+#       fields = "__all__"
+#       read_only_fields = ['id', "created_date" ]
 
 
 
@@ -190,7 +190,7 @@ class SubStepTemplateAttachmentSerializer(ModelSerializer):
 class CreateOrGetOrPutObjectSubStepTemplateSerializer(ModelSerializer):
    
 
-    files = SubStepTemplateAttachmentSerializer(many=True, read_only=True, source='SubStepTemplateAttachment_sub_step_template_related_SubStepTemplate')
+    # files = SubStepTemplateAttachmentSerializer(many=True, read_only=True, source='SubStepTemplateAttachment_sub_step_template_related_SubStepTemplate')
     show_to_client = serializers.BooleanField(default=True)
 
     class Meta:
@@ -198,31 +198,31 @@ class CreateOrGetOrPutObjectSubStepTemplateSerializer(ModelSerializer):
       fields = "__all__"
       read_only_fields = ['id', "created_date","updated_date", 'sorted_weight' ]
 
-    def create(self, validated_data):
-        obj = super().create(validated_data)  # Create StepTemplateNote instance
-        request = self.context.get("request")
+    # def create(self, validated_data):
+    #     obj = super().create(validated_data)  # Create StepTemplateNote instance
+    #     request = self.context.get("request")
         
-        files = request.FILES.getlist("file[]") if request else []
+    #     files = request.FILES.getlist("file[]") if request else []
 
-        attachments = []
-        for file in files:
-            attachment = SubStepTemplateAttachment.objects.create(
-                sub_step_template=obj, file=file
-            )
-            attachments.append(attachment)
+    #     attachments = []
+    #     for file in files:
+    #         attachment = SubStepTemplateAttachment.objects.create(
+    #             sub_step_template=obj, file=file
+    #         )
+    #         attachments.append(attachment)
 
-        obj.files = attachments  # Attach created files
-        return obj
+    #     obj.files = attachments  # Attach created files
+    #     return obj
 
-    def update(self, obj, validated_data):
-        obj = super().update(obj, validated_data)  # Update StepTemplateNote instance
-        request = self.context.get("request")
-        files = request.FILES.getlist("file[]") if request else []
-        for file in files:
-            SubStepTemplateAttachment.objects.create(
-                sub_step_template=obj, file=file
-            )
-        return obj
+    # def update(self, obj, validated_data):
+    #     obj = super().update(obj, validated_data)  # Update StepTemplateNote instance
+    #     request = self.context.get("request")
+    #     files = request.FILES.getlist("file[]") if request else []
+    #     for file in files:
+    #         SubStepTemplateAttachment.objects.create(
+    #             sub_step_template=obj, file=file
+    #         )
+    #     return obj
 
 
 class SubStepTemplateSerializer(ModelSerializer):
@@ -343,62 +343,62 @@ class ProjectFlowTemplateNoteSerializer(ModelSerializer):
 
 
 
-class ProjectFlowTemplateAttachmentSerializer(ModelSerializer):
+# class ProjectFlowTemplateAttachmentSerializer(ModelSerializer):
  
-    class Meta:
-      model = ProjectFlowTemplateAttachment
-      fields = "__all__"
-      read_only_fields = ['id', "created_date" ]
+#     class Meta:
+#       model = ProjectFlowTemplateAttachment
+#       fields = "__all__"
+#       read_only_fields = ['id', "created_date" ]
 
 
 
 
 
-class CreateProjectFlowTemplateAttachmentSerializer(ModelSerializer):
+# class CreateProjectFlowTemplateAttachmentSerializer(ModelSerializer):
 
  
-    file = serializers.FileField(required=False)
+#     file = serializers.FileField(required=False)
 
 
-    class Meta:
-      model = ProjectFlowTemplateAttachment
-      fields = "__all__"
-      read_only_fields = ['id', "created_date" ]
+#     class Meta:
+#       model = ProjectFlowTemplateAttachment
+#       fields = "__all__"
+#       read_only_fields = ['id', "created_date" ]
  
     
-    def validate(self, attrs):
+#     def validate(self, attrs):
 
-      request = self.context.get('request')
-      files = request.FILES.getlist('file[]')
+#       request = self.context.get('request')
+#       files = request.FILES.getlist('file[]')
 
-      if not files:  # Check if no files are provided
-        raise serializers.ValidationError({"file[]": "This field is required and cannot be empty."})
-      return attrs    
+#       if not files:  # Check if no files are provided
+#         raise serializers.ValidationError({"file[]": "This field is required and cannot be empty."})
+#       return attrs    
 
-    def create(self, validated_data):
-        request = self.context.get('request')
+#     def create(self, validated_data):
+#         request = self.context.get('request')
 
-        files = request.FILES.getlist('file[]')  # Retrieve file list
+#         files = request.FILES.getlist('file[]')  # Retrieve file list
 
-        attachments = [
-            ProjectFlowTemplateAttachment.objects.create(**validated_data, file=file)
-            for file in files
-        ]
-        return attachments
-        # return ProjectFlowTemplateAttachment.objects.filter(id__in=[a.id for a in attachments])  # Return queryset
+#         attachments = [
+#             ProjectFlowTemplateAttachment.objects.create(**validated_data, file=file)
+#             for file in files
+#         ]
+#         return attachments
+#         # return ProjectFlowTemplateAttachment.objects.filter(id__in=[a.id for a in attachments])  # Return queryset
 
-    def to_representation(self, instance):
-        request = self.context.get("request")  # Get request safely
-        representation = super().to_representation(instance)
+#     def to_representation(self, instance):
+#         request = self.context.get("request")  # Get request safely
+#         representation = super().to_representation(instance)
 
-        if instance.file:
-            file_url = instance.file.url
-            if request:
-                file_url = request.build_absolute_uri(file_url)
+#         if instance.file:
+#             file_url = instance.file.url
+#             if request:
+#                 file_url = request.build_absolute_uri(file_url)
 
-            representation["file"] = file_url  # Ensure full URL
+#             representation["file"] = file_url  # Ensure full URL
 
-        return representation
+#         return representation
 
 
 class StepTemplateNoteAttachmentSerializer(ModelSerializer):
@@ -512,7 +512,7 @@ class StepTemplateNoteSerializer(ModelSerializer):
 
 
 class CreateOrGetOrPutObjectProjectFlowTemplateSeriallizer(ModelSerializer):
-    files = ProjectFlowTemplateAttachmentSerializer(many=True, read_only=True, source='ProjectFlowTemplateAttachment_project_flow_template_related_ProjectFlowTemplate')
+    # files = ProjectFlowTemplateAttachmentSerializer(many=True, read_only=True, source='ProjectFlowTemplateAttachment_project_flow_template_related_ProjectFlowTemplate')
 
     class Meta:
       model = ProjectFlowTemplate
@@ -520,33 +520,33 @@ class CreateOrGetOrPutObjectProjectFlowTemplateSeriallizer(ModelSerializer):
       read_only_fields = ['id', "created_date"]
 
 
-    def create(self, validated_data):
-        obj = super().create(validated_data)  # Create StepTemplateNote instance
-        file_list = self.context["request"].FILES.getlist("file[]")  # Get file list
+    # def create(self, validated_data):
+    #     obj = super().create(validated_data)  # Create StepTemplateNote instance
+    #     file_list = self.context["request"].FILES.getlist("file[]")  # Get file list
 
-        created_files = []  # To hold the created attachments
+    #     created_files = []  # To hold the created attachments
 
-        if file_list:
-            for file in file_list:
-                attachment = ProjectFlowTemplateAttachment.objects.create(
-                    project_flow_template=obj,
-                    file=file,
-                )
-                created_files.append(attachment)
+    #     if file_list:
+    #         for file in file_list:
+    #             attachment = ProjectFlowTemplateAttachment.objects.create(
+    #                 project_flow_template=obj,
+    #                 file=file,
+    #             )
+    #             created_files.append(attachment)
 
-        # Manually set the attachments field to return only the created attachments
-        obj.files = created_files
-        return obj
+    #     # Manually set the attachments field to return only the created attachments
+    #     obj.files = created_files
+    #     return obj
 
-    def update(self, obj, validated_data):
-        obj = super().update(obj, validated_data)  # Update StepTemplateNote instance
-        request = self.context.get("request")
-        files = request.FILES.getlist("file[]") if request else []
-        for file in files:
-            ProjectFlowTemplateAttachment.objects.create(
-                project_flow_template=obj, file=file
-            )
-        return obj
+    # def update(self, obj, validated_data):
+    #     obj = super().update(obj, validated_data)  # Update StepTemplateNote instance
+    #     request = self.context.get("request")
+    #     files = request.FILES.getlist("file[]") if request else []
+    #     for file in files:
+    #         ProjectFlowTemplateAttachment.objects.create(
+    #             project_flow_template=obj, file=file
+    #         )
+    #     return obj
 
 
 
@@ -564,66 +564,66 @@ class ProjectFlowTemplateSeriallizer(ModelSerializer):
  
 
 
-class createStepTemplateAttachmentSerializer(ModelSerializer):
+# class createStepTemplateAttachmentSerializer(ModelSerializer):
 
-    file = serializers.FileField( required=False )
-
-
-    class Meta:
-      model = StepTemplateAttachment
-      fields = "__all__"
-      read_only_fields = ['id', "created_date"]
+#     file = serializers.FileField( required=False )
 
 
-    def validate(self, attrs):
-
-      request = self.context.get('request')
-      files = request.FILES.getlist('file[]')
-
-      if not files:  # Check if no files are provided
-        raise serializers.ValidationError({"file[]": "This field is required and cannot be empty."})
-      return attrs
-
-    def create(self, validated_data):
-        request = self.context.get('request')
-
-        files = request.FILES.getlist('file[]')  # Retrieve file list
-
-        attachments = []
-        for file in files:
-            attachment = StepTemplateAttachment.objects.create(**validated_data, file=file)
-            attachments.append(attachment)
-
-        return attachments
-        # attachment_ids = []
-        # for attachment in attachments:
-        #     attachment_ids.append(attachment.id)
-
-        # return StepTemplateAttachment.objects.filter(id__in=attachment_ids)
-
-    def to_representation(self, instance):
-        request = self.context.get("request")  # Get request safely
-        representation = super().to_representation(instance)
-
-        if instance.file:
-            file_url = instance.file.url
-            if request:
-                file_url = request.build_absolute_uri(file_url)
-
-            representation["file"] = file_url  # Ensure full URL
-
-        return representation
+#     class Meta:
+#       model = StepTemplateAttachment
+#       fields = "__all__"
+#       read_only_fields = ['id', "created_date"]
 
 
+#     def validate(self, attrs):
+
+#       request = self.context.get('request')
+#       files = request.FILES.getlist('file[]')
+
+#       if not files:  # Check if no files are provided
+#         raise serializers.ValidationError({"file[]": "This field is required and cannot be empty."})
+#       return attrs
+
+#     def create(self, validated_data):
+#         request = self.context.get('request')
+
+#         files = request.FILES.getlist('file[]')  # Retrieve file list
+
+#         attachments = []
+#         for file in files:
+#             attachment = StepTemplateAttachment.objects.create(**validated_data, file=file)
+#             attachments.append(attachment)
+
+#         return attachments
+#         # attachment_ids = []
+#         # for attachment in attachments:
+#         #     attachment_ids.append(attachment.id)
+
+#         # return StepTemplateAttachment.objects.filter(id__in=attachment_ids)
+
+#     def to_representation(self, instance):
+#         request = self.context.get("request")  # Get request safely
+#         representation = super().to_representation(instance)
+
+#         if instance.file:
+#             file_url = instance.file.url
+#             if request:
+#                 file_url = request.build_absolute_uri(file_url)
+
+#             representation["file"] = file_url  # Ensure full URL
+
+#         return representation
 
 
 
-class StepTemplateAttachmentSerializer(ModelSerializer):
+
+
+# class StepTemplateAttachmentSerializer(ModelSerializer):
  
-    class Meta:
-      model = StepTemplateAttachment
-      fields = "__all__"
-      read_only_fields = ['id', "created_date"]
+#     class Meta:
+#       model = StepTemplateAttachment
+#       fields = "__all__"
+#       read_only_fields = ['id', "created_date"]
 
  
 
@@ -632,7 +632,7 @@ class StepTemplateAttachmentSerializer(ModelSerializer):
 
 class CreateOrGetOrPutObjectStepTemplateSerializer(ModelSerializer):
 
-    files = StepTemplateAttachmentSerializer(many=True, read_only=True, source='StepTemplateAttachment_step_template_StepTemplate')
+    # files = StepTemplateAttachmentSerializer(many=True, read_only=True, source='StepTemplateAttachment_step_template_StepTemplate')
     show_to_client = serializers.BooleanField(default=True)
 
     class Meta:
@@ -641,33 +641,33 @@ class CreateOrGetOrPutObjectStepTemplateSerializer(ModelSerializer):
       read_only_fields = ['id', "created_date", "updated_date", "sorted_weight"]
 
  
-    def create(self, validated_data):
-        obj = super().create(validated_data)  # Create StepTemplateNote instance
-        file_list = self.context["request"].FILES.getlist("file[]")  # Get file list
+    # def create(self, validated_data):
+    #     obj = super().create(validated_data)  # Create StepTemplateNote instance
+    #     file_list = self.context["request"].FILES.getlist("file[]")  # Get file list
 
-        created_files = []  # To hold the created attachments
+    #     created_files = []  # To hold the created attachments
 
-        if file_list:
-            for file in file_list:
-                attachment = StepTemplateAttachment.objects.create(
-                    step_template=obj,
-                    file=file,
-                )
-                created_files.append(attachment)
+    #     if file_list:
+    #         for file in file_list:
+    #             attachment = StepTemplateAttachment.objects.create(
+    #                 step_template=obj,
+    #                 file=file,
+    #             )
+    #             created_files.append(attachment)
 
-        # Manually set the attachments field to return only the created attachments
-        obj.files = created_files
-        return obj
+    #     # Manually set the attachments field to return only the created attachments
+    #     obj.files = created_files
+    #     return obj
 
-    def update(self, obj, validated_data):
-        obj = super().update(obj, validated_data)  # Update StepTemplateNote instance
-        request = self.context.get("request")
-        files = request.FILES.getlist("file[]") if request else []
-        for file in files:
-            StepTemplateAttachment.objects.create(
-                step_template=obj, file=file
-            )
-        return obj
+    # def update(self, obj, validated_data):
+    #     obj = super().update(obj, validated_data)  # Update StepTemplateNote instance
+    #     request = self.context.get("request")
+    #     files = request.FILES.getlist("file[]") if request else []
+    #     for file in files:
+    #         StepTemplateAttachment.objects.create(
+    #             step_template=obj, file=file
+    #         )
+    #     return obj
 
 
 

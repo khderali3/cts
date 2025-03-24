@@ -17,6 +17,15 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+from django.contrib.auth.models import Group
+
+
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ['id', 'name']  # Returning id and name
+
+
  
 def get_user_data(obj, user_attr_name, request=None):
     user = getattr(obj, user_attr_name, None)
@@ -98,6 +107,10 @@ class ProjectFlowSubStepSerializer(serializers.ModelSerializer):
 
     handler_user = serializers.SerializerMethodField(read_only=True)
 
+    allowed_process_groups = GroupSerializer(many=True, read_only=True)  # Use GroupSerializer
+
+
+
     class Meta:
         model = ProjectFlowSubStep
         fields = "__all__"
@@ -168,6 +181,7 @@ class ProjectFlowStepSerializer(serializers.ModelSerializer):
     sub_steps = ProjectFlowSubStepSerializer(many=True, read_only=True, source="ProjectFlowSubStep_step_related_ProjectFlowStep")
 
     handler_user = serializers.SerializerMethodField(read_only=True)
+    allowed_process_groups = GroupSerializer(many=True, read_only=True)  # Use GroupSerializer
 
     class Meta:
         model = ProjectFlowStep
