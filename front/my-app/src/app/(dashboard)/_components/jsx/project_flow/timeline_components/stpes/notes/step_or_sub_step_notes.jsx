@@ -23,9 +23,10 @@ export const  StepOrSubStepNotes = ({notes=[], notes_for="step", step_or_step_id
     const  isFirstRender = useRef(true)
     const [reloadComponentFlag, setReloadComponentFlag] = useState(false)
  
+    
     const url = notes_for === "step" 
-        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/steps_template/${step_or_step_id}/steps_template_note/`
-        : `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/sub_steps/${step_or_step_id}/sub_step_note/` 
+        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/step/${step_or_step_id}/note/`
+        : `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/step/sub_step/${step_or_step_id}/note/` 
 
  
     const handleReloadFlag = () => {

@@ -262,7 +262,7 @@ const handleScroll = () => {
 
             <div className="col-md-5 col-12 pt-2">
               <label htmlFor="template_name" className="form-label small"> 
-                Template Name
+                 Name
             
               </label>
               <input

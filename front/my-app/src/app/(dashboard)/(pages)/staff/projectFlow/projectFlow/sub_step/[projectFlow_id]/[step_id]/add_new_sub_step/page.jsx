@@ -18,7 +18,7 @@ import { useParams } from "next/navigation";
 
 const Page = () =>  {
 
-    const {template_id, step_id} = useParams()
+    const {projectFlow_id, step_id} = useParams()
  
     const locale = useLocale()
 
@@ -89,13 +89,13 @@ const Page = () =>  {
       
 
     const response = await customFetch({
-      url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/steps_template/${step_id}/sub_steps/`,
+      url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/step/${step_id}/sub_step/`,
       method: "POST",
       body: form,  
     });
 
     if(response && response.data){
-      router.push(`/staff/projectFlow/projectFlowTemplate/template_details/${template_id}`)
+      router.push(`/staff/projectFlow/projectFlow/projectFlowDetails/${projectFlow_id}`)
       toast.success('data has been added succusfuly');
 
     } else{

@@ -14,12 +14,14 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 import { GroupAasignOrRemove } from "@/app/(dashboard)/_components/jsx/project_flow_template/groups assign/group";
 
 
+
+
 import { useParams } from "next/navigation";
 
 
 const Page = () =>  {
 
-    const {template_id} = useParams()
+    const {projectFlow_id} = useParams()
  
     const locale = useLocale()
 
@@ -90,13 +92,13 @@ const Page = () =>  {
 
 
     const response = await customFetch({
-      url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/${template_id}/steps_template/`,
+      url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/${projectFlow_id}/step/`,
       method: "POST",
       body: form,  
     });
 
     if(response && response.data){
-      router.push(`/staff/projectFlow/projectFlowTemplate/template_details/${template_id}`)
+      router.push(`/staff/projectFlow/projectFlow/projectFlowDetails/${projectFlow_id}`)
       toast.success('data has been added succusfuly');
 
     } else{

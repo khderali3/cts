@@ -17,7 +17,7 @@ export const Timeline = ({ data = {} }) => {
 
 <div className="container-fluid py-5 px-1 mx-1 px-md-2 ">
   <h2 className="text-center  border-bottom pb-2 mb-4">
-    Project Flow Template Timeline
+    Project Flow  Timeline
   </h2>
 
   <div className="position-relative timeline-dash d-flex flex-column align-items-start ">

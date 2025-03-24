@@ -16,8 +16,8 @@ export const AddNewNote =  ({note_for="step", step_or_step_id=null, handleReload
     const [formData, setFormData] = useState({note : ""});
 
     const submit_url = note_for === "step" 
-        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/steps_template/${step_or_step_id}/steps_template_note/`
-        : `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/sub_steps/${step_or_step_id}/sub_step_note/`  
+        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/step/${step_or_step_id}/note/`
+        : `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/step/sub_step/${step_or_step_id}/note/`  
  
         
 

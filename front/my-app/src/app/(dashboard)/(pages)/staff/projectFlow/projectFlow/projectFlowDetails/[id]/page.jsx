@@ -427,10 +427,9 @@ useEffect(() => {
                             </div>
                         </div>
 
- 
 
                         <div className="p-1 row col-12 ">
-                            <Link className="btn btn-light " href={`/staff/projectFlow/projectFlowTemplate/step/${data?.id}/add_new_step`}>Add New Step</Link>
+                            <Link className="btn btn-light " href={`/staff/projectFlow/projectFlow/step/${data?.id}/add_new_step`}>Add New Step</Link>
                         </div>
 
 

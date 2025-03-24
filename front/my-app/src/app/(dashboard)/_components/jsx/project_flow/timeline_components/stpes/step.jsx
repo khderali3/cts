@@ -74,10 +74,10 @@ export const StepComponent = ({ step={}, index=0 }) =>{
                         <div className="col-md-12">
 
                             <div className="  ">
-                                <Link className="  " href={`/staff/projectFlow/projectFlowTemplate/sub_step/${step?.project_flow_template}/${step?.id}/add_new_sub_step`}>Add Sub-Step</Link>
+                                <Link className="  " href={`/staff/projectFlow/projectFlow/sub_step/${step?.project_flow}/${step?.id}/add_new_sub_step`}>Add Sub-Step</Link>
                             </div>
 
-
+                            
 
                             <div className="mb-2">
                                 <span className="fw-bold  ">Step ID:</span> 
