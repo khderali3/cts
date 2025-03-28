@@ -4,7 +4,7 @@ import { StepComponent } from "./timeline_components/stpes/step";
 
 
 
-export const Timeline = ({ data = {} }) => {
+export const Timeline = ({ data = {}, reloadComponentMethod }) => {
 
 
  
@@ -25,7 +25,7 @@ export const Timeline = ({ data = {} }) => {
     {data?.steps?.map(( step, index) => 
 
         
-        <StepComponent key={`step_${step.id}`}  step={step} index={index} />
+        <StepComponent key={`step_${step.id}`}  step={step} index={index} reloadComponentMethod={reloadComponentMethod}/>
 
         
 

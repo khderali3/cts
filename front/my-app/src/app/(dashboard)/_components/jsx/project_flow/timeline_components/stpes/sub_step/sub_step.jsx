@@ -15,13 +15,12 @@ import { ChangeStatusLogs } from "../../status_change_logs";
 import { StepOrSubStepNotes } from "../notes/step_or_sub_step_notes";
 import { get_string_allow_process_by, get_string_show_status_log_to_client, get_string_start_process_strategy } from "@/app/(dashboard)/_components/utils/projectflow/utils";
 
+import { ResortStepUpOrDown } from "../resort_step/up_or_down_buttons";
 
 
 
 
-
-
-export const SubStepComponent = ({sub_step={}, index=0}) =>{
+export const SubStepComponent = ({sub_step={}, index=0, reloadComponentMethod}) =>{
 
     const locale = useLocale(); // Get the current locale
     const currentLocale = locale === "ar" ? ar : enUS;
@@ -53,7 +52,11 @@ export const SubStepComponent = ({sub_step={}, index=0}) =>{
                {index +1}
             </div>
 
+                    <ResortStepUpOrDown move_to="up" resort_for='sub_step' step_id={sub_step?.step}  sub_step_id={sub_step?.id} reloadComponentMethod={reloadComponentMethod} />
 
+                    <ResortStepUpOrDown move_to="down" resort_for='sub_step' step_id={sub_step?.step}  sub_step_id={sub_step?.id} reloadComponentMethod={reloadComponentMethod} />  
+ 
+ 
 
  
                     <div className="mb-2">

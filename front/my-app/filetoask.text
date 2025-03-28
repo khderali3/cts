@@ -1,120 +1,114 @@
-hi  , 
+hi , i am using next.js v 15 with app router as front end with bootstrap 5 , and django as backend , 
+and i have the follwing component :
 
-          <div className="col">
-            <div className="product-desc w-100 d-flex flex-column justify-content-center align-items-center mt-5">
-              {/* Main Image */}
-              <div className="product-img">
-                <img
-                  src={mainImage}
-                  alt="Main Project Image"
-                  className="image_product_dait"
-                  style={{ width: "100%", maxHeight: "500px", objectFit: "contain" }}
-                />
-              </div>
+<div className="card-body">
 
-              {/* Extra Images (Including Main Image) */}
-              <div className="mt-3 row">
-                {allImages.map((image, index) => (
-                  <div className="col-3  col-sm-2 p-2 m-3 " key={index}>
-                    <img
-                      src={image}
-                      alt={`Image ${index}`}
-                      className={`     ${image === mainImage ? "border border-3 border-success" : ""}`}
-                      onClick={() => setMainImage(image)}
-                      // style={{ width: "100%", height: "auto", cursor: "pointer" }}
-
-                      style={{
-                        width: "100px",  // Fixed width
-                        height: "100px", // Fixed height
-                        objectFit: "contain", // Ensure the full image is visible
-                        // backgroundColor: "#f8f9fa", // Light background for empty spaces
-                        border: "1px solid #ddd", // Optional border
-                        cursor: "pointer",
-                       }}
+    <div id="extra_info"> 
 
 
-                    />
-                  </div>
-                ))}
-              </div>
-
-
-
-
-
-
-
-
-              {/* Project Description */}
-              <div className="text mt-5 mb-5 col-md-10 col-12">
-                <h2 className="text-light text-bolder col-12 fs-1">
-                  {locale === "ar" ? data.project_name_ar : data.project_name}
-                  <p>{locale === "ar" ? data.project_name_hint_ar : data.project_name_hint}</p>
-                </h2>
-                <p className="fs-6 text-light" style={{ whiteSpace: "pre-line" }}>
-                  {locale === "ar" ? data.project_description_ar : data.project_description}
-                </p>
-
-                {/* Attachment Files Section */}
-                {data?.files && data?.files.length > 0 && (
-                  
-                  <div className="attachments ">
-                    <hr />  
-                    <p className="text-light  fs-8  mb-0 ">Attachments:</p>
-                      {data.files.map((file, index) => (
-                          <div key={file.id}>
-                            <a href={file.file} target="_blank" rel="noopener noreferrer" className="text-decoration-none">
-                              {/* 📎  */}
-                              <i className="fas fa-paperclip me-2"></i> {/* FontAwesome Paperclip Icon */}
-                              {file.file_name}  {/* File Icon with Name */}
-                            </a>
-                          </div> 
-                      ))}
-                  </div>
-                )}
-
-
-              <div className="d-flex justify-content-center align-items-center"> 
-                <ButtonProjectApplyNow />
-              </div>
-
-
-              </div>
-
+        <div className="p-1 row col-12 ">
+            <div className="col-6  text-muted">
+                ProjectFlow ID 
             </div>
-          </div>
+            <div className="col-6">
+                #{ data?.id }
+            </div>
+        </div>
+
+
+        <div className="p-1 row col-12 ">
+            <div className="col-6  text-muted">
+                Project Type  
+            </div>
+            <div className="col-6">
+                { data?.project_type_name }
+            </div>
+        </div>
+
+        <div className="p-1 row col-12 ">
+            <div className="col-6  text-muted">
+                is template cloned 
+            </div>
+            <div className="col-6">
+                { data?.is_template_cloned   ? 'Yes' : 'No'  }
+            </div>
+        </div>
+
+        <div className="p-1 row col-12 ">
+            <div className="col-6  text-muted">
+                    template cloned name 
+            </div>
+            <div className="col-6">
+                { data?.template_name_cloned_from ?  data?.template_name_cloned_from : '-'  }
+            </div>
+        </div>
 
 
 
 
-why extra images "Extra Images" for eatch page the margin is desplay deffrent from other pages , "based on the image uploaded"
+        <div className="p-1 row col-12 ">
+            <div className="col-6  text-muted">
+                Steps Process Strategy 
+            </div>
+            <div className="col-6">
+                { data?.default_start_process_step_or_sub_step_strategy  }
+            </div>
+        </div>
+
+        <div className="p-1 row col-12 ">
+            <div className="col-6  text-muted">
+                Manual Start Mode 
+            </div>
+            <div className="col-6">
+                { data?.manual_start_mode }
+            </div>
+        </div>
 
 
-how to make ui same as best practise ?
-note : i am just tolking about the follwin component :
 
-              {/* Extra Images (Including Main Image) */}
-              <div className="mt-3 row">
-                {allImages.map((image, index) => (
-                  <div className="col-3  col-sm-2 p-2 m-3 " key={index}>
-                    <img
-                      src={image}
-                      alt={`Image ${index}`}
-                      className={`     ${image === mainImage ? "border border-3 border-success" : ""}`}
-                      onClick={() => setMainImage(image)}
-                      // style={{ width: "100%", height: "auto", cursor: "pointer" }}
-
-                      style={{
-                        width: "100px",  // Fixed width
-                        height: "100px", // Fixed height
-                        objectFit: "contain", // Ensure the full image is visible
-                        // backgroundColor: "#f8f9fa", // Light background for empty spaces
-                        border: "1px solid #ddd", // Optional border
-                        cursor: "pointer",
-                       }}
+        <div className="p-1 row col-12 ">
+            <div className="col-6  text-muted">
+                Auto Start First Step 
+            </div>
+            <div className="col-6">
+                { data?.auto_start_first_step_after_clone   ? 'Yes' : 'No'  }
+            </div>
+        </div>
 
 
-                    />
-                  </div>
-                ))}
-              </div>
+        <div className="p-1 row col-12 ">
+            <div className="col-6  text-muted">
+                Show Steps To Client 
+            </div>
+            <div className="col-6">
+                { data?.show_steps_to_client   ? 'Yes' : 'No'  }
+            </div>
+        </div>
+
+
+        <div className="p-1 row col-12 ">
+            <div className="col-6  text-muted">
+                Show Step Status Logs To Client 
+            </div>
+            <div className="col-6">
+                { data?.show_steps_or_sub_steps_status_log_to_client   ? 'Yes' : 'No'  }
+            </div>
+        </div>
+
+
+        <div className="p-1 row col-12 ">
+            <Link className="btn btn-light " href={`/staff/projectFlow/projectFlow/step/${data?.id}/add_new_step`}>Add New Step</Link>
+        </div>
+
+
+
+    </div>
+
+
+    <div id="out_collepse"> this is whoing out of collepse </div>
+
+</div>
+
+
+
+i wana make div with id "extra_info" collepsed tuggle , and div with id "out_collepse" alwese showin , using bootstrap 5 classes. how to do that as best practse and nice ui ? 

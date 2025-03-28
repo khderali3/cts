@@ -322,7 +322,7 @@ useEffect(() => {
                 {/* start template body   */}
                     
 
-                <Timeline data={data} />
+                <Timeline data={data} reloadComponentMethod={reloadComponentMethod} />
 
 
                 {/* end template body */}
@@ -333,109 +333,125 @@ useEffect(() => {
 
             <div className="col-lg-5  ">
                 <div className="card   d-lg-block d-none">
-
+ 
                     <div className="card-body">
+                        {/* Toggle Button */}
+                        <button 
+                        className="btn btn-light d-flex align-items-center justify-content-center gap-2 rounded-pill px-3 py-2 shadow-sm mb-4"
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#extra_info"
+                        aria-expanded="false"
+                        aria-controls="extra_info"
+                        >
+                        <i className="bi bi-info-circle-fill"></i> <span>More Info</span>
+                        </button>
 
-
-                        <div className="p-1 row col-12 ">
-                            <div className="col-6  text-muted">
-                                ProjectFlow ID 
+        
+                        <div id="extra_info" className="collapse ">  
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6 text-muted">ProjectFlow ID</div>
+                                <div className="col-6">#{data?.id}</div>
                             </div>
-                            <div className="col-6">
-                                #{ data?.id }
-                            </div>
-                        </div>
-
-
-
-                        <div className="p-1 row col-12 ">
-                            <div className="col-6  text-muted">
-                                Project Type  
-                            </div>
-                            <div className="col-6">
-                                { data?.project_type_name }
-                            </div>
-                        </div>
-
-                        <div className="p-1 row col-12 ">
-                            <div className="col-6  text-muted">
-                                is template cloned 
-                            </div>
-                            <div className="col-6">
-                                { data?.is_template_cloned   ? 'Yes' : 'No'  }
-                            </div>
-                        </div>
-
-                        <div className="p-1 row col-12 ">
-                            <div className="col-6  text-muted">
-                                 template cloned name 
-                            </div>
-                            <div className="col-6">
-                                { data?.template_name_cloned_from ?  data?.template_name_cloned_from : '-'  }
-                            </div>
-                        </div>
 
 
 
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6 text-muted">Is Template Cloned</div>
+                                <div className="col-6">{data?.is_template_cloned ? 'Yes' : 'No'}</div>
+                            </div>
 
-                        <div className="p-1 row col-12 ">
-                            <div className="col-6  text-muted">
-                                Steps Process Strategy 
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6 text-muted">Template Cloned Name</div>
+                                <div className="col-6">{data?.template_name_cloned_from || '-'}</div>
                             </div>
-                            <div className="col-6">
-                                { data?.default_start_process_step_or_sub_step_strategy  }
-                            </div>
-                        </div>
- 
-                        <div className="p-1 row col-12 ">
-                            <div className="col-6  text-muted">
-                                Manual Start Mode 
-                            </div>
-                            <div className="col-6">
-                                { data?.manual_start_mode }
-                            </div>
-                        </div>
 
-
-
-                        <div className="p-1 row col-12 ">
-                            <div className="col-6  text-muted">
-                                Auto Start First Step 
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6 text-muted">Steps Process Strategy</div>
+                                <div className="col-6">{data?.default_start_process_step_or_sub_step_strategy}</div>
                             </div>
-                            <div className="col-6">
-                                { data?.auto_start_first_step_after_clone   ? 'Yes' : 'No'  }
-                            </div>
-                        </div>
 
- 
-                        <div className="p-1 row col-12 ">
-                            <div className="col-6  text-muted">
-                                Show Steps To Client 
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6 text-muted">Manual Start Mode</div>
+                                <div className="col-6">{data?.manual_start_mode}</div>
                             </div>
-                            <div className="col-6">
-                                { data?.show_steps_to_client   ? 'Yes' : 'No'  }
+
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6 text-muted">Auto Start First Step</div>
+                                <div className="col-6">{data?.auto_start_first_step_after_clone ? 'Yes' : 'No'}</div>
+                            </div>
+
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6 text-muted">Show Steps To Client</div>
+                                <div className="col-6">{data?.show_steps_to_client ? 'Yes' : 'No'}</div>
+                            </div>
+
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6 text-muted">Show Step Status Logs To Client</div>
+                                <div className="col-6">{data?.show_steps_or_sub_steps_status_log_to_client ? 'Yes' : 'No'}</div>
+                            </div>
+
+                            <div className="p-1 row col-12 ">
+                                <Link className="btn btn-light" href={`/staff/projectFlow/projectFlow/step/${data?.id}/add_new_step`}>
+                                    Add New Step
+                                </Link>
                             </div>
                         </div>
 
 
-                        <div className="p-1 row col-12 ">
-                            <div className="col-6  text-muted">
-                                Show Step Status Logs To Client 
-                            </div>
-                            <div className="col-6">
-                                { data?.show_steps_or_sub_steps_status_log_to_client   ? 'Yes' : 'No'  }
-                            </div>
-                        </div>
-
-
-                        <div className="p-1 row col-12 ">
-                            <Link className="btn btn-light " href={`/staff/projectFlow/projectFlow/step/${data?.id}/add_new_step`}>Add New Step</Link>
-                        </div>
-
+                        <hr />
 
                         
+                        <div className="p-1 row col-12 align-items-center ">
+                            <div className="col-6 text-muted">Project Type</div>
+                            <div className="col-6">{data?.project_type_name}</div>
+                        </div>
+
+                        <div className="p-1 row col-12 ">
+                            <div className="col-6  text-muted">
+            
+                                Requester:
+                            </div>
+                            <div className="col-6">
+                                {data?.project_created_user?.full_name}
+                            </div>
+                        </div>
+
+
+                        <div className="p-1 row col-12 ">
+                            <div className="col-6  text-muted">
+            
+                                Related User:
+                            </div>
+                            <div className="col-6">
+                                {data?.project_created_user?.full_name}
+                            </div>
+                        </div>
+
+                        <div className="p-1 row col-12">
+                            <div className="col-6  text-muted">
+                                Created: 
+                            </div>
+                            <div className="col-6">
+                                {formatDate( data?.created_date)}
+                            </div> 
+                        </div>
+                        <div className="p-1 row col-12 ">
+                            <div className="col-6  text-muted">
+                                Latest activity: 
+                            </div>
+                            <div className="col-6">
+                                {formatDate( data?.latest_activity)}
+                            </div>
+                        </div>
+                        <hr />
+
+
 
                     </div>
+
+
+
+
 
 
 

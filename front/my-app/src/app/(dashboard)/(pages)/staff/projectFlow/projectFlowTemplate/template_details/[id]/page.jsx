@@ -258,7 +258,7 @@ useEffect(() => {
                 {/* start template body   */}
                     
 
-                <Timeline data={data} />
+                <Timeline data={data} reloadComponentMethod={reloadComponentMethod} />
 
 
                 {/* end template body */}

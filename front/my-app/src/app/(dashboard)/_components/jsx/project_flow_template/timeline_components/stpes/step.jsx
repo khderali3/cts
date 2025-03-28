@@ -19,13 +19,18 @@ import { StepOrSubStepSingleNote } from "./notes/step_or_sub_step_single_note";
 import { StepOrSubStepNotes } from "./notes/step_or_sub_step_notes";
 
 
+
+import { ResortStepUpOrDown } from "./resort_step/up_or_down_buttons";
+
+
+
 import { get_string_allow_process_by, get_string_show_status_log_to_client, get_string_start_process_strategy } from "@/app/(dashboard)/_components/utils/projectflow/utils";
 
 
 
 
 
-export const StepComponent = ({ step={}, index=0 }) =>{
+export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
 
     const locale = useLocale(); // Get the current locale
     const currentLocale = locale === "ar" ? ar : enUS;
@@ -48,21 +53,21 @@ export const StepComponent = ({ step={}, index=0 }) =>{
 
         <div className={`timeline-icon-dash`} ></div>
             <div className="border border-secondary rounded ms-4 flex-grow-1">
-        <div 
-                className={`step-number rounded-circle d-flex justify-content-center align-items-center bg-secondary`}
-                style={{ 
-                position: 'absolute' , 
-                // top: '0px', 
-                left: '-15px', 
-                width: '30px', 
-                height: '30px', 
-                color: 'white',
- 
-                fontWeight: 'bold' 
-                }}
-            >
-               {index +1}
-        </div>
+            <div 
+                    className={`step-number rounded-circle d-flex justify-content-center align-items-center bg-secondary`}
+                    style={{ 
+                    position: 'absolute' , 
+                    // top: '0px', 
+                    left: '-15px', 
+                    width: '30px', 
+                    height: '30px', 
+                    color: 'white',
+    
+                    fontWeight: 'bold' 
+                    }}
+                >
+                {index +1}
+            </div>
 
 
 
@@ -74,8 +79,16 @@ export const StepComponent = ({ step={}, index=0 }) =>{
                         <div className="col-md-12">
 
                             <div className="  ">
-                                <Link className="  " href={`/staff/projectFlow/projectFlowTemplate/sub_step/${step?.project_flow_template}/${step?.id}/add_new_sub_step`}>Add Sub-Step</Link>
+                                <Link className="" href={`/staff/projectFlow/projectFlowTemplate/sub_step/${step?.project_flow_template}/${step?.id}/add_new_sub_step`}>Add Sub-Step</Link>
                             </div>
+
+
+
+                            <ResortStepUpOrDown move_to="up" resort_for='step' template_id={step?.project_flow_template} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />
+
+                            <ResortStepUpOrDown move_to="down" resort_for='step' template_id={step?.project_flow_template} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
+
+
 
 
 
@@ -185,8 +198,8 @@ export const StepComponent = ({ step={}, index=0 }) =>{
                             <SubStepComponent
                              key={`sub_step_${sub_step.id}`} 
                              sub_step={sub_step} 
-                             index={index} 
-                             
+                             index={index}
+                             reloadComponentMethod={reloadComponentMethod} 
                              />
                             
                             

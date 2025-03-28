@@ -23,9 +23,9 @@ import { get_string_allow_process_by, get_string_show_status_log_to_client, get_
 
 
 
+import { ResortStepUpOrDown } from "./resort_step/up_or_down_buttons";
 
-
-export const StepComponent = ({ step={}, index=0 }) =>{
+export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
 
     const locale = useLocale(); // Get the current locale
     const currentLocale = locale === "ar" ? ar : enUS;
@@ -77,7 +77,18 @@ export const StepComponent = ({ step={}, index=0 }) =>{
                                 <Link className="  " href={`/staff/projectFlow/projectFlow/sub_step/${step?.project_flow}/${step?.id}/add_new_sub_step`}>Add Sub-Step</Link>
                             </div>
 
-                            
+
+
+
+
+                             <ResortStepUpOrDown move_to="up" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />
+ 
+                             <ResortStepUpOrDown move_to="down" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
+ 
+
+
+
+
 
                             <div className="mb-2">
                                 <span className="fw-bold  ">Step ID:</span> 
@@ -186,6 +197,8 @@ export const StepComponent = ({ step={}, index=0 }) =>{
                              key={`sub_step_${sub_step.id}`} 
                              sub_step={sub_step} 
                              index={index} 
+                             reloadComponentMethod={reloadComponentMethod} 
+
                              
                              />
                             
