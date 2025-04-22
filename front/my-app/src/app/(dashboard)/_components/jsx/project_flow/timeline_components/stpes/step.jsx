@@ -19,11 +19,18 @@ import { StepOrSubStepSingleNote } from "./notes/step_or_sub_step_single_note";
 import { StepOrSubStepNotes } from "./notes/step_or_sub_step_notes";
 
 
-import { get_string_allow_process_by, get_string_show_status_log_to_client, get_string_start_process_strategy } from "@/app/(dashboard)/_components/utils/projectflow/utils";
+import { get_string_allow_process_by, get_string_step_or_sub_step_show_status_log_to_client_projectFlow, get_string_step_or_sub_step_start_process_strategy_projectFlow } from "@/app/(dashboard)/_components/utils/projectflow/utils";
 
-
+import { StartOrEndStepOrSubStepProcess } from "../start_end_process_for_step_or_substep/start_end_process";
+ 
 
 import { ResortStepUpOrDown } from "./resort_step/up_or_down_buttons";
+
+import { ProgressCircle } from "../../progress";
+
+
+
+
 
 export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
 
@@ -70,15 +77,25 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
 
                 <div className="p-3">
 
-                    <div className="row">
-                        <div className="col-md-12">
+                    <div className=" ">
+ 
+
+
+                        <button 
+                        className="btn btn-light d-flex align-items-center justify-content-center gap-2 rounded-pill px-3 py-2 shadow-sm mb-4"
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#step_extra_info"
+                        aria-expanded="false"
+                        aria-controls="step_extra_info"
+                        >
+                        <i className="bi bi-info-circle-fill"></i> <span>More Info</span>
+                        </button>
+
+                        <div id="step_extra_info" className="collapse "  >  
 
                             <div className="  ">
                                 <Link className="  " href={`/staff/projectFlow/projectFlow/sub_step/${step?.project_flow}/${step?.id}/add_new_sub_step`}>Add Sub-Step</Link>
                             </div>
-
-
-
 
 
                              <ResortStepUpOrDown move_to="up" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />
@@ -86,42 +103,21 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                              <ResortStepUpOrDown move_to="down" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
  
 
-
-
-
-
-                            <div className="mb-2">
-                                <span className="fw-bold  ">Step ID:</span> 
-                                <span className="ms-2 text-secondary ">{step?.id && step?.id}.</span>
-                            </div>
-
-                            <div className="mb-2">
-                                <span className="fw-bold">Step Title:</span> 
-                                <span className="ms-2 text-secondary">{step?.step_name && step?.step_name}.</span>
-                            </div>
-
-                            <div className="mb-2">
-                                <span className="fw-bold">Step Details:</span> 
-                                <span className="ms-2 text-muted">{step?.step_description && step?.step_description}</span>
-                            </div>
- 
-                            <div className="mb-2">
+                             <div className="mb-2">
                                 <span className="fw-bold">Show To Client:</span> 
                                 <span className="ms-2 text-muted">{step?.show_to_client ? 'Yes' : 'No'  }</span>
                             </div>
 
 
                             <div className="mb-2  ">
-                                <span className="fw-bold  ">Start Process Strategy:</span> 
-                                <span className="ms-2 text-muted  ">{  get_string_start_process_strategy(step?.start_process_step_strategy)  }</span>
+                                <span className="fw-bold  ">Start Process Strategy: </span> 
+                                <span className="ms-2 text-muted ">{get_string_step_or_sub_step_start_process_strategy_projectFlow(step?.start_process_step_strategy)}</span>
                             </div>
 
 
-
-
                             <div className="mb-2">
-                                <span className="fw-bold">Allowed Process By:</span> 
-                                <span className="ms-2 text-muted">{  get_string_allow_process_by(step?.allowed_process_by)  }</span>
+                                <span className="fw-bold">Allowed Process By: </span>  
+                                <span className="ms-2 text-muted">{get_string_allow_process_by(step?.allowed_process_by)}</span>
                             </div>
 
                             
@@ -130,25 +126,96 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                                 <div className="mb-2">
                                     <span className="fw-bold">Allowed Process Groups:</span> 
                                     <span className="ms-2 text-muted">[{step?.allowed_process_groups.map(group => group.name).join(", ")}]</span>
-                                    </div>
+                                </div>
                             
                             }
 
 
- 
 
 
                             <div className  ="mb-2">
                                 <span className="fw-bold">Show Status Logs To Client:</span> 
-                                <span className="ms-2 text-muted">{ get_string_show_status_log_to_client(step?.show_status_log_to_client) }</span>
+                                <span className="ms-2 text-muted">{ get_string_step_or_sub_step_show_status_log_to_client_projectFlow(step?.show_status_log_to_client) }</span>
                             </div>
 
 
 
+                        </div>
+                        
+                        <hr />
+
+
+                        <div className="row">
+
+                            <div className="col-md-6"> 
+                    
+                                <div className="mb-2 ">
+                                    <span className="fw-bold  ">Step ID:</span> 
+                                    <span className="ms-2 text-secondary ">{step?.id && step?.id}.</span>
+                                </div>
+
+                                <div className="mb-2  ">
+                                    <span className="fw-bold">Step Title:</span> 
+                                    <span className="ms-2 text-secondary">{step?.step_name && step?.step_name}.</span>
+                                </div>
+
+                                <div className="mb-2  ">
+                                    <span className="fw-bold">Step Details:</span> 
+                                    <span className="ms-2 text-muted">{step?.step_description && step?.step_description}</span>
+                                </div>
+    
+
+
+
+                                <div className="mb-2  ">
+                                    <span className="fw-bold">Step status:</span> 
+                                    <span className="ms-2 text-muted">{step?.project_flow_step_status && step?.project_flow_step_status}</span>
+                                </div>
+
+                                <div className="mb-2  ">
+                                    <span className="fw-bold">can_requester_start_step:</span> 
+                                    {/* <span className="ms-2 text-muted">{step?.can_requester_handle}</span> */}
+                                    <span className="ms-2 text-muted">{step?.can_requester_start_step?.toString()}</span>
+
+                                </div>
+
+
+ 
+
+                                <StartOrEndStepOrSubStepProcess action="start_process" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
+
+                                <StartOrEndStepOrSubStepProcess action="end_process" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
+
+                                
+                            </div>
+
+
+                            <div className="col-md-6">
+                                <ProgressCircle targetPercentage={step?.step_completed_percentage || 0} />
+                            </div>
+
+
 
                         </div>
+
  
                     </div> 
+
+
+
+
+
+                {/* Start & End Process Dates */}
+                <div className="row">
+                    <div className="col-md-6">
+                        <span className="fw-bold">Start Process Date:</span> 
+                        <span className="ms-2 text-primary">{ step?.start_date_process ? formatDate(step?.start_date_process) :" - " }</span>
+                    </div>
+                    <div className="col-md-6">
+                        <span className="fw-bold">End Process Date:</span> 
+                        <span className="ms-2 text-danger">{ step?.end_date_process ? formatDate(step?.end_date_process) :" - " }</span>
+                    </div>
+                </div>
 
 
 
@@ -164,6 +231,11 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                             </div>
                         </div> 
                     }
+
+
+
+
+
 
 
                     

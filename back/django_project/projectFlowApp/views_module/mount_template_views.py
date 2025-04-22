@@ -54,6 +54,11 @@ def clone_project_flow_template(request, template_id, projectflow_id, is_force_c
             projectflow.default_start_process_step_or_sub_step_strategy = template.default_start_process_step_or_sub_step_strategy
             projectflow.template_name_cloned_from = template.template_name
             projectflow.auto_start_first_step_after_clone = template.auto_start_first_step_after_clone
+
+            if projectflow.auto_start_first_step_after_clone:
+                projectflow.project_flow_status = 'in_progress'
+            else :
+                projectflow.project_flow_status = 'pending'
             projectflow.save()
 
             # project_flow_template_attachments = ProjectFlowTemplateAttachment.objects.filter(project_flow_template=template)
@@ -99,16 +104,10 @@ def clone_project_flow_template(request, template_id, projectflow_id, is_force_c
                 new_step_obj.step_type = step_template.step_type
                 new_step_obj.save()
                 new_step_obj.allowed_process_groups.set(step_template.allowed_process_groups.all())
-
-                # template_step_attachments = StepTemplateAttachment.objects.filter(step_template=step_template)
-                # for attachment in template_step_attachments:
-                #     if attachment.file:
-                #         file_name = os.path.basename(attachment.file.name)
-                #         with attachment.file.open('rb') as f:
-                #             new_attachment = ProjectFlowStepAttachment(step=new_step_obj)
-                #             new_attachment.file.save(file_name, File(f), save=True)
+             
 
 
+ 
                 step_templates_notes = StepTemplateNote.objects.filter(step_template=step_template)
                 for step_template_note_obj in step_templates_notes:
                     new_step_note_obj = ProjectFlowStepNote(project_step=new_step_obj)
@@ -165,6 +164,13 @@ def clone_project_flow_template(request, template_id, projectflow_id, is_force_c
                                 with attachment.file.open('rb') as f:
                                     new_attachment = ProjectFlowSubStepNoteAttachment(sub_step_note=new_sub_step_obj)
                                     new_attachment.file.save(file_name, File(f), save=True)
+
+
+            if projectflow.auto_start_first_step_after_clone:
+                first_step = projectflow.ProjectFlowStep_ProjectFlow_related_ProjectFlow.all().first()
+                if first_step:  # Ensure there is a step before modifying it
+                    first_step.project_flow_step_status = 'in_progress'
+                    first_step.save()
 
             projectflow.is_template_cloned = True
             projectflow.save()

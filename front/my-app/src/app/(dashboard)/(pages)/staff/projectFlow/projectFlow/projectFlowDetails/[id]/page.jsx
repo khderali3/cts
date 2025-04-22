@@ -10,7 +10,7 @@ import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staf
 
 import { ProjectFlowNotes } from "@/app/(dashboard)/_components/jsx/project_flow/project_comments/projectFlowComments";
 
-
+import { ProgressCircleDetailsInfo } from "@/app/(dashboard)/_components/jsx/project_flow/progress";
 
 
 
@@ -21,7 +21,7 @@ import { useSelector } from "react-redux";
  
 import Link from "next/link";
 
- 
+import { ButtonCloneTemplate } from "@/app/(dashboard)/_components/jsx/project_flow/clone_template_components/clone_template_button";
 
 import { toast } from "react-toastify";
 
@@ -347,7 +347,7 @@ useEffect(() => {
                         </button>
 
         
-                        <div id="extra_info" className="collapse ">  
+                        <div id="extra_info" className="collapse "  >  
                             <div className="p-1 row col-12 ">
                                 <div className="col-6 text-muted">ProjectFlow ID</div>
                                 <div className="col-6">#{data?.id}</div>
@@ -390,11 +390,18 @@ useEffect(() => {
                                 <div className="col-6">{data?.show_steps_or_sub_steps_status_log_to_client ? 'Yes' : 'No'}</div>
                             </div>
 
-                            <div className="p-1 row col-12 ">
-                                <Link className="btn btn-light" href={`/staff/projectFlow/projectFlow/step/${data?.id}/add_new_step`}>
+                            <div className="p-1     ">
+                                <Link className="btn btn-light  btn-sm small" href={`/staff/projectFlow/projectFlow/step/${data?.id}/add_new_step`}>
                                     Add New Step
                                 </Link>
                             </div>
+
+                            <div className="p-1     ">
+                                 <ButtonCloneTemplate project_id={data?.id} reloadComponentMethod={reloadComponentMethod}/>
+                            </div>
+
+
+
                         </div>
 
 
@@ -443,19 +450,50 @@ useEffect(() => {
                                 {formatDate( data?.latest_activity)}
                             </div>
                         </div>
+
+                        <div className="p-1 row col-12 ">
+                            <div className="col-6  text-muted">
+                                status : 
+                            </div>
+                            <div className="col-6">
+                                {data?.project_flow_status}
+                            </div>
+                        </div>
+
+
+
+
+
                         <hr />
 
+                    <div className="p-1 row col-12 d-flex justify-content-start   align-items-center ">
+                        <div className="col-6  text-muted">
+                            Progress
+                        </div>
+                        <div className="col-6">
 
+                            <ProgressCircleDetailsInfo  targetPercentage={data?.steps_completion_percentage || 0} animation_speed={100}/>
+        
+                        </div>
 
                     </div>
+ 
+                    </div>
 
-
+ 
 
 
 
 
 
                 </div>
+
+
+
+
+
+
+
 
                 <hr />
                 <ProjectFlowNotes notes={data?.notes || []} project_id={data?.id} />

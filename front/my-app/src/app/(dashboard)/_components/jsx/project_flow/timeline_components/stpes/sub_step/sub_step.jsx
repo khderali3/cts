@@ -13,7 +13,7 @@ import { ChangeStatusLogs } from "../../status_change_logs";
 
 
 import { StepOrSubStepNotes } from "../notes/step_or_sub_step_notes";
-import { get_string_allow_process_by, get_string_show_status_log_to_client, get_string_start_process_strategy } from "@/app/(dashboard)/_components/utils/projectflow/utils";
+import { get_string_allow_process_by, get_string_step_or_sub_step_show_status_log_to_client_projectFlow, get_string_step_or_sub_step_start_process_strategy_projectFlow } from "@/app/(dashboard)/_components/utils/projectflow/utils";
 
 import { ResortStepUpOrDown } from "../resort_step/up_or_down_buttons";
 
@@ -85,7 +85,10 @@ export const SubStepComponent = ({sub_step={}, index=0, reloadComponentMethod}) 
 
                     <div className="mb-2">
                         <span className="fw-bold">Start Process Strategy:</span> 
-                        <span className="ms-2 text-muted">{  get_string_start_process_strategy(sub_step?.start_process_step_strategy)  }</span>
+                        <span className="ms-2 text-muted">
+                            {  get_string_step_or_sub_step_start_process_strategy_projectFlow(sub_step?.start_process_sub_step_strategy)  }
+                            
+                        </span>
                     </div>
 
 
@@ -97,6 +100,7 @@ export const SubStepComponent = ({sub_step={}, index=0, reloadComponentMethod}) 
                         <span className="ms-2 text-muted">{  get_string_allow_process_by(sub_step?.allowed_process_by)  }</span>
                     </div>
 
+
                     {sub_step?.allowed_process_by === "specific_staff_group"  &&
                             
                             <div className="mb-2">
@@ -107,16 +111,46 @@ export const SubStepComponent = ({sub_step={}, index=0, reloadComponentMethod}) 
                         }
  
 
- 
+                        <div className="mb-2">
+                            <span className="fw-bold">Sub Step status:</span> 
+                            <span className="ms-2 text-muted">{sub_step?.project_flow_sub_step_status && sub_step.project_flow_sub_step_status}</span>
+                        </div>
 
 
                         <div className  ="mb-2">
                             <span className="fw-bold">Show Status Logs To Client:</span> 
-                            <span className="ms-2 text-muted">{ get_string_show_status_log_to_client(sub_step?.show_status_log_to_client) }</span>
+                            <span className="ms-2 text-muted">{ get_string_step_or_sub_step_show_status_log_to_client_projectFlow(sub_step?.show_status_log_to_client) }</span>
                         </div>
 
 
 
+                        {/* Start & End Process Dates */}
+                        <div className="row">
+                            <div className="col-md-6">
+                                <span className="fw-bold">Start Process Date:</span> 
+                                <span className="ms-2 text-primary">{ sub_step?.start_date_process ? formatDate(sub_step?.start_date_process) :" - " }</span>
+                            </div>
+                            <div className="col-md-6">
+                                <span className="fw-bold">End Process Date:</span> 
+                                <span className="ms-2 text-danger">{ sub_step?.end_date_process ? formatDate(sub_step?.end_date_process) :" - " }</span>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+                    {sub_step?.status_logs && sub_step.status_logs.length > 0 &&
+                        <div   className="mt-3">
+                            <h6 className="fw-bold">Change Sub-Step Status Logs</h6>
+                            <div className="list-group small border rounded p-2" style={{ maxHeight: "150px", overflowY: "auto" }}>
+
+                            {sub_step?.status_logs.map((log) =>  <ChangeStatusLogs key={`step_status_${log.id}`} log={log} />)}
+                            </div>
+                        </div> 
+                    }
 
 
                     <StepOrSubStepNotes

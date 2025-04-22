@@ -1,13 +1,83 @@
-i am using django 
-hi i have the follwing model :
 
 
-class StepTemplate(models.Model):
+class ProjectFlow(models.Model):
+    ProjectFlow_status_options = [
+        ('pending', 'pending'),
+        ('wait_customer_action', 'wait_customer_action'),
+        ('in_progress', 'in_progress'),
+        ('completed', 'completed'),
+        ('canceled', 'canceled'),
+    ]
+    default_start_process_step_or_sub_step_strategy_options = [
+        ('auto', 'auto'),
+        ('manual', 'manual'),
+    ]
+
+    project_type = models.ForeignKey(ProjectType, related_name='ProjectFlow_project_type_related_ProjectType', on_delete=models.SET_NULL, blank=True, null=True)
+    project_type_name = models.CharField(max_length=255, default='',  blank=True )
+    project_type_name_ar = models.CharField(max_length=255, default='',  blank=True)
+    details = models.TextField()
+    project_user = models.ForeignKey(User, related_name='ProjectFlow_project_user_related_User', on_delete=models.PROTECT, blank=True, null=True)
+    project_created_user = models.ForeignKey(User, related_name='ProjectFlow_project_created_user_related_User', on_delete=models.PROTECT, blank=True, null=True)
+    project_flow_status = models.CharField(max_length=30, choices=ProjectFlow_status_options, default='pending')
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    show_steps_to_client = models.BooleanField(default=True)
+    show_steps_or_sub_steps_status_log_to_client = models.BooleanField(default=True)
+    project_flow_slug =  models.SlugField(max_length=255, blank=True, null=True, db_index=True, unique=True) 
+    default_start_process_step_or_sub_step_strategy = models.CharField(max_length=30, choices=default_start_process_step_or_sub_step_strategy_options, default='auto')
+    is_template_cloned = models.BooleanField(default=False)
+    template_name_cloned_from = models.CharField(max_length=255, default='')
+
+    manual_start_mode_options = [
+        ('serialized', 'serialized'),
+        ('non-serialized', 'non-serialized'),
+    ]
+    manual_start_mode = models.CharField(max_length=30, choices=manual_start_mode_options, default='serialized')
+    auto_start_first_step_after_clone = models.BooleanField(default=True)
+
+
+    def __str__(self):
+        if self.project_type:
+            return f"{self.project_type.project_name} , {self.project_flow_status}"
+        return f"{self.id}"
+
+    class Meta:
+        ordering = ('-id',)
+
+    def save(self , *args , **kwargs):
+        if not self.project_flow_slug:
+            time_now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+            data_to_slug = f"{time_now}_{self.project_type.project_name}"
+            self.project_flow_slug = slugify(data_to_slug)
+
+        if not self.project_type_name :
+            self.project_type_name = self.project_type.project_name
+        
+        if not self.project_type_name_ar :
+            self.project_type_name_ar = self.project_type.project_name_ar
+
+
+        super(ProjectFlow , self).save(*args, **kwargs)
+
+
+
+
+
+
+class ProjectFlowStep(models.Model):
+    ProjectFlowStep_status_options = [
+        ('pending', 'pending'),
+        ('in_progress', 'in_progress'),
+        ('wait_customer_action', 'wait_customer_action'),
+        ('completed', 'completed'),
+        ('canceled', 'canceled'),
+    ]
+    
     allow_process_by_options = [
         ('any_staff', 'any_staff'),
         ('specific_staff_group', 'specific_staff_group'),
         ('client', 'client')
-
     ]
 
     start_process_step_strategy_options = [
@@ -22,31 +92,45 @@ class StepTemplate(models.Model):
         ('no', 'no'),
     ]
 
-    show_status_log_to_client = models.CharField(max_length=128, choices=show_status_log_to_client_options, default='inherit_from_project_flow')
+    show_status_log_to_client = models.CharField(max_length=30, choices=show_status_log_to_client_options, default='inherit_from_project_flow')
 
-
-    project_flow_template = models.ForeignKey(ProjectFlowTemplate, related_name='StepTemplate_project_flow_template_related_ProjectFlowTemplate', on_delete=models.CASCADE, null=True, blank=True)
+    project_flow = models.ForeignKey(ProjectFlow, related_name='ProjectFlowStep_ProjectFlow_related_ProjectFlow', on_delete=models.CASCADE, null=True, blank=True )
+    handler_user = models.ForeignKey(User, related_name='ProjectFlowStep_handler_user_related_User', on_delete=models.PROTECT, blank=True, null=True)
     step_name = models.CharField(max_length=255, db_index=True)
     step_description = models.TextField()
     step_name_ar = models.CharField(max_length=255, db_index=True)
     step_description_ar = models.TextField()
-    show_to_client = models.BooleanField(default=True)
-    allowed_process_by =  models.CharField(max_length=30, choices=allow_process_by_options, default='any_staff')
-    allowed_process_groups = models.ManyToManyField(Group, related_name="steps_templates_allowed_groups", blank=True)
-    sorted_weight = models.PositiveIntegerField(db_index=True, blank=True, default=0)
-    created_date = models.DateTimeField(auto_now_add=True)
-    updated_date = models.DateTimeField(auto_now=True)    
+    project_flow_step_status = models.CharField(max_length=30, choices=ProjectFlowStep_status_options, default='pending')
 
+    show_to_client = models.BooleanField(default=True)
+
+    allowed_process_by =  models.CharField(max_length=30, choices=allow_process_by_options, default='any_staff')
+    allowed_process_groups = models.ManyToManyField(Group, related_name="project_flow_steps_groups", blank=True)
+
+    sorted_weight = models.PositiveIntegerField(default=0, db_index=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
 
     start_process_step_strategy = models.CharField(max_length=30, choices=start_process_step_strategy_options, default='inherit_from_project_flow')
+    start_date_process = models.DateTimeField(null=True, blank=True)
+    end_date_process =  models.DateTimeField(null=True, blank=True)
 
     step_type = models.CharField(max_length=50, default='default_step_type')
 
     def __str__(self):
-        return f"{self.id}, {self.step_name} , {self.project_flow_template}" 
+        return f"{self.id}, {self.project_flow}" 
 
-  
+
     def save(self, *args, **kwargs):
+
+        if self.project_flow_step_status != 'pending' and not self.start_date_process:
+            self.start_date_process = timezone.now()
+
+        if self.project_flow_step_status in ['completed', 'canceled'] and not self.end_date_process:
+            self.end_date_process = timezone.now()
+
+ 
+
         if not self.sorted_weight:  # If sorted_weight is None or 0
             super().save(*args, **kwargs)  # Save first to get an ID
             self.sorted_weight = self.id
@@ -57,25 +141,32 @@ class StepTemplate(models.Model):
     class Meta:
         ordering = ['sorted_weight'] 
 
+ 
 
 
 
-and the follwin serializer : 
+ and i have the follwin view :
+class EndStepProcess(APIView):
+    def post(self, request,project_flow, step_id):
+        try:
+            step_obj = ProjectFlowStep.objects.get(id=step_id)
 
-class StepTemplateSerializer(serializers.ModelSerializer):
+            if step_obj.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
+                return Response({'message': 'can not change status for step that related with substep directly!'}, status=status.HTTP_400_BAD_REQUEST)
 
-    files = StepTemplateAttachmentSerializer(many=True, read_only=True, source='StepTemplateAttachment_step_template_StepTemplate')
-    notes = StepTemplateNoteSerializer(many=True, read_only=True, source='StepsTemplateNote_step_template_related_StepTemplate')
-    sub_steps = SubStepTemplateSerializer(many=True, read_only=True, source='SubStepTemplate_step_template_StepTemplate')
+            step_obj.project_flow_step_status = 'completed'
+            step_obj.save()
+            return Response({'message': 'status has been updated'}, status=status.HTTP_200_OK)
 
-    class Meta:
-      model = StepTemplate
-      fields = "__all__"
-      read_only_fields = ['id', "created_date", "updated_date", "sorted_weight"]
-
-
-
-for  allowed_process_groups it return list of IDs , but insted i wana return list of objects {id: id, group name : group name} , how to do that 
+        except ProjectFlowStep.DoesNotExist:
+            return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
+i what add to view the follwing concept , after 'step_obj.save()' i want to check if there is a next step and if the next step start_process_step_strategy == "auto" or 
+
+start_process_step_strategy == 'inherit_from_project_flow' and obj.project_flow.default_start_process_step_or_sub_step_strategy_options == 'auto'
+
+if yes i what to change next step .project_flow_step_status to  'in_progress' , how to do that ?

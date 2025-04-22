@@ -391,6 +391,7 @@ useEffect(() => {
 
                     </div>
                     <hr />
+                    
                     <div className="p-1 row col-12 d-flex justify-content-start   align-items-center ">
                         <div className="col-6  text-muted">
                             Progress

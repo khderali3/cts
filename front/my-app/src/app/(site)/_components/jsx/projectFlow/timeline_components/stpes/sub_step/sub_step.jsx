@@ -69,8 +69,8 @@ export const SubStepComponent = ({sub_step={}, index=0}) =>{
                     </div>
 
                     <div className="mb-2">
-                    <span className="fw-bold">Sub Step status:</span> 
-                    <span className="ms-2 text-muted">{sub_step?.project_flow_sub_step_status && sub_step.project_flow_sub_step_status}</span>
+                        <span className="fw-bold">Sub Step status:</span> 
+                        <span className="ms-2 text-muted">{sub_step?.project_flow_sub_step_status && sub_step.project_flow_sub_step_status}</span>
                     </div>
 
 

@@ -6,7 +6,8 @@ from django.urls import path
 from ..views_module.staff_workflow_views import ( 
     ProjectFlowView, ProjectFlowAttachmentView, ProjectFlowNoteView, ProjectFlowNoteAttachmentView , ProjectFlowStepView, ProjectFlowStepAttachmentView,
     ProjectFlowStepNoteView, ProjectFlowStepNoteAttachmentView, ProjectFlowSubStepView, ProjectFlowSubStepAttachmentView, ProjectFlowSubStepNoteView, ProjectFlowSubStepNoteAttachmentView,
-    GetFullProjectFlowView, StepResortMoveUpOrDownView, StepResortByAbsolutePositionView, SubStepResortMoveUpOrDownView, SubStepResortByAbsolutePositionView
+    GetFullProjectFlowView, StepResortMoveUpOrDownView, StepResortByAbsolutePositionView, SubStepResortMoveUpOrDownView, SubStepResortByAbsolutePositionView,
+    StartStepProcess, EndStepProcess
     )
  
 
@@ -38,6 +39,15 @@ urlpatterns = [
 
      path('projectflow/projectflow/<int:project_flow>/step/', ProjectFlowStepView.as_view()),
      path('projectflow/projectflow/<int:project_flow>/step/<int:step_id>/', ProjectFlowStepView.as_view()),
+
+
+    # start and end step process
+
+     path('projectflow/projectflow/<int:project_flow>/step/start_process/<int:step_id>/', StartStepProcess.as_view()),
+     path('projectflow/projectflow/<int:project_flow>/step/end_process/<int:step_id>/', EndStepProcess.as_view()),
+
+
+
 
 
 

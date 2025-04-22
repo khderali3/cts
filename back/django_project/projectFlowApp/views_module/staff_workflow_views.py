@@ -25,6 +25,32 @@ from projectFlowApp.custom_app_utils import MyCustomPagination
 
 
 
+# def can_requester_handle_step(request, obj):
+#     if not request or not request.user:
+#         return False
+
+#     user = request.user
+
+#     # if user.is_superuser:
+#     #     return True
+
+#     if obj.allowed_process_by == 'client' and obj.project_flow.project_user == user:
+#         return True
+
+#     if obj.allowed_process_by == 'any_staff' and user.is_staff:
+#         return True
+
+#     if obj.allowed_process_by == 'specific_project_group' and user.is_staff:
+#         user_groups = user.groups.all()
+#         allowed_groups = obj.allowed_process_groups.all()
+#         if allowed_groups.filter(id__in=user_groups.values_list("id", flat=True)).exists():
+#             return True
+
+#     return False
+
+
+
+
 
 
 def validate_allowed_process_groups(data, field_name="allowed_process_groups"):
@@ -58,6 +84,99 @@ def validate_allowed_process_groups(data, field_name="allowed_process_groups"):
             )
 
     return None  # Return None if validation fails
+
+
+
+
+class StartStepProcess(APIView):
+    def post(self, request,project_flow, step_id):
+        try:
+            step_obj = ProjectFlowStep.objects.get(id=step_id)
+            if step_obj.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
+                return Response({'message': 'can not change status for step that includes  sub-steps'}, status=status.HTTP_400_BAD_REQUEST)
+            step_obj.project_flow_step_status = 'in_progress'
+            step_obj.save()
+            return Response({'message': 'status has been updated'}, status=status.HTTP_200_OK)
+        except ProjectFlowStep.DoesNotExist:
+            return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class EndStepProcess(APIView):
+    def post(self, request,project_flow, step_id):
+        try:
+            step_obj = ProjectFlowStep.objects.get(id=step_id)
+            if step_obj.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
+                return Response({'message': 'can not change status for step that related with substep directly!'}, status=status.HTTP_400_BAD_REQUEST)
+            step_obj.project_flow_step_status = 'completed'
+            step_obj.save()
+            # Try to find the next step based on sorted_weight
+            next_step = ProjectFlowStep.objects.filter(
+                project_flow=step_obj.project_flow,
+                sorted_weight__gt=step_obj.sorted_weight
+            ).first()
+            if next_step:
+                should_auto_start = (
+                    next_step.start_process_step_strategy == 'auto' or
+                    (
+                        next_step.start_process_step_strategy == 'inherit_from_project_flow' and
+                        step_obj.project_flow.default_start_process_step_or_sub_step_strategy == 'auto'
+                    )
+                )
+
+                if should_auto_start:
+                    if not next_step.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
+                        next_step.project_flow_step_status = 'in_progress'
+                        next_step.save()
+                    else :
+                        first_sub_step = next_step.ProjectFlowSubStep_step_related_ProjectFlowStep.all().first()
+                        should_auto_start_first_sub_step = (
+                            first_sub_step.start_process_sub_step_strategy == 'auto' or
+                            (
+                                first_sub_step.start_process_sub_step_strategy == 'inherit_from_project_flow' and
+                                first_sub_step.step.project_flow.default_start_process_step_or_sub_step_strategy == 'auto'
+                            )
+                        )
+ 
+                        if should_auto_start_first_sub_step:
+                            first_sub_step.project_flow_sub_step_status = 'in_progress'
+                            first_sub_step.save()
+                            next_step.project_flow_step_status = 'in_progress'
+                            next_step.save()
+            return Response({'message': 'status has been updated'}, status=status.HTTP_200_OK)
+        except ProjectFlowStep.DoesNotExist:
+            return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class StartSubStepProcess(APIView):
+    def post(self, request, step_id, sub_step_id):
+        try:
+            step_obj = ProjectFlowStep.objects.get(id=step_id)
+            if step_obj.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
+                return Response({'message': 'can not change status for step that includes  sub-steps'}, status=status.HTTP_400_BAD_REQUEST)
+            step_obj.project_flow_step_status = 'in_progress'
+            step_obj.save()
+            return Response({'message': 'status has been updated'}, status=status.HTTP_200_OK)
+        except ProjectFlowStep.DoesNotExist:
+            return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+
+
 
 
 

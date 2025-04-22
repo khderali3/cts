@@ -622,12 +622,6 @@ const handleaddItem = async (e) => {
 
 
 
-
-
-
-
-
-
             <div className="modal-footer">
               <button
                 type="button"

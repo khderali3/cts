@@ -135,9 +135,10 @@ class ProjectFlowStep(models.Model):
         ('completed', 'completed'),
         ('canceled', 'canceled'),
     ]
+    
     allow_process_by_options = [
         ('any_staff', 'any_staff'),
-        ('specific_project_group', 'specific_project_group'),
+        ('specific_staff_group', 'specific_staff_group'),
         ('client', 'client')
     ]
 
