@@ -133,7 +133,7 @@ const Page = () =>  {
         <div className="container-fluid  min-vh-150 bg-white p-3 border rounded " >
 
 
-            <h2>Add New Sub-Step Template</h2>
+            <h2>Add New Sub-Step  </h2>
               <form className="col-md-8 col-12 mb-5" onSubmit={handleSubmit}>
 
                 <div className="mb-3">

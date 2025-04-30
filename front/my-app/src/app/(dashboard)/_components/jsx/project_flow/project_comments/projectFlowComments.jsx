@@ -15,11 +15,15 @@ import { AddNewComment } from "./add_Comment";
 import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/siteApiSlice";
 
 
+import { toast } from "react-toastify";
+import { getErrorMessage } from "@/app/public_utils/utils";
+import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 
 
 
 
-export const ProjectFlowNotes = ({notes=[], project_id}) => {
+
+export const ProjectFlowNotes = ({notes=[], project_status='',  project_id}) => {
 
     const t_common = useTranslations('common')
 
@@ -36,6 +40,39 @@ export const ProjectFlowNotes = ({notes=[], project_id}) => {
 
 
     const [reloadComponentFlag, setReloadComponentFlag] = useState(false)
+
+
+
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [objToDelete, setObjToDelete ] = useState(null)
+    const [deleting, setDeleting] = useState(false)
+
+    const handleDelete = async ( ) => {
+      setDeleting(true)
+       try {   
+         const response = await customFetch({
+          url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/${project_id}/note/${objToDelete}/`,
+         
+          method: "DELETE",
+         });  
+         if (response && response.data) {
+            setReloadComponentFlag(!reloadComponentFlag)
+            toast.success('the object has been deleted')
+         } else {
+           toast.error(getErrorMessage(response?.error?.data))
+   
+         }
+       } catch (error) {
+         toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
+       } finally{
+            setDeleting(false)
+            setObjToDelete(null)
+        }
+     };
+
+
+
 
 
     const handleReloadComponent = () => {
@@ -159,6 +196,18 @@ useEffect( () =>{
 
 
 
+                           <div className="text-end mt-2 ">
+                                 <Link href="#"
+                                 onClick={(e) => {
+                                    e.preventDefault()
+                                    setObjToDelete(note?.id)
+                                    setIsModalOpen(true)
+                                 }}
+                                  className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i></Link>
+                            </div>
+
+
+
 
                         
                         </div>
@@ -172,7 +221,25 @@ useEffect( () =>{
             </div>
 
 
-            <AddNewComment project_id={project_id}  handleReplayAdded={handleReloadComponent} />
+            <AddNewComment project_id={project_id} project_status={project_status}  handleReplayAdded={handleReloadComponent} />
+
+
+
+
+
+            <CustomModal  
+                id="delete_projectflow_note_id"
+                handleSubmit={handleDelete}
+        
+                submitting={deleting}
+                message={'are you sure you want to delete this note ?'}
+                showModal={true} 
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+
+            /> 
+
+
 
         </div>
 

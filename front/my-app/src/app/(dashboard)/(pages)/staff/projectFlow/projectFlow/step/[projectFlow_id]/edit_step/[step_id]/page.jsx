@@ -1,118 +1,3 @@
-hi i have the follwin child checkboxes component , 
-
-
-'use client'
-import { useState } from "react"
-import { useEffect } from "react";
-import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/siteApiSlice";
- 
-
-
-
-import { useLocale } from "next-intl";
-
- 
-
-export const GroupAasignOrRemove = ({allowedProcessGroups, setAllowedProcessGroups}) => {
-
-	const [customFetch] = useCustomFetchMutation();
- 
-	const [allGroups, setAllGroups] = useState([])
-
-	const locale = useLocale()
- 
- 
-
-	const handleChange = (groupsId, isChecked) => {
-		if (isChecked) {
-			setAllowedProcessGroups((prev) => [...prev, groupsId]);
-		} else {
-			setAllowedProcessGroups((prev) => prev.filter((id) => id !== groupsId));
-		}
-	  };
-
-
-	const fetchAllGroups = async () => {
-		try {
-		  const response = await customFetch({
-			url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/usersmanagment/group/`,
-			method: "GET",
-		  });	  
-		  if (response && response.data) {	
-			setAllGroups(response.data);
-		  } else {
-			console.log("Failed to get groups. Please try again.", response);
-		
-		  }
-		} catch (error) {
-		  console.error("Error fetching departments:", error);
-		}
-	  };
-	  
- 
- 
-
-useEffect(() => {
-	fetchAllGroups() 
-}, []);
-
-
-
-
-	return(
-
- 
- 
-		<div className="row "> 
-		
-
-			{allGroups.map( (group) => (
-					<div key={group.id}className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `} >
-						<input
-							className="form-check-input   "
-							type="checkbox"
-							name={group?.name}
-							id={`${group?.id}_group_id`}
-							checked={allowedProcessGroups.includes(group.id)} // Check if ID is in the list
-							onChange={(e) => handleChange(group.id, e.target.checked)}
-
-						/>
-						<label className="form-check-label small" htmlFor={`${group?.id}_group_id`}>
-							{group?.name}
-						</label>
-					</div>
-				) )}
-
-		</div>
- 
- 
-
-
-	)
-}
-
-
-
-
-the data comming from api like this :
-[
-    {
-        "id": 3,
-        "name": "new name updated",
-        "permissions": []
-    },
-    {
-        "id": 4,
-        "name": "new group",
-        "permissions": []
-    },
-  
-]
-
-now i have parent component for edit , first load to parent component i featch the current object , 
-
-but how to pass the group id to the child to make eatch selected checkbox group show as selected , here is my parent :
-
 'use client'
 
 import {  useState, useEffect} from "react"
@@ -129,12 +14,14 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 import { GroupAasignOrRemove } from "@/app/(dashboard)/_components/jsx/project_flow_template/groups assign/group";
 
 
+
+
 import { useParams } from "next/navigation";
 
 
 const Page = () =>  {
 
-    const {template_id, step_id} = useParams()
+    const {projectFlow_id, step_id} = useParams()
  
     const locale = useLocale()
 
@@ -159,19 +46,19 @@ const Page = () =>  {
         allowed_process_by : '',
         // allowed_process_groups:[],
         start_process_step_strategy : '',
-        show_status_log_to_client: '',
-     });
+        show_status_log_to_client: true,
+    });
+
 
   const fetchData = async () => {
     try {   
       const response = await customFetch({
-        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/${template_id}/steps_template/${step_id}/`,
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/${projectFlow_id}/step/${step_id}/`,   
         method: "GET",
       });  
       if (response && response.data) {
         setFormData(response.data);
-        setAllowedProcessGroups([{id:3}, {id:18}])
- 
+        setAllowedProcessGroups(response.data.allowed_process_groups)
       } else {
         toast.error(getErrorMessage(response?.error?.data))
         router.push('/404')
@@ -180,6 +67,8 @@ const Page = () =>  {
       toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
     }
   };
+
+
 
 
 
@@ -216,8 +105,27 @@ const Page = () =>  {
       setIsSubmiting(true)
       const form = new FormData();
 
+ 
+      
       for (const key in formData) {
-        form.append(key, formData[key]);
+        if(
+          key === 'step_name' ||
+          key === 'step_name_ar' ||
+          key === 'step_description' ||
+          key === 'step_description_ar' ||        
+          key === 'allowed_process_by'  ||      
+          key === 'start_process_step_strategy' ||        
+          key === 'show_status_log_to_client'  ||
+          key === 'show_to_client'   
+                
+        
+        ){
+          form.append(key, formData[key]);
+
+        }
+
+
+        // form.append(key, formData[key]);
       }
 
       form.append('allowed_process_groups', JSON.stringify(allowedProcessGroups));
@@ -226,14 +134,14 @@ const Page = () =>  {
 
 
     const response = await customFetch({
-      url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/${template_id}/steps_template/${step_id}/`,
+      url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/${projectFlow_id}/step/${step_id}/`,   
       method: "PUT",
       body: form,  
     });
 
     if(response && response.data){
-      router.push(`/staff/projectFlow/projectFlowTemplate/template_details/${template_id}`)
-      toast.success('data has been changed succusfuly');
+      router.push(`/staff/projectFlow/projectFlow/projectFlowDetails/${projectFlow_id}`)
+      toast.success('data has been added succusfuly');
 
     } else{
       console.log('allowedProcessGroups', allowedProcessGroups)
@@ -251,11 +159,11 @@ const Page = () =>  {
   };
   
 
-  useEffect(() => {
-  
-    fetchData()
-  
-  }, []);
+   useEffect(() => {
+   
+     fetchData()
+   
+   }, []);
  
 
     return (
@@ -463,9 +371,10 @@ const Page = () =>  {
                     Choose whether clients can see project steps.
     
                   </div>
+
                 </div>
 
- 
+
 
 
 

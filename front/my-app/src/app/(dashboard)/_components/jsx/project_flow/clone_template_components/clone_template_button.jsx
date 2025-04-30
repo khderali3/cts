@@ -7,7 +7,7 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 
 import { toast } from "react-toastify";
 
-export const ButtonCloneTemplate= ({project_id, reloadComponentMethod}) => {
+export const ButtonCloneTemplate= ({is_template_cloned, project_id, reloadComponentMethod}) => {
 
   const [templateId, setTemplateId] = useState('');  
 
@@ -77,7 +77,7 @@ export const ButtonCloneTemplate= ({project_id, reloadComponentMethod}) => {
     
     
     > 
-            clone template
+           {is_template_cloned  ? 'Re-Clone Template' : 'Clone Template' }
     </button>
 
  
@@ -93,7 +93,11 @@ export const ButtonCloneTemplate= ({project_id, reloadComponentMethod}) => {
         <div className="modal-dialog   ">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="cloneTemplateLabel">Clone Template</h5>
+              <h5 className="modal-title" id="cloneTemplateLabel">
+                {is_template_cloned ? 'Re-Clone Template' : 'Clone Template'}
+                
+                
+              </h5>
               <button
                 type="button"
                 className="btn-close"
@@ -116,6 +120,11 @@ export const ButtonCloneTemplate= ({project_id, reloadComponentMethod}) => {
           lable={'Select Template'}
 
         />
+        {is_template_cloned ? 
+          <small className="small text-danger"> Note: for 'Re-Clone Template'  all steps Data will be lost.</small>
+
+        : ''}
+
 			</div>
 
  

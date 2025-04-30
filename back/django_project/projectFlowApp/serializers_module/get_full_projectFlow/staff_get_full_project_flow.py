@@ -111,7 +111,10 @@ class ProjectFlowSubStepSerializer(serializers.ModelSerializer):
 
     allowed_process_groups = GroupSerializer(many=True, read_only=True)  # Use GroupSerializer
 
+    can_requester_handle = serializers.SerializerMethodField()
+    can_requester_start_step = serializers.SerializerMethodField()
 
+    can_requester_end_step = serializers.SerializerMethodField()
 
     class Meta:
         model = ProjectFlowSubStep
@@ -121,6 +124,135 @@ class ProjectFlowSubStepSerializer(serializers.ModelSerializer):
     def get_handler_user(self, obj):
             request = self.context.get("request")  # Get request from serializer context
             return get_user_data(obj, "handler_user", request)  # Pass request explicitly
+
+
+
+
+    def get_can_requester_end_step(self, obj):
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+ 
+        if not request or not user:  
+            return False   
+
+        if obj.project_flow_sub_step_status != 'in_progress':
+            return False
+
+
+
+
+
+
+
+
+        if obj.allowed_process_by == 'client' and obj.project_flow.project_user == user:
+            return True
+
+        if obj.allowed_process_by == 'any_staff' and user.is_staff:
+            return True
+
+
+        if obj.allowed_process_by == 'specific_project_group' and user.is_staff:
+            user_groups = user.groups.all()   
+            allowed_groups = obj.allowed_process_groups.all()   
+            if allowed_groups.filter(id__in=user_groups.values_list("id", flat=True)).exists():
+                return True
+
+        return False 
+
+
+
+
+
+    def get_can_requester_start_step(self, obj):
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+ 
+        if not request or not user:  
+            return False   
+
+        if obj.project_flow_sub_step_status != 'pending':
+            return False
+ 
+
+        if (obj.start_process_sub_step_strategy == 'auto') or \
+            (obj.start_process_sub_step_strategy == 'inherit_from_project_flow' and  \
+            obj.step.project_flow.default_start_process_step_or_sub_step_strategy == 'auto'):
+            return False
+        
+
+        step_obj = obj.step
+        project_flow_obj = step_obj.project_flow
+        if (
+            project_flow_obj.manual_start_mode == 'serialized' and (
+                obj.start_process_sub_step_strategy == 'manual' or
+                (
+                    obj.start_process_sub_step_strategy == 'inherit_from_project_flow' and
+                    obj.step.project_flow.default_start_process_step_or_sub_step_strategy == 'manual'
+                )
+            )
+        ):
+            previous_step_not_completed = ProjectFlowStep.objects.filter(
+                project_flow=step_obj.project_flow,
+                sorted_weight__lt=step_obj.sorted_weight,
+            ).exclude(project_flow_step_status='completed').first()
+
+            if previous_step_not_completed:
+               return False
+
+
+
+ 
+
+        if obj.allowed_process_by == 'client' and obj.project_flow.project_user == user:
+            return True
+
+        if obj.allowed_process_by == 'any_staff' and user.is_staff:
+            return True
+
+
+        if obj.allowed_process_by == 'specific_project_group' and user.is_staff:
+            user_groups = user.groups.all()   
+            allowed_groups = obj.allowed_process_groups.all()   
+            if allowed_groups.filter(id__in=user_groups.values_list("id", flat=True)).exists():
+                return True
+
+        return False 
+
+
+
+
+
+
+
+
+
+    def get_can_requester_handle(self, obj):
+        request = self.context.get("request")
+ 
+        if not request or not request.user:  
+            return False   
+
+        user = request.user
+
+        if obj.allowed_process_by == 'client' and obj.project_flow.project_user == user:
+            return True
+
+        if obj.allowed_process_by == 'any_staff' and user.is_staff:
+            return True
+
+
+        if obj.allowed_process_by == 'specific_project_group' and user.is_staff:
+            user_groups = user.groups.all()  # Get all groups for the user
+            allowed_groups = obj.allowed_process_groups.all()  # Get allowed groups for this step
+            if allowed_groups.filter(id__in=user_groups.values_list("id", flat=True)).exists():
+                return True
+
+        return False 
+
+ 
+
+
 
 
 
@@ -186,8 +318,10 @@ class ProjectFlowStepSerializer(serializers.ModelSerializer):
     handler_user = serializers.SerializerMethodField(read_only=True)
     allowed_process_groups = GroupSerializer(many=True, read_only=True)  # Use GroupSerializer
     can_requester_handle = serializers.SerializerMethodField()
+
     can_requester_start_step = serializers.SerializerMethodField()
 
+    can_requester_end_step = serializers.SerializerMethodField()
 
 
     class Meta:
@@ -196,15 +330,54 @@ class ProjectFlowStepSerializer(serializers.ModelSerializer):
         read_only_fields = [ field.name for field in ProjectFlowStep._meta.fields ]
 
 
-    def get_can_requester_start_step(self, obj):
+
+    def get_can_requester_end_step(self, obj):
         request = self.context.get("request")
-        user = request.user
+        user = getattr(request, "user", None)
         all_related_project_flow_steps = obj.project_flow.ProjectFlowStep_ProjectFlow_related_ProjectFlow.all()
  
         if not request or not user:  
             return False   
 
+        if obj.project_flow_step_status != 'in_progress':
+            return False
 
+        if obj.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
+            return False
+
+       
+ 
+            
+
+        if obj.allowed_process_by == 'client' and obj.project_flow.project_user == user:
+            return True
+
+        if obj.allowed_process_by == 'any_staff' and user.is_staff:
+            return True
+
+
+        if obj.allowed_process_by == 'specific_project_group' and user.is_staff:
+            user_groups = user.groups.all()   
+            allowed_groups = obj.allowed_process_groups.all()   
+            if allowed_groups.filter(id__in=user_groups.values_list("id", flat=True)).exists():
+                return True
+
+        return False 
+
+
+
+
+
+    def get_can_requester_start_step(self, obj):
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+        all_related_project_flow_steps = obj.project_flow.ProjectFlowStep_ProjectFlow_related_ProjectFlow.all()
+ 
+        if not request or not user:  
+            return False   
+
+        if obj.project_flow_step_status != 'pending':
+            return False
 
         if obj.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
             return False
@@ -218,6 +391,27 @@ class ProjectFlowStepSerializer(serializers.ModelSerializer):
              obj.project_flow.auto_start_first_step_after_clone == True :
              return False
             
+
+        project_flow_obj = obj.project_flow
+
+        if (
+            project_flow_obj.manual_start_mode == 'serialized' and (
+                obj.start_process_step_strategy == 'manual' or
+                (
+                    obj.start_process_step_strategy == 'inherit_from_project_flow' and
+                    obj.project_flow.default_start_process_step_or_sub_step_strategy == 'manual'
+                )
+            )
+        ):
+            previous_step_not_completed = ProjectFlowStep.objects.filter(
+                project_flow=obj.project_flow,
+                sorted_weight__lt=obj.sorted_weight,
+            ).exclude(project_flow_step_status='completed').first()
+
+            if previous_step_not_completed:
+                return False
+
+
 
 
         if obj.allowed_process_by == 'client' and obj.project_flow.project_user == user:
@@ -233,7 +427,7 @@ class ProjectFlowStepSerializer(serializers.ModelSerializer):
             if allowed_groups.filter(id__in=user_groups.values_list("id", flat=True)).exists():
                 return True
 
-        return True 
+        return False 
 
 
 

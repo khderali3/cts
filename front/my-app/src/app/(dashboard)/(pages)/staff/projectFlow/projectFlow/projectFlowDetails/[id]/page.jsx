@@ -37,6 +37,12 @@ import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 import { Timeline } from "@/app/(dashboard)/_components/jsx/project_flow/timeline";
  
 
+import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
+
+import { CancelProjectFlowOrReOpen } from "@/app/(dashboard)/_components/jsx/project_flow/cancel_or_re-open_projectflow/cancel_or_re_open_projectflow";
+
+
+
 
 const Page = () => {
 
@@ -67,13 +73,10 @@ const Page = () => {
 
     const router = useRouter()
 
-    const [deletingReplyId, setDeletingReplyId] = useState(null)
-    const [isDeletingitem, setIsDeletingitem] = useState(false)
-    
     const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+    const [deleting, setDeleting] = useState(false)
 
 
- 
 
 
 
@@ -85,7 +88,25 @@ const Page = () => {
   
   
  
-
+    const handleDelete = async () => {
+        setDeleting(true)
+         try {   
+           const response = await customFetch({
+             url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/${id}/`,
+             method: "DELETE",
+           });  
+           if (response && response.data) {
+            router.push('/staff/projectFlow/projectFlow')
+            toast.success('the projectFlow has been deleted')
+           } else {
+             toast.error(getErrorMessage(response?.error?.data))
+     
+           }
+         } catch (error) {
+           toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
+         } finally{setDeleting(false)}
+       };
+    
 
 
     const formatDate = (dateString) => {
@@ -397,7 +418,19 @@ useEffect(() => {
                             </div>
 
                             <div className="p-1     ">
-                                 <ButtonCloneTemplate project_id={data?.id} reloadComponentMethod={reloadComponentMethod}/>
+                                 <ButtonCloneTemplate is_template_cloned={data?.is_template_cloned} project_id={data?.id} reloadComponentMethod={reloadComponentMethod}/>
+                            </div>
+
+                            <div>
+                                <Link href={`/staff/projectFlow/projectFlow/edit_projectflow/${id}`}>Edit ProjectFlow</Link>
+ 
+                            </div>
+                            <div> 
+                                <button onClick={() => setIsModalOpen(true)} className="btn btn-sm btn-outline-danger mt-2"  >Delete ProjectFlow</button>
+                            </div>
+
+                            <div> 
+                                 <CancelProjectFlowOrReOpen projectflow_id={data?.id} projectflow_status={data?.project_flow_status} reloadComponentMethod={reloadComponentMethod} />
                             </div>
 
 
@@ -496,7 +529,7 @@ useEffect(() => {
 
 
                 <hr />
-                <ProjectFlowNotes notes={data?.notes || []} project_id={data?.id} />
+                <ProjectFlowNotes project_status={data?.project_flow_status} notes={data?.notes || []} project_id={data?.id} />
 
             </div>
 
@@ -516,6 +549,24 @@ useEffect(() => {
 
     
             </div>
+
+
+
+    <CustomModal  
+        id="delete_projectFlow_id"
+        handleSubmit={handleDelete}
+ 
+        submitting={deleting}
+        message={'are you sure you want to delete this projectFlow?'}
+        showModal={true} 
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+
+    /> 
+
+
+
+
 
           </div>
 

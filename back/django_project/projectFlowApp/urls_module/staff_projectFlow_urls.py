@@ -7,7 +7,7 @@ from ..views_module.staff_workflow_views import (
     ProjectFlowView, ProjectFlowAttachmentView, ProjectFlowNoteView, ProjectFlowNoteAttachmentView , ProjectFlowStepView, ProjectFlowStepAttachmentView,
     ProjectFlowStepNoteView, ProjectFlowStepNoteAttachmentView, ProjectFlowSubStepView, ProjectFlowSubStepAttachmentView, ProjectFlowSubStepNoteView, ProjectFlowSubStepNoteAttachmentView,
     GetFullProjectFlowView, StepResortMoveUpOrDownView, StepResortByAbsolutePositionView, SubStepResortMoveUpOrDownView, SubStepResortByAbsolutePositionView,
-    StartStepProcess, EndStepProcess
+    StartStepProcess, EndStepProcess, StartSubStepProcess, EndSubStepProcess, CanceleProjectFlow, ReopenProjectFlow
     )
  
 
@@ -21,6 +21,9 @@ urlpatterns = [
      path('projectflow/projectflow/', ProjectFlowView.as_view()),
      path('projectflow/projectflow/<int:id>/', ProjectFlowView.as_view()),
      path('projectflow/projectflow/<int:id>/get_full_flow/', GetFullProjectFlowView.as_view()),
+     
+     path('projectflow/projectflow/<int:id>/cancele_project_flow/', CanceleProjectFlow.as_view()),
+     path('projectflow/projectflow/<int:id>/reopen_project_flow/', ReopenProjectFlow.as_view()),
 
 
 
@@ -46,11 +49,7 @@ urlpatterns = [
      path('projectflow/projectflow/<int:project_flow>/step/start_process/<int:step_id>/', StartStepProcess.as_view()),
      path('projectflow/projectflow/<int:project_flow>/step/end_process/<int:step_id>/', EndStepProcess.as_view()),
 
-
-
-
-
-
+  
 
 
      # start steps resort 
@@ -77,6 +76,14 @@ urlpatterns = [
 
      path('projectflow/projectflow/step/<int:step>/sub_step/', ProjectFlowSubStepView.as_view()),
      path('projectflow/projectflow/step/<int:step>/sub_step/<int:sub_step_id>/', ProjectFlowSubStepView.as_view()),
+
+
+
+
+    # start and end sub step process
+
+     path('projectflow/projectflow/step/<int:step_id>/sub_step/start_process/<int:sub_step_id>/', StartSubStepProcess.as_view()),
+     path('projectflow/projectflow/step/<int:step_id>/sub_step/end_process/<int:sub_step_id>/', EndSubStepProcess.as_view()),
 
 
  

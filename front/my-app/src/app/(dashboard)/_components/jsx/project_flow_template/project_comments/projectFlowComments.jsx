@@ -15,7 +15,10 @@ import { AddNewComment } from "./add_Comment";
 import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/siteApiSlice";
 
 
+import { toast } from "react-toastify";
+import { getErrorMessage } from "@/app/public_utils/utils";
 
+import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 
 
 
@@ -36,11 +39,41 @@ export const ProjectFlowNotes = ({notes=[], project_id}) => {
 
 
     const [reloadComponentFlag, setReloadComponentFlag] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
+    const [objToDelete, setObjToDelete ] = useState(null)
 
     const handleReloadComponent = () => {
         setReloadComponentFlag(!reloadComponentFlag)
     }
+
+    const [deleting, setDeleting] = useState(false)
+
+    const handleDelete = async ( ) => {
+      setDeleting(true)
+       try {   
+         const response = await customFetch({
+          url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/${project_id}/note/${objToDelete}/`,
+         
+          method: "DELETE",
+         });  
+         if (response && response.data) {
+            setReloadComponentFlag(!reloadComponentFlag)
+            toast.success('the object has been deleted')
+         } else {
+           toast.error(getErrorMessage(response?.error?.data))
+   
+         }
+       } catch (error) {
+         toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
+       } finally{
+            setDeleting(false)
+            setObjToDelete(null)
+        }
+     };
+
+
+
 
 
     const formatDate = (dateString) => {
@@ -109,7 +142,7 @@ useEffect( () =>{
                         
                         <div  className="  ">
 
-                        <div className="  d-flex  align-items-center mb-1">
+                        <div className="  d-flex  align-items-center   mb-1">
                             <img
                             src={note?.created_user?.PRF_image ? note.created_user.PRF_image: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAJQAswMBIgACEQEDEQH/xAAaAAEAAwEBAQAAAAAAAAAAAAAAAQIDBAUH/8QALBABAAICAAUDAgUFAAAAAAAAAAECAxEEEjFBUSEycZGhEyJSYbEUIzNCgf/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A+4gAAAAAAAAiZ13BIrzx5OevkFhEWiZ9JhIAAAAAAAAAAAAAAAAClrxHyre+/SOigLTaZ+PCoAAAJiZjogBpGTtZeJjswTW01BuIrMTHokAAAAAAAAAABlktv0jovedV/diAAACJmIjczqPIJGFuKpHtibfZEcVH6J+oOgUx5KXj8s7nvC4AAJrPLO20TtgvjtqdA1AAAAAAAABEzqJBled2VAAAETOomZ6Q4cuT8S2+3aHTxVtY4iO8uMABUTE6ncdXbhy/iV9fdHVwtuFtrLEdpRXYAAADes7hLPHPZoAAAAAAArf2yspk9sgyAAABz8X7K/LldvE158Xp2nbiUABBpg/y1+Wbbha82XfgHYAigAL4vdLVjj9zYAAAAAABW3SVgHOExqdAAADjz4ZrO6xM1/h2Im0R1mI+ZB5w7bUw268v/JRGLDHj6g5aUm86rDux0jHXlj6kTSI1E1j4lYAAAAF8XWWqmONVXAAAAAAAABnkjuzbzG40xtHLOgQplyRjruevaPK8zqJmekPPyXnJabSC2TNfJ1nUeIZgqGjQAajwmtppO6zqUAOvDxHPPLedW7T5bvNdvD358fr1j0RWqaxM2iOyGuOuo35BcAAAAAAAAABW1eaFgHHxO64rbcL18uOuWvLbo87Nw98XrPrXzCjEOwIAAAAN+En+5MeYZY6WyW1SJl38NwsYvzWndv4BpSneerUEUAAAAAAAAAAAAABhl4XFkneuW3mGF+Bt/peJ+YdwDzP6TN4ifiSOEzfp+70wHnV4LJPWax92+Pgsce+Zs6gEVrFY1WIiP2SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//Z"}
 
@@ -131,6 +164,8 @@ useEffect( () =>{
 
                                 <p className="m-0 text-muted">{formatDate(note?.created_date)}</p>
                             </div>
+
+
 
                         </div>
 
@@ -158,7 +193,15 @@ useEffect( () =>{
                             </div>
 
 
-
+                            <div className="text-end mt-2 ">
+                                 <Link href="#"
+                                 onClick={(e) => {
+                                    e.preventDefault()
+                                    setObjToDelete(note?.id)
+                                    setIsModalOpen(true)
+                                 }}
+                                  className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i></Link>
+                            </div>
 
                         
                         </div>
@@ -173,6 +216,22 @@ useEffect( () =>{
 
 
             <AddNewComment project_id={project_id}  handleReplayAdded={handleReloadComponent} />
+
+
+
+
+            <CustomModal  
+                id="delete_template_note_id"
+                handleSubmit={handleDelete}
+        
+                submitting={deleting}
+                message={'are you sure you want to delete this note ?'}
+                showModal={true} 
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+
+            /> 
+
 
         </div>
 

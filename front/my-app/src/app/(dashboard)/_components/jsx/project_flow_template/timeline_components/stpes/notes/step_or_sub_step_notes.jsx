@@ -86,7 +86,7 @@ useEffect(() => {
         <h6 className="fw-bold fs-6">Notes</h6>
 
         {noteList?.length > 0 ?  
-            noteList.map((note) => <StepOrSubStepSingleNote key={`step_note_${note.id}`} note={note} />) :  
+            noteList.map((note) => <StepOrSubStepSingleNote note_for={notes_for} handleReloadFlag={handleReloadFlag}   key={`step_note_${note.id}`} note={note} />) :  
 
             <div className="small text-muted fst-italic">No notes available</div>
         }

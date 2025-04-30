@@ -28,11 +28,21 @@ import { ResortStepUpOrDown } from "./resort_step/up_or_down_buttons";
 
 import { ProgressCircle } from "../../progress";
 
+import { getErrorMessage } from "@/app/public_utils/utils";
 
+import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staff/features/authApiSlice";
+
+ 
+
+import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
+import { toast } from "react-toastify";
+import { useState } from "react";
 
 
 
 export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
+
+    const [customFetch] = useCustomFetchMutation();
 
     const locale = useLocale(); // Get the current locale
     const currentLocale = locale === "ar" ? ar : enUS;
@@ -42,9 +52,28 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
         }
     };
  
+    const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+    const [deleting, setDeleting] = useState(false)
 
 
-
+    const handleDelete = async () => {
+      setDeleting(true)
+       try {   
+         const response = await customFetch({
+          url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/${step?.project_flow}/step/${step?.id}/`,
+          method: "DELETE",
+         });  
+         if (response && response.data) {
+            if(reloadComponentMethod){reloadComponentMethod()}
+            toast.success('the object has been deleted')
+         } else {
+           toast.error(getErrorMessage(response?.error?.data))
+   
+         }
+       } catch (error) {
+         toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
+       } finally{setDeleting(false)}
+     };
 
     return(
  
@@ -84,14 +113,14 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                         <button 
                         className="btn btn-light d-flex align-items-center justify-content-center gap-2 rounded-pill px-3 py-2 shadow-sm mb-4"
                         data-bs-toggle="collapse" 
-                        data-bs-target="#step_extra_info"
+                        data-bs-target={`#step_extra_info_${step?.id}`}
                         aria-expanded="false"
-                        aria-controls="step_extra_info"
+                        aria-controls={`step_extra_info_${step?.id}`}
                         >
                         <i className="bi bi-info-circle-fill"></i> <span>More Info</span>
                         </button>
 
-                        <div id="step_extra_info" className="collapse "  >  
+                        <div id={`step_extra_info_${step?.id}`} className="collapse "  >  
 
                             <div className="  ">
                                 <Link className="  " href={`/staff/projectFlow/projectFlow/sub_step/${step?.project_flow}/${step?.id}/add_new_sub_step`}>Add Sub-Step</Link>
@@ -103,7 +132,25 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                              <ResortStepUpOrDown move_to="down" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
  
 
-                             <div className="mb-2">
+                            <div>
+                                <Link href={`/staff/projectFlow/projectFlow/step/${step?.project_flow}/edit_step/${step?.id}`}>Edit Step</Link>
+                            </div>
+
+                            <div>
+                                <button className="btn btn-sm btn-outline-danger my-2" onClick={ () => setIsModalOpen(true)} >Delete</button>
+                            </div>
+
+
+                            <div className="mb-2 ">
+                                <span className="fw-bold  ">Step ID:</span> 
+                                <span className="ms-2 text-secondary ">{step?.id && step?.id}.</span>
+                            </div>
+
+
+
+
+
+                            <div className="mb-2">
                                 <span className="fw-bold">Show To Client:</span> 
                                 <span className="ms-2 text-muted">{step?.show_to_client ? 'Yes' : 'No'  }</span>
                             </div>
@@ -149,10 +196,7 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
 
                             <div className="col-md-6"> 
                     
-                                <div className="mb-2 ">
-                                    <span className="fw-bold  ">Step ID:</span> 
-                                    <span className="ms-2 text-secondary ">{step?.id && step?.id}.</span>
-                                </div>
+
 
                                 <div className="mb-2  ">
                                     <span className="fw-bold">Step Title:</span> 
@@ -176,15 +220,23 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                                     <span className="fw-bold">can_requester_start_step:</span> 
                                     {/* <span className="ms-2 text-muted">{step?.can_requester_handle}</span> */}
                                     <span className="ms-2 text-muted">{step?.can_requester_start_step?.toString()}</span>
-
                                 </div>
 
+                                <div className="mb-2  ">
+                                    <span className="fw-bold">can_requester_end_step:</span> 
+                                    {/* <span className="ms-2 text-muted">{step?.can_requester_handle}</span> */}
+                                    <span className="ms-2 text-muted">{step?.can_requester_end_step?.toString()}</span>
+                                </div>
+ 
+
+                                    <StartOrEndStepOrSubStepProcess disabled_status={step?.can_requester_start_step} action="start_process" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
+                               
+ 
+                                    <StartOrEndStepOrSubStepProcess disabled_status={step?.can_requester_end_step} action="end_process" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
 
  
 
-                                <StartOrEndStepOrSubStepProcess action="start_process" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
 
-                                <StartOrEndStepOrSubStepProcess action="end_process" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
 
                                 
                             </div>
@@ -270,6 +322,7 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                              sub_step={sub_step} 
                              index={index} 
                              reloadComponentMethod={reloadComponentMethod} 
+                             projectflow_id={step?.project_flow}
 
                              
                              />
@@ -290,6 +343,25 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
 
 
             </div>
+
+
+
+            <CustomModal  
+                id="delete_projectflow_step_id"
+                handleSubmit={handleDelete}
+        
+                submitting={deleting}
+                message={'are you sure you want to delete this step ?'}
+                showModal={true} 
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+
+            /> 
+
+
+
+
+
         </div>
 
                 

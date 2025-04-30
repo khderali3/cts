@@ -51,8 +51,7 @@ export const GroupAasignOrRemove = ({allowedProcessGroups, setAllowedProcessGrou
  
 
 useEffect(() => {
-	fetchAllGroups()
- 
+	fetchAllGroups() 
 }, []);
 
 

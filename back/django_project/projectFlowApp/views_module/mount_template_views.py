@@ -54,7 +54,7 @@ def clone_project_flow_template(request, template_id, projectflow_id, is_force_c
             projectflow.default_start_process_step_or_sub_step_strategy = template.default_start_process_step_or_sub_step_strategy
             projectflow.template_name_cloned_from = template.template_name
             projectflow.auto_start_first_step_after_clone = template.auto_start_first_step_after_clone
-
+            projectflow.manual_start_mode = template.manual_start_mode
             if projectflow.auto_start_first_step_after_clone:
                 projectflow.project_flow_status = 'in_progress'
             else :
@@ -133,6 +133,11 @@ def clone_project_flow_template(request, template_id, projectflow_id, is_force_c
                     new_sub_step_obj.show_status_log_to_client = template_sub_step.show_status_log_to_client
                     new_sub_step_obj.sub_step_name =  template_sub_step.sub_step_name
                     new_sub_step_obj.sub_step_description = template_sub_step.sub_step_description
+
+                    new_sub_step_obj.sub_step_name_ar =  template_sub_step.sub_step_name_ar
+                    new_sub_step_obj.sub_step_description_ar = template_sub_step.sub_step_description_ar
+
+
                     new_sub_step_obj.show_to_client =  template_sub_step.show_to_client
                     new_sub_step_obj.allowed_process_by = template_sub_step.allowed_process_by
                     new_sub_step_obj.sorted_weight = template_sub_step.sorted_weight
@@ -166,11 +171,33 @@ def clone_project_flow_template(request, template_id, projectflow_id, is_force_c
                                     new_attachment.file.save(file_name, File(f), save=True)
 
 
-            if projectflow.auto_start_first_step_after_clone:
-                first_step = projectflow.ProjectFlowStep_ProjectFlow_related_ProjectFlow.all().first()
+            # if projectflow.auto_start_first_step_after_clone:
+            #     first_step = projectflow.ProjectFlowStep_ProjectFlow_related_ProjectFlow.all().first()
+            #     if first_step:  # Ensure there is a step before modifying it
+            #         first_step.project_flow_step_status = 'in_progress'
+            #         first_step.save()
+
+            #         first_sub_step = first_step.ProjectFlowSubStep_step_related_ProjectFlowStep.all().first()
+            #         if first_sub_step:
+            #             first_sub_step.project_flow_sub_step_status = 'in_progress'
+            #             first_sub_step.save()
+
+
+            first_step = projectflow.ProjectFlowStep_ProjectFlow_related_ProjectFlow.all().first()
+
+            if (first_step and first_step.start_process_step_strategy == 'auto') \
+                    or projectflow.auto_start_first_step_after_clone:
                 if first_step:  # Ensure there is a step before modifying it
                     first_step.project_flow_step_status = 'in_progress'
                     first_step.save()
+
+                    first_sub_step = first_step.ProjectFlowSubStep_step_related_ProjectFlowStep.all().first()
+                    if first_sub_step:
+                        first_sub_step.project_flow_sub_step_status = 'in_progress'
+                        first_sub_step.save()
+
+                projectflow.project_flow_status = 'in_progress'
+ 
 
             projectflow.is_template_cloned = True
             projectflow.save()

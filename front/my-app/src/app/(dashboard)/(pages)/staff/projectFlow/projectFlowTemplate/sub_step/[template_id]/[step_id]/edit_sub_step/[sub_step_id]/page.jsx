@@ -1,124 +1,8 @@
-hi i have the follwin child checkboxes component , 
-
-
-'use client'
-import { useState } from "react"
-import { useEffect } from "react";
-import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/siteApiSlice";
- 
-
-
-
-import { useLocale } from "next-intl";
-
- 
-
-export const GroupAasignOrRemove = ({allowedProcessGroups, setAllowedProcessGroups}) => {
-
-	const [customFetch] = useCustomFetchMutation();
- 
-	const [allGroups, setAllGroups] = useState([])
-
-	const locale = useLocale()
- 
- 
-
-	const handleChange = (groupsId, isChecked) => {
-		if (isChecked) {
-			setAllowedProcessGroups((prev) => [...prev, groupsId]);
-		} else {
-			setAllowedProcessGroups((prev) => prev.filter((id) => id !== groupsId));
-		}
-	  };
-
-
-	const fetchAllGroups = async () => {
-		try {
-		  const response = await customFetch({
-			url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/usersmanagment/group/`,
-			method: "GET",
-		  });	  
-		  if (response && response.data) {	
-			setAllGroups(response.data);
-		  } else {
-			console.log("Failed to get groups. Please try again.", response);
-		
-		  }
-		} catch (error) {
-		  console.error("Error fetching departments:", error);
-		}
-	  };
-	  
- 
- 
-
-useEffect(() => {
-	fetchAllGroups() 
-}, []);
-
-
-
-
-	return(
-
- 
- 
-		<div className="row "> 
-		
-
-			{allGroups.map( (group) => (
-					<div key={group.id}className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `} >
-						<input
-							className="form-check-input   "
-							type="checkbox"
-							name={group?.name}
-							id={`${group?.id}_group_id`}
-							checked={allowedProcessGroups.includes(group.id)} // Check if ID is in the list
-							onChange={(e) => handleChange(group.id, e.target.checked)}
-
-						/>
-						<label className="form-check-label small" htmlFor={`${group?.id}_group_id`}>
-							{group?.name}
-						</label>
-					</div>
-				) )}
-
-		</div>
- 
- 
-
-
-	)
-}
-
-
-
-
-the data comming from api like this :
-[
-    {
-        "id": 3,
-        "name": "new name updated",
-        "permissions": []
-    },
-    {
-        "id": 4,
-        "name": "new group",
-        "permissions": []
-    },
-  
-]
-
-now i have parent component for edit , first load to parent component i featch the current object , 
-
-but how to pass the group id to the child to make eatch selected checkbox group show as selected , here is my parent :
-
 'use client'
 
-import {  useState, useEffect} from "react"
+import {useState , useEffect} from "react"
 
-import {useCustomFetchMutation} from "@/app/(dashboard)/_components/redux_staff/features/authApiSlice"
-
+import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staff/features/authApiSlice";
 
 import { toast } from "react-toastify";
 import { useRouter } from 'next/navigation';
@@ -134,7 +18,7 @@ import { useParams } from "next/navigation";
 
 const Page = () =>  {
 
-    const {template_id, step_id} = useParams()
+    const {template_id, step_id, sub_step_id} = useParams()
  
     const locale = useLocale()
 
@@ -147,31 +31,29 @@ const Page = () =>  {
 
 
 
-
-
-
     const [formData, setFormData] = useState({
-        step_name: "",
-        step_description: '',
-        step_name_ar : '',
-        step_description_ar : '',
-        show_to_client : true,
-        allowed_process_by : '',
+      sub_step_name: "",
+      sub_step_description: '',
+      sub_step_name_ar : '',
+      sub_step_description_ar : '',
+      show_to_client : true,
+      allowed_process_by : '',
         // allowed_process_groups:[],
-        start_process_step_strategy : '',
-        show_status_log_to_client: '',
-     });
+      start_process_sub_step_strategy : '',
+      show_status_log_to_client: '',
+    });
+
 
   const fetchData = async () => {
     try {   
       const response = await customFetch({
-        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/${template_id}/steps_template/${step_id}/`,
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/steps_template/${step_id}/sub_steps/${sub_step_id}/`,
         method: "GET",
       });  
       if (response && response.data) {
         setFormData(response.data);
-        setAllowedProcessGroups([{id:3}, {id:18}])
- 
+        // setAllowedProcessGroups([{id:3}, {id:18}])
+        setAllowedProcessGroups(response.data.allowed_process_groups)
       } else {
         toast.error(getErrorMessage(response?.error?.data))
         router.push('/404')
@@ -180,6 +62,8 @@ const Page = () =>  {
       toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
     }
   };
+
+
 
 
 
@@ -194,16 +78,16 @@ const Page = () =>  {
     }
   };
 
-
+ 
  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (
-      !formData.step_name.trim() ||  
-      !formData.step_description.trim() ||  
-      !formData.step_name_ar.trim() ||  
-      !formData.step_description_ar.trim() ||  
-      !["inherit_from_project_flow", "auto", "manual"].includes(formData.start_process_step_strategy) ||
+      !formData.sub_step_name.trim() ||  
+      !formData.sub_step_description.trim() ||  
+      !formData.sub_step_name_ar.trim() ||  
+      !formData.sub_step_description_ar.trim() ||  
+      !["inherit_from_project_flow", "auto", "manual"].includes(formData.start_process_sub_step_strategy) ||
       !["any_staff", "specific_staff_group", "client"].includes(formData.allowed_process_by)  ||
       !["inherit_from_project_flow", "yes", "no"].includes(formData.show_status_log_to_client)  
 
@@ -223,17 +107,17 @@ const Page = () =>  {
       form.append('allowed_process_groups', JSON.stringify(allowedProcessGroups));
 
 
-
+      
 
     const response = await customFetch({
-      url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/${template_id}/steps_template/${step_id}/`,
+      url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/steps_template/${step_id}/sub_steps/${sub_step_id}/`,
       method: "PUT",
       body: form,  
     });
 
     if(response && response.data){
       router.push(`/staff/projectFlow/projectFlowTemplate/template_details/${template_id}`)
-      toast.success('data has been changed succusfuly');
+      toast.success('data has been changed ');
 
     } else{
       console.log('allowedProcessGroups', allowedProcessGroups)
@@ -274,74 +158,74 @@ const Page = () =>  {
         <div className="container-fluid  min-vh-150 bg-white p-3 border rounded " >
 
 
-            <h2>Add New Step Template</h2>
+            <h2>Edit Sub-Step Template</h2>
               <form className="col-md-8 col-12 mb-5" onSubmit={handleSubmit}>
 
                 <div className="mb-3">
-                    <label htmlFor="step_name" className="form-label small">
-                        Step Name <span className="text-danger">*</span>
+                    <label htmlFor="sub_step_name" className="form-label small">
+                        Sub-Step Name <span className="text-danger">*</span>
                     </label>
                     <input  
-                        name="step_name" 
+                        name="sub_step_name" 
                         onChange={handleChange}
                         className=" form-control form-control-sm " 
-                        id="step_name" 
+                        id="sub_step_name" 
                         maxLength="50"
-                        value={formData.step_name}
+                        value={formData.sub_step_name}
                     />
-                    <div className="form-text fs-8">Enter a name for this Step.</div>
+                    <div className="form-text fs-8">Enter a name for this Sub-Step.</div>
                 </div>
 
 
                 <div className="mb-3">
-                    <label htmlFor="step_description" className="form-label small">
-                        Step Details<span className="text-danger">*</span>
+                    <label htmlFor="sub_step_description" className="form-label small">
+                        Sub-Step Details<span className="text-danger">*</span>
                     </label>
                     <textarea  
-                        name="step_description" 
+                        name="sub_step_description" 
                         onChange={handleChange}
                         className="form-control form-control-sm " 
-                        id="step_description" 
+                        id="sub_step_description" 
                         maxLength="500" // Adjust if needed
-                        value={formData.step_description}
+                        value={formData.sub_step_description}
                         rows="2"  
                     />
-                    <div className="form-text fs-8">Enter a Details for this Step.</div>
+                    <div className="form-text fs-8">Enter a Details for this Sub-Step.</div>
                 </div>
 
 
 
                 <div className="mb-3">
-                    <label htmlFor="step_name_ar" className="form-label small">
-                        Step Name (Ar) <span className="text-danger">*</span>
+                    <label htmlFor="sub_step_name_ar" className="form-label small">
+                        Sub-Step (Ar) <span className="text-danger">*</span>
                     </label>
                     <input  
-                        name="step_name_ar" 
+                        name="sub_step_name_ar" 
                         onChange={handleChange}
                         className="form-control text-end form-control-sm "
                          
-                        id="step_name_ar" 
+                        id="sub_step_name_ar" 
                         maxLength="50"
-                        value={formData.step_name_ar}
+                        value={formData.sub_step_name_ar}
                     />
                     <div className="form-text fs-8">Enter a name for this Step in Arabic.</div>
                 </div>
 
 
                 <div className="mb-3">
-                    <label htmlFor="step_description_ar" className="form-label small">
-                        Step Details (Ar) <span className="text-danger">*</span>
+                    <label htmlFor="sub_step_description_ar" className="form-label small">
+                      Sub-Step Details (Ar) <span className="text-danger">*</span>
                     </label>
                     <textarea  
-                        name="step_description_ar" 
+                        name="sub_step_description_ar" 
                         onChange={handleChange}
                         className="form-control text-end form-control-sm " 
-                        id="step_description_ar" 
+                        id="sub_step_description_ar" 
                         maxLength="500" // Adjust if needed
-                        value={formData.step_description_ar}
+                        value={formData.sub_step_description_ar}
                         rows="2"  
                     />
-                    <div className="form-text fs-8">Enter a Details for this Step in Arabic.</div>
+                    <div className="form-text fs-8">Enter a Details for this Sub-Step in Arabic.</div>
                 </div>
 
  
@@ -367,7 +251,7 @@ const Page = () =>  {
 
                   </select> 
                   <div className="form-text fs-8">
-                    Choose who is allowed to process this step: any staff member, a specific staff group, or the client.
+                    Choose who is allowed to process this  Sub-Step: any staff member, a specific staff group, or the client.
                   </div>
                 </div>
 
@@ -395,16 +279,16 @@ const Page = () =>  {
 
 
                 <div className="mb-3">
-                  <label htmlFor="start_process_step_strategy" className="form-label small">
+                  <label htmlFor="start_process_sub_step_strategy" className="form-label small">
                     Start Process Strategy
                   </label>
                   <select 
                     className="form-select form-select-sm" 
-                    id="start_process_step_strategy"
-                    name="start_process_step_strategy"   
+                    id="start_process_sub_step_strategy"
+                    name="start_process_sub_step_strategy"   
                     onChange={handleChange}   
                     // defaultValue=""
-                    value={formData.start_process_step_strategy}
+                    value={formData.start_process_sub_step_strategy}
               
                   >
                     <option value="" disabled >Select Option</option> 
@@ -414,8 +298,8 @@ const Page = () =>  {
                   </select> 
                   <div className="form-text fs-8">
                     Inherit From Template: Uses the predefined process from the project template.
-                    Auto: The  step starts automatically when the previous step is complete.
-                    Manual: Staff must manually start each step.
+                    Auto: The  Sub-Step starts automatically when the previous step or Sub-Step is complete.
+                    Manual: Staff must manually start each Sub-Step.
                   </div>
                 </div>
 
@@ -439,7 +323,7 @@ const Page = () =>  {
                     <option value="no">No</option>
                   </select> 
                   <div className="form-text fs-8">
-                    Choose whether clients can see step status logs.
+                    Choose whether clients can see Sub-Step status logs.
                   </div>
                 </div>
 
@@ -460,12 +344,13 @@ const Page = () =>  {
                     Show To Client
                   </label>
                   <div className="form-text fs-8">
-                    Choose whether clients can see project steps.
+                    Choose whether clients can see this Sub-Step.
     
                   </div>
+
                 </div>
 
- 
+
 
 
 
@@ -482,6 +367,13 @@ const Page = () =>  {
           
 
           </div>
+
+
+
+
+
+
+
         </div>
     )
 

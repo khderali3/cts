@@ -27,14 +27,13 @@ import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 
 import { Timeline } from "@/app/(dashboard)/_components/jsx/project_flow_template/timeline";
 
- 
+ import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 
 
 const Page = () => {
 
 
-    const t_common = useTranslations('common')
-    const t = useTranslations('dashboard.ticket')
+     const t = useTranslations('dashboard.ticket')
 
 
     const locale = useLocale(); // Get the current locale
@@ -42,30 +41,39 @@ const Page = () => {
 
 
     const currentLocale = locale === "ar" ? ar : enUS;
-
-
-
-    const { user_id, permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
-    const [canReply, setCanReply] = useState(false)
-
-
+ 
     const {id} = useParams()  
 
     const [data, setData] = useState({})
     const [loading, setLoading] = useState(true); // Loading state
 
-
     const [customFetch] = useCustomFetchMutation();
 
     const router = useRouter()
-
-    const [deletingReplyId, setDeletingReplyId] = useState(null)
-    const [isDeletingitem, setIsDeletingitem] = useState(false)
+ 
     
     const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+    const [deleting, setDeleting] = useState(false)
 
 
+   const handleDelete = async () => {
+    setDeleting(true)
+     try {   
+       const response = await customFetch({
+         url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/${id}/`,
+         method: "DELETE",
+       });  
+       if (response && response.data) {
+        router.push('/staff/projectFlow/projectFlowTemplate')
+        toast.success('the object has been deleted')
+       } else {
+         toast.error(getErrorMessage(response?.error?.data))
  
+       }
+     } catch (error) {
+       toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
+     } finally{setDeleting(false)}
+   };
 
 
 
@@ -348,9 +356,12 @@ useEffect(() => {
                         <div className="p-1 row col-12 ">
                             <Link className="btn btn-light " href={`/staff/projectFlow/projectFlowTemplate/step/${data?.id}/add_new_step`}>Add New Step</Link>
                         </div>
+                        <div>
+                            <Link href={`/staff/projectFlow/projectFlowTemplate/edit_template/${data?.id}`}>Edit Template</Link>
 
-
+                        </div>
                         
+                        <button className="btn btn-sm btn-outline-danger mt-2" onClick={() => setIsModalOpen(true)}>Delete Template</button>
 
                     </div>
 
@@ -384,6 +395,26 @@ useEffect(() => {
 
     
             </div>
+
+
+    <CustomModal  
+        id="delete_template_id"
+        handleSubmit={handleDelete}
+ 
+        submitting={deleting}
+        message={'are you sure you want to delete this template?'}
+        showModal={true} 
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+
+    /> 
+
+
+
+
+
+
+
 
           </div>
 

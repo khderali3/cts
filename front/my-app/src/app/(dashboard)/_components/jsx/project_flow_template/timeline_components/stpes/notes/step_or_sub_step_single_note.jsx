@@ -6,19 +6,59 @@ import { parseISO, format } from "date-fns";
 import { useLocale } from "next-intl"; // Get the current locale from next-intl
 import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 
-  
+import Link from "next/link";
 
-export const  StepOrSubStepSingleNote = ({note={}}) => {
+import { useState } from "react";
+
+import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/siteApiSlice";
+import { toast } from "react-toastify";
+import { getErrorMessage } from "@/app/public_utils/utils";
+import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
+
+
+
+
+export const  StepOrSubStepSingleNote = ({note={}, note_for="step",  handleReloadFlag=null , step_id=null}) => {
 
     const locale = useLocale(); // Get the current locale
-
-
-
     const currentLocale = locale === "ar" ? ar : enUS;
+ 
+
+    const [customFetch] = useCustomFetchMutation();
+ 
+    const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
 
+    const [deleting, setDeleting] = useState(false)
 
 
+    const submit_url = note_for === "step" 
+        ?  `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/steps_template/${note?.step_template}/steps_template_note/${note?.id}/`
+        : `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/sub_steps/${note?.sub_step_template}/sub_step_note/${note?.id}/`  
+
+
+    const handleDelete = async ( ) => {
+      setDeleting(true)
+       try {   
+         const response = await customFetch({
+          url: submit_url,
+         
+          method: "DELETE",
+         });  
+         if (response && response.data) {
+            if(handleReloadFlag){handleReloadFlag()}
+            toast.success('the object has been deleted')
+         } else {
+           toast.error(getErrorMessage(response?.error?.data))
+   
+         }
+       } catch (error) {
+         toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
+       } finally{
+            setDeleting(false)
+            // setObjToDelete(null)
+        }
+     };
 
     const formatDate = (dateString) => {
    
@@ -51,9 +91,30 @@ export const  StepOrSubStepSingleNote = ({note={}}) => {
                             </li>
                         )}
                     </ul>
+
+                    <div className="text-end mt-2 ">
+                        <Link href="#"
+                        
+                        onClick={(e) => {
+                        e.preventDefault()
+                        // setObjToDelete(note?.id)
+                        setIsModalOpen(true)
+                        }}
+                        className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i></Link>
+                    </div>
                 </div>
 
+                <CustomModal  
+                id={`delete_template_${note_for}_note_id`}
+                handleSubmit={handleDelete}
 
+                submitting={deleting}
+                message={'are you sure you want to delete this note ?'}
+                showModal={true} 
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+
+                /> 
             </div>
     
  

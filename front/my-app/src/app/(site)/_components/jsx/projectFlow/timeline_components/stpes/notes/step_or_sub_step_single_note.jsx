@@ -33,7 +33,15 @@ export const  StepOrSubStepSingleNote = ({note={}}) => {
 
             <div className="note mb-2 p-2 border rounded">
                 <div className="note-header d-flex justify-content-between  small text-muted  ">
-                    <span>{note?.step_note_user?.full_name}</span>
+
+
+
+
+
+
+
+                    <span>{note?.step_note_user?.full_name}</span> 
+
                     <span>{formatDate(note?.created_date || '')}</span> 
                 </div>
 

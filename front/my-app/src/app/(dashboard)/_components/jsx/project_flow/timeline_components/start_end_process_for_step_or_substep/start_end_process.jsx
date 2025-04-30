@@ -8,7 +8,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 
-export const StartOrEndStepOrSubStepProcess = ({resort_for='step', action='start_process', projectflow_id=null,   step_id=null, sub_step_id=null, reloadComponentMethod}) =>{
+export const StartOrEndStepOrSubStepProcess = ({resort_for='step', disabled_status=false, action='start_process', projectflow_id=null,   step_id=null, sub_step_id=null, reloadComponentMethod}) =>{
 
     const [customFetch] = useCustomFetchMutation();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -17,7 +17,7 @@ export const StartOrEndStepOrSubStepProcess = ({resort_for='step', action='start
 
     const submit_url = resort_for === "step" 
         ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/${projectflow_id}/step/${action}/${step_id}/`
-        : `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/step/${step_id}/sub_step/${sub_step_id}/resort/resort_up_down/${action}/`  
+        : `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/projectflow/step/${step_id}/sub_step/${action}/${sub_step_id}/`  
  
         
 
@@ -52,7 +52,7 @@ export const StartOrEndStepOrSubStepProcess = ({resort_for='step', action='start
  
     return(
  
-        <button type="button" onClick={handleSubmit} disabled={isSubmitting} className="btn btn-primary btn-sm small m-2 "> {action === 'start_process' ? "Start Process" : "End Process" } </button>
+        <button type="button" disabled={!disabled_status || isSubmitting} onClick={handleSubmit}  className="btn btn-primary btn-sm small m-2 "> {action === 'start_process' ? "Start Process" : "End Process" } </button>
  
     )
 }

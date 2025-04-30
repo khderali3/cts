@@ -18,7 +18,24 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+def get_user_data(obj, user_attr_name, request=None):
+    user = getattr(obj, user_attr_name, None)
+    if user:
+        PRF_image = None
+        if hasattr(user, 'profile_prf_user_relaed_useraccount'):
+            profile = user.profile_prf_user_relaed_useraccount
+            if profile.PRF_image:
+                PRF_image = profile.PRF_image.url
+                if request:
+                    PRF_image = request.build_absolute_uri(PRF_image)  # Ensure full URL
 
+        return {
+            "is_staff": user.is_staff or user.is_superuser ,
+            "full_name": f"{user.first_name} {user.last_name}",
+            "id": user.id,
+            "PRF_image": PRF_image,
+        }
+    return None
 
 
 class ProjectFlowSubStepNoteAttachmentSerializer(serializers.ModelSerializer):
@@ -55,6 +72,23 @@ class ProjectFlowSubStepNoteAttachmentSerializer(serializers.ModelSerializer):
         #     attachment_ids.append(attachment.id)
 
         # return ProjectFlowSubStepNoteAttachment.objects.filter(id__in=attachment_ids)
+
+
+
+
+class GetListProjectFlowSubStepNoteSerializer(serializers.ModelSerializer):
+
+
+    files = ProjectFlowSubStepNoteAttachmentSerializer(many=True, read_only=True, source='ProjectFlowSubStepNoteAttachment_sub_step_note_related_ProjectFlowSubStepNote')
+    sub_step_note_user = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = ProjectFlowSubStepNote
+        fields = "__all__"
+        read_only_fields = [ field.name  for field in ProjectFlowSubStepNote._meta.fields ]
+    def get_sub_step_note_user(self, obj):
+            request = self.context.get("request")  # Get request from serializer context
+            return get_user_data(obj, "sub_step_note_user", request)  # Pass request explicitly
 
 
 
@@ -222,12 +256,34 @@ class ProjectFlowStepNoteAttachmentSerializer(serializers.ModelSerializer):
 
 
 
+ 
+
+
+
+
+class GetListProjectFlowStepNoteSerializer(serializers.ModelSerializer):
+
+    files = ProjectFlowStepNoteAttachmentSerializer(many=True, read_only=True, source='ProjectFlowStepNoteAttachment_project_flow_step_note_related_ProjectFlowStepNote')
+    step_note_user = serializers.SerializerMethodField(read_only=True)
+
+    def get_step_note_user(self, obj):
+            request = self.context.get("request")  # Get request from serializer context
+            return get_user_data(obj, "step_note_user", request)  # Pass request explicitly
+
+    class Meta:
+        model = ProjectFlowStepNote
+        fields = "__all__"
+        read_only_fields = ["id", "created_date", "updated_date"]
+
+
+
 
 
 
 class ProjectFlowStepNoteSerializer(serializers.ModelSerializer):
 
     files = ProjectFlowStepNoteAttachmentSerializer(many=True, read_only=True, source='ProjectFlowStepNoteAttachment_project_flow_step_note_related_ProjectFlowStepNote')
+
 
     class Meta:
         model = ProjectFlowStepNote
@@ -406,7 +462,7 @@ class CreateOrPutProjectFlowNoteSerializer(serializers.ModelSerializer):
 
  
     def create(self, validated_data):
-        obj = super().create(validated_data)  # Create StepTemplateNote instance
+        obj = super().create(validated_data)  
         request = self.context.get("request")
         
         files = request.FILES.getlist("file[]") if request else []

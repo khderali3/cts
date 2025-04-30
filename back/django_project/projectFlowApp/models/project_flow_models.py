@@ -37,6 +37,10 @@ class ProjectFlow(models.Model):
     project_user = models.ForeignKey(User, related_name='ProjectFlow_project_user_related_User', on_delete=models.PROTECT, blank=True, null=True)
     project_created_user = models.ForeignKey(User, related_name='ProjectFlow_project_created_user_related_User', on_delete=models.PROTECT, blank=True, null=True)
     project_flow_status = models.CharField(max_length=30, choices=ProjectFlow_status_options, default='pending')
+
+    project_flow_status_when_canceled = models.CharField(max_length=30, choices=ProjectFlow_status_options, default='pending')
+
+
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     show_steps_to_client = models.BooleanField(default=True)
@@ -242,6 +246,15 @@ class ProjectFlowStepNote(models.Model):
 
     def __str__(self):
         return f"{self.id}, {self.project_step}"
+
+
+
+
+
+
+
+
+
 
 
 class ProjectFlowStepNoteAttachment(models.Model):

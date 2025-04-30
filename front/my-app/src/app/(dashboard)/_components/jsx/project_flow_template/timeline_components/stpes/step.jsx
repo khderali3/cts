@@ -26,12 +26,22 @@ import { ResortStepUpOrDown } from "./resort_step/up_or_down_buttons";
 
 import { get_string_allow_process_by, get_string_show_status_log_to_client, get_string_start_process_strategy } from "@/app/(dashboard)/_components/utils/projectflow/utils";
 
+import { getErrorMessage } from "@/app/public_utils/utils";
 
+import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staff/features/authApiSlice";
 
+import { useRouter } from "next/navigation";
+
+import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
+
+import { toast } from "react-toastify";
+import { useState } from "react";
 
 
 export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
-
+    const router = useRouter()
+    const [customFetch] = useCustomFetchMutation();
+    
     const locale = useLocale(); // Get the current locale
     const currentLocale = locale === "ar" ? ar : enUS;
     const formatDate = (dateString) => {
@@ -41,7 +51,28 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
     };
  
 
+    const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+    const [deleting, setDeleting] = useState(false)
 
+
+    const handleDelete = async () => {
+      setDeleting(true)
+       try {   
+         const response = await customFetch({
+          url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/project_flow_template/${step?.project_flow_template}/steps_template/${step?.id}/`,
+          method: "DELETE",
+         });  
+         if (response && response.data) {
+            if(reloadComponentMethod){reloadComponentMethod()}
+            toast.success('the object has been deleted')
+         } else {
+           toast.error(getErrorMessage(response?.error?.data))
+   
+         }
+       } catch (error) {
+         toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
+       } finally{setDeleting(false)}
+     };
 
 
     return(
@@ -82,7 +113,13 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                                 <Link className="" href={`/staff/projectFlow/projectFlowTemplate/sub_step/${step?.project_flow_template}/${step?.id}/add_new_sub_step`}>Add Sub-Step</Link>
                             </div>
 
+                            <div>
+                                <Link href={`/staff/projectFlow/projectFlowTemplate/step/${step?.project_flow_template}/edit_step/${step?.id}`}>Edit Step</Link>
+                            </div>
 
+                            <div>
+                                <button className="btn btn-sm btn-outline-danger my-2" onClick={()=> setIsModalOpen(true)}>Delete</button>
+                            </div>
 
                             <ResortStepUpOrDown move_to="up" resort_for='step' template_id={step?.project_flow_template} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />
 
@@ -200,6 +237,7 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                              sub_step={sub_step} 
                              index={index}
                              reloadComponentMethod={reloadComponentMethod} 
+                             template_id={step?.project_flow_template}
                              />
                             
                             
@@ -218,6 +256,21 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
 
 
             </div>
+
+            <CustomModal  
+                id="delete_step_template_id"
+                handleSubmit={handleDelete}
+        
+                submitting={deleting}
+                message={'are you sure you want to delete this step ?'}
+                showModal={true} 
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+
+            /> 
+
+
+
         </div>
 
                 

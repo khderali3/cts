@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import  useSubmitForm from "@/app/(dashboard)/_components/hooks/project_hoks/use_submit_form"
 
 
-export const  AddNewComment = ({project_id, handleReplayAdded }) => {
+export const  AddNewComment = ({project_id, project_status='',  handleReplayAdded }) => {
 
     const t = useTranslations('site.ticket.ticket_details_msgs.ticket_reply_form')
     const [files, setFiles] = useState([{ id: 1, file: null }]);
@@ -45,116 +45,199 @@ export const  AddNewComment = ({project_id, handleReplayAdded }) => {
         setFiles(updatedFiles);
     };
 
- 
- 
-
-    return(
 
 
+
+    return (
+      project_status === 'completed' || project_status === 'canceled' ? (
         <div>
-
-
+          <p>You can't add new comment/note for this project because it's {project_status}.</p>
+        </div>
+      ) : (
+         <div>
  
-  <form className="mt-5 mb-5" onSubmit={(e) => handleSubmit(e, formData, ['note'],"POST", setFormData, files, setFiles)}>
-      <div className="form-group">
-        <label htmlFor="add_comment_text_aria" className=" form-label small">
-          {/* Add A New Replay */}
-           Add New Comment
-        </label>
-        <textarea
-          className="form-control form-control-sm"
-          id="add_comment_text_aria"
-          rows={2}
-          name="note"
-          value={formData.note}
-          onChange={(e) => setFormData({ ...formData, note: e.target.value })} // Correctly updating state
-          />
-      </div>
-      
-
-
-        {/* Render file inputs dynamically */}
-        {files.map((fileInput, index) => (
-        <div className="card  p-2 m-2 shadow-sm border rounded" key={fileInput.id}>
-            <div className="form-group">
-            <div className="mb-3">
-                <label 
-                htmlFor={`fileInput-comment-${fileInput.id}`} 
-                className="form-label fw-bold me-1 ms-1 small"
-                >
-                {/* Upload File {index + 1} */}
-                {t('upload_file') } {index + 1}
-
-                </label>
-                <input
-                type="file"
-                className="form-control-file small w-100"
-                id={`fileInput-comment-${fileInput.id}`}
-                onChange={(e) => handleFileChange(e, fileInput.id)}
-                name="files[]"
-                ref={(el) => (fileInputRefs.current[index] = el)} // Assign ref to each input
-                />
-            </div>
-            
-            {/* Only show the "Add More" and "Delete" buttons for the last file input */}
-            {index === files.length - 1 && (
-                <div className="row pt-0 mt-0">
-                    <div className="col-12 col-md-auto">
-                        <button
-                        type="button"
-                        className="btn btn-outline-secondary w-100 mb-2 mb-md-0 me-md-2 btn-sm  "
-                        onClick={handleAddMore}
-                        >
-                        <i className="fa fa-plus me-2"></i> {/* Font Awesome icon */}
-                        {/* Add More */}
-                        {t('btn_add_More_file')}
-                        </button>
-                    </div>
-                    <div className="col-12 col-md-auto">
-                        <button
-                        type="button"
-                        className="btn btn-outline-danger w-100 btn-sm "
-                        onClick={handleDeleteLast}
-                        disabled={files.length <= 1} // Disable if only one input left
-                        >
-                        <i className="fa fa-trash me-2"></i> {/* Font Awesome icon */}
-                        {/* Delete */}
-                        {t('btn_remove_file')}
-                        </button>
-                    </div>
-
-                    
+            <form className="mt-5 mb-5" onSubmit={(e) => handleSubmit(e, formData, ['note'],"POST", setFormData, files, setFiles)}>
+                <div className="form-group">
+                  <label htmlFor="add_comment_text_aria" className=" form-label small">
+                      Add New Comment
+                  </label>
+                  <textarea
+                    className="form-control form-control-sm"
+                    id="add_comment_text_aria"
+                    rows={2}
+                    name="note"
+                    value={formData.note}
+                    onChange={(e) => setFormData({ ...formData, note: e.target.value })} 
+                    />
                 </div>
-            )}
-            </div>
+                
+
+
+          
+                  {files.map((fileInput, index) => (
+                  <div className="card  p-2 m-2 shadow-sm border rounded" key={fileInput.id}>
+                      <div className="form-group">
+                      <div className="mb-3">
+                          <label 
+                          htmlFor={`fileInput-comment-${fileInput.id}`} 
+                          className="form-label fw-bold me-1 ms-1 small"
+                          >
+                          {t('upload_file') } {index + 1}
+
+                          </label>
+                          <input
+                          type="file"
+                          className="form-control-file small w-100"
+                          id={`fileInput-comment-${fileInput.id}`}
+                          onChange={(e) => handleFileChange(e, fileInput.id)}
+                          name="files[]"
+                          ref={(el) => (fileInputRefs.current[index] = el)}  
+                          />
+                      </div>
+                      
+                      {index === files.length - 1 && (
+                          <div className="row pt-0 mt-0">
+                              <div className="col-12 col-md-auto">
+                                  <button
+                                  type="button"
+                                  className="btn btn-outline-secondary w-100 mb-2 mb-md-0 me-md-2 btn-sm  "
+                                  onClick={handleAddMore}
+                                  >
+                                  <i className="fa fa-plus me-2"></i>  
+                
+                                  {t('btn_add_More_file')}
+                                  </button>
+                              </div>
+                              <div className="col-12 col-md-auto">
+                                  <button
+                                  type="button"
+                                  className="btn btn-outline-danger w-100 btn-sm "
+                                  onClick={handleDeleteLast}
+                                  disabled={files.length <= 1}  
+                                  >
+                                  <i className="fa fa-trash me-2"></i>  
+          
+                                  {t('btn_remove_file')}
+                                  </button>
+                              </div>
+
+                              
+                          </div>
+                      )}
+                      </div>
+                  </div>
+                  ))}
+
+
+
+
+                <button type="submit" className="btn btn-outline-primary btn-sm  mt-3 mb-5  " disabled={isSubmitting}>
+
+                { isSubmitting && ( <span className="spinner-border spinner-border-sm me-2"></span> ) }  
+
+                  {/* Submit */}
+                  {t('btn_submit')}
+                </button>
+            </form>
+          
         </div>
-        ))}
+      )
+    );
 
 
 
 
-      <button type="submit" className="btn btn-outline-primary btn-sm  mt-3 mb-5  " disabled={isSubmitting}>
-
-      { isSubmitting && ( <span className="spinner-border spinner-border-sm me-2"></span> ) }  
-
-        {/* Submit */}
-        {t('btn_submit')}
-      </button>
-    </form>
  
+    // return(
+    //      <div>
  
- 
+    //       <form className="mt-5 mb-5" onSubmit={(e) => handleSubmit(e, formData, ['note'],"POST", setFormData, files, setFiles)}>
+    //           <div className="form-group">
+    //             <label htmlFor="add_comment_text_aria" className=" form-label small">
+    //                 Add New Comment
+    //             </label>
+    //             <textarea
+    //               className="form-control form-control-sm"
+    //               id="add_comment_text_aria"
+    //               rows={2}
+    //               name="note"
+    //               value={formData.note}
+    //               onChange={(e) => setFormData({ ...formData, note: e.target.value })} 
+    //               />
+    //           </div>
+              
+
+
+        
+    //             {files.map((fileInput, index) => (
+    //             <div className="card  p-2 m-2 shadow-sm border rounded" key={fileInput.id}>
+    //                 <div className="form-group">
+    //                 <div className="mb-3">
+    //                     <label 
+    //                     htmlFor={`fileInput-comment-${fileInput.id}`} 
+    //                     className="form-label fw-bold me-1 ms-1 small"
+    //                     >
+    //                     {t('upload_file') } {index + 1}
+
+    //                     </label>
+    //                     <input
+    //                     type="file"
+    //                     className="form-control-file small w-100"
+    //                     id={`fileInput-comment-${fileInput.id}`}
+    //                     onChange={(e) => handleFileChange(e, fileInput.id)}
+    //                     name="files[]"
+    //                     ref={(el) => (fileInputRefs.current[index] = el)}  
+    //                     />
+    //                 </div>
+                    
+    //                 {index === files.length - 1 && (
+    //                     <div className="row pt-0 mt-0">
+    //                         <div className="col-12 col-md-auto">
+    //                             <button
+    //                             type="button"
+    //                             className="btn btn-outline-secondary w-100 mb-2 mb-md-0 me-md-2 btn-sm  "
+    //                             onClick={handleAddMore}
+    //                             >
+    //                             <i className="fa fa-plus me-2"></i>  
+              
+    //                             {t('btn_add_More_file')}
+    //                             </button>
+    //                         </div>
+    //                         <div className="col-12 col-md-auto">
+    //                             <button
+    //                             type="button"
+    //                             className="btn btn-outline-danger w-100 btn-sm "
+    //                             onClick={handleDeleteLast}
+    //                             disabled={files.length <= 1}  
+    //                             >
+    //                             <i className="fa fa-trash me-2"></i>  
+        
+    //                             {t('btn_remove_file')}
+    //                             </button>
+    //                         </div>
+
+                            
+    //                     </div>
+    //                 )}
+    //                 </div>
+    //             </div>
+    //             ))}
 
 
 
 
-        </div>
+    //           <button type="submit" className="btn btn-outline-primary btn-sm  mt-3 mb-5  " disabled={isSubmitting}>
 
+    //           { isSubmitting && ( <span className="spinner-border spinner-border-sm me-2"></span> ) }  
 
-
-
-
-    )
+    //             {/* Submit */}
+    //             {t('btn_submit')}
+    //           </button>
+    //       </form>
+        
+  
+    //     </div>
+    // )
 }
 
 
