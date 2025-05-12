@@ -60,7 +60,7 @@ const useSubmitForm = (endpoint, onSuccess) => {
             });
 
             if (response && response.data) {
-                toast.success("Your comment has been added.");
+                toast.success("Your data has been added.");
                 setFormData({note: ""});
                 setFiles([{ id: 1, file: null }]);
 

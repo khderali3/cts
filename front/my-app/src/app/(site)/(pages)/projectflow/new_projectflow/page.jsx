@@ -12,9 +12,17 @@ import { useTranslations, useLocale } from "next-intl";
 
 import useSubmitForm from "@/app/(site)/_components/hooks/project_hoks/use_submit_form";
 
+import { useSearchParams } from 'next/navigation';
 
 
 const Page = () =>  {
+
+
+  const searchParams = useSearchParams();
+  const selectedProjectTypeId = searchParams.get('projecttype_id');
+
+
+
 
   const t = useTranslations('site.ticket.add_new_ticket')
   const locale = useLocale()
@@ -36,7 +44,9 @@ const Page = () =>  {
 
 
   const [formData, setFormData] = useState({
-    project_type: "",
+    // project_type: "",
+    project_type: selectedProjectTypeId || "",
+
     details: "",
   });
 
@@ -137,8 +147,8 @@ useEffect(() => {
                   id="project_type"
                   name="project_type"  // Correct place for name
                   onChange={handleChange}  // Handle the change event
-                  defaultValue="" 
-                >
+                  value={formData?.project_type}
+                  >
 
                 <option disabled   value=''> 
                   Select Project Type

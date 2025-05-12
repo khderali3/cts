@@ -5,7 +5,7 @@ from rest_framework.serializers import ModelSerializer
 from ..models import (ProjectType, ProjectTypeExtraImages, ProjectFlow,
                      ProjectFlowAttachment, ProjectTypeAttachment, ProjectFlowNote, ProjectFlowNoteAttachment,
                      ProjectFlowSubStep, ProjectFlowStep,ProjectFlowStepNote,ProjectFlowStepNoteAttachment,
-                     ProjectFlowSubStepNote, ProjectFlowSubStepNoteAttachment )
+                     ProjectFlowSubStepNote, ProjectFlowSubStepNoteAttachment, InstalledProduct )
 
 from rest_framework import serializers
 
@@ -33,7 +33,25 @@ def get_user_data(obj, user_attr_name, request=None):
 
 
 
- 
+class InstalledProductSerializer(serializers.ModelSerializer):
+
+   product_info = serializers.SerializerMethodField()
+   
+   class Meta:
+      model = InstalledProduct
+      fields = "__all__"
+      read_only_fields = ['id']
+
+   def get_product_info(self, obj):
+      product_type = getattr(obj, 'installed_product_type', None)
+      if product_type:
+         return {
+               'id': getattr(product_type, 'id', None),
+               'name': getattr(product_type, 'product_name', None),
+               'name_ar': getattr(product_type, 'product_name_ar', None)
+         }
+      return None
+
 
 class ProjectFlowSubStepNoteAttachmentSerializer(serializers.ModelSerializer):
 

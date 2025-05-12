@@ -296,6 +296,8 @@ class SubStepTemplateNoteView(APIView):
 
         data = request.data.copy()
         data['sub_step_template'] = sub_step_id
+        data['sub_step_note_user'] = request.user.id
+        
 
         serializer = CreateOrGetOrPutObjectSubStepTemplateNoteSerializer(data=data, context={'request': request})
         if serializer.is_valid():
@@ -640,6 +642,7 @@ class StepTemplateNoteView(APIView):
         
         # Add the step_template_id to the data
         data['step_template'] = step_template_id
+        data['step_note_user'] = request.user.id
 
         # Pass the modified data to the serializer
         serializer = CreateOrGetOrPutObjectStepTemplateNoteSerializer(data=data, context={'request': request})

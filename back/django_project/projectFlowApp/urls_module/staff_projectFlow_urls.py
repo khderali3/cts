@@ -4,10 +4,11 @@ from django.urls import path
  
 
 from ..views_module.staff_workflow_views import ( 
-    ProjectFlowView, ProjectFlowAttachmentView, ProjectFlowNoteView, ProjectFlowNoteAttachmentView , ProjectFlowStepView, ProjectFlowStepAttachmentView,
-    ProjectFlowStepNoteView, ProjectFlowStepNoteAttachmentView, ProjectFlowSubStepView, ProjectFlowSubStepAttachmentView, ProjectFlowSubStepNoteView, ProjectFlowSubStepNoteAttachmentView,
+    ProjectFlowView, ProjectFlowAttachmentView, ProjectFlowNoteView, ProjectFlowNoteAttachmentView , ProjectFlowStepView, 
+    ProjectFlowStepNoteView, ProjectFlowStepNoteAttachmentView, ProjectFlowSubStepView,  ProjectFlowSubStepNoteView, ProjectFlowSubStepNoteAttachmentView,
     GetFullProjectFlowView, StepResortMoveUpOrDownView, StepResortByAbsolutePositionView, SubStepResortMoveUpOrDownView, SubStepResortByAbsolutePositionView,
-    StartStepProcess, EndStepProcess, StartSubStepProcess, EndSubStepProcess, CanceleProjectFlow, ReopenProjectFlow
+    StartStepProcess, EndStepProcess, StartSubStepProcess, EndSubStepProcess, CanceleProjectFlow, ReopenProjectFlow, InstalledProductView, InstalledProductTypeView
+
     )
  
 
@@ -26,6 +27,18 @@ urlpatterns = [
      path('projectflow/projectflow/<int:id>/reopen_project_flow/', ReopenProjectFlow.as_view()),
 
 
+
+    #projectflow installed product 
+     path('projectflow/projectflow/installed_product_type/', InstalledProductTypeView.as_view()),
+     path('projectflow/projectflow/installed_product_type/<int:id>/', InstalledProductTypeView.as_view()),
+
+
+
+    path('projectflow/projectflow/<int:projectflow>/<int:installed_product_type>/installed_product/', InstalledProductView.as_view()),
+    path('projectflow/projectflow/<int:projectflow>/installed_product/', InstalledProductView.as_view()),
+
+    path('projectflow/projectflow/<int:projectflow>/installed_product/<int:id>/', InstalledProductView.as_view()),
+    # end projectflow installed product
 
 
 
@@ -61,8 +74,6 @@ urlpatterns = [
 
 
 
-     path('projectflow/projectflow/step/<int:step>/files/', ProjectFlowStepAttachmentView.as_view()),
-     path('projectflow/projectflow/step/<int:step>/files/<int:file_id>/', ProjectFlowStepAttachmentView.as_view()),
 
 
      path('projectflow/projectflow/step/<int:step>/note/', ProjectFlowStepNoteView.as_view()),
@@ -95,15 +106,6 @@ urlpatterns = [
       # end sub steps resort
 
 
-
-
-
-
-
-
-
-     path('projectflow/projectflow/step/sub_step/<int:sub_step>/files/', ProjectFlowSubStepAttachmentView.as_view()),
-     path('projectflow/projectflow/step/sub_step/<int:sub_step>/files/<int:file_id>/', ProjectFlowSubStepAttachmentView.as_view()),
 
 
      path('projectflow/projectflow/step/sub_step/<int:sub_step>/note/', ProjectFlowSubStepNoteView.as_view()),

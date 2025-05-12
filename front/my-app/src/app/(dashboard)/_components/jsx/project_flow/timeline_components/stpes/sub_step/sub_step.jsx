@@ -30,9 +30,10 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staff/features/authApiSlice";
 
 
+import { getprojectStatusBadgeColors } from "@/app/public_utils/utils";
 
 
-export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadComponentMethod}) =>{
+export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadComponentMethod , hasPermissionToDeleteStep=() => false }) =>{
 
     const locale = useLocale(); // Get the current locale
     const currentLocale = locale === "ar" ? ar : enUS;
@@ -108,18 +109,38 @@ export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadCo
 
                         <div id={`step_extra_info_${sub_step?.id}`} className="collapse "  >  
    
+
+                            <Link 
+                                href={`/staff/projectFlow/projectFlow/sub_step/${projectflow_id}/${sub_step?.step}/edit_sub_step/${sub_step?.id}`}
+                                className="text-primary mx-2" title="Edit"><i className="bi bi-pencil-fill"></i>
+
+                            </Link>
+        
+
+
+                            {hasPermissionToDeleteStep() &&
+                                <Link href=""
+                                    onClick={(e) => {
+                                            e.preventDefault()
+                                            setIsModalOpen(true) 
+                                            } 
+                                        }
+                                    className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+                                </Link>
+                            }
+
+
+
+
+  
+
+
+
+
                             <ResortStepUpOrDown move_to="up" resort_for='sub_step' step_id={sub_step?.step}  sub_step_id={sub_step?.id} reloadComponentMethod={reloadComponentMethod} />
 
                             <ResortStepUpOrDown move_to="down" resort_for='sub_step' step_id={sub_step?.step}  sub_step_id={sub_step?.id} reloadComponentMethod={reloadComponentMethod} />  
-        
-                            <div>
-                                <Link href={`/staff/projectFlow/projectFlow/sub_step/${projectflow_id}/${sub_step?.step}/edit_sub_step/${sub_step?.id}`}>Edit</Link>
-                            </div>
-        
 
-                            <div>
-                                <button className="btn btn-sm btn-outline-danger my-2" onClick={() => setIsModalOpen(true)} >Delete</button>
-                            </div>
 
 
 
@@ -183,8 +204,13 @@ export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadCo
 
     
                         <div className="mb-2">
-                            <span className="fw-bold">Sub Step Details:</span> 
-                            <span className="ms-2 text-muted">{sub_step?.sub_step_description && sub_step.sub_step_description}</span>
+                            <div className="fw-bold">Sub Step Details:</div> 
+                            <div className="ms-2 text-muted"
+                                dir="auto"  style={{ whiteSpace: 'pre-line' }}
+                            >
+
+                                {sub_step?.sub_step_description && sub_step.sub_step_description}
+                            </div>
                         </div>
 
 
@@ -197,7 +223,7 @@ export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadCo
 
                         <div className="mb-2">
                             <span className="fw-bold">Sub Step status:</span> 
-                            <span className="ms-2 text-muted">{sub_step?.project_flow_sub_step_status && sub_step.project_flow_sub_step_status}</span>
+                            <span className={`ms-2   ${getprojectStatusBadgeColors(sub_step?.project_flow_sub_step_status)} `} >{sub_step?.project_flow_sub_step_status && sub_step.project_flow_sub_step_status}</span>
                         </div>
 
 

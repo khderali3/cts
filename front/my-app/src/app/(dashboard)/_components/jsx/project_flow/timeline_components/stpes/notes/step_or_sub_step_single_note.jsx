@@ -16,6 +16,12 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
   
 
+import { useSelector } from "react-redux";
+
+
+
+
+
 export const  StepOrSubStepSingleNote = ({note={}, note_for="step",  handleReloadFlag=null }) => {
 
     const locale = useLocale(); // Get the current locale
@@ -32,6 +38,21 @@ export const  StepOrSubStepSingleNote = ({note={}, note_for="step",  handleReloa
 
 
     const [deleting, setDeleting] = useState(false)
+
+
+    const { permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
+
+    const hasPermissionToDeleteStepNote = () => {
+        if (is_superuser || (permissions?.includes('usersAuthApp.projectflow_step_note_delete') && is_staff)) {
+            return true
+        }
+          return false
+    }
+
+
+
+
+
 
 
     const submit_url = note_for === "step" 
@@ -96,8 +117,12 @@ export const  StepOrSubStepSingleNote = ({note={}, note_for="step",  handleReloa
                     <span>{formatDate(note?.created_date || '')}</span> 
                 </div>
 
-                <p className="  small">{note?.note}</p>
-     
+                {/* <p className="  small">{note?.note}</p> */}
+                <div className="note small" dir="auto"  style={{ whiteSpace: 'pre-line' }}> 
+                    {note?.note}
+
+
+                </div>
 
                 <div className="attachments  ">
                     <ul className="list-unstyled small">
@@ -113,16 +138,18 @@ export const  StepOrSubStepSingleNote = ({note={}, note_for="step",  handleReloa
 
 
 
+                    {hasPermissionToDeleteStepNote() &&
+                        <div className="text-end mt-2 ">
+                            <Link href="#"
+                            
+                            onClick={(e) => {
+                            e.preventDefault()
+                            setIsModalOpen(true)
+                            }}
+                            className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i></Link>
+                        </div>                    
+                    }
 
-                    <div className="text-end mt-2 ">
-                        <Link href="#"
-                        
-                        onClick={(e) => {
-                        e.preventDefault()
-                        setIsModalOpen(true)
-                        }}
-                        className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i></Link>
-                    </div>
 
 
 

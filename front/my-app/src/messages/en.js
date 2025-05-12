@@ -19,7 +19,7 @@ import staff_nav from './main_directory_translations/en/dashboard/staff_nav';
 
 import account_staff from './main_directory_translations/en/dashboard/account';
 
-
+import projectFlow from './main_directory_translations/en/dashboard/projectFlow'
 
 
 
@@ -112,6 +112,7 @@ export default {
 		users_managment,
 		sidebar,
 		account: account_staff,
-		nav : staff_nav
+		nav : staff_nav,
+		projectFlow
 	}
 }

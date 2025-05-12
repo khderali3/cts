@@ -1,6 +1,5 @@
 
 
-// import OurProductSection from "@/app/(dashboard)/_components/jsx/index_page_components/our_product_section" 
 
 import ProjectTypeSection from "@/app/(dashboard)/_components/jsx/projecttype/projectTypeMin"
 
@@ -26,6 +25,7 @@ const Page = () => {
 
 
 { /*  start  sections   */}
+ 
 
       <ProjectTypeSection />
  

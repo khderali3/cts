@@ -3,7 +3,7 @@ import { StepComponent } from "./timeline_components/stpes/step";
 
 
 
-export const Timeline = ({ data = {} }) => {
+export const Timeline = ({ data = {}, reloadComponentMethod }) => {
 
 
  
@@ -16,7 +16,7 @@ export const Timeline = ({ data = {} }) => {
 
 <div className="container-fluid py-5 px-1 mx-1 px-md-5 ">
   <h2 className="text-center  border-bottom pb-2 mb-4">
-    ProjectFlow Template Timeline
+    ProjectFlow  Timeline
   </h2>
 
   <div className="position-relative timeline d-flex flex-column align-items-start ">
@@ -24,7 +24,7 @@ export const Timeline = ({ data = {} }) => {
     {data?.steps?.map(( step, index) => 
 
 
-        <StepComponent key={`step_${step.id}`}  step={step} index={index} />
+        <StepComponent key={`step_${step.id}`}  step={step} index={index} reloadComponentMethod={reloadComponentMethod} />
 
         
 

@@ -168,6 +168,8 @@ class StepTemplate(models.Model):
 
 class StepTemplateNote(models.Model):
     step_template = models.ForeignKey(StepTemplate, related_name='StepsTemplateNote_step_template_related_StepTemplate', on_delete=models.CASCADE, null=True, blank=True)
+    step_note_user = models.ForeignKey(User, related_name='ProjectFlowTemplateStepNote_step_note_user_related_ProjectFlowStep', on_delete=models.PROTECT, blank=True, null=True)
+
     note = models.TextField()
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
@@ -282,6 +284,9 @@ class SubStepTemplate(models.Model):
 
 class SubStepTemplateNote(models.Model):
     sub_step_template = models.ForeignKey(SubStepTemplate, related_name='SubStepTemplateNote_sub_step_template_related_SubStepTemplate', on_delete=models.CASCADE, null=True, blank=True)
+
+    sub_step_note_user = models.ForeignKey(User, related_name='ProjectFlowTemplatesubStepNote_step_note_user_related_ProjectFlowStep', on_delete=models.PROTECT, blank=True, null=True)
+
     note = models.TextField()
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)

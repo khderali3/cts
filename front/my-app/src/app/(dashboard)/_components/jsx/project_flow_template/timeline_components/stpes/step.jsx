@@ -106,27 +106,47 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
 
                 <div className="p-3">
 
-                    <div className="row">
-                        <div className="col-md-12">
+                    <div className="">
 
-                            <div className="  ">
-                                <Link className="" href={`/staff/projectFlow/projectFlowTemplate/sub_step/${step?.project_flow_template}/${step?.id}/add_new_sub_step`}>Add Sub-Step</Link>
-                            </div>
+                        <button 
+                            className="btn btn-light d-flex align-items-center justify-content-center gap-2 rounded-pill px-3 py-2 shadow-sm mb-4"
+                            data-bs-toggle="collapse" 
+                            data-bs-target={`#step_template_extra_info_${step?.id}`}
+                            aria-expanded="false"
+                            aria-controls={`step_template_extra_info_${step?.id}`}
+                            >
+                            <i className="bi bi-info-circle-fill"></i> <span>More Info</span>
+                        </button>
 
-                            <div>
-                                <Link href={`/staff/projectFlow/projectFlowTemplate/step/${step?.project_flow_template}/edit_step/${step?.id}`}>Edit Step</Link>
-                            </div>
+                        <div id={`step_template_extra_info_${step?.id}`} className="collapse "  >  
+ 
 
-                            <div>
-                                <button className="btn btn-sm btn-outline-danger my-2" onClick={()=> setIsModalOpen(true)}>Delete</button>
-                            </div>
+                            <Link 
+                                className="text-success mx-2"
+                                href={`/staff/projectFlow/projectFlowTemplate/sub_step/${step?.project_flow_template}/${step?.id}/add_new_sub_step`}
+                                title="Add New Sub-Step"> 
+                                <i className="bi   bi-plus-circle-fill"></i> 
+                            </Link>
+
+                            <Link 
+                                href={`/staff/projectFlow/projectFlowTemplate/step/${step?.project_flow_template}/edit_step/${step?.id}`}
+                                className="text-primary mx-2" title="Edit"><i className="bi bi-pencil-fill"></i>
+
+                            </Link>
+
+                            <Link href=""
+                                onClick={(e) => {
+                                        e.preventDefault()
+                                        setIsModalOpen(true) 
+                                        } 
+                                    }
+                                className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+                            </Link>
+
 
                             <ResortStepUpOrDown move_to="up" resort_for='step' template_id={step?.project_flow_template} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />
 
                             <ResortStepUpOrDown move_to="down" resort_for='step' template_id={step?.project_flow_template} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
-
-
-
 
 
                             <div className="mb-2">
@@ -134,15 +154,7 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                                 <span className="ms-2 text-secondary ">{step?.id && step?.id}.</span>
                             </div>
 
-                            <div className="mb-2">
-                                <span className="fw-bold">Step Title:</span> 
-                                <span className="ms-2 text-secondary">{step?.step_name && step?.step_name}.</span>
-                            </div>
 
-                            <div className="mb-2">
-                                <span className="fw-bold">Step Details:</span> 
-                                <span className="ms-2 text-muted">{step?.step_description && step?.step_description}</span>
-                            </div>
  
                             <div className="mb-2">
                                 <span className="fw-bold">Show To Client:</span> 
@@ -183,6 +195,40 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                             </div>
 
 
+ 
+
+
+                        </div>
+                            <hr />
+
+                    </div>
+
+
+
+                    <div className="row">
+                        <div className="col-md-12">
+
+
+ 
+
+
+
+
+
+                            <div className="mb-2">
+                                <span className="fw-bold">Step Title:</span> 
+                                <span className="ms-2 text-secondary">{step?.step_name && step?.step_name}.</span>
+                            </div>
+
+                            <div className="mb-2">
+                                <div className="fw-bold">Step Details:</div> 
+                                <div 
+                                    className="ms-2 text-muted"
+                                    dir="auto"  style={{ whiteSpace: 'pre-line' }}
+                                >
+                                    {step?.step_description && step?.step_description}
+                                </div>
+                            </div>
 
 
                         </div>

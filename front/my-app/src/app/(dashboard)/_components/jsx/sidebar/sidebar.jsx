@@ -325,7 +325,8 @@ useEffect(() => {
                     >
                       <i className="nav-icon bi bi-speedometer" />
                       <p>
-                        Project Managment
+                        {/* Project Managment */}
+                        {t("projects_managment.main_title")}
                         <i className="nav-arrow bi bi-chevron-right  " />
                       </p>
                   </a>
@@ -336,7 +337,7 @@ useEffect(() => {
                   <li className="nav-item text-light w-100 ">
                     <Link href="/staff/projectFlow/projectType" className={` rounded text-light nav-link    ${isActive('/staff/projectFlow/projectType', true) ? ' active_class' : '' }     `}  >
                     <i className= 'nav-icon bi bi-circle '  />
-                    <p>Project Type</p>
+                    <p>{t("projects_managment.project_type")}</p>
 
                     </Link>
                   </li>
@@ -345,18 +346,31 @@ useEffect(() => {
                   <li className="nav-item text-light w-100 ">
                     <Link href="/staff/projectFlow/projectFlowTemplate" className={` rounded text-light nav-link    ${isActive('/staff/projectFlow/projectFlowTemplate', true) ? ' active_class' : '' }     `}  >
                     <i className= 'nav-icon bi bi-circle '  />
-                    <p>Flow Template</p>
+                    <p>{t("projects_managment.flow_template")}</p>
 
                     </Link>
                   </li>
 
 
                   <li className="nav-item text-light w-100 ">
-                    <Link href="/staff/projectFlow/projectFlow" className={` rounded text-light nav-link    ${isActive('/staff/projectFlow', true) ? ' active_class' : '' }     `}  >
+                    <Link href="/staff/projectFlow/productsType" className={` rounded text-light nav-link    ${isActive('/staff/projectFlow/productsType', true) ? ' active_class' : '' }     `}  >
                     <i className= 'nav-icon bi bi-circle '  />
-                    <p>ProjectFlow</p>
+                    <p>{t("projects_managment.products_type")}</p>
                     </Link>
                   </li>
+ 
+
+
+
+
+
+                  <li className="nav-item text-light w-100 ">
+                    <Link href="/staff/projectFlow/projectFlow" className={` rounded text-light nav-link    ${isActive('/staff/projectFlow/projectFlow', true) ? ' active_class' : '' }     `}  >
+                    <i className= 'nav-icon bi bi-circle '  />
+                    <p>{t("projects_managment.project_flow")}</p>
+                    </Link>
+                  </li>
+
 
 
 

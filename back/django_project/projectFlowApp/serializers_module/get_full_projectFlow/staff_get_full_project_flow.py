@@ -6,7 +6,7 @@ from rest_framework import serializers
 from django.conf import settings
 from ...models.project_flow_models import (
     ProjectFlow, ProjectFlowAttachment, ProjectFlowNote, ProjectFlowNoteAttachment, ProjectFlowStep,
-    ProjectFlowStepAttachment, ProjectFlowStepNote, ProjectFlowStepNoteAttachment,ProjectFlowStepStatusLog, ProjectFlowSubStep, ProjectFlowSubStepAttachment,
+     ProjectFlowStepNote, ProjectFlowStepNoteAttachment,ProjectFlowStepStatusLog, ProjectFlowSubStep,
     ProjectFlowSubStepNote, ProjectFlowSubStepNoteAttachment, ProjectFlowSubStepStatusLog               
     )
 
@@ -78,6 +78,7 @@ class ProjectFlowSubStepNoteSerializer(serializers.ModelSerializer):
 
     files = ProjectFlowSubStepNoteAttachmentSerializer(many=True, read_only=True, source="ProjectFlowSubStepNoteAttachment_sub_step_note_related_ProjectFlowSubStepNote")
     sub_step_note_user = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = ProjectFlowSubStepNote
         fields = "__all__"
@@ -93,17 +94,17 @@ class ProjectFlowSubStepNoteSerializer(serializers.ModelSerializer):
 
 
 
-class ProjectFlowSubStepAttachmentSerializer(serializers.ModelSerializer):
+# class ProjectFlowSubStepAttachmentSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = ProjectFlowSubStepAttachment
-        fields = "__all__"
-        read_only_fields = [ field.name for field in ProjectFlowSubStepAttachment._meta.fields ]
+#     class Meta:
+#         model = ProjectFlowSubStepAttachment
+#         fields = "__all__"
+#         read_only_fields = [ field.name for field in ProjectFlowSubStepAttachment._meta.fields ]
 
 
 
 class ProjectFlowSubStepSerializer(serializers.ModelSerializer):
-    files = ProjectFlowSubStepAttachmentSerializer(many=True, read_only=True, source="ProjectFlowSubStepAttachment_sub_step_ProjectFlowSubStep")
+    # files = ProjectFlowSubStepAttachmentSerializer(many=True, read_only=True, source="ProjectFlowSubStepAttachment_sub_step_ProjectFlowSubStep")
     notes = ProjectFlowSubStepNoteSerializer(many=True, read_only=True, source="ProjectFlowSubStepNote_sub_step_related_ProjectFlowSubStep")
     status_logs = ProjectFlowSubStepStatusLogSerializer(many=True, read_only=True, source="ProjectFlowSubStepStatusLog_project_flow_sub_step_related_ProjectFlowSubStep")
 
@@ -112,6 +113,7 @@ class ProjectFlowSubStepSerializer(serializers.ModelSerializer):
     allowed_process_groups = GroupSerializer(many=True, read_only=True)  # Use GroupSerializer
 
     can_requester_handle = serializers.SerializerMethodField()
+
     can_requester_start_step = serializers.SerializerMethodField()
 
     can_requester_end_step = serializers.SerializerMethodField()
@@ -139,18 +141,12 @@ class ProjectFlowSubStepSerializer(serializers.ModelSerializer):
             return False
 
 
-
-
-
-
-
-
-        if obj.allowed_process_by == 'client' and obj.project_flow.project_user == user:
+        if obj.allowed_process_by == 'client' and obj.step.project_flow.project_user == user:
             return True
 
         if obj.allowed_process_by == 'any_staff' and user.is_staff:
             return True
-
+ 
 
         if obj.allowed_process_by == 'specific_project_group' and user.is_staff:
             user_groups = user.groups.all()   
@@ -204,7 +200,7 @@ class ProjectFlowSubStepSerializer(serializers.ModelSerializer):
 
  
 
-        if obj.allowed_process_by == 'client' and obj.project_flow.project_user == user:
+        if obj.allowed_process_by == 'client' and obj.step.project_flow.project_user == user:
             return True
 
         if obj.allowed_process_by == 'any_staff' and user.is_staff:
@@ -235,7 +231,7 @@ class ProjectFlowSubStepSerializer(serializers.ModelSerializer):
 
         user = request.user
 
-        if obj.allowed_process_by == 'client' and obj.project_flow.project_user == user:
+        if obj.allowed_process_by == 'client' and obj.step.project_flow.project_user == user:
             return True
 
         if obj.allowed_process_by == 'any_staff' and user.is_staff:
@@ -300,16 +296,16 @@ class ProjectFlowStepNoteSerializer(serializers.ModelSerializer):
 
 
 
-class ProjectFlowStepAttachmentSerializer(serializers.ModelSerializer):
+# class ProjectFlowStepAttachmentSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = ProjectFlowStepAttachment
-        fields = "__all__"
-        read_only_fields = [ field.name for field in ProjectFlowStepAttachment._meta.fields ]
+#     class Meta:
+#         model = ProjectFlowStepAttachment
+#         fields = "__all__"
+#         read_only_fields = [ field.name for field in ProjectFlowStepAttachment._meta.fields ]
 
 
 class ProjectFlowStepSerializer(serializers.ModelSerializer):
-    files = ProjectFlowStepAttachmentSerializer(many=True, read_only=True, source="ProjectFlowStepAttachment_step_related_ProjectFlowStep")
+    # files = ProjectFlowStepAttachmentSerializer(many=True, read_only=True, source="ProjectFlowStepAttachment_step_related_ProjectFlowStep")
     notes = ProjectFlowStepNoteSerializer(many=True, read_only=True, source="ProjectFlowStepNote_project_step_related_ProjectFlowStep")
     status_logs = ProjectFlowStepStatusLogSerializer(many=True, read_only=True, source="ProjectFlowStepStatusLog_project_flow_step_related_ProjectFlowStep")
     sub_steps = ProjectFlowSubStepSerializer(many=True, read_only=True, source="ProjectFlowSubStep_step_related_ProjectFlowStep")

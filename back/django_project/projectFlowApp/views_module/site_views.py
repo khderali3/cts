@@ -13,7 +13,7 @@ from ..serializers_module.site_serializer import (
     ProjectFlowNoteAttachmentSerializer,
     GetListProjectFlowNoteSerializer,
     ProjectFlowStepNoteSerializer, GetProjectFlowStepNoteSerializer,
-    GetProjectFlowSubStepNoteSerializer, ProjectFlowSubStepNoteSerializer
+    GetProjectFlowSubStepNoteSerializer, ProjectFlowSubStepNoteSerializer, InstalledProductSerializer
     )
 
 from ..serializers_module.get_full_projectFlow.site_get_full_project_flow import SiteGetFullProjectFlowSerializer 
@@ -22,7 +22,404 @@ from ..serializers_module.get_full_projectFlow.site_get_full_project_flow import
 from rest_framework import status
 from rest_framework.response import Response
 
-from ..models.project_flow_models import ProjectFlow, ProjectFlowNote, ProjectFlowNoteAttachment, ProjectFlowSubStepNote, ProjectFlowSubStep, ProjectFlowStep
+from ..models.project_flow_models import (ProjectFlow, ProjectFlowNote, ProjectFlowNoteAttachment,
+                                        ProjectFlowSubStepNote, ProjectFlowSubStep, ProjectFlowStep, InstalledProduct
+                                        ) 
+
+from django.db import transaction
+
+
+
+from .mount_template_views import clone_project_flow_template
+
+
+
+class StartStepProcess(APIView):
+    def post(self, request,project_flow, step_id):
+
+
+        try:
+            obj = ProjectFlowStep.objects.get(id=step_id)      
+
+            if obj.project_flow.project_user != request.user:
+                return Response({'message' : "this projectFlow is not related with your user"}, status=status.HTTP_400_BAD_REQUEST)
+
+            elif obj.project_flow.project_flow_status == 'canceled' :
+                return Response({'message' : "the projectflow status is 'Canceled' you can't do this operation! "}, status=status.HTTP_400_BAD_REQUEST)
+            elif obj.project_flow.project_flow_status == 'completed':
+                return Response({'message' : "the projectflow status is 'Completed' you can't do this operation!  "}, status=status.HTTP_400_BAD_REQUEST)
+               
+        except Exception as e :
+                return Response({'message' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            with transaction.atomic():
+                step_obj = ProjectFlowStep.objects.get(id=step_id)
+
+                if step_obj.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
+                    return Response({'message': 'can not change status for step that includes  sub-steps'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                if step_obj.project_flow_step_status == 'in_progress':
+                    return Response({'message': 'the step already "in_progress" '}, status=status.HTTP_400_BAD_REQUEST)
+                
+                elif step_obj.project_flow_step_status != 'pending':
+                    return Response({'message': 'the step shuld be pending status to start it '}, status=status.HTTP_400_BAD_REQUEST)
+
+                project_flow_obj = step_obj.project_flow
+
+
+
+ 
+
+                if (
+                    project_flow_obj.manual_start_mode == 'serialized' and (
+                        step_obj.start_process_step_strategy == 'manual' or
+                        (
+                            step_obj.start_process_step_strategy == 'inherit_from_project_flow' and
+                            step_obj.project_flow.default_start_process_step_or_sub_step_strategy == 'manual'
+                        )
+                    )
+                ):
+                    previous_step_not_completed = ProjectFlowStep.objects.filter(
+                        project_flow=step_obj.project_flow,
+                        sorted_weight__lt=step_obj.sorted_weight,
+                    ).exclude(project_flow_step_status='completed').first()
+
+                    if previous_step_not_completed:
+                        return Response({'message': 'the previous step is not completed yet'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+                step_obj.project_flow_step_status = 'in_progress'
+                step_obj.handler_user = request.user
+
+                step_obj.save()
+
+
+                if  project_flow_obj.project_flow_status == "pending": 
+                    project_flow_obj.project_flow_status = 'in_progress'
+                    
+
+                    project_flow_obj.save()
+
+
+
+                return Response({'message': 'status has been updated'}, status=status.HTTP_200_OK)
+        except ProjectFlowStep.DoesNotExist:
+            return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+class EndStepProcess(APIView):
+    def post(self, request, project_flow, step_id):
+
+        try:
+            obj = ProjectFlowStep.objects.get(id=step_id)     
+
+            if obj.project_flow.project_user != request.user:
+                return Response({'message' : "this projectFlow is not related with your user"}, status=status.HTTP_400_BAD_REQUEST)
+
+            elif obj.project_flow.project_flow_status == 'canceled' :
+                return Response({'message' : "the projectflow status is 'Canceled' you can't do this operation! "}, status=status.HTTP_400_BAD_REQUEST)
+            
+            elif obj.project_flow.project_flow_status == 'completed':
+                return Response({'message' : "the projectflow status is 'Completed' you can't do this operation!  "}, status=status.HTTP_400_BAD_REQUEST)
+               
+
+        except Exception as e :
+                return Response({'message' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+        try:
+            with transaction.atomic():
+                step_obj = ProjectFlowStep.objects.get(id=step_id)
+
+                if step_obj.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
+                    return Response({'message': 'can not change status for step that related with substep directly!'}, status=status.HTTP_400_BAD_REQUEST)
+
+                if step_obj.project_flow_step_status == 'completed':
+                    return Response({'message': 'the step already "completed"'}, status=status.HTTP_400_BAD_REQUEST)
+
+                elif step_obj.project_flow_step_status != 'in_progress':
+                    return Response({'message': 'the step should be in_progress status to end it'}, status=status.HTTP_400_BAD_REQUEST)
+
+                step_obj.project_flow_step_status = 'completed'
+                step_obj.save()
+
+                next_step = ProjectFlowStep.objects.filter(
+                    project_flow=step_obj.project_flow,
+                    sorted_weight__gt=step_obj.sorted_weight
+                ).first()
+
+                if next_step:
+                    should_auto_start = (
+                        next_step.start_process_step_strategy == 'auto' or
+                        (
+                            next_step.start_process_step_strategy == 'inherit_from_project_flow' and
+                            step_obj.project_flow.default_start_process_step_or_sub_step_strategy == 'auto'
+                        )
+                    )
+
+                    if should_auto_start:
+                        if not next_step.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
+                            next_step.project_flow_step_status = 'in_progress'
+                            next_step.save()
+                        else:
+                            first_sub_step = next_step.ProjectFlowSubStep_step_related_ProjectFlowStep.all().first()
+                            should_auto_start_first_sub_step = (
+                                first_sub_step.start_process_sub_step_strategy == 'auto' or
+                                (
+                                    first_sub_step.start_process_sub_step_strategy == 'inherit_from_project_flow' and
+                                    first_sub_step.step.project_flow.default_start_process_step_or_sub_step_strategy == 'auto'
+                                )
+                            )
+
+                            if should_auto_start_first_sub_step:
+                                first_sub_step.project_flow_sub_step_status = 'in_progress'
+                                first_sub_step.save()
+                                next_step.project_flow_step_status = 'in_progress'
+                                next_step.save()
+
+                all_project_steps = step_obj.project_flow.ProjectFlowStep_ProjectFlow_related_ProjectFlow.all()
+                all_project_steps_completed = not all_project_steps.exclude(project_flow_step_status='completed').exists()
+                if all_project_steps_completed:
+                    project_flow_object = step_obj.project_flow
+                    project_flow_object.project_flow_status = 'completed'
+                    project_flow_object.save()
+
+            return Response({'message': 'status has been updated'}, status=status.HTTP_200_OK)
+
+        except ProjectFlowStep.DoesNotExist:
+            return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+class StartSubStepProcess(APIView):
+    def post(self, request, step_id, sub_step_id):
+
+        try:
+            obj = ProjectFlowSubStep.objects.get(id=sub_step_id)  
+
+            if obj.step.project_flow.project_user != request.user:
+                return Response({'message' : "this projectFlow is not related with your user"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+            elif obj.step.project_flow.project_flow_status == 'canceled' :
+                return Response({'message' : "the projectflow status is 'Canceled' you can't do this operation! "}, status=status.HTTP_400_BAD_REQUEST)
+            elif obj.step.project_flow.project_flow_status == 'completed':
+                return Response({'message' : "the projectflow status is 'Completed' you can't do this operation!  "}, status=status.HTTP_400_BAD_REQUEST)
+               
+        except Exception as e :
+                return Response({'message' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+        try:
+            with transaction.atomic():
+                sub_step_obj = ProjectFlowSubStep.objects.get(id=sub_step_id)
+                step_obj = sub_step_obj.step  # parent object
+
+
+
+                if sub_step_obj.project_flow_sub_step_status == 'in_progress':
+                    return Response({'message': 'the sub-step already "in_progress" '}, status=status.HTTP_400_BAD_REQUEST)
+                
+                elif sub_step_obj.project_flow_sub_step_status != 'pending':
+                    return Response({'message': 'the sub-step shuld be pending status to start it '}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+ 
+                project_flow_obj = step_obj.project_flow
+                if (
+                    project_flow_obj.manual_start_mode == 'serialized' and (
+                        sub_step_obj.start_process_sub_step_strategy == 'manual' or
+                        (
+                            sub_step_obj.start_process_sub_step_strategy == 'inherit_from_project_flow' and
+                            sub_step_obj.step.project_flow.default_start_process_step_or_sub_step_strategy == 'manual'
+                        )
+                    )
+                ):
+                    previous_step_not_completed = ProjectFlowStep.objects.filter(
+                        project_flow=step_obj.project_flow,
+                        sorted_weight__lt=step_obj.sorted_weight,
+                    ).exclude(project_flow_step_status='completed').first()
+
+                    if previous_step_not_completed:
+                        return Response({'message': 'the previous step is not completed yet'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+                    previous_sub_step_not_completed = ProjectFlowSubStep.objects.filter(
+                        step=step_obj,
+                        sorted_weight__lt=sub_step_obj.sorted_weight,
+                    ).exclude(project_flow_sub_step_status='completed').first()
+
+                    if previous_sub_step_not_completed:
+                        return Response({'message': 'the previous sub step is not completed yet'}, status=status.HTTP_400_BAD_REQUEST)
+
+    
+                sub_step_obj.project_flow_sub_step_status = 'in_progress'
+                sub_step_obj.save()
+
+
+
+                if step_obj.project_flow_step_status == 'pending':
+                    step_obj.project_flow_step_status = 'in_progress'
+                    step_obj.save()
+
+
+                project_flow_object = step_obj.project_flow
+                if project_flow_object.project_flow_status == 'pending':
+                    project_flow_object.project_flow_status = 'in_progress'
+                    project_flow_object.save()
+
+
+
+                return Response({'message': 'status has been updated'}, status=status.HTTP_200_OK)
+        except ProjectFlowSubStep.DoesNotExist:
+            return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class EndSubStepProcess(APIView):
+    def post(self, request, step_id, sub_step_id):
+
+
+        try:
+            obj = ProjectFlowSubStep.objects.get(id=sub_step_id)     
+
+            if obj.step.project_flow.project_user != request.user:
+                return Response({'message' : "this projectFlow is not related with your user"}, status=status.HTTP_400_BAD_REQUEST)
+
+            elif obj.step.project_flow.project_flow_status == 'canceled' :
+                return Response({'message' : "the projectflow status is 'Canceled' you can't do this operation! "}, status=status.HTTP_400_BAD_REQUEST)
+            elif obj.step.project_flow.project_flow_status == 'completed':
+                return Response({'message' : "the projectflow status is 'Completed' you can't do this operation!  "}, status=status.HTTP_400_BAD_REQUEST)
+               
+        except Exception as e :
+                return Response({'message' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+        try:
+            with transaction.atomic():
+
+                sub_step_obj = ProjectFlowSubStep.objects.get(id=sub_step_id)
+
+                if sub_step_obj.project_flow_sub_step_status == 'completed':
+                    return Response({'message': 'the sub-step already "completed" '}, status=status.HTTP_400_BAD_REQUEST)
+                
+                elif sub_step_obj.project_flow_sub_step_status != 'in_progress':
+                    return Response({'message': 'the sub-step shuld be in_progress status to end it '}, status=status.HTTP_400_BAD_REQUEST)
+
+                
+                sub_step_obj.project_flow_sub_step_status = 'completed'
+                sub_step_obj.save()
+                # Try to find the next step based on sorted_weight
+                next_sub_step = ProjectFlowSubStep.objects.filter(
+                    step=sub_step_obj.step,
+                    sorted_weight__gt=sub_step_obj.sorted_weight
+                ).first()
+
+                if next_sub_step:
+                    should_auto_start = (
+                        next_sub_step.start_process_sub_step_strategy == 'auto' or
+                        (
+                            next_sub_step.start_process_sub_step_strategy == 'inherit_from_project_flow' and
+                            next_sub_step.step.project_flow.default_start_process_step_or_sub_step_strategy == 'auto'
+                        )
+                    )
+                    if should_auto_start:
+                        next_sub_step.project_flow_sub_step_status = 'in_progress'
+                        next_sub_step.save()
+
+                all_sub_steps = sub_step_obj.step.ProjectFlowSubStep_step_related_ProjectFlowStep.all()
+                all_completed = not all_sub_steps.exclude(project_flow_sub_step_status='completed').exists()
+                if all_completed:
+                    step_obj = sub_step_obj.step  # parent object
+
+                    if step_obj.project_flow_step_status != 'completed':
+                        step_obj.project_flow_step_status = 'completed'
+                        step_obj.save()
+
+                        all_project_steps = step_obj.project_flow.ProjectFlowStep_ProjectFlow_related_ProjectFlow.all()
+                        all_project_steps_complated =  not all_project_steps.exclude(project_flow_step_status='completed').exists()
+                        if all_project_steps_complated:
+                            project_flow_object = step_obj.project_flow
+                            project_flow_object.project_flow_status = 'completed'
+                            project_flow_object.save()
+
+
+
+                ## new for next step 'not sub step'
+                step_obj = sub_step_obj.step
+                next_step = ProjectFlowStep.objects.filter(
+                    project_flow=step_obj.project_flow,
+                    sorted_weight__gt=step_obj.sorted_weight
+                ).first()
+                if next_step:
+                    should_auto_start = (
+                        next_step.start_process_step_strategy == 'auto' or
+                        (
+                            next_step.start_process_step_strategy == 'inherit_from_project_flow' and
+                            step_obj.project_flow.default_start_process_step_or_sub_step_strategy == 'auto'
+                        )
+                    )
+
+                    if should_auto_start:
+                        if not next_step.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
+                            next_step.project_flow_step_status = 'in_progress'
+                            next_step.save()
+                        else :
+                            first_sub_step = next_step.ProjectFlowSubStep_step_related_ProjectFlowStep.all().first()
+                            should_auto_start_first_sub_step = (
+                                first_sub_step.start_process_sub_step_strategy == 'auto' or
+                                (
+                                    first_sub_step.start_process_sub_step_strategy == 'inherit_from_project_flow' and
+                                    first_sub_step.step.project_flow.default_start_process_step_or_sub_step_strategy == 'auto'
+                                )
+                            )
+    
+                            if should_auto_start_first_sub_step:
+                                first_sub_step.project_flow_sub_step_status = 'in_progress'
+                                first_sub_step.save()
+                                next_step.project_flow_step_status = 'in_progress'
+                                next_step.save()
+
+    
+                return Response({'message': 'status has been updated'}, status=status.HTTP_200_OK)
+        except ProjectFlowStep.DoesNotExist:
+            return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+
+
 
 
 
@@ -56,6 +453,20 @@ class ProjectFlowSubStepNoteView(APIView):
         data = request.data.copy()
         data['sub_step'] = sub_step
         data['sub_step_note_user'] = request.user.id
+
+        try:
+            obj = ProjectFlowSubStep.objects.get(id=sub_step)             
+            if obj.step.project_flow.project_flow_status == 'canceled' :
+                return Response({'message' : "the projectflow status is 'Canceled' you can't add note! "}, status=status.HTTP_400_BAD_REQUEST)
+            elif obj.step.project_flow.project_flow_status == 'completed':
+                return Response({'message' : "the projectflow status is 'Completed' you can't add note! "}, status=status.HTTP_400_BAD_REQUEST)
+               
+        except Exception as e :
+                return Response({'message' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
         serializer = ProjectFlowSubStepNoteSerializer(data=data, context={'request': request})
         if serializer.is_valid():
             obj = serializer.save()
@@ -106,6 +517,21 @@ class ProjectFlowStepNoteView(APIView):
         data = request.data.copy()
         data['step_note_user'] = request.user.id
         data['project_step'] = step
+
+        try:
+            obj = ProjectFlowStep.objects.get(id=step)             
+            if obj.project_flow.project_flow_status == 'canceled' :
+                return Response({'message' : "the projectflow status is 'Canceled' you can't add note! "}, status=status.HTTP_400_BAD_REQUEST)
+            elif obj.project_flow.project_flow_status == 'completed':
+                return Response({'message' : "the projectflow status is 'Completed' you can't add note! "}, status=status.HTTP_400_BAD_REQUEST)
+               
+        except Exception as e :
+                return Response({'message' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
         serializer = ProjectFlowStepNoteSerializer(data=data, context={'request': request})
         if serializer.is_valid():
             res = serializer.save()
@@ -216,6 +642,22 @@ class ProjectFlowNoteView(APIView):
         data["project_flow"] = project_flow_id
         data["show_to_client"] = True
 
+
+        try:
+            obj = ProjectFlow.objects.get(id=project_flow_id)
+            if obj.project_flow_status == 'canceled' :
+                return Response({'message' : "the projectflow status is 'Canceled' you can't add note! "}, status=status.HTTP_400_BAD_REQUEST)
+            elif obj.project_flow_status == 'completed':
+                return Response({'message' : "the projectflow status is 'Completed' you can't add note! "}, status=status.HTTP_400_BAD_REQUEST)
+               
+        except Exception as e :
+                return Response({'message' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
         serializer = ProjectFlowNoteSerializer(data=data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
@@ -298,6 +740,17 @@ class ProjectFlowView(APIView):
         serializer = CreateProjectFlowSerializer(data=data , context={'request' : request})
         if serializer.is_valid():
             obj = serializer.save()
+            # new logic
+            if (obj.project_type and 
+                obj.project_type.is_auto_clone_template and 
+                obj.project_type.default_template_to_clone is not None):
+                clone_project_flow_template(request, obj.project_type.default_template_to_clone.id, obj.id)
+
+            # end new logic
+
+
+
+
             return Response(ProjectFlowSerializer(obj, context={'request': request}).data , status=status.HTTP_201_CREATED )
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -307,7 +760,7 @@ class ProjectFlowView(APIView):
       
         if project_flow_slug:
             try:
-                obj = ProjectFlow.objects.get(project_flow_slug=project_flow_slug)
+                obj = ProjectFlow.objects.get(project_flow_slug=project_flow_slug, project_user=request.user)
                 serializer = SiteGetFullProjectFlowSerializer(obj,  context={"request": request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -330,6 +783,27 @@ class ProjectFlowView(APIView):
             page = paginator.paginate_queryset(obj_list, request)
             serializer = ProjectFlowSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)            
+
+
+
+
+
+class InstalledProductView(APIView):
+
+    def get(self, request, projectflow ):
+
+        try:
+            projectflow_obj =ProjectFlow.objects.get(id=projectflow)
+        except ProjectFlow.DoesNotExist: 
+            return Response({'message': 'projectflow object not found'}, status=status.HTTP_404_NOT_FOUND)
+        list_obj = InstalledProduct.objects.filter(project_flow=projectflow_obj)
+        serializer = InstalledProductSerializer(list_obj, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+ 
+    
+ 
+
 
 
 

@@ -127,78 +127,22 @@ class CustomPermission(models.Model):
             ('ticket_reply_delete', 'Ticket Reply Delete'),
  
             ('ticket_reply_attachment_delete_after_submited', 'Ticket Reply Attachment Delete After Submited'), 
+
+
+            ('projectflow_create_behalf_client', 'ProjectFlow Create Behalf Client'),
+            ('projectflow_delete', 'projectflow delete'),
+            ('projectflow_note_delete', 'ProjectFlow Note Delete'),
+
+
+
+            ('projectflow_step_note_delete', 'ProjectFlow Step Note Delete'),
+
+            ('projectflow_step_delete', 'projectflow step delete'),
+
+
         )
 
 
-from django.db.models.signals import post_migrate
-from django.contrib.auth.models import Group, Permission
-from django.dispatch import receiver
-from django.apps import apps
-
-# @receiver(post_migrate)
-# def create_default_groups_and_permissions(sender, **kwargs):
-#     if sender.name == 'usersAuthApp':  # Replace 'your_app_name' with the app containing your CustomPermission.
-#         # Define your default groups and permissions
-#         default_groups = {
-#             'Customer Group': ['customer_rights'],
-#             'Vendor Group': ['vendor_rights'],
-#             'Any Group': ['any_rights'],
-#         }
-
-#         # Loop through each group
-#         for group_name, permissions in default_groups.items():
-#             # Create or get the group
-#             group, created = Group.objects.get_or_create(name=group_name)
-
-#             # Assign permissions to the group
-#             for codename in permissions:
-#                 permission = Permission.objects.filter(codename=codename).first()
-#                 if permission:
-#                     group.permissions.add(permission)
-
-
-
-# from django.contrib.auth.models import Group, Permission
-# from django.contrib.contenttypes.models import ContentType
-# from django.db.models.signals import post_migrate
-# from django.dispatch import receiver
-
-# @receiver(post_migrate)
-# def create_default_groups_and_permissions(sender, **kwargs):
-#     if sender.name != 'usersAuthApp':  # Replace with your app's name
-#         return
-
-#     # Define custom permissions not tied to a specific model
-#     custom_permissions = [
-#         ('global_customer_rights', 'Global customer rights'),
-#         ('global_vendor_rights', 'Global vendor rights'),
-#         ('global_admin_rights', 'Global admin rights'),
-#     ]
-
-#     # Use a generic ContentType for global permissions
-#     content_type = ContentType.objects.get(app_label='auth', model='permission')
-
-#     # Create permissions
-#     for codename, name in custom_permissions:
-#         permission, created = Permission.objects.get_or_create(
-#             codename=codename,
-#             name=name,
-#             content_type=content_type
-#         )
-
-#     # Define default groups and assign global permissions
-#     groups_with_permissions = {
-#         'Global Customer Group': ['global_customer_rights'],
-#         'Global Vendor Group': ['global_vendor_rights', 'global_admin_rights'],
-#     }
-
-#     for group_name, permission_codenames in groups_with_permissions.items():
-#         group, created = Group.objects.get_or_create(name=group_name)
-#         if created:
-#             for codename in permission_codenames:
-#                 try:
-#                     permission = Permission.objects.get(codename=codename)
-#                     group.permissions.add(permission)
-#                 except:
-#                     pass
-
+ 
+ 
+ 

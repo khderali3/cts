@@ -32,13 +32,14 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 
 import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staff/features/authApiSlice";
 
+ import { getprojectStatusBadgeColors } from "@/app/public_utils/utils";
  
 
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 import { toast } from "react-toastify";
 import { useState } from "react";
 
-
+import { useSelector } from "react-redux";
 
 export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
 
@@ -54,6 +55,20 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
  
     const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
     const [deleting, setDeleting] = useState(false)
+
+
+
+    const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
+
+
+    const hasPermissionToDeleteStep = () => {
+        if (is_superuser || (permissions?.includes('usersAuthApp.projectflow_step_delete') && is_staff)) {
+            return true
+        }
+          return false
+    }
+
+
 
 
     const handleDelete = async () => {
@@ -85,7 +100,7 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
         <div className={`timeline-icon-dash`} ></div>
             <div className="border border-secondary rounded ms-4 flex-grow-1">
         <div 
-                className={`step-number rounded-circle d-flex justify-content-center align-items-center bg-secondary`}
+                className={`step-number rounded-circle d-flex justify-content-center align-items-center ${handleTimelineColler(step?.project_flow_step_status)}`}
                 style={{ 
                 position: 'absolute' , 
                 // top: '0px', 
@@ -122,9 +137,42 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
 
                         <div id={`step_extra_info_${step?.id}`} className="collapse "  >  
 
-                            <div className="  ">
-                                <Link className="  " href={`/staff/projectFlow/projectFlow/sub_step/${step?.project_flow}/${step?.id}/add_new_sub_step`}>Add Sub-Step</Link>
-                            </div>
+ 
+                            <Link 
+                                className="text-success mx-2"
+                                href={`/staff/projectFlow/projectFlow/sub_step/${step?.project_flow}/${step?.id}/add_new_sub_step`}
+                                title="Add New Sub-Step"> 
+                                <i className="bi   bi-plus-circle-fill"></i> 
+                            </Link>
+ 
+
+                            <Link 
+                                href={`/staff/projectFlow/projectFlow/step/${step?.project_flow}/edit_step/${step?.id}`}
+                                className="text-primary mx-2" title="Edit"><i className="bi bi-pencil-fill"></i>
+
+                            </Link>
+ 
+
+
+                            {hasPermissionToDeleteStep() &&
+                                <Link href=""
+                                    onClick={(e) => {
+                                            e.preventDefault()
+                                            setIsModalOpen(true) 
+                                            } 
+                                        }
+                                    className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+                                </Link>
+                            
+                            }
+
+
+
+ 
+                             
+                           
+ 
+
 
 
                              <ResortStepUpOrDown move_to="up" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />
@@ -132,13 +180,6 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                              <ResortStepUpOrDown move_to="down" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
  
 
-                            <div>
-                                <Link href={`/staff/projectFlow/projectFlow/step/${step?.project_flow}/edit_step/${step?.id}`}>Edit Step</Link>
-                            </div>
-
-                            <div>
-                                <button className="btn btn-sm btn-outline-danger my-2" onClick={ () => setIsModalOpen(true)} >Delete</button>
-                            </div>
 
 
                             <div className="mb-2 ">
@@ -204,8 +245,15 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                                 </div>
 
                                 <div className="mb-2  ">
-                                    <span className="fw-bold">Step Details:</span> 
-                                    <span className="ms-2 text-muted">{step?.step_description && step?.step_description}</span>
+                                    <div className="fw-bold">Step Details:</div> 
+
+                                    <div 
+                                        className="ms-2 text-muted"
+                                        dir='auto'
+                                        style={{whiteSpace: 'pre-line'}}
+                                    >
+                                        {step?.step_description && step?.step_description}
+                                    </div>
                                 </div>
     
 
@@ -213,20 +261,11 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
 
                                 <div className="mb-2  ">
                                     <span className="fw-bold">Step status:</span> 
-                                    <span className="ms-2 text-muted">{step?.project_flow_step_status && step?.project_flow_step_status}</span>
+                                    {/* <span className="ms-2 text-muted">{step?.project_flow_step_status && step?.project_flow_step_status}</span> */}
+                                    <span className={`ms-2   ${getprojectStatusBadgeColors(step?.project_flow_step_status)} `}>{step?.project_flow_step_status && step?.project_flow_step_status}</span>
                                 </div>
 
-                                <div className="mb-2  ">
-                                    <span className="fw-bold">can_requester_start_step:</span> 
-                                    {/* <span className="ms-2 text-muted">{step?.can_requester_handle}</span> */}
-                                    <span className="ms-2 text-muted">{step?.can_requester_start_step?.toString()}</span>
-                                </div>
-
-                                <div className="mb-2  ">
-                                    <span className="fw-bold">can_requester_end_step:</span> 
-                                    {/* <span className="ms-2 text-muted">{step?.can_requester_handle}</span> */}
-                                    <span className="ms-2 text-muted">{step?.can_requester_end_step?.toString()}</span>
-                                </div>
+ 
  
 
                                     <StartOrEndStepOrSubStepProcess disabled_status={step?.can_requester_start_step} action="start_process" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
@@ -323,6 +362,7 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                              index={index} 
                              reloadComponentMethod={reloadComponentMethod} 
                              projectflow_id={step?.project_flow}
+                             hasPermissionToDeleteStep={hasPermissionToDeleteStep}
 
                              
                              />

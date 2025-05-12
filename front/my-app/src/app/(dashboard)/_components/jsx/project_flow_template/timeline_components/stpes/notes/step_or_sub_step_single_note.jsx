@@ -71,16 +71,53 @@ export const  StepOrSubStepSingleNote = ({note={}, note_for="step",  handleReloa
 
     return(
 
-            <div className="note mb-2 p-2 border rounded">
+            <div className="note mb-2 p-2 border rounded" >
                 <div className="note-header d-flex justify-content-between  small text-muted  ">
-                    <span>{note?.step_note_user?.full_name}</span>
+                    <span>{note?.step_note_user?.full_name} </span>
                     <span>{formatDate(note?.created_date || '')}</span> 
                 </div>
 
-                <p className="  small">{note?.note}</p>
-     
+                <div className="note small" dir="auto"  style={{ whiteSpace: 'pre-line' }}> 
+                    {note?.note}
+
+
+                </div>
 
                 <div className="attachments  ">
+                    <ul className="list-unstyled small text-end">
+                         {note?.files?.map((file) => 
+                            <li key={`note_${file.created_data}_${file.id}`} className="d-flex align-items-center">
+                                <i className="bi bi-file-earmark" style={{ marginRight: '5px' }}></i>
+                                <a href={file?.file || ''} target="_blank" rel="noopener noreferrer" className="text-muted  text-break">
+                                    {file.file_name}
+                                </a>
+                            </li>
+                        )}
+                    </ul>
+
+                    <div className="text-end mt-2 ">
+                        <Link href="#"
+                        
+                        onClick={(e) => {
+                        e.preventDefault()
+                        setIsModalOpen(true)
+                        }}
+                        className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i></Link>
+                    </div>
+                    
+                    </div>
+
+
+
+
+
+
+
+
+                {/* <p className="  small">{note?.note}</p> */}
+     
+
+                {/* <div className="attachments  ">
                     <ul className="list-unstyled small">
                          {note?.files?.map((file) => 
                             <li key={`note_${file.created_data}_${file.id}`} className="d-flex align-items-center">
@@ -97,12 +134,11 @@ export const  StepOrSubStepSingleNote = ({note={}, note_for="step",  handleReloa
                         
                         onClick={(e) => {
                         e.preventDefault()
-                        // setObjToDelete(note?.id)
                         setIsModalOpen(true)
                         }}
                         className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i></Link>
                     </div>
-                </div>
+                </div> */}
 
                 <CustomModal  
                 id={`delete_template_${note_for}_note_id`}

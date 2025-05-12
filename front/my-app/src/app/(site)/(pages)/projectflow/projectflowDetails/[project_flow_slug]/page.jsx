@@ -20,6 +20,14 @@ import { ProjectFlowNotes } from "@/app/(site)/_components/jsx/projectFlow/proje
 
 import { Timeline } from "@/app/(site)/_components/jsx/projectFlow/timeline";
 
+import { getprojectStatusBadgeColors } from "@/app/public_utils/utils";
+
+import { ViewProductInstalledButton } from "@/app/(site)/_components/jsx/projectFlow/installed_products/view_installed_products_buttun_modal/button_view_modal";
+
+import { useRouter } from "next/navigation";
+
+
+
 
 const Page = () => {
 
@@ -30,7 +38,7 @@ const Page = () => {
 
     const locale = useLocale(); // Get the current locale
 
-
+    const router = useRouter()
 
     const currentLocale = locale === "ar" ? ar : enUS;
 
@@ -80,11 +88,22 @@ const Page = () => {
               'Content-Type': 'application/json',
             }, 
           });
-     
-          setProjectDetails(response.data)
+          if (response?.data) {
+            setProjectDetails(response.data);
+          } else if (response?.error?.status === 404) {
+            router.push('/404');
+          } else {
+            console.warn("Unexpected response:", response);
+          }
+
+
  
         } catch (error) {
           console.error("Error fetching data:", error);
+
+ 
+
+
         }
         finally{
             setLoading(false);
@@ -225,12 +244,24 @@ useEffect(() => {
                             <div className="col-6">
 
                                 <p className={`p-0 m-0    p-1  `}  >
-                                    { projectDetails?.project_flow_status  }
+                                    <span className={` ${getprojectStatusBadgeColors(projectDetails?.project_flow_status)}  `}>
+                                        {  projectDetails?.project_flow_status}
+                                    </span>
                                 </p>
                                 
                             </div>
 
                         </div>
+
+
+                        <div>
+                            <ViewProductInstalledButton modal_id="productInstalledModal_site_mini"  projectflow_id={projectDetails?.id}/>
+                        </div>
+
+
+
+
+
                         <hr />
                         <div className="p-1 row col-12 d-flex justify-content-start   align-items-center ">
                             <div className="col-6  text-muted">
@@ -315,7 +346,7 @@ useEffect(() => {
 
 
 
-            <Timeline data={projectDetails} />
+            <Timeline data={projectDetails} reloadComponentMethod={reloadComponentMethod} />
  
 
             <hr />
@@ -384,12 +415,25 @@ useEffect(() => {
                         <div className="col-6">
 
                             <p className={`p-0 m-0    p-1  `}  >
-                                { projectDetails?.project_flow_status  }
+                                {/* { projectDetails?.project_flow_status  } */}
+                                <span className={` ${getprojectStatusBadgeColors(projectDetails?.project_flow_status)}  `}>
+                                    {  projectDetails?.project_flow_status}
+                                </span>
+
                             </p>
                             
                         </div>
 
                     </div>
+
+
+                    <div>
+                        <ViewProductInstalledButton modal_id="productInstalledModal_site_lg"  projectflow_id={projectDetails?.id}/>
+                    </div>
+
+
+
+
                     <hr />
                     
                     <div className="p-1 row col-12 d-flex justify-content-start   align-items-center ">
@@ -422,7 +466,7 @@ useEffect(() => {
             </div>
  
             <hr />
-            <ProjectFlowNotes notes={projectDetails?.notes || []} project_id={projectDetails?.id} />
+            <ProjectFlowNotes project_status={projectDetails?.project_flow_status} notes={projectDetails?.notes || []} project_id={projectDetails?.id} />
 
         </div>
 

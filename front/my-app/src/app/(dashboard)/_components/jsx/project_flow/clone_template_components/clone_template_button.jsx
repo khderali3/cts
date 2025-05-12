@@ -7,7 +7,7 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 
 import { toast } from "react-toastify";
 
-export const ButtonCloneTemplate= ({is_template_cloned, project_id, reloadComponentMethod}) => {
+export const ButtonCloneTemplate= ({is_template_cloned, project_id, reloadComponentMethod , modal_id='modal_clone_id'}) => {
 
   const [templateId, setTemplateId] = useState('');  
 
@@ -71,9 +71,9 @@ export const ButtonCloneTemplate= ({is_template_cloned, project_id, reloadCompon
     return ( <>
     
     <button 
-    className="btn btn-light btn-sm small"
+    className="btn btn-outline-primary btn-sm small mt-2"
     data-bs-toggle="modal"
-    data-bs-target="#cloneTemplate_id"
+    data-bs-target={`#${modal_id}`}
     
     
     > 
@@ -85,7 +85,7 @@ export const ButtonCloneTemplate= ({is_template_cloned, project_id, reloadCompon
 
     <div
         className="modal fade   "
-        id="cloneTemplate_id"
+        id={`${modal_id}`}
         tabIndex="-1"
         aria-labelledby="cloneTemplateLabel"
         aria-hidden="true"

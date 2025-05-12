@@ -5,15 +5,21 @@ import { toast } from "react-toastify";
 import { getErrorMessage } from "@/app/public_utils/utils";
 import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/siteApiSlice"
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { AddFilesComponent } from "./add_project_components/extra_images";
+
+import { FormSearchInput } from "../../project_flow_template/input_search_templates/page";
+
+ 
 
 
 
 export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
-	const t = useTranslations('site.ticket.ticket_details_msgs.ticket_reply_form')
-
+	const t = useTranslations('dashboard.projectFlow.projectType.form_add_or_edit')
+	const locale = useLocale()
 	const [customFetch] = useCustomFetchMutation();
+
+
 
     const [data, setData] = useState({
         project_name:'',
@@ -24,8 +30,12 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
         project_description_ar: '',
      })
 
-	 const [isPublished, setIsPublished] = useState(false)
- 
+	 const [isPublished, setIsPublished] = useState(false) 
+	 const [isAutoCloneTemplate, setIsAutoCloneTemplate] = useState(false)
+
+	 const [selectedClonedTemplate, setSelectedClonedTemplate] = useState('')
+
+
 
 	const isButtonDisabled = Object.values(data).some((value) => value.trim() === "");
     const [projectMainImageSelected, setProjectMainImageSelected] = useState(null)
@@ -68,7 +78,13 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 		.map(([key]) => key); // Extract field names
 	
 	  if (emptyFields.length > 0) {
+		if(locale === 'ar'){
+		toast.error(`جميع الحقول مطلوبة: ${emptyFields.join(", ")}`)
+
+		} else {
 		toast.error(`Please fill in all fields: ${emptyFields.join(", ")}`)
+
+		}
 		return;
 	  }
 
@@ -105,6 +121,15 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 
 
 			formData.append("is_published", isPublished);
+			formData.append("is_auto_clone_template", isAutoCloneTemplate);
+
+			if(selectedClonedTemplate) {
+				formData.append("default_template_to_clone", selectedClonedTemplate  );
+			}
+ 
+ 
+
+
 
 
  			const response = await customFetch({
@@ -130,6 +155,8 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 					project_description_ar: '',
 				 })
 				 setIsPublished(false);  // This resets the checkbox to unchecked
+				 setIsAutoCloneTemplate(false)
+				 setSelectedClonedTemplate(null)
 
 				if(handleReloadFlag){handleReloadFlag()}
 
@@ -144,8 +171,14 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
                 fileInputRefsFilesAttachment.current.forEach((input) => {
                     if (input) input.value = "";
                 });
+				if( locale === 'ar'){
 
-				toast.success('your data has been submited')
+				} else {
+					toast.success('your data has been submited')
+
+				}
+
+
 			} else{
 				setIsSubmitting(false)
 				console.log('response', response)
@@ -179,7 +212,7 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 			
 			<div className="mb-3">
 				<label htmlFor="project_name" className="form-label small">
- 				Project Name
+ 				{t('project_name')}
 				</label>
 				<input
 					type="text"
@@ -197,7 +230,7 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 
 			<div className="mb-3">
 				<label htmlFor="project_name_hint" className="form-label small">
-                    project Name Hint
+                   {t('project_name_hint')}
 				</label>
 				<input
 					type="text"
@@ -214,7 +247,7 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 
 			<div className="mb-3">
 				<label htmlFor="project_description" className="form-label small">
- 				Details
+ 				 {t('details')}
 				</label>
 				<textarea 
 					className="form-control  form-control-sm" 
@@ -236,7 +269,7 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 			
 			<div className="mb-3">
 				<label htmlFor="project_name_ar" className="form-label small">
- 				Project Name (Ar)
+ 				  {t('project_name_ar')}
 				</label>
 				<input
 					type="text"
@@ -252,7 +285,7 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 
 			<div className="mb-3">
 				<label htmlFor="project_name_hint_ar" className="form-label small">
-                Project Name Hint (Ar)
+                {t('project_name_hint_ar')}
 				</label>
 				<input
 					type="text"
@@ -269,7 +302,7 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 
 			<div className="mb-3">
 				<label htmlFor="project_description_ar" className="form-label small">
-                    Details (Ar)
+                   {t('details_ar')}
 				</label>
 				<textarea 
 					className="form-control   form-control-sm text-end"
@@ -287,7 +320,7 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 			</div>
 
 
-		<div className="form-check">
+		<div className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
 			<input
 				className="form-check-input small"
 				type="checkbox"
@@ -297,21 +330,39 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 				onChange={(e) => setIsPublished(e.target.checked)}
 			/>
 			<label className="form-check-label small " htmlFor="is_published">
-				Published
+				  {t('Published')}
 			</label>
 		</div>
 
 
+		<div className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
+			<input
+				className="form-check-input small"
+				type="checkbox"
+	
+				id="is_auto_clone_template"
+				checked={isAutoCloneTemplate}
+				onChange={(e) => setIsAutoCloneTemplate(e.target.checked)}
+			/>
+			<label className="form-check-label small " htmlFor="is_auto_clone_template">
+				 {t('auto_clone_template')}
+			</label>
+		</div>
+
+
+		{isAutoCloneTemplate &&
+			<FormSearchInput  handleobjectIdChange={setSelectedClonedTemplate} objectId={selectedClonedTemplate} lable={t('search_template_lable')} ph={t('search_template_ph')}  />
+
+		}
 
 
 
 
 
 
-
-            <div className="mb-3">
+            <div className="mb-3 mt-5">
               <label htmlFor="prod_image" className="form-label small">
- 				Main Image
+ 				 {t('main_image')}
               </label>
               <input
                 type="file"
@@ -328,7 +379,7 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 
 			<AddFilesComponent 
 				custom_id = "extra_images"
-				title = "Extra Images"
+				title =  {t('extra_images')}
 				filesExtraImages={filesExtraImages} 
 				setFilesExtraImages={setFilesExtraImages} 
 				fileInputRefsExtraImages={fileInputRefsExtraImages} 
@@ -338,7 +389,7 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 
 			<AddFilesComponent 
 				custom_id = "attachment"
-				title = "Attachments"
+				title = {t('Attachments')}
 				filesExtraImages={filesAttachment} 
 				setFilesExtraImages={setFilesAttachment} 
 				fileInputRefsExtraImages={fileInputRefsFilesAttachment} 
@@ -362,7 +413,7 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
  		>
 
 			{/* {addingItem ? t('form_add.adding_item') : t('form_add.add_item')} */}
-			Add Item
+			 {t('add')}
 		</button>
 
 

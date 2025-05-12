@@ -83,6 +83,17 @@ export default {
 		ticket_reply_delete : "Ticket Reply Delete",
 		user_managment: "User Managment",
 		ticket_create_behalf_client: 'Ticket Create Behalf Client',
+
+
+		projectflow_create_behalf_client: 'ProjectFlow | Create Behalf Client',
+		projectflow_note_delete: 'ProjectFlow | Note Delete',
+		projectflow_step_note_delete: 'ProjectFlow | Step Note Delete',
+
+		projectflow_delete: 'ProjectFlow | delete',
+		projectflow_step_delete: 'ProjectFlow | Step delete',
+
+
+
 	 },
 	users : {
 		title : "Users Managmnet",

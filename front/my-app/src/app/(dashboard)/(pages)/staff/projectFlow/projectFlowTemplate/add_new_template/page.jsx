@@ -9,12 +9,13 @@ import { useRouter } from 'next/navigation';
 
 import { getErrorMessage } from "@/app/public_utils/utils";
 
+import { useTranslations, useLocale } from "next-intl";
 
 
 const Page = () =>  {
 
- 
- 
+  const t = useTranslations('dashboard.projectFlow.projectflow_template.add_or_edit_template_form')
+  const locale = useLocale()
   const [customFetch] = useCustomFetchMutation();
   const [isSubmiting, setIsSubmiting] = useState(false)
  
@@ -31,15 +32,7 @@ const Page = () =>  {
   });
 
  
-
-  // Handle input changes for text fields
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prevState) => ({
-  //     ...prevState,
-  //     [name]: value,
-  //   }));
-  // };
+ 
  
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -58,7 +51,11 @@ const Page = () =>  {
       !["auto", "manual"].includes(formData.default_start_process_step_or_sub_step_strategy) ||   
       !["serialized", "non-serialized"].includes(formData.manual_start_mode)
     ) {
-      toast.error("All fields are required!");
+      if(locale === 'ar'){
+        toast.error("جميع الحقول مطلوبة!");
+      } else {
+        toast.error("All fields are required!");
+      }
       return;
     }
   
@@ -78,13 +75,31 @@ const Page = () =>  {
     });
 
     if(response && response.data){
+      if(locale === 'ar'){
+        toast.success('تم إضافة البيانات بنجاح');
+
+      } else {
+        toast.success('data has been added succusfuly');
+
+      }
+
       router.push('/staff/projectFlow/projectFlowTemplate')
-      toast.success('data has been added succusfuly');
+
 
     } else{
       console.log('response?.error', response?.error)
-      // toast.error(JSON.stringify(response?.error));
+      
+    if(locale === 'ar'){
+      toast.error('حدث خطأ')
+
       toast.error(getErrorMessage(response?.error?.data))
+
+    } else {
+      toast.error('error')
+
+      toast.error(getErrorMessage(response?.error?.data))
+
+    }
 
     }
 
@@ -117,11 +132,11 @@ const Page = () =>  {
         <div className="container-fluid  min-vh-150 bg-white p-3 border rounded " >
 
 
-            <h2>Add New ProjectFlow Template</h2>
+            <h6>{t('add_title')}</h6>
               <form className="col-md-8 col-12 mb5" onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label htmlFor="template_name" className="form-label small">
-                    Template Name <span className="text-danger">*</span>
+                    {t('template_name')} <span className="text-danger">*</span>
                   </label>
                   <input  
                     name="template_name" 
@@ -131,12 +146,12 @@ const Page = () =>  {
                     maxLength="50"
                     value={formData.template_name}
                   />
-                  <div className="form-text fs-8">Enter a name for this template.</div>
+                  <div className="form-text fs-8">  {t('template_name_des')}</div>
                 </div>
 
                 <div className="mb-3">
                   <label htmlFor="default_start_process_step_or_sub_step_strategy" className="form-label small">
-                    Steps Process Strategy
+                  {t('steps_process_strategy')}
                   </label>
                   <select 
                     className="form-select form-select-sm" 
@@ -147,18 +162,18 @@ const Page = () =>  {
                     value={formData.default_start_process_step_or_sub_step_strategy}
               
                   >
-                    <option value="" disabled >Select Option</option>  
-                    <option value="auto">Auto</option>
-                    <option value="manual">Manual</option>
+                    <option value="" disabled >{locale === 'ar' ? 'يرجى الإختيار' : 'Select Option'}</option>  
+                    <option value="auto"> {locale === 'ar' ? 'تلقائي' : 'Auto'} </option>
+                    <option value="manual"> {locale === 'ar' ? 'يدوي' : 'Manual'} </option>
                   </select> 
                   <div className="form-text fs-8">
-                    Auto: The next step starts automatically when the previous step is complete. Manual: Staff must manually start each step.
+                    {t('steps_process_strategy_des')}
                   </div>
                 </div>
 
                 <div className="mb-3">
                   <label htmlFor="manual_start_mode" className="form-label small">
-                    Manual Start Mode
+                    {t('manual_start_mode')}
                   </label>
                   <select 
                     className="form-select form-select-sm" 
@@ -170,19 +185,21 @@ const Page = () =>  {
 
                     // defaultValue=''
                   >
-                    <option value="" disabled>Select Option</option>
-                    <option value="serialized">Serialized</option>
-                    <option value="non-serialized">Non-Serialized</option>
+                    <option value="" disabled> {locale === 'ar' ? 'يرجى الإختيار' : 'Select Option'} </option>
+                    <option value="serialized">{locale === 'ar' ? 'تسلسلي' : 'Serialized'}</option>
+                    <option value="non-serialized">{locale === 'ar' ? 'غير تسلسلي' : 'Non-Serialized'} </option>
                   </select> 
                   <div className="form-text fs-8">
-                    Serialized: A step can only start if the previous one is completed.  
-                    Non-Serialized: Steps can start in any order.
+ 
+
+                     {t('manual_start_mode_des')}
+
                   </div>
                 </div>
  
 
 
-                <div className="form-check ">
+                <div className={`   ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
                   <input
                     name="auto_start_first_step_after_clone"   
 
@@ -193,11 +210,11 @@ const Page = () =>  {
                     id="auto_start_first_step_after_clone"
                   />
                   <label className="form-check-label small" htmlFor="auto_start_first_step_after_clone">
-                    Auto Start First Step
+                    {t('auto_start_first_step')}
                   </label>
                   <div className="form-text fs-8">
-                    If enabled, the first step will automatically change to 'In Progress'
-                    when the template is cloned (steps and settings are copied) to the project flow.    
+ 
+                      {t('auto_start_first_step_des')}
                   </div>
 
                 </div>
@@ -205,7 +222,7 @@ const Page = () =>  {
 
 
 
-                <div className="form-check mt-2">
+                <div className={`    ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
                   <input
                     name="show_steps_to_client"   
 
@@ -216,11 +233,11 @@ const Page = () =>  {
                     id="show_steps_to_client"
                   />
                   <label className="form-check-label small" htmlFor="show_steps_to_client">
-                    Show Steps To Client
+                        {t('show_steps_to_client')}
                   </label>
                   <div className="form-text fs-8">
-                    Choose whether clients can see project steps.
-    
+                    {/* Choose whether clients can see project steps. */}
+                    {t('show_steps_to_client_des')}
                   </div>
 
                 </div>
@@ -228,7 +245,7 @@ const Page = () =>  {
 
  
 
-                <div className="form-check mt-2">
+                <div className={`    ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
                   <input
                     name="show_steps_or_sub_steps_status_log_to_client"   
 
@@ -239,10 +256,10 @@ const Page = () =>  {
                     id="show_steps_or_sub_steps_status_log_to_client"
                   />
                   <label className="form-check-label small" htmlFor="show_steps_or_sub_steps_status_log_to_client">
-                    Show Step Status Logs To Client
+                    {t('show_steps_status_logs_to_client')}
                   </label>
                   <div className="form-text fs-8">
-                    Choose whether clients can see step status logs.
+                     {t('show_steps_status_logs_to_client_des')}
     
                   </div>
 
@@ -255,7 +272,7 @@ const Page = () =>  {
                   className="btn-sm btn btn-outline-primary mt-4"
                   disabled={isSubmiting}
                   >
-                  Submit
+                   {t('submit')}
                 </button>
               </form>
 

@@ -28,4 +28,11 @@ export default {
 		all_tickets: "All Tickets",
 		my_tickets : "My Tickets",
 	},
+	projects_managment : {
+		main_title: "Projects Managment",
+		project_type : "Projects Type",
+		flow_template: "Flow Tempaltes",
+		products_type : "Products Type",
+		project_flow : "ProjectFlow"
+	},
 }

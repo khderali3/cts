@@ -8,15 +8,16 @@ import json
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from ..models.project_flow_models import (
-    ProjectFlow, ProjectFlowAttachment, ProjectFlowNote, ProjectFlowNoteAttachment, ProjectFlowStep, ProjectFlowStepAttachment, ProjectFlowStepNote, ProjectFlowStepNoteAttachment,
-    ProjectFlowSubStep, ProjectFlowSubStepAttachment, ProjectFlowSubStepNote, ProjectFlowSubStepNoteAttachment
+    ProjectFlow, ProjectFlowAttachment, ProjectFlowNote, ProjectFlowNoteAttachment, ProjectFlowStep,  ProjectFlowStepNote, ProjectFlowStepNoteAttachment,
+    ProjectFlowSubStep,  ProjectFlowSubStepNote, ProjectFlowSubStepNoteAttachment,InstalledProduct , InstalledProductType
     
     )
 from ..serializers_module.staff_serializer_projectFlow import ( 
     GetListProjectFlowSerializer, GetObjectProjectFlowSerializer, CreateOrPutObjectProjectFlowSerializer, ProjectFlowAttachmentSerializer, CreateProjectFlowAttachmentSerializer,
-    ProjectFlowNoteSerializer, CreateOrPutProjectFlowNoteSerializer, ProjectFlowNoteAttachmentSerializer, ProjectFlowStepSerializer, ProjectFlowStepAttachmentSerializer, ProjectFlowStepNoteSerializer,
-    ProjectFlowStepNoteAttachmentSerializer, ProjectFlowSubStepSerializer, ProjectFlowSubStepAttachmentSerializer, ProjectFlowSubStepNoteSerializer,
-      ProjectFlowSubStepNoteAttachmentSerializer, GetListProjectFlowStepNoteSerializer, GetListProjectFlowSubStepNoteSerializer
+    ProjectFlowNoteSerializer, CreateOrPutProjectFlowNoteSerializer, ProjectFlowNoteAttachmentSerializer, ProjectFlowStepSerializer,  ProjectFlowStepNoteSerializer,
+    ProjectFlowStepNoteAttachmentSerializer, ProjectFlowSubStepSerializer,  ProjectFlowSubStepNoteSerializer,
+      ProjectFlowSubStepNoteAttachmentSerializer, GetListProjectFlowStepNoteSerializer, GetListProjectFlowSubStepNoteSerializer,
+        InstalledProductSerializer, InstalledProductTypeSerializer
 )
 
 from ..serializers_module.get_full_projectFlow.staff_get_full_project_flow import GetFullProjectFlowSeriallizer
@@ -24,6 +25,114 @@ from ..serializers_module.get_full_projectFlow.staff_get_full_project_flow impor
 from projectFlowApp.custom_app_utils import MyCustomPagination
 
 from django.db import transaction
+from ..custom_app_utils import IsStaffOrSuperUser
+
+
+
+
+
+class InstalledProductTypeView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+    def post(self, request):
+        serializer = InstalledProductTypeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request, id=None):
+        if id:
+            try:
+                obj = InstalledProductType.objects.get(id=id)
+            except InstalledProductType.DoesNotExist:
+                return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+
+            serializer = InstalledProductTypeSerializer(obj)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            list_obj = InstalledProductType.objects.all()
+            serializer = InstalledProductTypeSerializer(list_obj, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def put(self, request, id):
+        try:
+            obj = InstalledProductType.objects.get(id=id)
+        except InstalledProductType.DoesNotExist:
+            return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = InstalledProductTypeSerializer(obj, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+ 
+    def delete(self, request, id):
+        try:
+            obj = InstalledProductType.objects.get(id=id)
+        except InstalledProductType.DoesNotExist:
+            return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        obj.delete()
+        return Response({'message': 'object has been deleted'}, status=status.HTTP_202_ACCEPTED)
+
+
+
+class InstalledProductView(APIView):
+
+    def post(self, request, projectflow, installed_product_type):
+ 
+        data = request.data.copy()
+        data['project_flow'] = projectflow
+        data['installed_product_type'] = installed_product_type
+        serializer = InstalledProductSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+    def get(self, request, projectflow ,  id=None):
+        if id:
+            try:
+                obj = InstalledProduct.objects.get(id=id)
+
+            except InstalledProduct.DoesNotExist:
+                return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e :
+                return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+            serializer = InstalledProductSerializer(obj)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+        else:
+ 
+            try:
+                projectflow_obj =ProjectFlow.objects.get(id=projectflow)
+            except ProjectFlow.DoesNotExist: 
+                return Response({'message': 'projectflow object not found'}, status=status.HTTP_404_NOT_FOUND)
+
+            list_obj = InstalledProduct.objects.filter(project_flow=projectflow_obj)
+            serializer = InstalledProductSerializer(list_obj, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, projectflow , id):
+        obj = get_object_or_404(InstalledProduct, id=id)
+        serializer = InstalledProductSerializer(obj, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, projectflow,  id):
+        obj = get_object_or_404(InstalledProduct, id=id)
+        obj.delete()
+        return Response({'message' : 'object has been deleted'}, status=status.HTTP_202_ACCEPTED)
+
+
 
 
 
@@ -144,16 +253,7 @@ class StartStepProcess(APIView):
 
 
 
-
-                # if project_flow_obj.manual_start_mode == 'serialized' and step_obj.start_process_step_strategy == 'manual' :
-                #     previous_step = ProjectFlowStep.objects.filter(
-                #         project_flow=step_obj.project_flow,
-                #         sorted_weight__lt=step_obj.sorted_weight,
-                #     ).exclude(project_flow_step_status='completed').first()
-
-                #     if previous_step:
-                #         return Response({'message': 'the previous step is not completed yet'}, status=status.HTTP_400_BAD_REQUEST)
-
+ 
 
                 if (
                     project_flow_obj.manual_start_mode == 'serialized' and (
@@ -177,11 +277,15 @@ class StartStepProcess(APIView):
 
 
                 step_obj.project_flow_step_status = 'in_progress'
+                step_obj.handler_user = request.user
+
                 step_obj.save()
 
 
                 if  project_flow_obj.project_flow_status == "pending": 
                     project_flow_obj.project_flow_status = 'in_progress'
+                    
+
                     project_flow_obj.save()
 
 
@@ -278,77 +382,7 @@ class EndStepProcess(APIView):
 
 
 
-
-
-
-# class EndStepProcess(APIView):
-#     def post(self, request,project_flow, step_id):
-#         try:
-#             step_obj = ProjectFlowStep.objects.get(id=step_id)
-#             if step_obj.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
-#                 return Response({'message': 'can not change status for step that related with substep directly!'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-#             if step_obj.project_flow_step_status == 'completed':
-#                 return Response({'message': 'the step already "completed" '}, status=status.HTTP_400_BAD_REQUEST)
-            
-#             elif step_obj.project_flow_step_status != 'in_progress':
-#                 return Response({'message': 'the step shuld be in_progress status to end it '}, status=status.HTTP_400_BAD_REQUEST)
-
-#             step_obj.project_flow_step_status = 'completed'
-#             step_obj.save()
-#             # Try to find the next step based on sorted_weight
-#             next_step = ProjectFlowStep.objects.filter(
-#                 project_flow=step_obj.project_flow,
-#                 sorted_weight__gt=step_obj.sorted_weight
-#             ).first()
-#             if next_step:
-#                 should_auto_start = (
-#                     next_step.start_process_step_strategy == 'auto' or
-#                     (
-#                         next_step.start_process_step_strategy == 'inherit_from_project_flow' and
-#                         step_obj.project_flow.default_start_process_step_or_sub_step_strategy == 'auto'
-#                     )
-#                 )
-
-#                 if should_auto_start:
-#                     if not next_step.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
-#                         next_step.project_flow_step_status = 'in_progress'
-#                         next_step.save()
-#                     else :
-#                         first_sub_step = next_step.ProjectFlowSubStep_step_related_ProjectFlowStep.all().first()
-#                         should_auto_start_first_sub_step = (
-#                             first_sub_step.start_process_sub_step_strategy == 'auto' or
-#                             (
-#                                 first_sub_step.start_process_sub_step_strategy == 'inherit_from_project_flow' and
-#                                 first_sub_step.step.project_flow.default_start_process_step_or_sub_step_strategy == 'auto'
-#                             )
-#                         )
  
-#                         if should_auto_start_first_sub_step:
-#                             first_sub_step.project_flow_sub_step_status = 'in_progress'
-#                             first_sub_step.save()
-#                             next_step.project_flow_step_status = 'in_progress'
-#                             next_step.save()
-
-
-
-#             all_project_steps = step_obj.project_flow.ProjectFlowStep_ProjectFlow_related_ProjectFlow.all()
-#             all_project_steps_complated =  not all_project_steps.exclude(project_flow_step_status='completed').exists()
-#             if all_project_steps_complated:
-#                 project_flow_object = step_obj.project_flow
-#                 project_flow_object.project_flow_status = 'completed'
-#                 project_flow_object.save()
-
-
-#             return Response({'message': 'status has been updated'}, status=status.HTTP_200_OK)
-#         except ProjectFlowStep.DoesNotExist:
-#             return Response({'message': 'object not found'}, status=status.HTTP_404_NOT_FOUND)
-#         except Exception as e:
-#             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 
 class StartSubStepProcess(APIView):
     def post(self, request, step_id, sub_step_id):
@@ -381,16 +415,7 @@ class StartSubStepProcess(APIView):
 
 
 
-                # project_flow_obj = step_obj.project_flow
-                # if project_flow_obj.manual_start_mode == 'serialized' and sub_step_obj.start_process_sub_step_strategy == 'manual' :
-
-                #     previous_step_not_completed = ProjectFlowStep.objects.filter(
-                #         project_flow=step_obj.project_flow,
-                #         sorted_weight__lt=step_obj.sorted_weight,
-                #     ).exclude(project_flow_step_status='completed').first()
-
-                #     if previous_step_not_completed:
-                #         return Response({'message': 'the previous step is not completed yet'}, status=status.HTTP_400_BAD_REQUEST)
+ 
 
 
                 project_flow_obj = step_obj.project_flow
@@ -432,6 +457,15 @@ class StartSubStepProcess(APIView):
                 if step_obj.project_flow_step_status == 'pending':
                     step_obj.project_flow_step_status = 'in_progress'
                     step_obj.save()
+
+
+                project_flow_object = step_obj.project_flow
+                if project_flow_object.project_flow_status == 'pending':
+                    project_flow_object.project_flow_status = 'in_progress'
+                    project_flow_object.save()
+
+
+
 
                 return Response({'message': 'status has been updated'}, status=status.HTTP_200_OK)
         except ProjectFlowSubStep.DoesNotExist:
@@ -552,15 +586,7 @@ class EndSubStepProcess(APIView):
 
 
 
-
-
-
-
-
-
-
-
-
+ 
 
 class StepResortMoveUpOrDownView(APIView):
     def post(self, request, project_flow_id, step_id, direction):
@@ -720,11 +746,10 @@ class SubStepResortByAbsolutePositionView(APIView):
         return Response({"message": f"Step moved to position {absolute_position}"}, status=status.HTTP_200_OK)
 
 
-
-
-
-
+ 
 class GetFullProjectFlowView(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
 
     def get(self, request, id):
         try:
@@ -742,6 +767,7 @@ class GetFullProjectFlowView(APIView):
 
 
 class ProjectFlowSubStepNoteAttachmentView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
     serializer_class = ProjectFlowSubStepNoteAttachmentSerializer 
 
     def get_serializer(self, *args, **kwargs):
@@ -791,7 +817,7 @@ class ProjectFlowSubStepNoteAttachmentView(APIView):
 
 
 class ProjectFlowSubStepNoteView(APIView):
-
+    permission_classes = [IsStaffOrSuperUser]
     serializer_class  = ProjectFlowSubStepNoteSerializer
 
     def get_serializer(self, *args, **kwargs):
@@ -861,6 +887,10 @@ class ProjectFlowSubStepNoteView(APIView):
             return Response({'message' : str(e)}, status=status.HTTP_400_BAD_REQUEST)      
 
     def delete(self, request, sub_step , note_id):
+        if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.projectflow_step_note_delete'):
+            return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
+
+
         try:
             obj = ProjectFlowSubStepNote.objects.get(id=note_id)
  
@@ -875,50 +905,9 @@ class ProjectFlowSubStepNoteView(APIView):
 
 
 
-class ProjectFlowSubStepAttachmentView(APIView):
-    def post(self, request, sub_step):
-        data = request.data.copy()
-        data["sub_step"] = sub_step
-
-        serializer = ProjectFlowSubStepAttachmentSerializer(data=data, context={'request': request})
-        if serializer.is_valid():
-            list_obj =  serializer.save()
-            return Response(ProjectFlowSubStepAttachmentSerializer(list_obj, many=True,  context={'request': request}).data, status=status.HTTP_201_CREATED)
-        else :
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def get(self, request, sub_step, file_id=None):
-
-        if file_id:
-            try:
-                obj = ProjectFlowSubStepAttachment.objects.get(id=file_id)
-                serializer = ProjectFlowSubStepAttachmentSerializer(obj,  context={'request': request})
-                return Response(serializer.data, status=status.HTTP_200_OK) 
-            except ProjectFlowSubStepAttachment.DoesNotExist:
-                return Response({'message' : "object not found"}, status=status.HTTP_404_NOT_FOUND)
-            except Exception as e :
-                return Response({"message" : str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            list_obj = ProjectFlowSubStepAttachment.objects.filter(sub_step=sub_step)
-            serializer = ProjectFlowSubStepAttachmentSerializer(list_obj, many=True,  context={'request': request})
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
- 
-    def delete(self, request, sub_step, file_id):
-        try:
-            obj = ProjectFlowSubStepAttachment.objects.get(id=file_id)
-            obj.delete()
-            return Response({"message":  'object has been deleted' }, status=status.HTTP_202_ACCEPTED) 
-        except ProjectFlowSubStepAttachment.DoesNotExist:
-            return Response({'message' : "object not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e :
-            return Response({"message" : str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
 
 class ProjectFlowSubStepView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
     def post(self, request, step):
         data = request.data.copy()
         data['step'] = step
@@ -983,6 +972,11 @@ class ProjectFlowSubStepView(APIView):
 
 
     def delete(self, request, step, sub_step_id):
+
+        if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.projectflow_step_delete'):
+            return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
+
+
         try:
             obj = ProjectFlowSubStep.objects.get(id=sub_step_id)
             obj.delete()
@@ -1000,7 +994,7 @@ class ProjectFlowSubStepView(APIView):
 
 
 class ProjectFlowStepNoteAttachmentView(APIView):
-
+    permission_classes = [IsStaffOrSuperUser]
     def post(self, request, note_id):
         data= request.data.copy()
         data['project_flow_step_note'] = note_id
@@ -1044,6 +1038,8 @@ class ProjectFlowStepNoteAttachmentView(APIView):
 
 
 class ProjectFlowStepNoteView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
 
     def post(self, request, step):
         data = request.data.copy()
@@ -1108,6 +1104,13 @@ class ProjectFlowStepNoteView(APIView):
 
 
     def delete(self, request, step, note_id):
+
+        if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.projectflow_step_note_delete'):
+            return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
+
+
+
+
         try:
             obj = ProjectFlowStepNote.objects.get(id=note_id)
             obj.delete()
@@ -1121,53 +1124,11 @@ class ProjectFlowStepNoteView(APIView):
 
 
 
-
-
-
-
-class ProjectFlowStepAttachmentView(APIView):
-
-    def post(self, request, step):
-        data = request.data.copy()
-        data['step']= step
-
-        serializer = ProjectFlowStepAttachmentSerializer(data=data, context={'request': request})
-        if serializer.is_valid():
-            list_data = serializer.save()
-            return Response(ProjectFlowStepAttachmentSerializer(list_data, many=True, context={'request': request}).data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-    def get(self, request, step, file_id=None):
-        if file_id:
-            try:
-                obj = ProjectFlowStepAttachment.objects.get(id=file_id)
-                serializer = ProjectFlowStepAttachmentSerializer(obj, context={'request': request})
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            except ProjectFlowStepAttachment.DoesNotExist:
-                return Response({'message': "object not found"}, status=status.HTTP_404_NOT_FOUND)
-            except Exception as e :
-                return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-            
-        else:
-            list_obj = ProjectFlowStepAttachment.objects.filter(step=step)
-            serializer = ProjectFlowStepAttachmentSerializer(list_obj, many=True, context={'request': request})
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        
-    def delete(self, request, step, file_id):
-        try:
-            obj = ProjectFlowStepAttachment.objects.get(id=file_id)
-            obj.delete()
-            return Response({"message": "object has been deleted"}, status=status.HTTP_202_ACCEPTED)
-        except ProjectFlowStepAttachment.DoesNotExist:
-            return Response({'message': "object not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e :
-            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 class ProjectFlowStepView(APIView):
  
+    permission_classes = [IsStaffOrSuperUser]
+
+
     def post(self, request, project_flow):
         data = request.data.copy()
         data['project_flow']=  project_flow
@@ -1232,6 +1193,11 @@ class ProjectFlowStepView(APIView):
 
 
     def delete(self, request, project_flow, step_id):
+
+        if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.projectflow_step_delete'):
+            return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
+
+
         try:
             obj = ProjectFlowStep.objects.get(id=step_id)
             obj.delete()
@@ -1244,10 +1210,13 @@ class ProjectFlowStepView(APIView):
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
-
+ 
 class ProjectFlowNoteAttachmentView(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
 
     def post(self, request, note_id):
         data = request.data.copy()
@@ -1288,6 +1257,11 @@ class ProjectFlowNoteAttachmentView(APIView):
 
 
 class ProjectFlowNoteView(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
     def post(self, request, project_flow):
         data = request.data.copy()
         data['project_flow'] = project_flow
@@ -1343,6 +1317,8 @@ class ProjectFlowNoteView(APIView):
 
 
     def delete(self, request,  project_flow , note_id):
+        if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.projectflow_note_delete'):
+            return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
 
         try:
             obj = ProjectFlowNote.objects.get(id=note_id)
@@ -1353,15 +1329,27 @@ class ProjectFlowNoteView(APIView):
         except Exception as e:
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
+ 
 from django.db.models import Q
+from .mount_template_views import clone_project_flow_template
 
 class ProjectFlowView(APIView):
 
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
     def post(self, request):
  
+
+        if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.projectflow_create_behalf_client'):
+            return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
+
+
+
+
+
         data = request.data.copy()
         data['project_user'] =  request.data.get("project_user", None)
    
@@ -1370,6 +1358,19 @@ class ProjectFlowView(APIView):
         if serializer.is_valid():
 
             obj_data =  serializer.save( project_created_user = request.user)
+
+            #new logic 
+
+            if (obj_data.project_type and 
+                obj_data.project_type.is_auto_clone_template and 
+                obj_data.project_type.default_template_to_clone is not None):
+                    clone_project_flow_template(request, obj_data.project_type.default_template_to_clone.id, obj_data.id)
+
+
+
+            # end new logic
+
+
             return Response(GetObjectProjectFlowSerializer(obj_data,  context={'request': request} ).data , status=status.HTTP_201_CREATED)
             # return Response(serializer.data , status=status.HTTP_201_CREATED)
 
@@ -1393,13 +1394,35 @@ class ProjectFlowView(APIView):
             list_obj = ProjectFlow.objects.all()
 
             ProjectType_Name = request.query_params.get('ProjectType_Name', None)
+            status_query = request.query_params.get('status', None)
+            user_id_query = request.query_params.get('userId', None)
+            project_id_query = request.query_params.get('projectId', None)
+
+
+
+
+
             if ProjectType_Name:
                 list_obj = list_obj.filter(
                     Q(project_type_name__icontains=ProjectType_Name)
                 ) 
 
-            # serializer = GetListProjectFlowSerializer(list_obj, many=True, context={'request': request})
-            # return Response(serializer.data, status=status.HTTP_200_OK)
+
+            # start new search
+            if status_query and status_query != 'all':
+                list_obj = list_obj.filter(project_flow_status=status_query)
+
+            if user_id_query and user_id_query != 'all':
+                list_obj = list_obj.filter(project_user=user_id_query)
+
+                
+            if project_id_query :
+                list_obj = list_obj.filter(id=project_id_query)
+
+
+            # end new search
+
+ 
             paginator = MyCustomPagination()
             page = paginator.paginate_queryset(list_obj, request)
             serializer = GetListProjectFlowSerializer(page, many=True)
@@ -1419,6 +1442,17 @@ class ProjectFlowView(APIView):
             return Response({'message': "object not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, id):
+
+
+        if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.projectflow_delete'):
+            return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
+
+
+
+
+
+
+
         try:
             obj = ProjectFlow.objects.get(id=id)
             obj.delete()
@@ -1429,10 +1463,15 @@ class ProjectFlowView(APIView):
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
  
 
 class ProjectFlowAttachmentView(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
+
 
     def post(self, request, project_flow ):
         data = request.data.copy()

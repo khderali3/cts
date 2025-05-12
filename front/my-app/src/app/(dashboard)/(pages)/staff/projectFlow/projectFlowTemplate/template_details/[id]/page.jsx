@@ -33,7 +33,7 @@ import { Timeline } from "@/app/(dashboard)/_components/jsx/project_flow_templat
 const Page = () => {
 
 
-     const t = useTranslations('dashboard.ticket')
+    const t = useTranslations('dashboard.projectFlow.template_details')
 
 
     const locale = useLocale(); // Get the current locale
@@ -162,8 +162,9 @@ useEffect(() => {
             <div className="   mt-2  ">
                 <h6> <Link href='/staff/projectFlow/projectFlowTemplate/'>
                  {/* Tickets */}
-                 Project Flow Template 
-                </Link>   - Template Details </h6>
+                 {/* Project Flow Template  */}
+                {t('mini_nav.Project_Flow_Template')}
+                </Link>   - {t('mini_nav.Template_Details')} </h6>
                 <hr />
             </div>
 
@@ -194,7 +195,7 @@ useEffect(() => {
                 >
                     {/* Ticket Details  */}
                     <i className="bi bi-caret-down ms-2 me-2" />
-                    {t('ticket_details_msgs.ticket_details_btn')} 
+                    {t('detail')} 
                     
                 </button>
 
@@ -206,32 +207,45 @@ useEffect(() => {
                         className="card collapse  toggle-content mt-3 "
                     >
 
+
                         <div className="card-body">
 
 
                             <div className="p-1 row col-12 ">
                                 <div className="col-6  text-muted">
-                                    Template Name 
+                                    
+                                    {t('Template_ID')}
                                 </div>
                                 <div className="col-6">
-                                    { data?.template_name ? 'Yes' : 'No'  }
+                                    #{ data?.id }
+                                </div>
+                            </div>
+
+
+
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6  text-muted">
+                                    {t('Template_Name')} 
+                                </div>
+                                <div className="col-6">
+                                    { data?.template_name }
                                 </div>
                             </div>
 
 
                             <div className="p-1 row col-12 ">
                                 <div className="col-6  text-muted">
-                                    Steps Process Strategy 
+                                    {t('Steps_Process_Strategy')} 
                                 </div>
                                 <div className="col-6">
                                     { data?.default_start_process_step_or_sub_step_strategy  }
                                 </div>
                             </div>
-    
-    
+
                             <div className="p-1 row col-12 ">
                                 <div className="col-6  text-muted">
-                                    Manual Start Mode 
+                                    {/* Manual Start Mode */}
+                                     {t('Manual_Start_Mode')}  
                                 </div>
                                 <div className="col-6">
                                     { data?.manual_start_mode }
@@ -239,17 +253,69 @@ useEffect(() => {
                             </div>
 
 
+
                             <div className="p-1 row col-12 ">
                                 <div className="col-6  text-muted">
-                                    Manual Start Mode
+                                    {/* Auto Start First Step  */}
+                                     {t('Auto_Start_First_Step')}
                                 </div>
                                 <div className="col-6">
                                     { data?.auto_start_first_step_after_clone   ? 'Yes' : 'No'  }
                                 </div>
                             </div>
-    
+
+
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6  text-muted">
+                                    {/* Show Steps To Client */}
+                                     {t('Show_Steps_To_Client')} 
+                                </div>
+                                <div className="col-6">
+                                    { data?.show_steps_to_client   ? 'Yes' : 'No'  }
+                                </div>
+                            </div>
+
+
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6  text-muted">
+                                    {/* Show Step Status Logs To Client  */}
+                                     {t('Show_Step_Status_Logs_To_Client')}
+                                </div>
+                                <div className="col-6">
+                                    { data?.show_steps_or_sub_steps_status_log_to_client   ? 'Yes' : 'No'  }
+                                </div>
+                            </div>
+
+
+
+                            <Link
+
+                                href={`/staff/projectFlow/projectFlowTemplate/step/${data?.id}/add_new_step`}
+                                
+                                className="text-success mx-2"
+                                title= {t('Add_New_Step')}>
+                                <i className="bi   bi-plus-circle-fill"></i> 
+                            </Link>
+
+                            <Link 
+                                href={`/staff/projectFlow/projectFlowTemplate/edit_template/${data?.id}`}
+
+                                className="text-primary mx-2" title={t('Edit')}><i className="bi bi-pencil-fill"></i>
+                            </Link> 
+
+
+                            <Link href=""
+                                onClick={(e) => {
+                                        e.preventDefault()
+                                        setIsModalOpen(true) 
+                                    } 
+                                }
+                                className="text-danger mx-2" title={t('Delete')}><i className="bi bi-trash-fill"></i>
+                            </Link>
+
 
                         </div>
+
 
 
 
@@ -353,15 +419,31 @@ useEffect(() => {
 
  
 
-                        <div className="p-1 row col-12 ">
-                            <Link className="btn btn-light " href={`/staff/projectFlow/projectFlowTemplate/step/${data?.id}/add_new_step`}>Add New Step</Link>
-                        </div>
-                        <div>
-                            <Link href={`/staff/projectFlow/projectFlowTemplate/edit_template/${data?.id}`}>Edit Template</Link>
+                        <Link
 
-                        </div>
+                            href={`/staff/projectFlow/projectFlowTemplate/step/${data?.id}/add_new_step`}
+                            
+                            className="text-success mx-2"
+                            title="Add New Step">
+                            <i className="bi   bi-plus-circle-fill"></i> 
+                        </Link>
+
+                        <Link 
+                            href={`/staff/projectFlow/projectFlowTemplate/edit_template/${data?.id}`}
                         
-                        <button className="btn btn-sm btn-outline-danger mt-2" onClick={() => setIsModalOpen(true)}>Delete Template</button>
+                            className="text-primary mx-2" title="Edit"><i className="bi bi-pencil-fill"></i>
+                        </Link> 
+
+
+                        <Link href=""
+                            onClick={(e) => {
+                                    e.preventDefault()
+                                    setIsModalOpen(true) 
+                                } 
+                            }
+                            className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+                        </Link>
+ 
 
                     </div>
 

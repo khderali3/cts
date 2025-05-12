@@ -15,6 +15,7 @@ import { useTranslations } from "next-intl";
 import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 import { useLocale } from "next-intl"; // Get the current locale from next-intl
 
+import { getprojectStatusBadgeColors } from "@/app/public_utils/utils";
 
 
 const Page = () => {
@@ -381,8 +382,15 @@ const Page = () => {
                 <td>{formatDate(project_flow?.latest_activity)}</td>
                 <td>
                   <span  >
-                    {/* {ticket.ticket_status} */}
-                    {project_flow?.project_flow_status }
+ 
+                    {/* {project_flow?.project_flow_status } */}
+
+                        <span className={` ${getprojectStatusBadgeColors(project_flow?.project_flow_status)}  `}> 
+                          {project_flow?.project_flow_status && project_flow.project_flow_status}
+                        </span>
+
+
+
                   </span>
                 </td>
               </tr>
@@ -437,10 +445,17 @@ const Page = () => {
                 </p>
                 <p>
                   <strong>status : </strong>{" "}
-                  <span  >
- 
+                  {/* <span  > 
                     {project_flow?.project_flow_status && project_flow?.project_flow_status }
+                  </span> */}
+                  <span className={` ${getprojectStatusBadgeColors(project_flow?.project_flow_status)}  `}> 
+                    {project_flow?.project_flow_status && project_flow.project_flow_status}
                   </span>
+
+
+
+
+
                 </p>
 
  

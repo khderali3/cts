@@ -136,7 +136,8 @@ def clone_project_flow_template(request, template_id, projectflow_id, is_force_c
 
                     new_sub_step_obj.sub_step_name_ar =  template_sub_step.sub_step_name_ar
                     new_sub_step_obj.sub_step_description_ar = template_sub_step.sub_step_description_ar
-
+                    
+                    new_sub_step_obj.start_process_sub_step_strategy = template_sub_step.start_process_sub_step_strategy
 
                     new_sub_step_obj.show_to_client =  template_sub_step.show_to_client
                     new_sub_step_obj.allowed_process_by = template_sub_step.allowed_process_by

@@ -181,13 +181,7 @@ class DepartmentsStaffView(APIView):
 			department.delete()
 			return Response({"detail": "Department deleted successfully."}, status=status.HTTP_202_ACCEPTED)
 	
-
-
-
-
-
-
-	
+ 
 
 class MyCustomStaffPagination(PageNumberPagination):
     page_size = 5

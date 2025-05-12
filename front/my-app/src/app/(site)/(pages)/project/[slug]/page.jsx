@@ -113,7 +113,7 @@ const ProjectDetailsComponent = async ({ params }) => {
 
 
               <div className="d-flex justify-content-center align-items-center"> 
-                <ButtonProjectApplyNow />
+                <ButtonProjectApplyNow projecttype_id={data?.id} />
               </div>
 
 

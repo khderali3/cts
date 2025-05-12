@@ -170,7 +170,7 @@ useEffect( () =>{
                         </div>
 
 
-                        <div dir="auto" className="ticket-details-text" style={{ whiteSpace: 'pre-line' }}>
+                        <div dir="auto" className="ticket-details-text" style={{ whiteSpace: 'pre-line' }} >
 
                             {note?.note}
 

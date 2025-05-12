@@ -12,6 +12,7 @@ User = get_user_model()
  
 from .utils import validate_file_or_image, validate_image
 
+from .project_flow_template_models import ProjectFlowTemplate
 
 class ProjectType(models.Model):
     project_name = models.CharField(max_length=255, db_index=True)    
@@ -29,9 +30,9 @@ class ProjectType(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=False)  # Field for showing on site
-
-
-
+    is_auto_clone_template = models.BooleanField(default=False)
+    default_template_to_clone = models.ForeignKey(ProjectFlowTemplate, related_name='ProjectType_default_template_to_clone_ProjectFlowTemplate', on_delete=models.SET_NULL, blank=True, null=True)
+ 
 
     def save(self , *args , **kwargs):
         if not self.project_slog:

@@ -8,11 +8,14 @@ import { getErrorMessage } from "@/app/public_utils/utils"
 
 import { AddFilesComponent } from "../add_project_components/extra_images"
 
+ 
+import { FormSearchInput } from "../../../project_flow_template/input_search_templates/page"
 
+import {useLocale} from "next-intl"
 
 export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
-
-    const t = useTranslations('dashboard.site_managment.our_product.list_manager')
+    const locale = useLocale()
+    const t = useTranslations('dashboard.projectFlow.projectType.form_add_or_edit')
     const [customFetch] = useCustomFetchMutation()
     const [data, setData] = useState({
         project_name:'',
@@ -23,6 +26,8 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
         project_description_ar: '',
         main_image: '',
         is_published:false,
+        is_auto_clone_template: false,
+        default_template_to_clone: ''
      })
 
      const [projectMainImageSelected, setProjectMainImageSelected] = useState(null)
@@ -36,6 +41,19 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
 
      const [isSubmitting, setIsSubmitting] = useState(false)
+     
+
+ 
+    const handleChangeSelectedClonedTemplate =  (template_id) => {
+
+        setData((prevState) => ({
+          ...prevState,
+          default_template_to_clone: template_id,
+          }));
+
+    }
+
+
 
 
 
@@ -43,16 +61,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    // const emptyFields = Object.entries(data)
-    // .filter(([key, value]) => !value.trim()) // Check for empty values (ignoring spaces)
-    // .map(([key]) => key); // Extract field names
-  
-    // if (emptyFields.length > 0) {
-    // toast.error(`Please fill in all fields: ${emptyFields.join(", ")}`)
-    // return;
-    // }
-
-
+ 
     const fieldsToCheck = [
         'project_name',
         'project_name_hint',
@@ -85,11 +94,20 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
           key === "project_name_ar" ||  
           key === "project_name_hint_ar" ||  
           key === "project_description_ar" ||  
-          key === "is_published"
+          key === "is_published" ||
+          key === 'is_auto_clone_template'
         ) {
           formData.append(key, value);
         }
       });
+
+			if(data?.default_template_to_clone) {
+				formData.append("default_template_to_clone", data?.default_template_to_clone  );
+			}
+
+
+
+
 
 
       if (projectMainImageSelected) {
@@ -273,7 +291,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
         <div className="modal-dialog        ">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="editModal_projectLabel">Edit Project Type</h5>
+              <h5 className="modal-title" id="editModal_projectLabel">{t('edit_project_type')}</h5>
               <button
                 type="button"
                 className="btn-close"
@@ -294,7 +312,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
               
               <div className="mb-3">
                   <label htmlFor="project_name_edit" className="form-label small">
-                  Project Name
+                  {t('project_name')}
                   </label>
                   <input
                       type="text"
@@ -314,7 +332,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
               <div className="mb-3">
                   <label htmlFor="project_name_hint_edit" className="form-label small">
-                      project Name Hint
+                       {t('project_name_hint')}
                   </label>
                   <input
                       type="text"
@@ -331,7 +349,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
               <div className="mb-3">
                   <label htmlFor="project_description_edit" className="form-label small">
-                  Details
+                    {t('details')}
                   </label>
                   <textarea 
                       className="form-control  form-control-sm" 
@@ -351,7 +369,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
               <div className="mb-3">
                   <label htmlFor="project_name_ar_edit" className="form-label small">
-                  Project Name (Ar)
+                   {t('project_name_ar')}
                   </label>
                   <input
                       type="text"
@@ -367,7 +385,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
               <div className="mb-3">
                   <label htmlFor="project_name_hint_ar_edit" className="form-label small">
-                  Project Name Hint (Ar)
+                   {t('project_name_hint_ar')}
                   </label>
                   <input
                       type="text"
@@ -384,7 +402,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
               <div className="mb-3">
                   <label htmlFor="project_description_ar_edit" className="form-label small">
-                      Details (Ar)
+                     {t('details_ar')}
                   </label>
                   <textarea 
                       className="form-control   form-control-sm text-end"
@@ -402,33 +420,61 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
               </div>
 
 
-              <div className="form-check">
-              <input
+              <div className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
+                <input
+                    className="form-check-input small"
+                    type="checkbox"
+
+                    id="is_published_edit"
+                    checked={data?.is_published}
+                    // onChange={(e) => setIsPublished(e.target.checked)}
+                    onChange={ (e) => {
+                      setData((prevState) => ({
+                        ...prevState,
+                        is_published: e.target.checked,
+                        }));
+                      }
+                    }
+                />
+                <label className="form-check-label small " htmlFor="is_published_edit">
+                    {t('Published')}
+                </label>
+              </div>
+
+
+              <div className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
+                <input
                   className="form-check-input small"
                   type="checkbox"
-
-                  id="is_published_edit"
-                  checked={data?.is_published}
-                  // onChange={(e) => setIsPublished(e.target.checked)}
+            
+                  id="is_auto_clone_template"
+                  checked={data?.is_auto_clone_template}
                   onChange={ (e) => {
                     setData((prevState) => ({
                       ...prevState,
-                      is_published: e.target.checked,
+                      is_auto_clone_template: e.target.checked,
                       }));
                     }
                   }
-              />
-              <label className="form-check-label small " htmlFor="is_published_edit">
-                  Published
-              </label>
+                />
+                <label className="form-check-label small " htmlFor="is_auto_clone_template">
+                   {t('auto_clone_template')}
+                </label>
               </div>
+
+
+            {data?.is_auto_clone_template &&
+              <FormSearchInput  handleobjectIdChange={handleChangeSelectedClonedTemplate} objectId={data?.default_template_to_clone} lable={t('search_template_lable')} ph={t('search_template_ph')} />
+
+            }
+
 
 
 
 
               <div className="mb-3">
                 <label htmlFor="main_image_edit" className="form-label small">
-                  Main Image
+                  {t('main_image')}
                 </label>
                 <input
                   type="file"
@@ -440,14 +486,14 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
                   ref={mainImagefileInputRef}
                 />
 
-                {data?.main_image &&  <a href={data?.main_image || '/#'} target="_blank">  current image  </a> }
+                {data?.main_image &&  <a href={data?.main_image || '/#'} target="_blank">  {t('current_image')}  </a> }
 
               </div>
 
 
       <AddFilesComponent 
           custom_id = "extra_images_edit_form"
-          title = "Extra Images"
+          title = {t('extra_images')}
           filesExtraImages={filesExtraImages} 
           setFilesExtraImages={setFilesExtraImages} 
           fileInputRefsExtraImages={fileInputRefsExtraImages} 
@@ -459,7 +505,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
       <AddFilesComponent 
           custom_id = "attachment_edit"
-          title = "Attachments"
+          title = {t('Attachments')}
           filesExtraImages={filesAttachment} 
           setFilesExtraImages={setFilesAttachment} 
           fileInputRefsExtraImages={fileInputRefsFilesAttachment} 
@@ -498,7 +544,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
               >
                 {/* {t('form_edit.cancel')} */}
-                cancel
+                 {t('cancel')}
               </button>
               <button
                 type="button"
@@ -508,7 +554,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
                 disabled={isSubmitting}
               >
 				{/* {editingItemId  ? t('form_edit.updating') : t('form_edit.update') } */}
-                update
+                 {t('update')}
               </button>
             </div>
           </div>

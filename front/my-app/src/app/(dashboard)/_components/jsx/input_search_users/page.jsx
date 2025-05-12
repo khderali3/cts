@@ -55,10 +55,8 @@ const UsersSearchInputGlopal = ({ handleUserIdChange, userId, lable, ph }) => {
   options={options}
   onChange={(selected) => handleUserIdChange(selected?.value)} // Pass the selected value or `null` to the handler
   value={selectedOption} // Ensure that the selected value is highlighted
-  isSearchable
-  // placeholder="Search Users"
+  isSearchable 
   placeholder={ph}
-
   isClearable 
 />
 

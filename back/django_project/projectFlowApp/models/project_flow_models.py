@@ -84,6 +84,41 @@ class ProjectFlow(models.Model):
 
 
 
+class InstalledProductType(models.Model):
+    product_name = models.CharField(max_length=255)
+    product_name_ar = models.CharField(max_length=255)
+
+
+    private_note = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.product_name}"
+
+
+ 
+
+
+class InstalledProduct(models.Model):
+    project_flow = models.ForeignKey(
+        ProjectFlow,
+        related_name='installed_products_ProjectFlow',
+        on_delete=models.CASCADE
+    )
+
+    installed_product_type = models.ForeignKey(
+        InstalledProductType,
+        related_name='installed_products_InstalledProductType',
+        on_delete=models.CASCADE,  
+    )
+    serial_number = models.CharField(max_length=255, blank=True, null=True)
+    note = models.CharField(max_length=255, blank=True, null=True)
+    private_note = models.CharField(max_length=255, blank=True, null=True)
+
+
+ 
+
+
+
 
 
 class ProjectFlowAttachment(models.Model):
@@ -218,24 +253,6 @@ class ProjectFlowStepStatusLog(models.Model):
 
 
 
-
-class ProjectFlowStepAttachment(models.Model):
-    step = models.ForeignKey(ProjectFlowStep, related_name='ProjectFlowStepAttachment_step_related_ProjectFlowStep', on_delete=models.CASCADE, null=True, blank=True)
-    file = models.FileField(upload_to='project_flow/ProjectFlowStepAttachment/', validators=[validate_file_or_image])
-    file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
-    created_data = models.DateTimeField(auto_now_add=True) 
-
-    def save(self, *args, **kwargs):
-        if self.file :
-            self.file_name = basename(self.file.name)
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.id}, {self.step}, {self.file_name}" 
-    
- 
-
-
 class ProjectFlowStepNote(models.Model):
     project_step = models.ForeignKey(ProjectFlowStep, related_name='ProjectFlowStepNote_project_step_related_ProjectFlowStep', on_delete=models.CASCADE, null=True, blank=True)
     step_note_user = models.ForeignKey(User, related_name='ProjectFlowStepNote_step_note_user_related_ProjectFlowStep', on_delete=models.PROTECT, blank=True, null=True)
@@ -366,22 +383,6 @@ class ProjectFlowSubStepStatusLog(models.Model):
     new_status = models.CharField(max_length=30, choices=ProjectFlowStep.ProjectFlowStep_status_options)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-
-
-   
-class ProjectFlowSubStepAttachment(models.Model):
-    sub_step = models.ForeignKey(ProjectFlowSubStep, related_name='ProjectFlowSubStepAttachment_sub_step_ProjectFlowSubStep', on_delete=models.CASCADE, null=True, blank=True)
-    file = models.FileField(upload_to='project_flow/ProjectFlowSubStepAttachment/', validators=[validate_file_or_image])
-    file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
-    created_data = models.DateTimeField(auto_now_add=True) 
-
-    def save(self, *args, **kwargs):
-        if self.file :
-            self.file_name = basename(self.file.name)
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.id}, {self.file_name}" 
 
 
 

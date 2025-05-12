@@ -10,7 +10,12 @@ import { useTranslations, useLocale } from "next-intl";
 
 import { getErrorMessage } from "@/app/public_utils/utils";
 
-export const DeleteButton = ({item_id, handleReloadFlag=null}) => {
+
+
+import Link from "next/link";
+
+
+export const DeleteButton = ({ title= 'Delete' ,item_id, handleReloadFlag=null}) => {
 
 	const locale = useLocale()
 
@@ -75,15 +80,31 @@ export const DeleteButton = ({item_id, handleReloadFlag=null}) => {
 		
 
 
-        <button
+		<Link href=""
+			onClick={(e) => {
+					e.preventDefault()
+					setIsModalOpen(true) 
+					} 
+				}
+			className="text-danger mx-2" title={title}><i className="bi bi-trash-fill"></i>
+		</Link>
+
+
+
+        {/* <button
         className="btn btn-sm btn-danger m-2"
-          onClick= {() => setIsModalOpen(true)}
+		onClick= {() => setIsModalOpen(true)}
 
         disabled={isSubmitting}
         style={{ minWidth: '75px' }}
       >
         {isSubmitting ? t('deleting') :  t('delete')}
-      </button>
+      </button> */}
+
+
+
+
+
 
 	  <CustomModal  
 		id={`list_manager_Product${item_id}`}

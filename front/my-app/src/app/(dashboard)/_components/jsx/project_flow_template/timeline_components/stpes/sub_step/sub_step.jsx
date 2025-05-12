@@ -83,7 +83,7 @@ export const SubStepComponent = ({sub_step={}, index=0, template_id,  reloadComp
 
 
             <div 
-                className={`step-number rounded-circle d-flex justify-content-center align-items-center ${handleTimelineColler(sub_step?.project_flow_sub_step_status)}`}
+                className={`step-number rounded-circle d-flex justify-content-center align-items-center bg-secondary  `}
                 style={{ 
                 position: 'absolute', 
                 top: '-5px', 
@@ -99,43 +99,57 @@ export const SubStepComponent = ({sub_step={}, index=0, template_id,  reloadComp
             </div>
 
 
-                    <ResortStepUpOrDown move_to="up" resort_for='sub_step' step_id={sub_step?.step_template}  sub_step_id={sub_step?.id} reloadComponentMethod={reloadComponentMethod} />
+                        <button 
+                            className="btn btn-light d-flex align-items-center justify-content-center gap-2 rounded-pill px-3 py-2 shadow-sm mb-4"
+                            data-bs-toggle="collapse" 
+                            data-bs-target={`#substep_template_extra_info_${sub_step?.id}`}
+                            aria-expanded="false"
+                            aria-controls={`substep_template_extra_info_${sub_step?.id}`}
+                            >
+                            <i className="bi bi-info-circle-fill"></i> <span>More Info</span>
+                        </button>
 
-                    <ResortStepUpOrDown move_to="down" resort_for='sub_step' step_id={sub_step?.step_template}  sub_step_id={sub_step?.id} reloadComponentMethod={reloadComponentMethod} />  
- 
-                    <div>
-                        <Link href={`/staff/projectFlow/projectFlowTemplate/sub_step/${template_id}/${sub_step?.step_template}/edit_sub_step/${sub_step?.id}`}>Edit</Link>
+                        <div id={`substep_template_extra_info_${sub_step?.id}`} className="collapse "  >  
 
-                    </div>
- 
-                    <div>
-                        <button className="btn btn-sm btn-outline-danger my-2" onClick={()=> setIsModalOpen(true)}>Delete</button>
-
-                    </div>
-
-
+                        <div className="actions mb-2">
 
 
+                            <Link 
+                                href={`/staff/projectFlow/projectFlowTemplate/sub_step/${template_id}/${sub_step?.step_template}/edit_sub_step/${sub_step?.id}`}
+                                className="text-primary mx-2" title="Edit"><i className="bi bi-pencil-fill"></i>
 
-                    <div className="mb-2">
-                        <span className="fw-bold">Sub Step ID:</span> 
-                        <span className="ms-2 text-secondary">{sub_step?.id && sub_step.id}</span>
-                    </div>
+                            </Link>
+
+                            <Link href=""
+                                onClick={(e) => {
+                                        e.preventDefault()
+                                        setIsModalOpen(true) 
+                                        } 
+                                    }
+                                className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+                            </Link>
 
 
- 
-                    <div className="mb-2">
-                        <span className="fw-bold">Sub Step Title:</span> 
-                        <span className="ms-2 text-secondary">{sub_step?.sub_step_name && sub_step.sub_step_name}</span>
-                    </div>
+                            <ResortStepUpOrDown move_to="up" resort_for='sub_step' step_id={sub_step?.step_template}  sub_step_id={sub_step?.id} reloadComponentMethod={reloadComponentMethod} />
 
- 
-                    <div className="mb-2">
-                        <span className="fw-bold">Sub Step Details:</span> 
-                        <span className="ms-2 text-muted">{sub_step?.sub_step_description && sub_step.sub_step_description}</span>
-                    </div>
+                            <ResortStepUpOrDown move_to="down" resort_for='sub_step' step_id={sub_step?.step_template}  sub_step_id={sub_step?.id} reloadComponentMethod={reloadComponentMethod} />  
 
-                    <div className="mb-2">
+
+
+
+                        </div>
+
+
+
+                        <div className="mb-2">
+                            <span className="fw-bold">Sub Step ID:</span> 
+                            <span className="ms-2 text-secondary">{sub_step?.id && sub_step.id}</span>
+                        </div>
+
+
+
+
+                        <div className="mb-2">
                         <span className="fw-bold">Show To Client:</span> 
                         <span className="ms-2 text-muted">{sub_step?.show_to_client ? 'Yes' : 'No'  }</span>
                     </div>
@@ -145,8 +159,6 @@ export const SubStepComponent = ({sub_step={}, index=0, template_id,  reloadComp
                         <span className="fw-bold">Start Process Strategy:</span> 
                         <span className="ms-2 text-muted">{  get_string_start_process_strategy(sub_step?.start_process_sub_step_strategy)  } </span>
                     </div>
-
-
 
 
 
@@ -173,6 +185,39 @@ export const SubStepComponent = ({sub_step={}, index=0, template_id,  reloadComp
                             <span className="ms-2 text-muted">{ get_string_show_status_log_to_client(sub_step?.show_status_log_to_client) }</span>
                         </div>
 
+
+
+
+
+
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+ 
+                    <div className="mb-2">
+                        <span className="fw-bold">Sub Step Title:</span> 
+                        <span className="ms-2 text-secondary">{sub_step?.sub_step_name && sub_step.sub_step_name}</span>
+                    </div>
+
+ 
+                    <div className="mb-2">
+                        <div className="fw-bold">Sub Step Details:</div> 
+                        <div 
+                            className="ms-2 text-muted"
+                            dir="auto"  style={{ whiteSpace: 'pre-line' }}
+                        >
+                                {sub_step?.sub_step_description && sub_step.sub_step_description}
+                        </div>
+                    </div>
 
 
 

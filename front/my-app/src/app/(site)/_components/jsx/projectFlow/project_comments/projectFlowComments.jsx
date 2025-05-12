@@ -19,7 +19,7 @@ import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/
 
 
 
-export const ProjectFlowNotes = ({notes=[], project_id}) => {
+export const ProjectFlowNotes = ({notes=[], project_status='', project_id}) => {
 
     const t_common = useTranslations('common')
 
@@ -172,7 +172,7 @@ useEffect( () =>{
             </div>
 
 
-            <AddNewComment project_id={project_id}  handleReplayAdded={handleReloadComponent} />
+            <AddNewComment project_id={project_id}  project_status={project_status}  handleReplayAdded={handleReloadComponent} />
 
         </div>
 

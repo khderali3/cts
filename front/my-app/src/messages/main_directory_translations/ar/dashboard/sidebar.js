@@ -27,4 +27,12 @@ export default {
 		all_tickets: "كافة التذاكر",
 		my_tickets : "تذاكري",
 	},
+	projects_managment : {
+		main_title: "إدارة المشاريع",
+		project_type : "أنواع المشاريع",
+
+		flow_template: "قوالب الخطوات",
+		products_type : "أنواع التجهيزات",
+		project_flow : "مشاريع العملاء"
+	},
 }

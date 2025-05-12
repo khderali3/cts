@@ -14,8 +14,12 @@ import { ChangeStatusLogs } from "../../status_change_logs";
 
 import { StepOrSubStepNotes } from "../notes/step_or_sub_step_notes";
 
+import { StartOrEndStepOrSubStepProcess } from "../../start_end_process_for_step_or_substep/start_end_process";
+import { getprojectStatusBadgeColors } from "@/app/public_utils/utils";
 
-export const SubStepComponent = ({sub_step={}, index=0}) =>{
+
+
+export const SubStepComponent = ({sub_step={}, index=0, reloadComponentMethod}) =>{
 
     const locale = useLocale(); // Get the current locale
     const currentLocale = locale === "ar" ? ar : enUS;
@@ -64,14 +68,40 @@ export const SubStepComponent = ({sub_step={}, index=0}) =>{
 
                     {/* Step Details */}
                     <div className="mb-2">
-                        <span className="fw-bold">Sub Step Details:</span> 
-                        <span className="ms-2 text-muted">{sub_step?.sub_step_description && sub_step.sub_step_description}</span>
+                        {/* <span className="fw-bold">Sub Step Details:</span> 
+                        <span className="ms-2 text-muted">{sub_step?.sub_step_description && sub_step.sub_step_description}</span> */}
+
+                            <div className="fw-bold">Sub Step Details:</div> 
+                                <div className="ms-2 text-muted"
+                                    dir="auto"  style={{ whiteSpace: 'pre-line' }}
+                                >
+
+                                    {sub_step?.sub_step_description && sub_step.sub_step_description}
+                            </div>
+
+
+
+
                     </div>
 
                     <div className="mb-2">
                         <span className="fw-bold">Sub Step status:</span> 
-                        <span className="ms-2 text-muted">{sub_step?.project_flow_sub_step_status && sub_step.project_flow_sub_step_status}</span>
+                        {/* <span className="ms-2 text-muted">{sub_step?.project_flow_sub_step_status && sub_step.project_flow_sub_step_status}</span> */}
+
+                        <span className={`ms-2   ${getprojectStatusBadgeColors(sub_step?.project_flow_sub_step_status)} `} >{sub_step?.project_flow_sub_step_status && sub_step.project_flow_sub_step_status}</span>
+
+
+
+
                     </div>
+
+
+                    <StartOrEndStepOrSubStepProcess disabled_status={sub_step?.can_requester_start_step} action="start_process" resort_for='sub_step' sub_step_id={sub_step?.id} step_id={sub_step?.step} reloadComponentMethod={reloadComponentMethod} />  
+
+                    <StartOrEndStepOrSubStepProcess disabled_status={sub_step?.can_requester_end_step} action="end_process" resort_for='sub_step' sub_step_id={sub_step?.id} step_id={sub_step?.step} reloadComponentMethod={reloadComponentMethod} />  
+
+
+
 
 
 

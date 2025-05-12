@@ -4,8 +4,8 @@ from rest_framework import serializers
 
 from ...models.project_flow_models import (
     ProjectFlow, ProjectFlowAttachment, ProjectFlowNote, ProjectFlowNoteAttachment, 
-    ProjectFlowStep, ProjectFlowStepAttachment, ProjectFlowStepNote, ProjectFlowStepNoteAttachment, ProjectFlowStepStatusLog,
-    ProjectFlowSubStep,  ProjectFlowSubStepAttachment, ProjectFlowSubStepNote, ProjectFlowSubStepNoteAttachment, ProjectFlowSubStepStatusLog
+    ProjectFlowStep,  ProjectFlowStepNote, ProjectFlowStepNoteAttachment, ProjectFlowStepStatusLog,
+    ProjectFlowSubStep,   ProjectFlowSubStepNote, ProjectFlowSubStepNoteAttachment, ProjectFlowSubStepStatusLog
     )
 
 from django.db.models import Max
@@ -64,23 +64,24 @@ class ProjectFlowSubStepNoteSerializer(serializers.ModelSerializer):
         request = self.context.get("request")  
         return get_user_data(obj, "sub_step_note_user", request)  
 
-class ProjectFlowSubStepAttachmentSerializer(serializers.ModelSerializer):
+# class ProjectFlowSubStepAttachmentSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = ProjectFlowSubStepAttachment
-        fields = "__all__"
-        read_only_fields = ["id"]
+#     class Meta:
+#         model = ProjectFlowSubStepAttachment
+#         fields = "__all__"
+#         read_only_fields = ["id"]
 
 
 
 class ProjectFlowSubStepSerializer(serializers.ModelSerializer):
-    files = ProjectFlowSubStepAttachmentSerializer(many=True, read_only=True, source="ProjectFlowSubStepAttachment_sub_step_ProjectFlowSubStep")
+    # files = ProjectFlowSubStepAttachmentSerializer(many=True, read_only=True, source="ProjectFlowSubStepAttachment_sub_step_ProjectFlowSubStep")
     notes = ProjectFlowSubStepNoteSerializer(many=True, read_only=True , source="ProjectFlowSubStepNote_sub_step_related_ProjectFlowSubStep")
 
     status_logs = serializers.SerializerMethodField()
 
-    can_handle_by_requester = serializers.SerializerMethodField(read_only=True)
     can_add_note_by_requester = serializers.SerializerMethodField(read_only=True)
+    can_requester_start_step = serializers.SerializerMethodField()
+    can_requester_end_step = serializers.SerializerMethodField()
 
     class Meta:
         model = ProjectFlowSubStep
@@ -88,17 +89,107 @@ class ProjectFlowSubStepSerializer(serializers.ModelSerializer):
         read_only_fields = ["id"]
 
 
-    def get_can_handle_by_requester(self, obj):
-        if obj.allowed_process_by == "client":
-            return True
-        else:
+
+
+    def get_can_requester_end_step(self, obj):
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+ 
+        if not request or not user:  
+            return False   
+
+        if obj.project_flow_sub_step_status != 'in_progress':
             return False
 
+
+        if obj.allowed_process_by == 'client' and obj.step.project_flow.project_user == user:
+            return True
+
+        if obj.allowed_process_by == 'any_staff' and user.is_staff:
+            return True
+ 
+
+        if obj.allowed_process_by == 'specific_project_group' and user.is_staff:
+            user_groups = user.groups.all()   
+            allowed_groups = obj.allowed_process_groups.all()   
+            if allowed_groups.filter(id__in=user_groups.values_list("id", flat=True)).exists():
+                return True
+
+        return False 
+
+
+
+
+
+
+ 
     def get_can_add_note_by_requester(self, obj):
         request = self.context.get('request')
-        if obj.allowed_process_by == "client" and obj.handler_user == request.user and obj.start_date_process != None:
-            return True
+ 
+        if obj.allowed_process_by == "client"   and obj.start_date_process != None and obj.step.project_flow.project_user == request.user:
+            return True        
         return False
+
+
+
+
+
+
+    def get_can_requester_start_step(self, obj):
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+ 
+        if not request or not user:  
+            return False   
+
+        if obj.project_flow_sub_step_status != 'pending':
+            return False
+ 
+
+        if (obj.start_process_sub_step_strategy == 'auto') or \
+            (obj.start_process_sub_step_strategy == 'inherit_from_project_flow' and  \
+            obj.step.project_flow.default_start_process_step_or_sub_step_strategy == 'auto'):
+            return False
+        
+
+        step_obj = obj.step
+        project_flow_obj = step_obj.project_flow
+        if (
+            project_flow_obj.manual_start_mode == 'serialized' and (
+                obj.start_process_sub_step_strategy == 'manual' or
+                (
+                    obj.start_process_sub_step_strategy == 'inherit_from_project_flow' and
+                    obj.step.project_flow.default_start_process_step_or_sub_step_strategy == 'manual'
+                )
+            )
+        ):
+            previous_step_not_completed = ProjectFlowStep.objects.filter(
+                project_flow=step_obj.project_flow,
+                sorted_weight__lt=step_obj.sorted_weight,
+            ).exclude(project_flow_step_status='completed').first()
+
+            if previous_step_not_completed:
+               return False
+
+
+
+ 
+
+        if obj.allowed_process_by == 'client' and obj.step.project_flow.project_user == user:
+            return True
+
+        if obj.allowed_process_by == 'any_staff' and user.is_staff:
+            return True
+
+
+        if obj.allowed_process_by == 'specific_project_group' and user.is_staff:
+            user_groups = user.groups.all()   
+            allowed_groups = obj.allowed_process_groups.all()   
+            if allowed_groups.filter(id__in=user_groups.values_list("id", flat=True)).exists():
+                return True
+
+        return False 
+
 
 
 
@@ -150,6 +241,9 @@ class ProjectFlowStepNoteAttachmentSerializer(serializers.ModelSerializer):
 class ProjectFlowStepNoteSerializer(serializers.ModelSerializer):
     files = ProjectFlowStepNoteAttachmentSerializer(many=True, read_only=True, source="ProjectFlowStepNoteAttachment_project_flow_step_note_related_ProjectFlowStepNote")
     step_note_user = serializers.SerializerMethodField()
+
+
+    
     class Meta:
         model = ProjectFlowStepNote
         fields = "__all__"
@@ -160,24 +254,26 @@ class ProjectFlowStepNoteSerializer(serializers.ModelSerializer):
             return get_user_data(obj, "step_note_user", request)  
 
 
-class ProjectFlowStepAttachmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProjectFlowStepAttachment
-        fields = "__all__"
-        read_only_fields = ["id"]
+# class ProjectFlowStepAttachmentSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ProjectFlowStepAttachment
+#         fields = "__all__"
+#         read_only_fields = ["id"]
 
 
 
 
 class ProjectFlowStepSerializer(serializers.ModelSerializer):
-    files = ProjectFlowStepAttachmentSerializer(read_only=True, many=True, source="ProjectFlowStepAttachment_step_related_ProjectFlowStep")
+    # files = ProjectFlowStepAttachmentSerializer(read_only=True, many=True, source="ProjectFlowStepAttachment_step_related_ProjectFlowStep")
     notes = ProjectFlowStepNoteSerializer(many=True, read_only=True, source="ProjectFlowStepNote_project_step_related_ProjectFlowStep")
     status_logs = serializers.SerializerMethodField(read_only=True)
     sub_steps = serializers.SerializerMethodField()
     step_completed_percentage = serializers.SerializerMethodField()
 
-    can_handle_by_requester = serializers.SerializerMethodField(read_only=True)
     can_add_note_by_requester = serializers.SerializerMethodField(read_only=True)
+
+    can_requester_start_step = serializers.SerializerMethodField()
+    can_requester_end_step = serializers.SerializerMethodField()
 
 
     class Meta:
@@ -187,16 +283,116 @@ class ProjectFlowStepSerializer(serializers.ModelSerializer):
 
 
 
-    def get_can_handle_by_requester(self, obj):
-        if obj.allowed_process_by == "client":
-            return True
-        else:
+    def get_can_requester_end_step(self, obj):
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+        all_related_project_flow_steps = obj.project_flow.ProjectFlowStep_ProjectFlow_related_ProjectFlow.all()
+ 
+        if not request or not user:  
+            return False   
+
+        if obj.project_flow_step_status != 'in_progress':
             return False
+
+        if obj.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
+            return False
+
+       
+ 
+            
+
+        if obj.allowed_process_by == 'client' and obj.project_flow.project_user == user:
+            return True
+
+        if obj.allowed_process_by == 'any_staff' and user.is_staff:
+            return True
+
+
+        if obj.allowed_process_by == 'specific_project_group' and user.is_staff:
+            user_groups = user.groups.all()   
+            allowed_groups = obj.allowed_process_groups.all()   
+            if allowed_groups.filter(id__in=user_groups.values_list("id", flat=True)).exists():
+                return True
+
+        return False 
+
+
+
+
+
+
+ 
+    def get_can_requester_start_step(self, obj):
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+        all_related_project_flow_steps = obj.project_flow.ProjectFlowStep_ProjectFlow_related_ProjectFlow.all()
+ 
+        if not request or not user:  
+            return False   
+
+        if obj.project_flow_step_status != 'pending':
+            return False
+
+        if obj.ProjectFlowSubStep_step_related_ProjectFlowStep.exists():
+            return False
+
+        if (obj.start_process_step_strategy == 'auto') or \
+            (obj.start_process_step_strategy == 'inherit_from_project_flow' and  \
+            obj.project_flow.default_start_process_step_or_sub_step_strategy == 'auto'):
+            return False
+        
+        if obj == all_related_project_flow_steps.first() and \
+             obj.project_flow.auto_start_first_step_after_clone == True :
+             return False
+            
+
+        project_flow_obj = obj.project_flow
+
+        if (
+            project_flow_obj.manual_start_mode == 'serialized' and (
+                obj.start_process_step_strategy == 'manual' or
+                (
+                    obj.start_process_step_strategy == 'inherit_from_project_flow' and
+                    obj.project_flow.default_start_process_step_or_sub_step_strategy == 'manual'
+                )
+            )
+        ):
+            previous_step_not_completed = ProjectFlowStep.objects.filter(
+                project_flow=obj.project_flow,
+                sorted_weight__lt=obj.sorted_weight,
+            ).exclude(project_flow_step_status='completed').first()
+
+            if previous_step_not_completed:
+                return False
+
+
+
+
+        if obj.allowed_process_by == 'client' and obj.project_flow.project_user == user:
+            return True
+
+        if obj.allowed_process_by == 'any_staff' and user.is_staff:
+            return True
+
+
+        if obj.allowed_process_by == 'specific_project_group' and user.is_staff:
+            user_groups = user.groups.all()   
+            allowed_groups = obj.allowed_process_groups.all()   
+            if allowed_groups.filter(id__in=user_groups.values_list("id", flat=True)).exists():
+                return True
+
+        return False 
+
+
+
+
+ 
 
     def get_can_add_note_by_requester(self, obj):
         request = self.context.get('request')
-        if obj.allowed_process_by == "client" and obj.handler_user == request.user and obj.start_date_process != None:
-            return True
+
+        if obj.allowed_process_by == "client"   and obj.start_date_process != None and obj.project_flow.project_user == request.user:
+            return True        
         return False
 
 

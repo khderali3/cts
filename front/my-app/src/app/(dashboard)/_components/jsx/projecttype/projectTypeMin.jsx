@@ -23,7 +23,7 @@ const ProjectTypeSection = () => {
 	const [submitting, setSubmitting] = useState(false)
 	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
-  const t = useTranslations('dashboard.site_managment.our_product')
+  const t = useTranslations('dashboard.projectFlow.projectType.projectTypeSection')
   const locale = useLocale()
 
   const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
@@ -33,9 +33,9 @@ const ProjectTypeSection = () => {
 
 	const [data, setData] = useState({
 		title: "",
-		title_hinit: "",
+		title_hint: "",
 		title_ar: "",
-		title_hinit_ar: "",
+		title_hint_ar: "",
 	});
 
 
@@ -118,7 +118,13 @@ const ProjectTypeSection = () => {
 		  }finally{setSubmitting(false)}
 
 	  } else {
-		toast.error("Error. all fields are required ");
+      if(locale === "ar"){
+        toast.error("جميع الحقول مطلوبة ");
+
+      } else {
+        toast.error("Error. all fields are required ");
+
+      }
     setSubmitting(false);
 	  }
 	
@@ -200,7 +206,8 @@ const ProjectTypeSection = () => {
         <div className="container mt-2">
         <h6>
           {/* Product Section (Fourth Section)   */}
-          Project Type Section
+          {/* Project Type Section */}
+          {t('section_title')}
         </h6>
         {/* Row for Search Form */}
         <div className="row my-4 py-4 px-4 border">
@@ -213,7 +220,8 @@ const ProjectTypeSection = () => {
            
             <div className="mb-3">
               <label htmlFor="title" className="form-label">
-              Title
+              
+              {t('form.title')}
               </label>
               <input
                 type="text"
@@ -233,7 +241,7 @@ const ProjectTypeSection = () => {
             <div className="mb-3">
               <label htmlFor="title_hint" className="form-label">
                 
-                Details
+              {t('form.details')}
               </label>
               <input
                 type="text"
@@ -253,7 +261,7 @@ const ProjectTypeSection = () => {
             <div className="mb-3">
               <label htmlFor="title_ar" className="form-label">
                  
-                title (ar)
+              {t('form.title_ar')}
               </label>
               <input
                 dir="rtl"
@@ -272,7 +280,7 @@ const ProjectTypeSection = () => {
 
             <div className="mb-3">
               <label htmlFor="title_hint_ar" className="form-label">
-               Details (ar)
+              {t('form.details_ar')}
               </label>
               <input
                 dir="rtl"
@@ -343,7 +351,7 @@ const ProjectTypeSection = () => {
  
 
 		submitting={submitting}
-		message={'are you sure you wana update project type secion data'}
+		message={  t('form.modal_msg')} 
 		showModal={true} 
 		isModalOpen={isModalOpen}
 		setIsModalOpen={setIsModalOpen}

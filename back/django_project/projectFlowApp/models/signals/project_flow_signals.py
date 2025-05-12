@@ -9,8 +9,8 @@ import os
 
 
 from ..project_flow_models import (
-    ProjectFlowAttachment,ProjectFlowNoteAttachment,ProjectFlowStepAttachment,
-    ProjectFlowStepNoteAttachment, ProjectFlowSubStepAttachment, ProjectFlowSubStepNoteAttachment,                
+    ProjectFlowAttachment,ProjectFlowNoteAttachment,
+    ProjectFlowStepNoteAttachment, ProjectFlowSubStepNoteAttachment,                
     ProjectFlowStep,   ProjectFlowSubStep, ProjectFlowSubStepStatusLog,  ProjectFlowStepStatusLog, 
      )
  
@@ -26,14 +26,15 @@ def delete_attachment_file(sender, instance, **kwargs):
             os.remove(file_path)
 
 # Attach the signal handler to multiple models
-models_to_register = [ProjectFlowAttachment, ProjectFlowNoteAttachment, ProjectFlowStepAttachment, ProjectFlowStepNoteAttachment,
-                      ProjectFlowSubStepAttachment, ProjectFlowSubStepNoteAttachment]
+models_to_register = [ProjectFlowAttachment, ProjectFlowNoteAttachment, ProjectFlowStepNoteAttachment,
+                       ProjectFlowSubStepNoteAttachment]
 
 for model in models_to_register:
     pre_delete.connect(delete_attachment_file, sender=model)
 
  
 
+from projectFlowApp.middleware import get_current_user
 
 @receiver(pre_save, sender=ProjectFlowSubStep)
 def log_project_flow_step_status_change(sender, instance, **kwargs):
@@ -42,7 +43,8 @@ def log_project_flow_step_status_change(sender, instance, **kwargs):
         if previous.project_flow_sub_step_status != instance.project_flow_sub_step_status:
             ProjectFlowSubStepStatusLog.objects.create(
                 project_flow_sub_step=instance,
-                user=instance.handler_user ,  # Use the last assigned user if available
+                # user=instance.handler_user ,  # Use the last assigned user if available
+                user = get_current_user(),
                 previous_status=previous.project_flow_sub_step_status,
                 new_status=instance.project_flow_sub_step_status
             )

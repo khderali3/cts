@@ -41,6 +41,13 @@ import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 
 import { CancelProjectFlowOrReOpen } from "@/app/(dashboard)/_components/jsx/project_flow/cancel_or_re-open_projectflow/cancel_or_re_open_projectflow";
 
+import { getprojectStatusBadgeColors } from "@/app/public_utils/utils";
+
+import { ViewProductInstalledButton } from "@/app/(dashboard)/_components/jsx/project_flow/view_installed_products_buttun_modal/button_view_modal";
+
+import { getErrorMessage } from "@/app/public_utils/utils";
+
+
 
 
 
@@ -59,8 +66,20 @@ const Page = () => {
 
 
 
-    const { user_id, permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
+    const {  permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
     const [canReply, setCanReply] = useState(false)
+
+
+    const hasPermissionToDeleteProjectFlow = () => {
+        if (is_superuser || (permissions?.includes('usersAuthApp.projectflow_delete') && is_staff)) {
+            return true
+        }
+          return false
+    }
+
+
+
+
 
 
     const {id} = useParams()  
@@ -126,9 +145,7 @@ const Page = () => {
 
 
 
-
-
-
+ 
 
 
     const fetchData = async (pageUrl) => {
@@ -228,50 +245,206 @@ useEffect(() => {
                     >
 
                         <div className="card-body">
+                            {/* Toggle Button */}
+                            <button 
+                            className="btn btn-light d-flex align-items-center justify-content-center gap-2 rounded-pill px-3 py-2 shadow-sm mb-4"
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#extra_info"
+                            aria-expanded="false"
+                            aria-controls="extra_info"
+                            >
+                            <i className="bi bi-info-circle-fill"></i> <span>More Info</span>
+                            </button>
+
+            
+                            <div id="extra_info" className="collapse "  >  
+                                <div className="p-1 row col-12 ">
+                                    <div className="col-6 text-muted">ProjectFlow ID</div>
+                                    <div className="col-6">#{data?.id}</div>
+                                </div>
 
 
-                            <div className="p-1 row col-12 ">
-                                <div className="col-6  text-muted">
-                                    Template Name 
-                                </div>
-                                <div className="col-6">
-                                    { data?.template_name ? 'Yes' : 'No'  }
-                                </div>
-                            </div>
 
+                                <div className="p-1 row col-12 ">
+                                    <div className="col-6 text-muted">Is Template Cloned</div>
+                                    <div className="col-6">{data?.is_template_cloned ? 'Yes' : 'No'}</div>
+                                </div>
 
-                            <div className="p-1 row col-12 ">
-                                <div className="col-6  text-muted">
-                                    Steps Process Strategy 
+                                <div className="p-1 row col-12 ">
+                                    <div className="col-6 text-muted">Template Cloned Name</div>
+                                    <div className="col-6">{data?.template_name_cloned_from || '-'}</div>
                                 </div>
-                                <div className="col-6">
-                                    { data?.default_start_process_step_or_sub_step_strategy  }
+
+                                <div className="p-1 row col-12 ">
+                                    <div className="col-6 text-muted">Steps Process Strategy</div>
+                                    <div className="col-6">{data?.default_start_process_step_or_sub_step_strategy}</div>
                                 </div>
-                            </div>
+
+                                <div className="p-1 row col-12 ">
+                                    <div className="col-6 text-muted">Manual Start Mode</div>
+                                    <div className="col-6">{data?.manual_start_mode}</div>
+                                </div>
+
+                                <div className="p-1 row col-12 ">
+                                    <div className="col-6 text-muted">Auto Start First Step</div>
+                                    <div className="col-6">{data?.auto_start_first_step_after_clone ? 'Yes' : 'No'}</div>
+                                </div>
+
+                                <div className="p-1 row col-12 ">
+                                    <div className="col-6 text-muted">Show Steps To Client</div>
+                                    <div className="col-6">{data?.show_steps_to_client ? 'Yes' : 'No'}</div>
+                                </div>
+
+                                <div className="p-1 row col-12 ">
+                                    <div className="col-6 text-muted">Show Step Status Logs To Client</div>
+                                    <div className="col-6">{data?.show_steps_or_sub_steps_status_log_to_client ? 'Yes' : 'No'}</div>
+                                </div>
+
+            
+                                    <Link
     
+                                        href={`/staff/projectFlow/projectFlow/step/${data?.id}/add_new_step`}
+                                        
+                                        className="text-success mx-2"
+                                        title="Add New Step">
+                                        <i className="bi   bi-plus-circle-fill"></i> 
+                                    </Link>
     
+
+
+
+    
+                                    {/* <Link className="btn btn-outline-primary  btn-sm small mt-2" href={`/staff/projectFlow/projectFlow/edit_projectflow/${id}`}>Edit ProjectFlow</Link> */}
+    
+                                    
+                                    <Link 
+                                        href={`/staff/projectFlow/projectFlow/edit_projectflow/${id}`}
+                                    
+                                        className="text-primary mx-2" title="Edit"><i className="bi bi-pencil-fill"></i>
+                                    </Link> 
+                                    
+                                
+
+
+
+    
+                                { hasPermissionToDeleteProjectFlow() && 
+ 
+                                    <Link href=""
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setIsModalOpen(true) 
+                                            } 
+                                        }
+                                        className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+                                    </Link>
+                                }
+
+
+ 
+
+
+
+                                <div className="   ">
+                                    <ButtonCloneTemplate is_template_cloned={data?.is_template_cloned} project_id={data?.id} reloadComponentMethod={reloadComponentMethod} modal_id={'modal_id_main_card'} />
+                                </div>
+
+                                <div> 
+                                    <CancelProjectFlowOrReOpen projectflow_id={data?.id} projectflow_status={data?.project_flow_status} reloadComponentMethod={reloadComponentMethod} />
+                                </div>
+
+                                {/* <div> 
+                                    <ViewProductInstalledButton  modal_id={`installed_products_sm_${data?.id}`} projectflow_id={data?.id}  />
+                                </div> */}
+
+                            </div>
+
+
+                            <hr />
+
+                            
+                            <div className="p-1 row col-12 align-items-center ">
+                                <div className="col-6 text-muted">Project Type</div>
+                                <div className="col-6">{data?.project_type_name}</div>
+                            </div>
+
                             <div className="p-1 row col-12 ">
                                 <div className="col-6  text-muted">
-                                    Manual Start Mode 
+                
+                                    Requester:
                                 </div>
                                 <div className="col-6">
-                                    { data?.manual_start_mode }
+                                    {data?.project_created_user?.full_name}
                                 </div>
                             </div>
 
 
                             <div className="p-1 row col-12 ">
                                 <div className="col-6  text-muted">
-                                    Manual Start Mode 
+                
+                                    Related User:
                                 </div>
                                 <div className="col-6">
-                                    { data?.auto_start_first_step_after_mount   ? 'Yes' : 'No'  }
+                                    {data?.project_created_user?.full_name}
                                 </div>
                             </div>
-    
+
+                            <div className="p-1 row col-12">
+                                <div className="col-6  text-muted">
+                                    Created: 
+                                </div>
+                                <div className="col-6">
+                                    {formatDate( data?.created_date)}
+                                </div> 
+                            </div>
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6  text-muted">
+                                    Latest activity: 
+                                </div>
+                                <div className="col-6">
+                                    {formatDate( data?.latest_activity)}
+                                </div>
+                            </div>
+
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6  text-muted">
+                                    status : 
+                                </div>
+                                <div className="col-6">
+                                    {/* {data?.project_flow_status} */}
+
+                                    <span className={` ${getprojectStatusBadgeColors(data?.project_flow_status)}  `}>
+                                        {  data?.project_flow_status}
+                                    </span>
+
+
+
+                                </div>
+                            </div>
+
+                            <div> 
+                                <ViewProductInstalledButton  modal_id={`installed_products_lg_${data?.id}`}   projectflow_id={data?.id} />
+                            </div>
+
+
+
+                            <hr />
+
+                        <div className="p-1 row col-12 d-flex justify-content-start   align-items-center ">
+                            <div className="col-6  text-muted">
+                                Progress
+                            </div>
+                            <div className="col-6">
+
+                                <ProgressCircleDetailsInfo  targetPercentage={data?.steps_completion_percentage || 0} animation_speed={100}/>
+            
+                            </div>
 
                         </div>
+    
+                        </div>
 
+    
 
                     </div>
                     </div>
@@ -411,29 +584,62 @@ useEffect(() => {
                                 <div className="col-6">{data?.show_steps_or_sub_steps_status_log_to_client ? 'Yes' : 'No'}</div>
                             </div>
 
-                            <div className="p-1     ">
-                                <Link className="btn btn-light  btn-sm small" href={`/staff/projectFlow/projectFlow/step/${data?.id}/add_new_step`}>
-                                    Add New Step
+         
+                                <Link
+ 
+                                    href={`/staff/projectFlow/projectFlow/step/${data?.id}/add_new_step`}
+                                    
+                                    className="text-success mx-2"
+                                    title="Add New Step">
+                                    <i className="bi   bi-plus-circle-fill"></i> 
                                 </Link>
-                            </div>
+ 
 
-                            <div className="p-1     ">
+
+
+ 
+                                {/* <Link className="btn btn-outline-primary  btn-sm small mt-2" href={`/staff/projectFlow/projectFlow/edit_projectflow/${id}`}>Edit ProjectFlow</Link> */}
+ 
+                                
+                                <Link 
+                                    href={`/staff/projectFlow/projectFlow/edit_projectflow/${id}`}
+                                
+                                    className="text-primary mx-2" title="Edit"><i className="bi bi-pencil-fill"></i>
+                                </Link> 
+                                
+                               
+
+
+
+ 
+
+
+
+                                { hasPermissionToDeleteProjectFlow() && 
+ 
+                                    <Link href=""
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setIsModalOpen(true) 
+                                            } 
+                                        }
+                                        className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+                                    </Link>
+                                }
+
+
+
+                            <div className="   ">
                                  <ButtonCloneTemplate is_template_cloned={data?.is_template_cloned} project_id={data?.id} reloadComponentMethod={reloadComponentMethod}/>
                             </div>
 
-                            <div>
-                                <Link href={`/staff/projectFlow/projectFlow/edit_projectflow/${id}`}>Edit ProjectFlow</Link>
- 
-                            </div>
-                            <div> 
-                                <button onClick={() => setIsModalOpen(true)} className="btn btn-sm btn-outline-danger mt-2"  >Delete ProjectFlow</button>
-                            </div>
-
-                            <div> 
+                             <div> 
                                  <CancelProjectFlowOrReOpen projectflow_id={data?.id} projectflow_status={data?.project_flow_status} reloadComponentMethod={reloadComponentMethod} />
                             </div>
-
-
+{/* 
+                            <div> 
+                                 <ViewProductInstalledButton  modal_id={`installed_products_lg${data?.id}`}   projectflow_id={data?.id} />
+                            </div> */}
 
                         </div>
 
@@ -463,7 +669,7 @@ useEffect(() => {
                                 Related User:
                             </div>
                             <div className="col-6">
-                                {data?.project_created_user?.full_name}
+                                {data?.project_user?.full_name}
                             </div>
                         </div>
 
@@ -488,12 +694,21 @@ useEffect(() => {
                             <div className="col-6  text-muted">
                                 status : 
                             </div>
+                            
                             <div className="col-6">
-                                {data?.project_flow_status}
+                                <span className={` ${getprojectStatusBadgeColors(data?.project_flow_status)}  `}>
+                                    {  data?.project_flow_status}
+                                </span>
                             </div>
+
+
+
                         </div>
 
 
+                        <div> 
+                            <ViewProductInstalledButton  modal_id={`installed_products_lg${data?.id}`}   projectflow_id={data?.id} />
+                        </div>
 
 
 

@@ -64,9 +64,12 @@ const Page = () => {
   const [data, setData] = useState([]); // Store the ticket data
   const [nextPage, setNextPage] = useState(null)
   const [loading, setLoading] = useState(true); // Loading state
+
+
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
   const [status, setStatus] = useState('all'); // Ticket status state
   const [userId, setUserId] = useState('all'); // Ticket status state
+
   const router = useRouter();
 
 	const [assigningTicketId, setAssiningTicketId] = useState(null)
@@ -272,27 +275,25 @@ useEffect(() => {
 <div className="  mt-1 mb-5 pb-5 ms-2  me-2 ">
  
  
-<div className="row">
-<div className="col-12 col-md-6  ">
-  <h1 className="mb-2">
-    {/* Tickets */}
-    {t('all_tickets.all_requests_title')}
-  </h1>
-</div>
+    <div className="row">
+      <div className="col-12 col-md-6  ">
+        <h1 className="mb-2">
+          {/* Tickets */}
+          {t('all_tickets.all_requests_title')}
+        </h1>
+      </div>
 
-  {hasPermissionToCreateTicketBelalfClient() &&
-    <div className="col-12 col-md-6 d-flex justify-content-md-end">
-      <button type="button" onClick={handleAddRequest} className="btn btn-outline-secondary">
-        {/* Add a new Request */}
-        {t('all_tickets.add_new_request_button')}
-      </button>
+        {hasPermissionToCreateTicketBelalfClient() &&
+          <div className="col-12 col-md-6 d-flex justify-content-md-end">
+            <button type="button" onClick={handleAddRequest} className="btn btn-outline-secondary">
+              {/* Add a new Request */}
+              {t('all_tickets.add_new_request_button')}
+            </button>
+          </div>
+
+        }
+
     </div>
-
-  }
-
-
-
-</div>
 
 
   <hr />
@@ -327,9 +328,9 @@ useEffect(() => {
             </div>
 
             <div className="col-md-5 col-12 pt-2">
-            <label htmlFor="search_words">  
-              {/* Search Per Ticket Status  */}
-              {t('all_tickets.search_aria.label_search_ticket_status')}
+              <label htmlFor="search_words">  
+                {/* Search Per Ticket Status  */}
+                {t('all_tickets.search_aria.label_search_ticket_status')}
               </label>
 
               <select

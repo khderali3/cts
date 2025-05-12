@@ -6,7 +6,7 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 
 import { useState } from "react";
 import { toast } from "react-toastify";
-
+import Link from "next/link";
 
 export const ResortStepUpOrDown = ({resort_for='step', move_to='up', projectflow_id=null,   step_id=null, sub_step_id=null, reloadComponentMethod}) =>{
 
@@ -52,7 +52,22 @@ export const ResortStepUpOrDown = ({resort_for='step', move_to='up', projectflow
  
     return(
  
-        <button type="button" onClick={handleSubmit} disabled={isSubmitting} className="btn btn-primary btn-sm small m-2 "> {move_to === 'up' ? "MoveUp" : "MoveDown" } </button>
+        // <button type="button" onClick={handleSubmit} disabled={isSubmitting} className="btn btn-primary btn-sm small m-2 "> {move_to === 'up' ? "MoveUp" : "MoveDown" } </button>
  
+
+        <Link   
+            href="#"
+
+            onClick={handleSubmit}
+
+            className="  " 
+            title={`${ move_to === 'up' ? 'move up' : 'move down'}`}>
+            <i className={`bi  text-secondary ${ move_to === 'up' ? 'bi-caret-up-fill' : 'bi-caret-down-fill ' }`} ></i>  
+        </Link>
+
+
+
+
+
     )
 }

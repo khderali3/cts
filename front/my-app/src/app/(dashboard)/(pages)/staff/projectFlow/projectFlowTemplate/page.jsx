@@ -13,14 +13,19 @@ import { useRef } from "react";
 
  
  
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ar, enUS } from "date-fns/locale"; // Import necessary locales
-
+import { useTrueFalseLabel, useStepsProcessStrategy, useManualStartMode } from "@/app/public_utils/hooks";
  
 
 const Page = () => {
+  const getTrueFalseLabel = useTrueFalseLabel()
+  const getStepsProcessStrategy = useStepsProcessStrategy()
+  const getManualStartMode = useManualStartMode()
 
- 
+
+
+  const t = useTranslations('dashboard.projectFlow.projectflow_template')
   const locales = { ar, en: enUS }; // Map of supported locales
   const locale = useLocale(); // Get the current locale
 
@@ -50,6 +55,7 @@ const Page = () => {
   const [reloadFlag , setReloadFlag] = useState(false)
 
  
+
  
 
  
@@ -144,11 +150,7 @@ const Page = () => {
 
 
 
-useEffect(() => {
-  console.log('reload  Component is changed to ', reloadFlag)
-}, [reloadFlag]);
-
-
+ 
 
 const handleScroll = () => {
   if (isFetching.current) return;
@@ -221,24 +223,29 @@ const handleScroll = () => {
 { /*  start  sections   */}
 
 <div className="  mt-1 mb-5 pb-5 ms-2  me-2 ">
- 
   
 
-    <div className="row align-items-center">
-      <div className="col-12 col-md-6 text-md-start">
-        <h1 className="mb-2">ProjectFlow Templates</h1>
+ 
+
+    <div  className="row  ">
+      <div className="col-12 col-md-6  ">
+        <h4 className="mb-2">{t('main_page.page_title')}</h4>
       </div>
 
-      <div className="col-12 col-md-6   text-md-end">
+      <div className="col-12 col-md-6 d-flex justify-content-md-end">
         <button
           type="button"
           onClick={handleAddNewTemplate}
           className="btn btn-sm btn-outline-secondary"
         >
-          Add New Template
+         {t('main_page.add_new_template')}
         </button>
       </div>
     </div>
+
+
+
+ 
 
 
 
@@ -258,14 +265,14 @@ const handleScroll = () => {
 
             <div className="col-md-5 col-12 pt-2">
               <label htmlFor="template_name" className="form-label small"> 
-                Template Name
+               {t('main_page.template_name')}
             
               </label>
               <input
                 type="text"
                 className="form-control form-control-sm  "
                 id="template_name"
-                placeholder='Search by template name  '
+                placeholder=  {t('main_page.search_ph')}
                 aria-describedby="template_name"
                 value={searchTemplateNameQuery}
                 onChange={handleSearchChange}
@@ -275,7 +282,7 @@ const handleScroll = () => {
 
           </div>
 
-          <h4 className="text-muted mt-2 fs-6">{searchTemplateNameQuery && `Search for template name : ${searchTemplateNameQuery}` }</h4>
+          <h6 className="text-muted mt-2 fs-6">{searchTemplateNameQuery && ` ${t('main_page.results')} : ${searchTemplateNameQuery}` }</h6>
 
 
         </form>
@@ -287,12 +294,12 @@ const handleScroll = () => {
   <table className="table table-striped d-none d-md-table ">
     <thead>
       <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Template Name</th>
-        <th scope="col">Show Steps To Client</th>
+        <th scope="col">{t('main_page.id')}</th>
+        <th scope="col">{t('main_page.template_name')}</th>
+        <th scope="col">{t('main_page.show_steps_to_client')}</th>
  
-        <th scope="col">steps Process Strategy</th>
-        <th scope="col">Manual Start Mode</th>
+        <th scope="col">{t('main_page.steps_process_strategy')}</th>
+        <th scope="col">{t('main_page.manual_start_mode')}</th>
 
       </tr>
     </thead>
@@ -315,10 +322,13 @@ const handleScroll = () => {
 
 
           </td>
-          <td>{obj?.show_steps_to_client ? 'yes' : 'No'}</td>
+          <td>
+            {/* {obj?.show_steps_to_client ? 'yes' : 'No'} */}
+            {getTrueFalseLabel(obj?.show_steps_to_client)}
+          </td>
  
-          <td>{obj?.default_start_process_step_or_sub_step_strategy}</td>
-          <td>{obj?.manual_start_mode}</td>
+          <td>{ getStepsProcessStrategy(obj?.default_start_process_step_or_sub_step_strategy)}</td>
+          <td>{ getManualStartMode(obj?.manual_start_mode)}</td>
 
         </tr>
       ))}
@@ -360,13 +370,14 @@ const handleScroll = () => {
 
           <p>
             <strong>Template Name : </strong>
-              <Link href={`/staff/ticket/ticketDetails/${obj.id}`}  >
-                {obj?.template_name.length > 25 
-                ? `${obj?.template_name.slice(0, 25)}...` 
-                : obj?.template_name
-                }        
-              
-              </Link>
+
+            <Link href={`/staff/projectFlow/projectFlowTemplate/template_details/${obj.id}`}  >
+              {obj?.template_name.length > 25 
+              ? `${obj?.template_name.slice(0, 25)}...` 
+              : obj?.template_name
+              }        
+            
+            </Link>
           </p>
           
           <p>

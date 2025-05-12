@@ -23,9 +23,11 @@ import { ChangeStatusLogs } from "../status_change_logs";
 import { StepOrSubStepSingleNote } from "./notes/step_or_sub_step_single_note";
 import { StepOrSubStepNotes } from "./notes/step_or_sub_step_notes";
 
+import { StartOrEndStepOrSubStepProcess } from "../start_end_process_for_step_or_substep/start_end_process";
 
+ import { getprojectStatusBadgeColors } from "@/app/public_utils/utils";
 
-export const StepComponent = ({ step={}, index=0 }) =>{
+export const StepComponent = ({ step={}, index=0 , reloadComponentMethod}) =>{
 
     const locale = useLocale(); // Get the current locale
     const currentLocale = locale === "ar" ? ar : enUS;
@@ -89,15 +91,43 @@ export const StepComponent = ({ step={}, index=0 }) =>{
 
                             {/* Step Details */}
                             <div className="mb-2">
-                                <span className="fw-bold">Step Details:</span> 
-                                <span className="ms-2 text-muted">{step?.step_description && step?.step_description}</span>
+                                {/* <span className="fw-bold">Step Details:</span> 
+                                <span className="ms-2 text-muted">{step?.step_description && step?.step_description}</span> */}
+
+                                <div className="fw-bold">Step Details:</div> 
+
+                                <div 
+                                    className="ms-2 text-muted"
+                                    dir='auto'
+                                    style={{whiteSpace: 'pre-line'}}
+                                >
+                                    {step?.step_description && step?.step_description}
+                                </div>
+
+
+
+
+
                             </div>
 
                             {/* Step status */}
                             <div className="mb-2">
                                 <span className="fw-bold">Step status:</span> 
-                                <span className="ms-2 text-muted">{step?.project_flow_step_status && step?.project_flow_step_status}</span>
+                                {/* <span className="ms-2 text-muted">{step?.project_flow_step_status && step?.project_flow_step_status}</span> */}
+                                <span className={`ms-2   ${getprojectStatusBadgeColors(step?.project_flow_step_status)} `}>{step?.project_flow_step_status && step?.project_flow_step_status}</span>
+
                             </div>
+
+
+                            <StartOrEndStepOrSubStepProcess disabled_status={step?.can_requester_start_step} action="start_process" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
+                        
+
+                            <StartOrEndStepOrSubStepProcess disabled_status={step?.can_requester_end_step} action="end_process" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
+
+
+
+
+
                         </div>
                         <div className="col-md-6">
                             <ProgressCircle targetPercentage={step?.step_completed_percentage || 0} />
@@ -161,7 +191,8 @@ export const StepComponent = ({ step={}, index=0 }) =>{
                              key={`sub_step_${sub_step.id}`} 
                              sub_step={sub_step} 
                              index={index} 
-                             
+                             reloadComponentMethod={reloadComponentMethod}
+                             projectflow_id={step?.project_flow}
                              />
                             
                             

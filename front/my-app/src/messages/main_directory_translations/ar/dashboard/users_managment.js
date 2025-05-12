@@ -75,6 +75,16 @@ export default {
 		ticket_reply_delete : "حذف الردود على التذاكر",
 		user_managment: "إدارة المستخدمين",
 		ticket_create_behalf_client: 'إنشاء تذكرة بالنيابة عن العميل',
+
+
+
+		projectflow_create_behalf_client: ' مشروع | إنشاء مشروع بالنيابة عن العميل ',
+		projectflow_note_delete: '  مشروع | حذف تعليق على مشروع ',
+		projectflow_step_note_delete:  '  مشروع | حذف تعليق على خطوة لمشروع ',
+
+		projectflow_delete:  'مشروع | حذف مشروع',
+		projectflow_step_delete:  'مشروع | حذف خطوة',
+
 	 },
 	users : {
 		title: "إدارة المستخدمين",

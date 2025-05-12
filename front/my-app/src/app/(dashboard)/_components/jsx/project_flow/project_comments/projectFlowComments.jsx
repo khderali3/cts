@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 import { getErrorMessage } from "@/app/public_utils/utils";
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 
-
+import { useSelector } from "react-redux";
 
 
 
@@ -47,6 +47,23 @@ export const ProjectFlowNotes = ({notes=[], project_status='',  project_id}) => 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [objToDelete, setObjToDelete ] = useState(null)
     const [deleting, setDeleting] = useState(false)
+
+
+    const { permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
+
+
+    const hasPermissionToDeleteProjectNote = () => {
+        if (is_superuser || (permissions?.includes('usersAuthApp.projectflow_note_delete') && is_staff)) {
+            return true
+        }
+          return false
+    }
+
+
+
+
+
+
 
     const handleDelete = async ( ) => {
       setDeleting(true)
@@ -195,16 +212,21 @@ useEffect( () =>{
                             </div>
 
 
+                            {hasPermissionToDeleteProjectNote() &&
+                            
+                            <div className="text-end mt-2 ">
+                                    <Link href="#"
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        setObjToDelete(note?.id)
+                                        setIsModalOpen(true)
+                                    }}
+                                    className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i></Link>
+                                </div>                            
+                            
+                            
+                            }
 
-                           <div className="text-end mt-2 ">
-                                 <Link href="#"
-                                 onClick={(e) => {
-                                    e.preventDefault()
-                                    setObjToDelete(note?.id)
-                                    setIsModalOpen(true)
-                                 }}
-                                  className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i></Link>
-                            </div>
 
 
 
