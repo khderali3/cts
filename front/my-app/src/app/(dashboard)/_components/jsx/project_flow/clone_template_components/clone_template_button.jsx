@@ -7,13 +7,21 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 
 import { toast } from "react-toastify";
 
-export const ButtonCloneTemplate= ({is_template_cloned, project_id, reloadComponentMethod , modal_id='modal_clone_id'}) => {
 
+
+import { useTranslations, useLocale } from "next-intl";
+
+
+
+export const ButtonCloneTemplate= ({is_template_cloned  , project_id, reloadComponentMethod , modal_id='modal_clone_id'}) => {
+
+  const locale = useLocale()
   const [templateId, setTemplateId] = useState('');  
 
   const [customFetch] = useCustomFetchMutation();
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+    const t = useTranslations('dashboard.projectFlow.projectflow.projectflow_details.ButtonCloneTemplate')
 
 
   const handleTemplateChange = (selectedValue) => {
@@ -44,7 +52,12 @@ export const ButtonCloneTemplate= ({is_template_cloned, project_id, reloadCompon
 
       if(response && response.data) {
         setTemplateId('')
+        if(locale === 'ar'){
+        toast.success('تم تركيب القالب بنجاح')
+        } else {
         toast.success('the project has been cloned a template successfully.')
+        }
+
         if(reloadComponentMethod) {reloadComponentMethod()}
       } else {
           toast.error("Failed to submit the request.");
@@ -77,7 +90,7 @@ export const ButtonCloneTemplate= ({is_template_cloned, project_id, reloadCompon
     
     
     > 
-           {is_template_cloned  ? 'Re-Clone Template' : 'Clone Template' }
+           {is_template_cloned  ? t('Re_Clone_Template') :  t('Clone_Template') }
     </button>
 
  
@@ -94,7 +107,7 @@ export const ButtonCloneTemplate= ({is_template_cloned, project_id, reloadCompon
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="cloneTemplateLabel">
-                {is_template_cloned ? 'Re-Clone Template' : 'Clone Template'}
+                {is_template_cloned ?  t('Re_Clone_Template')   :  t('Clone_Template') }
                 
                 
               </h5>
@@ -116,12 +129,12 @@ export const ButtonCloneTemplate= ({is_template_cloned, project_id, reloadCompon
         <FormSearchInput 
           handleobjectIdChange={handleTemplateChange}
           objectId={templateId}
-          ph={'Select Template'}
-          lable={'Select Template'}
+          ph={   t('Select_Template')   }
+          lable={   t('Select_Template')   }
 
         />
         {is_template_cloned ? 
-          <small className="small text-danger"> Note: for 'Re-Clone Template'  all steps Data will be lost.</small>
+          <small className="small text-danger"> { t('note')}</small>
 
         : ''}
 
@@ -142,7 +155,7 @@ export const ButtonCloneTemplate= ({is_template_cloned, project_id, reloadCompon
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
-                Cancel
+                 { t('Cancel')}
               </button>
               <button
                 disabled={isSubmitting}
@@ -151,7 +164,7 @@ export const ButtonCloneTemplate= ({is_template_cloned, project_id, reloadCompon
                 onClick={handleSubmit}
                 data-bs-dismiss="modal"
               >
-              Clone
+               { t('Clone') }
               </button>
             </div>
           </div>

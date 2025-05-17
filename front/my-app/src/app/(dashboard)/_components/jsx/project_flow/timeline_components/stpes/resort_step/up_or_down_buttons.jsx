@@ -8,7 +8,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import Link from "next/link";
 
-export const ResortStepUpOrDown = ({resort_for='step', move_to='up', projectflow_id=null,   step_id=null, sub_step_id=null, reloadComponentMethod}) =>{
+export const ResortStepUpOrDown = ({title='move', resort_for='step', move_to='up', projectflow_id=null,   step_id=null, sub_step_id=null, reloadComponentMethod}) =>{
 
     const [customFetch] = useCustomFetchMutation();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,7 +61,7 @@ export const ResortStepUpOrDown = ({resort_for='step', move_to='up', projectflow
             onClick={handleSubmit}
 
             className="  " 
-            title={`${ move_to === 'up' ? 'move up' : 'move down'}`}>
+            title={title}>
             <i className={`bi  text-secondary ${ move_to === 'up' ? 'bi-caret-up-fill' : 'bi-caret-down-fill ' }`} ></i>  
         </Link>
 

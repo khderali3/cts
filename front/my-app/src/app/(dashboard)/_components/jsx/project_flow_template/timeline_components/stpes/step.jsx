@@ -37,11 +37,27 @@ import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 import { toast } from "react-toastify";
 import { useState } from "react";
 
+import { useTranslations } from "next-intl";
+
+import { useFormatNumber, useTrueFalseLabel, useStepOrSubStepProcessStrategy, useStepOrSubStepAllowedProcessBy } from "@/app/public_utils/hooks";
+
+
 
 export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
     const router = useRouter()
     const [customFetch] = useCustomFetchMutation();
-    
+
+    const t = useTranslations('dashboard.projectFlow.template_step')
+    const formatNumber = useFormatNumber()
+    const getTrueFalseLabel = useTrueFalseLabel()
+    const getStepOrSubStepProcessStrategy = useStepOrSubStepProcessStrategy()
+    const getStepOrSubStepAllowedProcessBy = useStepOrSubStepAllowedProcessBy()
+
+
+
+
+
+
     const locale = useLocale(); // Get the current locale
     const currentLocale = locale === "ar" ? ar : enUS;
     const formatDate = (dateString) => {
@@ -64,7 +80,12 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
          });  
          if (response && response.data) {
             if(reloadComponentMethod){reloadComponentMethod()}
-            toast.success('the object has been deleted')
+            if(locale === 'ar'){
+                toast.success('تم الحذف بنجاح')
+            } else {
+                toast.success('the object has been deleted')
+            }
+        
          } else {
            toast.error(getErrorMessage(response?.error?.data))
    
@@ -83,30 +104,28 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
 
 
         <div className={`timeline-icon-dash`} ></div>
-            <div className="border border-secondary rounded ms-4 flex-grow-1">
-            <div 
-                    className={`step-number rounded-circle d-flex justify-content-center align-items-center bg-secondary`}
+            <div className={`border border-secondary rounded flex-grow-1 ${locale === 'ar' ? 'me-4'   : 'ms-4'}`}>
+ 
+
+                <div 
+                    className="step-number rounded-circle d-flex justify-content-center align-items-center bg-secondary"
                     style={{ 
-                    position: 'absolute' , 
-                    // top: '0px', 
-                    left: '-15px', 
-                    width: '30px', 
-                    height: '30px', 
-                    color: 'white',
-    
-                    fontWeight: 'bold' 
+                        position: 'absolute',
+                        insetInlineStart: '-15px',
+                        width: '30px',
+                        height: '30px',
+                        color: 'white',
+                        fontWeight: 'bold',
                     }}
-                >
-                {index +1}
-            </div>
+                    >
+                    {index + 1}
+                </div>
 
 
 
+                <div className="p-3" >
 
-
-                <div className="p-3">
-
-                    <div className="">
+                    <div className="" >
 
                         <button 
                             className="btn btn-light d-flex align-items-center justify-content-center gap-2 rounded-pill px-3 py-2 shadow-sm mb-4"
@@ -115,7 +134,7 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                             aria-expanded="false"
                             aria-controls={`step_template_extra_info_${step?.id}`}
                             >
-                            <i className="bi bi-info-circle-fill"></i> <span>More Info</span>
+                            <i className="bi bi-info-circle-fill"></i> <span>{t('more_info')}</span>
                         </button>
 
                         <div id={`step_template_extra_info_${step?.id}`} className="collapse "  >  
@@ -124,13 +143,13 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                             <Link 
                                 className="text-success mx-2"
                                 href={`/staff/projectFlow/projectFlowTemplate/sub_step/${step?.project_flow_template}/${step?.id}/add_new_sub_step`}
-                                title="Add New Sub-Step"> 
+                                title={t('Add_New_Sub_Step')}> 
                                 <i className="bi   bi-plus-circle-fill"></i> 
                             </Link>
 
                             <Link 
                                 href={`/staff/projectFlow/projectFlowTemplate/step/${step?.project_flow_template}/edit_step/${step?.id}`}
-                                className="text-primary mx-2" title="Edit"><i className="bi bi-pencil-fill"></i>
+                                className="text-primary mx-2" title={t('Edit')}><i className="bi bi-pencil-fill"></i>
 
                             </Link>
 
@@ -140,48 +159,54 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                                         setIsModalOpen(true) 
                                         } 
                                     }
-                                className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+                                className="text-danger mx-2" title={t('Delete')}><i className="bi bi-trash-fill"></i>
                             </Link>
 
 
-                            <ResortStepUpOrDown move_to="up" resort_for='step' template_id={step?.project_flow_template} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />
+                            <ResortStepUpOrDown title={t('move_up')} move_to="up" resort_for='step' template_id={step?.project_flow_template} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />
 
-                            <ResortStepUpOrDown move_to="down" resort_for='step' template_id={step?.project_flow_template} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
+                            <ResortStepUpOrDown title={t('move_down')} move_to="down" resort_for='step' template_id={step?.project_flow_template} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
 
 
-                            <div className="mb-2">
+                            {/* <div className="mb-2 ">
                                 <span className="fw-bold  ">Step ID:</span> 
                                 <span className="ms-2 text-secondary ">{step?.id && step?.id}.</span>
+                            </div> */}
+
+                            <div className="mb-2 d-flex align-items-center gap-2">
+                                <span className="fw-bold">{t('Step_ID')} : </span>
+                                <span className="text-secondary">{formatNumber(step.id)} </span>
                             </div>
-
-
  
-                            <div className="mb-2">
-                                <span className="fw-bold">Show To Client:</span> 
-                                <span className="ms-2 text-muted">{step?.show_to_client ? 'Yes' : 'No'  }</span>
+                            <div className="mb-2 d-flex align-items-center gap-2">
+                                <span className="fw-bold">{t('Show_To_Client')} : </span> 
+                                <span className="ms-2 text-muted">{  getTrueFalseLabel(step?.show_to_client) }</span>
                             </div>
 
 
-                            <div className="mb-2  ">
-                                <span className="fw-bold  ">Start Process Strategy:</span> 
-                                <span className="ms-2 text-muted  ">{  get_string_start_process_strategy(step?.start_process_step_strategy)  }</span>
+                            <div className="mb-2  d-flex align-items-center gap-2">
+                                <span className="fw-bold  ">{t('Start_Process_Strategy')} : </span> 
+                                <span className="ms-2 text-muted  ">
+                                    {  getStepOrSubStepProcessStrategy(step?.start_process_step_strategy)  }
+                                    
+                                </span>
                             </div>
 
 
 
 
-                            <div className="mb-2">
-                                <span className="fw-bold">Allowed Process By:</span> 
-                                <span className="ms-2 text-muted">{  get_string_allow_process_by(step?.allowed_process_by)  }</span>
+                            <div className="mb-2 d-flex align-items-center gap-2">
+                                <span className="fw-bold">{t('Allowed_Process_By')} :</span> 
+                                <span className="ms-2 text-muted">{  getStepOrSubStepAllowedProcessBy(step?.allowed_process_by)  }</span>
                             </div>
 
 
                             {step?.allowed_process_by === "specific_staff_group"  &&
                             
-                                <div className="mb-2">
-                                    <span className="fw-bold">Allowed Process Groups:</span> 
+                                <div className="mb-2 d-flex align-items-center gap-2">
+                                    <span className="fw-bold">{t('Allowed_Process_Groups')} : </span> 
                                     <span className="ms-2 text-muted">[{step.allowed_process_groups.map(group => group.name).join(", ")}]</span>
-                                    </div>
+                                </div>
                             
                             }
 
@@ -189,9 +214,9 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
  
 
 
-                            <div className  ="mb-2">
-                                <span className="fw-bold">Show Status Logs To Client:</span> 
-                                <span className="ms-2 text-muted">{ get_string_show_status_log_to_client(step?.show_status_log_to_client) }</span>
+                            <div className  ="mb-2 d-flex align-items-center gap-2">
+                                <span className="fw-bold">{t('Show_Status_Logs_To_Client')} : </span> 
+                                <span className="ms-2 text-muted">{ getTrueFalseLabel(step?.show_status_log_to_client) }</span>
                             </div>
 
 
@@ -209,24 +234,26 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                         <div className="col-md-12">
 
 
+  
+
+
+                            <div className="mb-2 d-flex  gap-2">
+                                <div className="fw-bold">{t('Step_Title')} : </div> 
+                                <div className="ms-2 text-secondary">
+                                   {locale === 'ar' ? step?.step_name_ar : step?.step_name}
+
  
 
-
-
-
-
-                            <div className="mb-2">
-                                <span className="fw-bold">Step Title:</span> 
-                                <span className="ms-2 text-secondary">{step?.step_name && step?.step_name}.</span>
+                                </div>
                             </div>
 
-                            <div className="mb-2">
-                                <div className="fw-bold">Step Details:</div> 
+                            <div className="mb-2 d-flex   gap-2">
+                                <div className="fw-bold">{t('Step_Details')} : </div> 
                                 <div 
                                     className="ms-2 text-muted"
                                     dir="auto"  style={{ whiteSpace: 'pre-line' }}
                                 >
-                                    {step?.step_description && step?.step_description}
+                                    { locale === 'ar' ? step?.step_description_ar : step?.step_description }
                                 </div>
                             </div>
 
@@ -236,20 +263,7 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                     </div> 
 
 
-
-
-
-
-                    {step?.status_logs && step.status_logs.length > 0 &&
-                        <div   className="mt-3">
-                            <h6 className="fw-bold">Change Step Status Logs</h6>
-                            <div className="list-group small border rounded p-2" style={{ maxHeight: "150px", overflowY: "auto" }}>
-
-                            {step?.status_logs.map((log) =>  <ChangeStatusLogs key={`step_status_${log.id}`} log={log} />)}
-                            </div>
-                        </div> 
-                    }
-
+ 
 
                     
 
@@ -308,7 +322,7 @@ export const StepComponent = ({ step={}, index=0, reloadComponentMethod }) =>{
                 handleSubmit={handleDelete}
         
                 submitting={deleting}
-                message={'are you sure you want to delete this step ?'}
+                message={t('del_modal_msg')}
                 showModal={true} 
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}

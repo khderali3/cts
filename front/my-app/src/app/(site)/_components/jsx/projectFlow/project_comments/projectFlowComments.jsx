@@ -3,8 +3,7 @@
 
 import { useState, useEffect, useRef } from "react"
 
-import { useTranslations } from "next-intl";
-import { useLocale } from "next-intl"; // Get the current locale from next-intl
+import { useTranslations, useLocale } from "next-intl";
 import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 import { parseISO, format } from "date-fns";
 
@@ -22,6 +21,7 @@ import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/
 export const ProjectFlowNotes = ({notes=[], project_status='', project_id}) => {
 
     const t_common = useTranslations('common')
+    const t = useTranslations('dashboard.projectFlow.projectflow.projectflow_notes')
 
    const [data, setData] = useState(notes)
    const [customFetch] = useCustomFetchMutation();
@@ -98,7 +98,7 @@ useEffect( () =>{
         
         <div className="container-fluid"> 
             <div>
-                <h2>Comments & Notes</h2>
+                <h4>{t('title')}</h4>
                 <hr />
             </div>
 
@@ -137,7 +137,15 @@ useEffect( () =>{
 
                         <div dir="auto" className="ticket-details-text" style={{ whiteSpace: 'pre-line' }}>
 
-                            {note?.note}
+                                {(() => {
+                                if (note?.note === 'this projectFlow has been Closed and marked as "Canceled"' && locale === 'ar') {
+                                    return 'تم إلغاء هذا المشروع';
+                                }
+                                else if (note?.note === 'this projectFlow has been Re-opend' && locale === 'ar') {
+                                    return 'هذا المشروع تم إعادة فتحه من جديد';
+                                }
+                                return note?.note;
+                                })()}
 
 
 

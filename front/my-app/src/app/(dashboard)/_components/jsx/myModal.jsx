@@ -4,6 +4,7 @@ import { useTranslations, useLocale } from "next-intl";
 
 const CustomModal = ( { id, handleSubmit, submitting,
      message="Are you sure you want to update Data?",
+ 
      isModalOpen,
      setIsModalOpen,
      operationType='Update'

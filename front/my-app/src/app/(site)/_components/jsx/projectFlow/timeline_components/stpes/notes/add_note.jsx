@@ -12,6 +12,12 @@ import useSubmitForm from "@/app/(site)/_components/hooks/project_hoks/use_submi
 export const AddNewNote =  ({note_for="step", step_or_step_id=null, handleReloadFlag=null}) => {
 
     const t = useTranslations('site.ticket.ticket_details_msgs.ticket_reply_form')
+
+    const tt = useTranslations('dashboard.projectFlow.projectflow.projectflow_step.add_note')
+
+
+
+
     const [files, setFiles] = useState([{ id: 1, file: null }]);
     const [formData, setFormData] = useState({note : ""});
 
@@ -62,7 +68,7 @@ export const AddNewNote =  ({note_for="step", step_or_step_id=null, handleReload
                         id={`${note_for}-${step_or_step_id}-noteText`}
                         className="form-control form-control-sm"
                         rows="2"
-                        placeholder="Write your note here"
+                        placeholder={tt('input_ph')}
  
                         name="note"
                         value={formData.note}
@@ -157,7 +163,7 @@ export const AddNewNote =  ({note_for="step", step_or_step_id=null, handleReload
 
 
  
-                <button type="submit" disabled={isSubmitting} className="btn btn-sm btn-primary">Add Note</button>
+                <button type="submit" disabled={isSubmitting} className="btn btn-sm btn-primary">{tt('btn_label')}</button>
             </form>
         </div>
        

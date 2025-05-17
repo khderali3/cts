@@ -11,9 +11,14 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 
 import { useParams } from "next/navigation";
 
+import { useTranslations, useLocale } from "next-intl";
+import { useProjectStatus } from "@/app/public_utils/hooks";
+
 const Page = () =>  {
 
- 
+  const t = useTranslations('dashboard.projectFlow.projectflow.edit_projectflow')
+  const locale = useLocale()
+  const getProjectStatus = useProjectStatus()
  
   const [customFetch] = useCustomFetchMutation();
   const [isSubmiting, setIsSubmiting] = useState(false)
@@ -74,7 +79,13 @@ const Page = () =>  {
       !["auto", "manual"].includes(formData.default_start_process_step_or_sub_step_strategy) ||   
       !["serialized", "non-serialized"].includes(formData.manual_start_mode)
     ) {
+      if(locale === 'ar'){
+      toast.error("جميع الحقول مطلوبة!");
+
+      } else {
       toast.error("All fields are required!");
+
+      }
       return;
     }
   
@@ -108,7 +119,14 @@ const Page = () =>  {
 
     if(response && response.data){
       router.push(`/staff/projectFlow/projectFlow/projectFlowDetails/${projectflow_id}`)
-      toast.success('data has been updated succusfuly');
+      if( locale === 'ar'){
+        toast.success('تم تعديل البيانات بنجاح');
+
+      } else {
+        toast.success('data has been updated succusfuly');
+
+      }
+
 
     } else{
       console.log('response?.error', response?.error)
@@ -150,13 +168,13 @@ const Page = () =>  {
         <div className="container-fluid  min-vh-150 bg-white p-3 border rounded " >
 
 
-            <h2>Edit ProjectFlow Settings</h2>
+            <h4 className="mb-3">{t('title')}</h4>
               <form className="col-md-8 col-12 mb5" onSubmit={handleSubmit}>
 
 
                 <div className="mb-3">
                   <label htmlFor="default_start_process_step_or_sub_step_strategy" className="form-label small">
-                    Steps Process Strategy
+                    {t('steps_process_strategy')}
                   </label>
                   <select 
                     className="form-select form-select-sm" 
@@ -167,18 +185,22 @@ const Page = () =>  {
                     value={formData.default_start_process_step_or_sub_step_strategy}
               
                   >
-                    <option value="" disabled >Select Option</option>  
-                    <option value="auto">Auto</option>
-                    <option value="manual">Manual</option>
+
+                    <option value="" disabled >{locale === 'ar' ? 'يرجى الإختيار' : 'Select Option'}</option>  
+                    <option value="auto"> {locale === 'ar' ? 'تلقائي' : 'Auto'}</option>
+                    <option value="manual"> {locale === 'ar' ? 'يدوي' : 'Manual'} </option>
+
+
+
                   </select> 
                   <div className="form-text fs-8">
-                    Auto: The next step starts automatically when the previous step is complete. Manual: Staff must manually start each step.
+                     {t('steps_process_strategy_des')}
                   </div>
                 </div>
 
                 <div className="mb-3">
                   <label htmlFor="manual_start_mode" className="form-label small">
-                    Manual Start Mode
+                    {t('manual_start_mode')}
                   </label>
                   <select 
                     className="form-select form-select-sm" 
@@ -187,20 +209,23 @@ const Page = () =>  {
                     onChange={handleChange}  
                     value={formData.manual_start_mode}
                   >
-                    <option value="" disabled>Select Option</option>
-                    <option value="serialized">Serialized</option>
-                    <option value="non-serialized">Non-Serialized</option>
+
+                    <option value="" disabled>{locale === 'ar' ? 'يرجى الإختيار' : 'Select Option'}</option>
+                    <option value="serialized">{locale === 'ar' ? 'تسلسلي' : 'Serialized'}</option>
+                    <option value="non-serialized">{locale === 'ar' ? 'غير تسلسلي' : 'Non-Serialized'}</option>
+
+
+
                   </select> 
                   <div className="form-text fs-8">
-                    Serialized: A step can only start if the previous one is completed.  
-                    Non-Serialized: Steps can start in any order.
+                      {t('manual_start_mode_des')}
                   </div>
                 </div>
  
 
                 <div className="mb-3">
                   <label htmlFor="project_flow_status" className="form-label small">
-                    ProjectFlow Status
+                     {t('projectflow_status')}
                   </label>
                   <select 
                     className="form-select form-select-sm" 
@@ -210,27 +235,24 @@ const Page = () =>  {
                     value={formData.project_flow_status}
                   >
 
- 
-
-
                     <option value="" disabled>Select Option</option>
-                    <option value="pending">Pending</option>
-                    <option value="wait_customer_action">Wait Customer Action</option>
-                    <option value="in_progress">In-Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="canceled">Canceled</option>
+                    <option value="pending">{getProjectStatus('pending')}</option>
+                    <option value="wait_customer_action">{getProjectStatus('wait_customer_action')}</option>
+                    <option value="in_progress">{getProjectStatus('in_progress')}</option>
+                    <option value="completed">{getProjectStatus('completed')}</option>
+                    <option value="canceled">{getProjectStatus('canceled')}</option>
+
                   </select> 
                   <div className="form-text fs-8 text-danger">
 
-                    Note: The status updates automatically based on workflow steps. 
-                    Use this dropdown to manually override it if needed.
+                    {t('projectflow_status_des')}
 
                   </div>
                 </div>
 
 
 
-                <div className="form-check mt-2">
+                <div className={` ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
                   <input
                     name="show_steps_to_client"   
 
@@ -241,10 +263,10 @@ const Page = () =>  {
                     id="show_steps_to_client"
                   />
                   <label className="form-check-label small" htmlFor="show_steps_to_client">
-                    Show Steps To Client
+                     {t('show_steps_to_client')}
                   </label>
                   <div className="form-text fs-8">
-                    Choose whether clients can see project steps.
+                    {t('show_steps_to_client_des')}
     
                   </div>
 
@@ -253,7 +275,7 @@ const Page = () =>  {
 
  
 
-                <div className="form-check mt-2">
+                <div className={` ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
                   <input
                     name="show_steps_or_sub_steps_status_log_to_client"   
 
@@ -264,10 +286,10 @@ const Page = () =>  {
                     id="show_steps_or_sub_steps_status_log_to_client"
                   />
                   <label className="form-check-label small" htmlFor="show_steps_or_sub_steps_status_log_to_client">
-                    Show Step Status Logs To Client
+                    {t('show_steps_status_logs_to_client')}
                   </label>
                   <div className="form-text fs-8">
-                    Choose whether clients can see step status logs.
+                     {t('show_steps_status_logs_to_client_des')}
     
                   </div>
 
@@ -280,7 +302,7 @@ const Page = () =>  {
                   className="btn-sm btn btn-outline-primary mt-4"
                   disabled={isSubmiting}
                   >
-                  Submit
+                   {t('edit_save_btn')}
                 </button>
               </form>
 

@@ -29,8 +29,15 @@ import { Timeline } from "@/app/(dashboard)/_components/jsx/project_flow_templat
 
  import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 
+import { useTrueFalseLabel, useStepsProcessStrategy, useManualStartMode } from "@/app/public_utils/hooks"; 
+
 
 const Page = () => {
+
+    const getTrueFalseLabel = useTrueFalseLabel()
+
+    const getStepsProcessStrategy = useStepsProcessStrategy()
+    const getManualStartMode = useManualStartMode()
 
 
     const t = useTranslations('dashboard.projectFlow.template_details')
@@ -65,7 +72,13 @@ const Page = () => {
        });  
        if (response && response.data) {
         router.push('/staff/projectFlow/projectFlowTemplate')
+        if(locale === 'ar'){
+        toast.success('تم الحذف بنجاح')
+
+        } else{
         toast.success('the object has been deleted')
+
+        }
        } else {
          toast.error(getErrorMessage(response?.error?.data))
  
@@ -161,8 +174,6 @@ useEffect(() => {
             
             <div className="   mt-2  ">
                 <h6> <Link href='/staff/projectFlow/projectFlowTemplate/'>
-                 {/* Tickets */}
-                 {/* Project Flow Template  */}
                 {t('mini_nav.Project_Flow_Template')}
                 </Link>   - {t('mini_nav.Template_Details')} </h6>
                 <hr />
@@ -217,7 +228,7 @@ useEffect(() => {
                                     {t('Template_ID')}
                                 </div>
                                 <div className="col-6">
-                                    #{ data?.id }
+                                    #{ formatNumber(data?.id)  }
                                 </div>
                             </div>
 
@@ -238,7 +249,7 @@ useEffect(() => {
                                     {t('Steps_Process_Strategy')} 
                                 </div>
                                 <div className="col-6">
-                                    { data?.default_start_process_step_or_sub_step_strategy  }
+                                    {   getStepsProcessStrategy(data?.default_start_process_step_or_sub_step_strategy)  }
                                 </div>
                             </div>
 
@@ -248,7 +259,7 @@ useEffect(() => {
                                      {t('Manual_Start_Mode')}  
                                 </div>
                                 <div className="col-6">
-                                    { data?.manual_start_mode }
+                                    { getManualStartMode(data?.manual_start_mode)  }
                                 </div>
                             </div>
 
@@ -260,7 +271,7 @@ useEffect(() => {
                                      {t('Auto_Start_First_Step')}
                                 </div>
                                 <div className="col-6">
-                                    { data?.auto_start_first_step_after_clone   ? 'Yes' : 'No'  }
+                                    { getTrueFalseLabel(data?.auto_start_first_step_after_clone)     }
                                 </div>
                             </div>
 
@@ -271,7 +282,7 @@ useEffect(() => {
                                      {t('Show_Steps_To_Client')} 
                                 </div>
                                 <div className="col-6">
-                                    { data?.show_steps_to_client   ? 'Yes' : 'No'  }
+                                    { getTrueFalseLabel(data?.show_steps_to_client)    }
                                 </div>
                             </div>
 
@@ -282,7 +293,7 @@ useEffect(() => {
                                      {t('Show_Step_Status_Logs_To_Client')}
                                 </div>
                                 <div className="col-6">
-                                    { data?.show_steps_or_sub_steps_status_log_to_client   ? 'Yes' : 'No'  }
+                                    {getTrueFalseLabel( data?.show_steps_or_sub_steps_status_log_to_client)    }
                                 </div>
                             </div>
 
@@ -349,10 +360,10 @@ useEffect(() => {
 
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
-                                Template ID 
+                                {t('Template_ID')} 
                             </div>
                             <div className="col-6">
-                                #{ data?.id }
+                                #{ formatNumber(data?.id)  }
                             </div>
                         </div>
 
@@ -360,7 +371,7 @@ useEffect(() => {
 
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
-                                Template Name 
+                                {t('Template_Name')} 
                             </div>
                             <div className="col-6">
                                 { data?.template_name }
@@ -370,19 +381,19 @@ useEffect(() => {
 
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
-                                Steps Process Strategy 
+                                {t('Steps_Process_Strategy')} 
                             </div>
                             <div className="col-6">
-                                { data?.default_start_process_step_or_sub_step_strategy  }
+                                {   getStepsProcessStrategy(data?.default_start_process_step_or_sub_step_strategy)  }
                             </div>
                         </div>
  
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
-                                Manual Start Mode 
+                                 {t('Manual_Start_Mode')} 
                             </div>
                             <div className="col-6">
-                                { data?.manual_start_mode }
+                                { getManualStartMode(data?.manual_start_mode)  }
                             </div>
                         </div>
 
@@ -390,30 +401,30 @@ useEffect(() => {
 
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
-                                Auto Start First Step 
+                                {t('Auto_Start_First_Step')}
                             </div>
                             <div className="col-6">
-                                { data?.auto_start_first_step_after_clone   ? 'Yes' : 'No'  }
+                                { getTrueFalseLabel(data?.auto_start_first_step_after_clone)     }
                             </div>
                         </div>
 
  
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
-                                Show Steps To Client 
+                                {t('Show_Steps_To_Client')} 
                             </div>
                             <div className="col-6">
-                                { data?.show_steps_to_client   ? 'Yes' : 'No'  }
+                                    { getTrueFalseLabel(data?.show_steps_to_client)    }
                             </div>
                         </div>
 
 
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
-                                Show Step Status Logs To Client 
+                                 {t('Show_Step_Status_Logs_To_Client')} 
                             </div>
                             <div className="col-6">
-                                { data?.show_steps_or_sub_steps_status_log_to_client   ? 'Yes' : 'No'  }
+                                    {getTrueFalseLabel( data?.show_steps_or_sub_steps_status_log_to_client)    }
                             </div>
                         </div>
 
@@ -424,14 +435,14 @@ useEffect(() => {
                             href={`/staff/projectFlow/projectFlowTemplate/step/${data?.id}/add_new_step`}
                             
                             className="text-success mx-2"
-                            title="Add New Step">
+                             title= {t('Add_New_Step')}>
                             <i className="bi   bi-plus-circle-fill"></i> 
                         </Link>
 
                         <Link 
                             href={`/staff/projectFlow/projectFlowTemplate/edit_template/${data?.id}`}
                         
-                            className="text-primary mx-2" title="Edit"><i className="bi bi-pencil-fill"></i>
+                            className="text-primary mx-2" title={t('Edit')}><i className="bi bi-pencil-fill"></i>
                         </Link> 
 
 
@@ -441,7 +452,7 @@ useEffect(() => {
                                     setIsModalOpen(true) 
                                 } 
                             }
-                            className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+                            className="text-danger mx-2" title={t('Delete')}><i className="bi bi-trash-fill"></i>
                         </Link>
  
 
@@ -452,6 +463,8 @@ useEffect(() => {
                 </div>
 
                 <hr />
+
+                
                 <ProjectFlowNotes notes={data?.notes || []} project_id={data?.id} />
 
             </div>
@@ -484,7 +497,7 @@ useEffect(() => {
         handleSubmit={handleDelete}
  
         submitting={deleting}
-        message={'are you sure you want to delete this template?'}
+        message={t('modal_msg')}
         showModal={true} 
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}

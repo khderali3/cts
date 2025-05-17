@@ -15,7 +15,7 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 import Link from "next/link";
 
 
-export const DeleteButton = ({item_id, handleReloadFlag=null}) => {
+export const DeleteButton = ({title='Delete', item_id, handleReloadFlag=null}) => {
 
 	const locale = useLocale()
 
@@ -86,7 +86,7 @@ export const DeleteButton = ({item_id, handleReloadFlag=null}) => {
 					setIsModalOpen(true) 
 					} 
 				}
-			className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+			className="text-danger mx-2" title={title}><i className="bi bi-trash-fill"></i>
 		</Link>
 
  

@@ -8,11 +8,14 @@ import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staf
  import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { useTranslations } from "next-intl";
+
+
 export const ViewProductInstalledButton = ({ modal_id = "productInstalledModal", projectflow_id }) => {
   
   const router = useRouter()
 
-
+    const t = useTranslations('dashboard.projectFlow.projectflow.projectflow_details.ViewProductInstalledButton')
 
     const [data, setData] = useState([])
  
@@ -71,7 +74,7 @@ export const ViewProductInstalledButton = ({ modal_id = "productInstalledModal",
         data-bs-toggle="modal"
         data-bs-target={`#${modal_id}`}
       >
-        View Installed Products
+        {t('btn_name')}
       </button>
 
       {/* Modal */}
@@ -86,7 +89,7 @@ export const ViewProductInstalledButton = ({ modal_id = "productInstalledModal",
           <div className="modal-content small">
             <div className="modal-header py-2 px-3">
               <h6 className="modal-title fs-6" id={`${modal_id}Label`}>
-                Installed Product List
+               {t('title')}
               </h6>
               <button
                 type="button"
@@ -102,17 +105,17 @@ export const ViewProductInstalledButton = ({ modal_id = "productInstalledModal",
                   <thead className="table-light small">
                     <tr>
                       <th className="fw-normal">#</th>
-                      <th className="fw-normal">Product Name</th>
-                      <th className="fw-normal">Serial Number</th>
-                      <th className="fw-normal">Note</th>
-                      <th className="fw-normal">Private Note</th>
+                      <th className="fw-normal"> {t('Product_Name')}</th>
+                      <th className="fw-normal">{t('Serial_Number')}</th>
+                      <th className="fw-normal">{t('Note')}</th>
+                      <th className="fw-normal">{t('Private_Note')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.length === 0 ? (
                       <tr>
                         <td colSpan="5" className="text-center text-muted">
-                          No products installed
+                          {t('No_products_installed')}
                         </td>
                       </tr>
                     ) : (
@@ -146,13 +149,13 @@ export const ViewProductInstalledButton = ({ modal_id = "productInstalledModal",
 
 
 
-              >Edit</a>
+              >{t('Edit')}</a>
               <button
                 type="button"
                 className="btn btn-sm btn-secondary"
                 data-bs-dismiss="modal"
               >
-                Close
+                {t('Close')}
               </button>
             </div>
           </div>

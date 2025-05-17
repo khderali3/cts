@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { useRouter } from 'next/navigation';
 
  
-import {  useLocale } from "next-intl";
+import {  useLocale, useTranslations } from "next-intl";
 import { getErrorMessage } from "@/app/public_utils/utils";
 import { GroupAasignOrRemove } from "@/app/(dashboard)/_components/jsx/project_flow_template/groups assign/group";
 
@@ -22,6 +22,7 @@ const Page = () =>  {
     const {template_id} = useParams()
  
     const locale = useLocale()
+    const t = useTranslations('dashboard.projectFlow.tepmlate_add_or_edit_step')
 
     const [customFetch] = useCustomFetchMutation();
     const [isSubmiting, setIsSubmiting] = useState(false)
@@ -72,7 +73,11 @@ const Page = () =>  {
       !["inherit_from_project_flow", "yes", "no"].includes(formData.show_status_log_to_client)  
 
     ) {
-      toast.error("All fields are required!");
+      if(locale === 'ar'){
+        toast.error("جميع الحقول مطلوبة!");
+      } else {
+        toast.error("All fields are required!");
+      }
       return;
     }
   
@@ -96,8 +101,18 @@ const Page = () =>  {
     });
 
     if(response && response.data){
+
+
+      if(locale === 'ar'){
+        toast.success('تم إضافة البيانات بنجاح');
+
+      } else {
+        toast.success('data has been added succusfuly');
+
+      }
+
       router.push(`/staff/projectFlow/projectFlowTemplate/template_details/${template_id}`)
-      toast.success('data has been added succusfuly');
+
 
     } else{
       console.log('allowedProcessGroups', allowedProcessGroups)
@@ -134,12 +149,12 @@ const Page = () =>  {
         <div className="container-fluid  min-vh-150 bg-white p-3 border rounded " >
 
 
-            <h2>Add New Step Template</h2>
+            <h4 className="mb-4">{t('title')}</h4>
               <form className="col-md-8 col-12 mb-5" onSubmit={handleSubmit}>
 
                 <div className="mb-3">
                     <label htmlFor="step_name" className="form-label small">
-                        Step Name <span className="text-danger">*</span>
+                       {t('step_name')} <span className="text-danger">*</span>
                     </label>
                     <input  
                         name="step_name" 
@@ -149,13 +164,13 @@ const Page = () =>  {
                         maxLength="50"
                         value={formData.step_name}
                     />
-                    <div className="form-text fs-8">Enter a name for this Step.</div>
+                    <div className="form-text fs-8"> {t('step_name_des')}</div>
                 </div>
 
 
                 <div className="mb-3">
                     <label htmlFor="step_description" className="form-label small">
-                        Step Details<span className="text-danger">*</span>
+                        {t('Step_Details')}<span className="text-danger">*</span>
                     </label>
                     <textarea  
                         name="step_description" 
@@ -166,14 +181,14 @@ const Page = () =>  {
                         value={formData.step_description}
                         rows="2"  
                     />
-                    <div className="form-text fs-8">Enter a Details for this Step.</div>
+                    <div className="form-text fs-8">{t('Step_Details_des')}</div>
                 </div>
 
 
 
                 <div className="mb-3">
                     <label htmlFor="step_name_ar" className="form-label small">
-                        Step Name (Ar) <span className="text-danger">*</span>
+                        {t('step_name_ar')} <span className="text-danger">*</span>
                     </label>
                     <input  
                         name="step_name_ar" 
@@ -184,13 +199,13 @@ const Page = () =>  {
                         maxLength="50"
                         value={formData.step_name_ar}
                     />
-                    <div className="form-text fs-8">Enter a name for this Step in Arabic.</div>
+                    <div className="form-text fs-8"> {t('step_name_ar_des')}</div>
                 </div>
 
 
                 <div className="mb-3">
                     <label htmlFor="step_description_ar" className="form-label small">
-                        Step Details (Ar) <span className="text-danger">*</span>
+                       {t('Step_Details_ar')} <span className="text-danger">*</span>
                     </label>
                     <textarea  
                         name="step_description_ar" 
@@ -201,7 +216,7 @@ const Page = () =>  {
                         value={formData.step_description_ar}
                         rows="2"  
                     />
-                    <div className="form-text fs-8">Enter a Details for this Step in Arabic.</div>
+                    <div className="form-text fs-8"> {t('Step_Details_ar_des')}</div>
                 </div>
 
  
@@ -209,7 +224,7 @@ const Page = () =>  {
 
                 <div className="mb-3">
                   <label htmlFor="allowed_process_by" className="form-label small">
-                    Allowed Process By
+                    {t('Allowed_Process_By')}
                   </label>
                   <select 
                     className="form-select form-select-sm " 
@@ -220,14 +235,14 @@ const Page = () =>  {
                     value={formData.allowed_process_by}
               
                   >
-                    <option value="" disabled >Select Option</option>  
-                    <option value="any_staff">Any Staff</option>
-                    <option value="specific_staff_group">Specific Staff Group</option>
-                    <option value="client">client</option>
+                    <option value="" disabled >{t('Select_Option')}</option>  
+                    <option value="any_staff">{t('any_staff')}</option>
+                    <option value="specific_staff_group">{t('specific_staff_group')}</option>
+                    <option value="client">{t('client')}</option>
 
                   </select> 
                   <div className="form-text fs-8">
-                    Choose who is allowed to process this step: any staff member, a specific staff group, or the client.
+                     {t('Allowed_Process_By_des')}
                   </div>
                 </div>
 
@@ -238,7 +253,7 @@ const Page = () =>  {
                 <div className="mb-3 ps-2 mb-5">
 
                   <label htmlFor="allowed_process_by" className="form-label small">
-                    Select Groups
+                     {t('Select_Groups')}
                   </label>
 
 
@@ -256,7 +271,7 @@ const Page = () =>  {
 
                 <div className="mb-3">
                   <label htmlFor="start_process_step_strategy" className="form-label small">
-                    Start Process Strategy
+                    {t('Start_Process_Strategy')}
                   </label>
                   <select 
                     className="form-select form-select-sm" 
@@ -267,15 +282,13 @@ const Page = () =>  {
                     value={formData.start_process_step_strategy}
               
                   >
-                    <option value="" disabled >Select Option</option> 
-                    <option value="inherit_from_project_flow">Inherit From Template</option>
-                    <option value="auto">Auto</option>
-                    <option value="manual">Manual</option>
+                    <option value="" disabled >{t('Select_Option')}</option> 
+                    <option value="inherit_from_project_flow">{t('inherit_from_project_flow')}</option>
+                    <option value="auto">{t('auto')}</option>
+                    <option value="manual">{t('manual')}</option>
                   </select> 
                   <div className="form-text fs-8">
-                    Inherit From Template: Uses the predefined process from the project template.
-                    Auto: The  step starts automatically when the previous step is complete.
-                    Manual: Staff must manually start each step.
+                    {t('Start_Process_Strategy_des')}
                   </div>
                 </div>
 
@@ -283,7 +296,7 @@ const Page = () =>  {
 
                 <div className="mb-3">
                   <label htmlFor="show_status_log_to_client" className="form-label small">
-                    Show Status Logs To Client
+                     {t('Show_Status_Logs_To_Client')}
                   </label>
                   <select 
                     className="form-select form-select-sm " 
@@ -293,20 +306,20 @@ const Page = () =>  {
                     value={formData.show_status_log_to_client}
 
                   >
-                    <option value="" disabled>Select Option</option>
-                    <option value="inherit_from_project_flow">Inherit From Template</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
+                    <option value="" disabled>{t('Select_Option')}</option>
+                    <option value="inherit_from_project_flow">{t('inherit_from_project_flow')}</option>
+                    <option value="yes">{t('yes')}</option>
+                    <option value="no">{t('no')}</option>
                   </select> 
                   <div className="form-text fs-8">
-                    Choose whether clients can see step status logs.
+                    {t('Show_Status_Logs_To_Client_des')}
                   </div>
                 </div>
 
 
 
 
-                <div className="form-check mt-2">
+                <div className={`    ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
                   <input
                     name="show_to_client"   
 
@@ -317,10 +330,10 @@ const Page = () =>  {
                     id="show_to_client"
                   />
                   <label className="form-check-label small" htmlFor="show_to_client">
-                    Show To Client
+                     {t('Show_To_Client')}
                   </label>
                   <div className="form-text fs-8">
-                    Choose whether clients can see project steps.
+                     {t('Show_To_Client_des')}
     
                   </div>
                 </div>
@@ -334,7 +347,7 @@ const Page = () =>  {
                   className="btn btn-sm btn-outline-primary mt-4"
                   disabled={isSubmiting}
                   >
-                  Submit
+                  {t('Submit')}
                 </button>
               </form>
 

@@ -475,6 +475,7 @@ class ProjectFlowTemplateNoteView(APIView):
     def post(self, request, project_flow_template_id):
         data = request.data.copy()
         data['project_flow_template'] =  project_flow_template_id 
+        data['created_user'] = request.user.id
         serializer = CreateOrGetOrPutObjectProjectFlowTemplateNoteSerializer(data=data, context={'request':request})
         if serializer.is_valid():
             serializer.save()
@@ -496,7 +497,7 @@ class ProjectFlowTemplateNoteView(APIView):
                 return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         else:
             data_list = ProjectFlowTemplateNote.objects.filter(project_flow_template=project_flow_template_id)
-            serializer =  ProjectFlowTemplateNoteSerializer(data_list, many=True)
+            serializer =  ProjectFlowTemplateNoteSerializer(data_list, many=True , context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         

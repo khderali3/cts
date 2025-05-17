@@ -8,7 +8,11 @@ export default {
 		about_us: 'About Us' ,
 		products: "Products",
 		services: "Services",
+
+		Requests : 'Requests',
+		projectflow : 'ProjectFlows',
 		tickets: "Ticketing System",
+
 		login: "Login",
 		contact_us : "Contact Us",
 		logout : "Logout",

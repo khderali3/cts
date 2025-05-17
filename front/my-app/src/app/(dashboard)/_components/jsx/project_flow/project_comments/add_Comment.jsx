@@ -1,15 +1,33 @@
 'use client'
 import { useState  } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 
 
 import  useSubmitForm from "@/app/(dashboard)/_components/hooks/project_hoks/use_submit_form"
 
 
+
+
+import { useProjectStatus } from "@/app/public_utils/hooks";
+
 export const  AddNewComment = ({project_id, project_status='',  handleReplayAdded }) => {
 
     const t = useTranslations('site.ticket.ticket_details_msgs.ticket_reply_form')
+
+    const locale = useLocale()
+
+
+    const getProjectStatus = useProjectStatus()
+
+    const tt = useTranslations('dashboard.projectFlow.projectflow.projectflow_notes.add_note')
+
+
+
+
+
+
+
     const [files, setFiles] = useState([{ id: 1, file: null }]);
     const [formData, setFormData] = useState({note : ""});
     const { isSubmitting, handleSubmit, fileInputRefs } = useSubmitForm(
@@ -51,7 +69,13 @@ export const  AddNewComment = ({project_id, project_status='',  handleReplayAdde
     return (
       project_status === 'completed' || project_status === 'canceled' ? (
         <div>
-          <p>You can't add new comment/note for this project because it's {project_status}.</p>
+          {/* <p>You can't add new comment/note for this project because it's {project_status}.</p> */}
+          <p>{tt('cant_add_note')} '{getProjectStatus(project_status)}'.</p>
+
+
+
+
+ 
         </div>
       ) : (
          <div>
@@ -59,7 +83,7 @@ export const  AddNewComment = ({project_id, project_status='',  handleReplayAdde
             <form className="mt-5 mb-5" onSubmit={(e) => handleSubmit(e, formData, ['note'],"POST", setFormData, files, setFiles)}>
                 <div className="form-group">
                   <label htmlFor="add_comment_text_aria" className=" form-label small">
-                      Add New Comment
+                      { locale === 'ar' ? 'أضف تعليق جديد' : 'Add New Comment' }
                   </label>
                   <textarea
                     className="form-control form-control-sm"

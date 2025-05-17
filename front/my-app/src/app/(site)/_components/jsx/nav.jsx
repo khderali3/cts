@@ -116,50 +116,55 @@ export const Nav =  () => {
             </Link>
           </li> */}
 
- 
-<li className="  nav-item dropdown  ">
-  <a
-    className="nav-link dropdown-toggle  p-lg-3     "
-    href="#"
-    id="id_support"
-    role="button"
-    data-bs-toggle="dropdown"
-    aria-expanded="false"
-  >
+      
+      <li className="  nav-item dropdown  ">
+        <a
+          className="nav-link dropdown-toggle  p-lg-3     "
+          href="#"
+          id="id_support"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
 
-            support
-  </a>
+      
 
 
-  <ul
-    className={`  dropdown-menu dropdown-menu-end  background-color  mt-md-3 `}
-    aria-labelledby="id_support"
-    
-  >
- 
-           <li className="nav-item   ">
-            <Link
-            className={`bg-focus dropdown-item text-light `}
-            onClick={handleNavLinkClick}
-            href="/tickets"
-            >
-                { t('nav_links.tickets')}  
-            </Link>
-          </li>
+      { t('nav_links.Requests')}
 
-          <li className="nav-item   ">
-            <Link
-            className={`bg-focus dropdown-item text-light  `}
-            onClick={handleNavLinkClick}
-            href="/projectflow"
-            >
-                ProjectFlow  
-            </Link>
-          </li>
- 
- 
-  </ul>
-</li>
+                  
+        </a>
+
+
+        <ul
+          className={`  dropdown-menu dropdown-menu-end  background-color  mt-md-3 ${locale === 'ar' ? 'text-end' : ''}`}
+          aria-labelledby="id_support"
+          
+        >
+      
+                <li className="nav-item   ">
+                  <Link
+                  className={`bg-focus dropdown-item text-light `}
+                  onClick={handleNavLinkClick}
+                  href="/tickets"
+                  >
+                      { t('nav_links.tickets')}  
+                  </Link>
+                </li>
+
+                <li className="nav-item   ">
+                  <Link
+                  className={`bg-focus dropdown-item text-light  `}
+                  onClick={handleNavLinkClick}
+                  href="/projectflow"
+                  >
+                        { t('nav_links.projectflow')}
+                  </Link>
+                </li>
+      
+      
+        </ul>
+      </li>
 
 
 

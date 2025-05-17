@@ -308,7 +308,7 @@ const handleScroll = () => {
       {data?.map((obj) => (
         <tr key={`table_${obj.id}`}>
 
-          <td>{`#${obj?.id}`}</td>
+          <td>{`#${formatNumber(obj?.id)}`}</td>
 
 
           <td>
@@ -362,14 +362,14 @@ const handleScroll = () => {
         <div className="card-body">
 
           <p>
-            <strong>ID : </strong> #{formatNumber(obj?.id)}
+            <strong>{t('main_page.id')} : </strong> #{formatNumber(obj?.id)}
           </p>
 
 
 
 
           <p>
-            <strong>Template Name : </strong>
+            <strong>{t('main_page.template_name')} : </strong>
 
             <Link href={`/staff/projectFlow/projectFlowTemplate/template_details/${obj.id}`}  >
               {obj?.template_name.length > 25 
@@ -381,16 +381,16 @@ const handleScroll = () => {
           </p>
           
           <p>
-            <strong>Show Steps To Client : </strong> {obj?.show_steps_to_client ? 'yes' : 'No'}
+            <strong>{t('main_page.show_steps_to_client')} : </strong> {getTrueFalseLabel(obj?.show_steps_to_client)}
           </p>
  
            
           <p>
-            <strong>steps Process Strategy : </strong> {obj?.default_start_process_step_or_sub_step_strategy}
+            <strong>{t('main_page.steps_process_strategy')}: </strong> { getStepsProcessStrategy(obj?.default_start_process_step_or_sub_step_strategy)}
           </p>
  
           <p>
-            <strong>Manual Start Mode : </strong> {obj?.manual_start_mode}
+            <strong>{t('main_page.manual_start_mode')} : </strong> { getManualStartMode(obj?.manual_start_mode)}
           </p>
 
 

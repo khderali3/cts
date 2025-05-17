@@ -8,6 +8,9 @@ export default {
 		about_us: 'حول الشركة' ,
 		products: "المنتجات",
 		services: "الخدمات",
+
+		Requests : 'الطلبات',
+		projectflow : 'مشاريعي',
 		tickets: "نظام التذاكر",
 		login: "تسجيل الدخول",
 		contact_us : "تواصل معنا",

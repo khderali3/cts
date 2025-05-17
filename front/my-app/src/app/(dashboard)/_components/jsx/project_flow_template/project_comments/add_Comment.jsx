@@ -1,6 +1,6 @@
 'use client'
 import { useState  } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 
 
@@ -10,6 +10,11 @@ import  useSubmitForm from "@/app/(dashboard)/_components/hooks/project_hoks/use
 export const  AddNewComment = ({project_id, handleReplayAdded }) => {
 
     const t = useTranslations('site.ticket.ticket_details_msgs.ticket_reply_form')
+    const locale = useLocale()
+
+
+
+
     const [files, setFiles] = useState([{ id: 1, file: null }]);
     const [formData, setFormData] = useState({note : ""});
 
@@ -60,7 +65,8 @@ export const  AddNewComment = ({project_id, handleReplayAdded }) => {
       <div className="form-group">
         <label htmlFor="add_comment_text_aria" className=" form-label small">
           {/* Add A New Replay */}
-           Add New Comment
+           
+           {locale === 'ar' ? 'أضف تعليق جديد' : 'Add New Comment'}
         </label>
         <textarea
           className="form-control form-control-sm"

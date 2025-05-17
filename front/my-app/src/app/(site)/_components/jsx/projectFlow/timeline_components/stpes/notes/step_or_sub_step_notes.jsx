@@ -82,12 +82,12 @@ useEffect(() => {
 
  
         <div className="notes-container mt-3 ">
-        <h6 className="fw-bold fs-6">Notes</h6>
+        <h6 className="fw-bold fs-6"> {locale ==='ar' ? 'ملاحظات' : 'Notes'}</h6>
 
         {noteList?.length > 0 ?  
             noteList.map((note) => <StepOrSubStepSingleNote key={`step_note_${note.id}`} note={note} />) :  
 
-            <div className="small text-muted fst-italic">No notes available</div>
+            <div className="small text-muted fst-italic">{locale === 'ar' ? 'لا يوجد أي ملاحظات' : 'No notes available'}</div>
         }
  
         {can_add_note &&

@@ -3,7 +3,7 @@
  
 import { parseISO, format } from "date-fns";
 
-import { useLocale } from "next-intl"; // Get the current locale from next-intl
+import { useLocale, useTranslations } from "next-intl"; // Get the current locale from next-intl
 import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 
 import { StepOrSubStepSingleNote } from "./step_or_sub_step_single_note";
@@ -16,6 +16,8 @@ import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staf
 
 export const  StepOrSubStepNotes = ({notes=[], notes_for="step", step_or_step_id=null, can_add_note=false}) => {
     const [noteList, setNoteList] = useState(notes)
+    const t = useTranslations('dashboard.projectFlow.notes')
+
 
     const locale = useLocale(); 
 
@@ -83,12 +85,12 @@ useEffect(() => {
 
  
         <div className="notes-container mt-3 ">
-        <h6 className="fw-bold fs-6">Notes</h6>
+        <h6 className="fw-bold fs-6">{t('notes_title')}</h6>
 
         {noteList?.length > 0 ?  
             noteList.map((note) => <StepOrSubStepSingleNote note_for={notes_for} handleReloadFlag={handleReloadFlag}   key={`step_note_${note.id}`} note={note} />) :  
 
-            <div className="small text-muted fst-italic">No notes available</div>
+            <div className="small text-muted fst-italic">{t('no_notes_available')}</div>
         }
  
         {can_add_note &&

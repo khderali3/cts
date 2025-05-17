@@ -27,13 +27,17 @@ import { ViewProductInstalledButton } from "@/app/(site)/_components/jsx/project
 import { useRouter } from "next/navigation";
 
 
+import { useTrueFalseLabel, useStepsProcessStrategy, useManualStartMode, useProjectStatus } from "@/app/public_utils/hooks"; 
 
 
 const Page = () => {
 
-   
+    const getTrueFalseLabel = useTrueFalseLabel()
+    const getStepsProcessStrategy = useStepsProcessStrategy()
+    const getManualStartMode = useManualStartMode()
+    const getProjectStatus = useProjectStatus()
 
-    const t = useTranslations('site.ticket')
+    const t = useTranslations('dashboard.projectFlow.projectflow.projectflow_details')
     const t_common = useTranslations('common')
 
     const locale = useLocale(); // Get the current locale
@@ -55,8 +59,11 @@ const Page = () => {
  
    
       const formatNumber = (number) => {
-        const formatter = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US"); // Arabic for "ar", fallback to English
-        return formatter.format(number);
+        if(number){
+            const formatter = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US"); // Arabic for "ar", fallback to English
+            return formatter.format(number);
+        }
+
       };
 
 
@@ -142,7 +149,7 @@ useEffect(() => {
                     ProjectFlow 
                     
                 </Link>
-                   - ProjectFlow Details
+                   - {t('mini_nav.projectflow_Details')}
             </h6>
             <hr />
         </div>
@@ -176,7 +183,7 @@ useEffect(() => {
                     <i className="fa-solid fa-caret-down fs-3 ms-2 me-2" />
 
     
-                    ProjectFlow Details
+                   {t('details_btn')} 
                 </button>
 
 
@@ -200,7 +207,7 @@ useEffect(() => {
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
             
-                                Project Requester:
+                                {t('Requester')}
                             </div>
                             <div className="col-6">
                                 {projectDetails?.project_created_user?.full_name}
@@ -209,7 +216,7 @@ useEffect(() => {
 
                         <div className="p-1 row col-12">
                             <div className="col-6  text-muted">
-                                Created: 
+                                 {t('Created')} 
                             </div>
                             <div className="col-6">
                                 {formatDate( projectDetails?.created_date)}
@@ -217,7 +224,7 @@ useEffect(() => {
                         </div>
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
-                                Latest activity: 
+                                {t('Latest_activity')}
                             </div>
                             <div className="col-6">
                                 {formatDate( projectDetails?.latest_activity)}
@@ -230,7 +237,7 @@ useEffect(() => {
                         <div className="p-1 row col-12">
 
                             <div className="col-6  text-muted">
-                                {t_common('ticket_card.id')}
+                               {t('projectflow_id')}
                             </div>
                             <div className="col-6">
                                 #{ formatNumber(projectDetails?.id) }
@@ -239,13 +246,13 @@ useEffect(() => {
 
                         <div className="p-1 row col-12">
                             <div className="col-6  text-muted">
-                                {t_common('ticket_card.status')}
+                                {t('status')}
                             </div>
                             <div className="col-6">
 
                                 <p className={`p-0 m-0    p-1  `}  >
                                     <span className={` ${getprojectStatusBadgeColors(projectDetails?.project_flow_status)}  `}>
-                                        {  projectDetails?.project_flow_status}
+                                         {  getProjectStatus( projectDetails?.project_flow_status) }
                                     </span>
                                 </p>
                                 
@@ -265,7 +272,7 @@ useEffect(() => {
                         <hr />
                         <div className="p-1 row col-12 d-flex justify-content-start   align-items-center ">
                             <div className="col-6  text-muted">
-                                Progress
+                                 {t('Progress')}
                             </div>
                             <div className="col-6">
 
@@ -371,7 +378,7 @@ useEffect(() => {
                     <div className="p-1 row col-12 ">
                         <div className="col-6  text-muted">
         
-                            Project Requester:
+                           {t('Requester')}
                         </div>
                         <div className="col-6">
                             {projectDetails?.project_created_user?.full_name}
@@ -380,7 +387,7 @@ useEffect(() => {
 
                     <div className="p-1 row col-12">
                         <div className="col-6  text-muted">
-                            Created: 
+                             {t('Created')} 
                         </div>
                         <div className="col-6">
                             {formatDate( projectDetails?.created_date)}
@@ -388,7 +395,7 @@ useEffect(() => {
                     </div>
                     <div className="p-1 row col-12 ">
                         <div className="col-6  text-muted">
-                            Latest activity: 
+                            {t('Latest_activity')}
                         </div>
                         <div className="col-6">
                             {formatDate( projectDetails?.latest_activity)}
@@ -401,7 +408,7 @@ useEffect(() => {
                     <div className="p-1 row col-12">
 
                         <div className="col-6  text-muted">
-                            {t_common('ticket_card.id')}
+                             {t('projectflow_id')}
                         </div>
                         <div className="col-6">
                             #{ formatNumber(projectDetails?.id) }
@@ -410,14 +417,14 @@ useEffect(() => {
 
                     <div className="p-1 row col-12">
                         <div className="col-6  text-muted">
-                            {t_common('ticket_card.status')}
+                             {t('status')}
                         </div>
                         <div className="col-6">
 
                             <p className={`p-0 m-0    p-1  `}  >
                                 {/* { projectDetails?.project_flow_status  } */}
                                 <span className={` ${getprojectStatusBadgeColors(projectDetails?.project_flow_status)}  `}>
-                                    {  projectDetails?.project_flow_status}
+                                    {  getProjectStatus( projectDetails?.project_flow_status) }
                                 </span>
 
                             </p>
@@ -438,7 +445,7 @@ useEffect(() => {
                     
                     <div className="p-1 row col-12 d-flex justify-content-start   align-items-center ">
                         <div className="col-6  text-muted">
-                            Progress
+                            {t('Progress')}
                         </div>
                         <div className="col-6">
 

@@ -58,6 +58,9 @@ class ProjectFlowTemplate(models.Model):
 
 class ProjectFlowTemplateNote(models.Model):
     project_flow_template = models.ForeignKey(ProjectFlowTemplate, related_name='ProjectFlowTemplateNote_project_flow_template_releated_ProjectFlowTemplate', on_delete=models.CASCADE, null=True, blank=True)
+    created_user = models.ForeignKey(User, related_name='ProjectFlowTemplateNote_created_user_User', on_delete=models.PROTECT, blank=True, null=True)
+ 
+
     note = models.TextField()
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)

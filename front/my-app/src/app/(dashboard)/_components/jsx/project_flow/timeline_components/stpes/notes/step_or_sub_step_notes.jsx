@@ -16,7 +16,6 @@ import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staf
 
 export const  StepOrSubStepNotes = ({notes=[], notes_for="step", step_or_step_id=null, can_add_note=false}) => {
     const [noteList, setNoteList] = useState(notes)
-
     const locale = useLocale(); 
 
     const currentLocale = locale === "ar" ? ar : enUS;
@@ -84,7 +83,7 @@ useEffect(() => {
 
  
         <div className="notes-container mt-3 ">
-        <h6 className="fw-bold fs-6">Notes</h6>
+        <h6 className="fw-bold fs-6"> {locale ==='ar' ? 'ملاحظات' : 'Notes'}</h6>
 
         {noteList?.length > 0 ?  
             noteList.map((note) => 
@@ -93,7 +92,7 @@ useEffect(() => {
             note_for={notes_for}
             />) :  
 
-            <div className="small text-muted fst-italic">No notes available</div>
+            <div className="small text-muted fst-italic">{locale === 'ar' ? 'لا يوجد أي ملاحظات' : 'No notes available'}</div>
         }
  
         {can_add_note &&

@@ -1,6 +1,6 @@
 
 
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import { useEffect, useState, useRef } from "react"
 import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staff/features/authApiSlice"
 import { toast } from "react-toastify"
@@ -11,7 +11,8 @@ import { getErrorMessage } from "@/app/public_utils/utils"
 
 export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
-    const t = useTranslations('dashboard.site_managment.our_product.list_manager')
+  const t = useTranslations('dashboard.projectFlow.installed_product_type.add_or_edit_new_project')
+  const locale = useLocale()
     const [customFetch] = useCustomFetchMutation()
     const [data, setData] = useState({
       id:null,
@@ -44,7 +45,13 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
         .map(([key]) => key); // Extract field names
 
     if (emptyFields.length > 0) {
-        toast.error(`Please fill in all fields: ${emptyFields.join(", ")}`);
+        if(locale === 'ar'){
+          toast.error(`يرجى ملئ كافة الحقول: ${emptyFields.join(", ")}`);
+
+        } else {
+          toast.error(`Please fill in all fields: ${emptyFields.join(", ")}`);
+
+        }
         return;
     }
 
@@ -80,13 +87,20 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
        });
 
       if(response && response.data){
+        if(locale === 'ar'){
+          toast.success('تم حفظ التغييرات بنجاح')
+
+        } else {
+            toast.success('data has been changed')
+
+        }
         onClose()
         if(handleReloadFlag){handleReloadFlag()}
-
-  
  
 
-        toast.success('your data has been submited')
+
+
+        
       } else{
         setIsSubmitting(false)
         console.log('response', response)
@@ -207,7 +221,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
         <div className="modal-dialog        ">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="editModal_instaledProductLabel">Edit installed Product  Type</h5>
+              <h5 className="modal-title" id="editModal_instaledProductLabel">{t('edit_title')}</h5>
               <button
                 type="button"
                 className="btn-close"
@@ -228,7 +242,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
               
                 <div className="mb-3">
                   <label htmlFor="product_name" className="form-label small">
-                  Product Type Name
+                  {t('Product_Type_Name')}
                   </label>
                   <input
                     type="text"
@@ -245,7 +259,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
                 <div className="mb-3">
                   <label htmlFor="product_name_ar" className="form-label small">
-                  Product Type Name (Ar)
+                    {t('Product_Type_Name_ar')}
                   </label>
                   <input
                     type="text"
@@ -261,7 +275,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
                 <div className="mb-3">
                   <label htmlFor="private_note" className="form-label small">
-                  Private Note
+                   {t('Private_Note')}
                   </label>
                   <input
                     type="text"
@@ -294,7 +308,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
               >
                 {/* {t('form_edit.cancel')} */}
-                cancel
+                 {t('cancel')}
               </button>
               <button
                 type="button"
@@ -304,7 +318,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
                 disabled={isSubmitting}
               >
 				{/* {editingItemId  ? t('form_edit.updating') : t('form_edit.update') } */}
-                update
+                 {t('update')}
               </button>
             </div>
           </div>

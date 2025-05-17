@@ -357,14 +357,16 @@ class CreateOrGetOrPutObjectProjectFlowTemplateNoteSerializer(ModelSerializer):
 
 
 class ProjectFlowTemplateNoteSerializer(ModelSerializer):
-      files = ProjectFlowTemplateNoteAttachmentSerializer(many=True, read_only=True, source='ProjectFlowTemplateNoteAttachment_project_flow_template_note_related_ProjectFlowTemplateNote')
-
-      class Meta:
+    files = ProjectFlowTemplateNoteAttachmentSerializer(many=True, read_only=True, source='ProjectFlowTemplateNoteAttachment_project_flow_template_note_related_ProjectFlowTemplateNote')
+    created_user = serializers.SerializerMethodField()
+    class Meta:
         model = ProjectFlowTemplateNote
         fields = "__all__"
         read_only_fields = ['id', "created_date", 'updated_date' ]
 
-
+    def get_created_user(self, obj):
+        request = self.context.get("request")  
+        return get_user_data(obj, "created_user", request)  
 
 # class ProjectFlowTemplateAttachmentSerializer(ModelSerializer):
  

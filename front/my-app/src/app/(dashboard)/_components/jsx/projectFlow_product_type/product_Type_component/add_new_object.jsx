@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { getErrorMessage } from "@/app/public_utils/utils";
 import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/siteApiSlice"
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 // import { AddFilesComponent } from "./add_project_components/extra_images";
 
 import { FormSearchInput } from "../../project_flow_template/input_search_templates/page";
@@ -13,7 +13,9 @@ import { FormSearchInput } from "../../project_flow_template/input_search_templa
 
 
 export const AddNewObject = ({handleReloadFlag=null}) => {
-	const t = useTranslations('site.ticket.ticket_details_msgs.ticket_reply_form')
+  const t = useTranslations('dashboard.projectFlow.installed_product_type')
+	const locale = useLocale()
+
 
 	const [customFetch] = useCustomFetchMutation();
  
@@ -51,7 +53,14 @@ export const AddNewObject = ({handleReloadFlag=null}) => {
 		.map(([key]) => key); // Extract field names
 	
 	  if (emptyFields.length > 0) {
-		toast.error(`Please fill in all fields: ${emptyFields.join(", ")}`)
+
+		if(locale === 'ar'){
+		toast.error(`يرجى ملئ كافة الحقول: ${emptyFields.join(", ")}`)
+
+		}else {
+			toast.error(`Please fill in all fields: ${emptyFields.join(", ")}`)
+
+		}
 		return;
 	  }
 
@@ -79,6 +88,12 @@ export const AddNewObject = ({handleReloadFlag=null}) => {
 			if(response && response.data){
   
 
+				if(locale === 'ar'){
+					toast.success('تم إضافة البيانات بنجاح')
+				} else {
+				toast.success('the data has been added.')
+				}
+
 				setData({
 					product_name:'',
 					product_name_ar: "",
@@ -88,7 +103,7 @@ export const AddNewObject = ({handleReloadFlag=null}) => {
 
 				if(handleReloadFlag){handleReloadFlag()}
  
-				toast.success('your data has been submited')
+
 			} else{
 				setIsSubmitting(false)
 				console.log('response', response)
@@ -122,7 +137,7 @@ export const AddNewObject = ({handleReloadFlag=null}) => {
 
 			<div className="mb-3">
 				<label htmlFor="product_name" className="form-label small">
- 				Product Type Name
+ 					{t('add_or_edit_new_project.Product_Type_Name')}
 				</label>
 				<input
 					type="text"
@@ -141,7 +156,7 @@ export const AddNewObject = ({handleReloadFlag=null}) => {
 			
 			<div className="mb-3">
 				<label htmlFor="product_name_ar" className="form-label small">
- 				Product Type Name (Ar)
+ 				{t('add_or_edit_new_project.Product_Type_Name_ar')}
 				</label>
 				<input
 					type="text"
@@ -159,7 +174,7 @@ export const AddNewObject = ({handleReloadFlag=null}) => {
 			
 			<div className="mb-3">
 				<label htmlFor="private_note" className="form-label small">
- 				Private Note
+ 				{t('add_or_edit_new_project.Private_Note')}
 				</label>
 				<input
 					type="text"
@@ -190,7 +205,7 @@ export const AddNewObject = ({handleReloadFlag=null}) => {
  		>
 
 			{/* {addingItem ? t('form_add.adding_item') : t('form_add.add_item')} */}
-			Add Item
+			{t('add_or_edit_new_project.add_item')}
 		</button>
 
 

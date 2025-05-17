@@ -21,7 +21,16 @@ const Page = () =>  {
   const [projectUser, setProjectUser] = useState(''); // Ticket status state
 
   const t = useTranslations('site.ticket.add_new_ticket')
+  const tt = useTranslations('dashboard.projectFlow.projectflow.add_new_projectflow')
+
+
+
   const locale = useLocale()
+
+  const success_message = locale === 'ar' ? 'تم إنشاء المشروع بنجاح' : 'ProjectFlow has been added'
+
+
+
   const [customFetch] = useCustomFetchMutation();
   const [projectTypes, setProjectTypes] = useState([])
   const [files, setFiles] = useState([{ id: 1, file: null }]);
@@ -144,11 +153,11 @@ useEffect(() => {
         <div className="container-fluid  min-vh-150 bg-white p-3 border rounded " >
 
 
-            <h2>Add New ProjectFlow </h2>
-            <form className="col-md-8 col-12 mb5 " onSubmit={(e) => handleSubmit(e, formData, ['project_type', 'details'],"POST", setFormData, files, setFiles)}>
+            <h4>{tt('title')} </h4>
+            <form className="col-md-8 col-12 mb5 " onSubmit={(e) => handleSubmit(e, formData, ['project_type', 'details'],"POST", setFormData, files, setFiles, success_message)}>
             <div className="mb-3">
               <label htmlFor="project_type" className="form-label">
-                Please select Project Type
+                {tt('select_project_type_label')}
                 <span className="text-danger">*</span>
               </label>
 
@@ -162,12 +171,12 @@ useEffect(() => {
                 >
 
                 <option disabled   value=''> 
-                  Select Project Type
+                  {tt('Select_Project_Type')}
  
                   </option>
                   {projectTypes?.map((item) => (
                     <option key={item.id} value={item.id}>
-                      {item?.project_name}
+                      { locale === 'ar' ?  item?.project_name_ar : item?.project_name }
                       {/* { locale ==="ar"  ? item.department_name_ar :  item.department_name} */}
                     </option>
                   ))}
@@ -180,14 +189,14 @@ useEffect(() => {
           <UsersSearchInputGlopal 
                   handleUserIdChange={handleUserIdChange}
                   userId={projectUser}
-                  ph={'Select ProjectFlow User'}
-                  lable={'Select ProjectFlow User'}
+                  ph= {tt('Select_ProjectFlow_User')}
+                  lable={tt('Select_ProjectFlow_User')}
               />
 
 
             <div className="mb-3 mt-3">
               <label htmlFor="description" className="form-label">
-                Description 
+                {tt('Description')} 
  
                 <span className="text-danger">*</span>
               </label>
@@ -195,7 +204,7 @@ useEffect(() => {
                 className="form-control"
                 id="description"
                 rows={6}
-                placeholder="Please enter the details of your project environment, and our staff will start working on it as soon as possible."
+                placeholder= {tt('Description_ph')}
                 // placeholder={t('description_placeholder')}
 
 
@@ -281,7 +290,7 @@ useEffect(() => {
             disabled={isSubmitting}
             >
               {/* Submit */}
-              {t('submit')}
+               {tt('submit')}
 
             </button>
           </form>

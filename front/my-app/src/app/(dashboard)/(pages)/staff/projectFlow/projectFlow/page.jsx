@@ -14,20 +14,25 @@ import { useRef } from "react";
 
  
  
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 import UsersSearchInputGlopal from "@/app/(dashboard)/_components/jsx/input_search_users/page";
 
 import { getprojectStatusBadgeColors } from "@/app/public_utils/utils";
 import { useSelector } from "react-redux";
 
+import { useProjectStatus } from "@/app/public_utils/hooks";
 
 
 const Page = () => {
 
-
+  const t = useTranslations('dashboard.projectFlow.projectflow')
 
   const { permissions, is_superuser, is_staff  } = useSelector(state => state.staff_auth);
+
+  const getProjectStatus = useProjectStatus()
+
+
 
   const hasPermissionToCreateNewProjectFlowBehalfClient = () => {
     if (is_superuser || (permissions?.includes('usersAuthApp.projectflow_create_behalf_client') && is_staff)) {
@@ -260,30 +265,34 @@ const handleScroll = () => {
             
               
 
-                <div className="row align-items-center">
-                  <div className="col-12 col-md-6 text-md-start">
-                    <h1 className="mb-2">ProjectFlows</h1>
-                  </div>
-
-                {hasPermissionToCreateNewProjectFlowBehalfClient() && 
-                
-                  <div className="col-12 col-md-6   text-md-end">
-                    <button
-                      type="button"
-                      onClick={handleAddNewProjectFlow}
-                      className="btn btn-sm btn-outline-secondary"
-                    >
-                      Add New ProjectFlow
-                    </button>
+                <div className="row  ">
+                  <div className="col-12 col-md-6  ">
+                    <h4 className="mb-2">{t('main_page.page_title')}</h4>
                   </div>
                 
-                }
+                  <div className="col-12 col-md-6  d-flex justify-content-md-end">
+
+
+                    {hasPermissionToCreateNewProjectFlowBehalfClient() &&
+                      <button
+                        type="button"
+                        onClick={handleAddNewProjectFlow}
+                        className="btn btn-sm btn-outline-secondary"
+                      >
+                        
+                        {t('main_page.add_new_projectflow')}
+                      </button>
+                    
+                    }
+
+
+
+                  </div>   
 
 
 
 
-
-
+ 
                 </div>
 
 
@@ -304,14 +313,14 @@ const handleScroll = () => {
 
                         <div className="col-md-5 col-12 pt-2">
                           <label htmlFor="ProjectType_Name" className="form-label small"> 
-                            Name
+                             {t('main_page.search_form.project_type_name')}
                         
                           </label>
                           <input
                             type="text"
                             className="form-control form-control-sm  "
                             id="ProjectType_Name"
-                            placeholder='Search by template name  '
+                            placeholder={t('main_page.search_form.project_type_name_ph')}
                             aria-describedby="ProjectType_Name"
                             value={searchProjectType_NameQuery}
                             onChange={handleSearchChange}
@@ -321,7 +330,7 @@ const handleScroll = () => {
 
                         <div className="col-md-5 col-12 pt-2">
                           <label htmlFor="status" className="form-label small">  
-                            ProjectFlow Status
+                              {t('main_page.search_form.ProjectFlow_Status')}
                           </label>
 
                           <select
@@ -335,12 +344,12 @@ const handleScroll = () => {
 
             
 
-                            <option value={'all'}> all </option>
-                            <option value={'pending'}>pending</option>
-                            <option value={'wait_customer_action'}>wait_customer_action</option>
-                            <option value={'in_progress'}>in_progress</option>
-                            <option value={'completed'}>completed</option>
-                            <option value={'canceled'}>canceled</option>
+                            <option value={'all'}>  {t('main_page.search_form.all')} </option>
+                            <option value={'pending'}>{t('main_page.search_form.pending')}</option>
+                            <option value={'wait_customer_action'}> {t('main_page.search_form.wait_customer_action')}  </option>
+                            <option value={'in_progress'}>{t('main_page.search_form.in_progress')}</option>
+                            <option value={'completed'}>{t('main_page.search_form.completed')}</option>
+                            <option value={'canceled'}>{t('main_page.search_form.canceled')}</option>
                           </select>
                         </div>
 
@@ -353,8 +362,8 @@ const handleScroll = () => {
                           <UsersSearchInputGlopal 
                                 handleUserIdChange={handleUserIdChange}
                                 userId={userId}
-                                ph={'Select ProjectFlow User'}
-                                lable={'Select ProjectFlow User'}
+                                ph={t('main_page.search_form.projectFlow_user_ph')}
+                                lable={t('main_page.search_form.projectFlow_user')}
                             />
 
 
@@ -364,7 +373,7 @@ const handleScroll = () => {
 
                         <div className="col-md-5 col-12 pt-2">
                           <label htmlFor="projectId" className="form-label small"> 
-                            Project ID
+                            {t('main_page.search_form.project_id')}
                         
                           </label>
 
@@ -377,7 +386,7 @@ const handleScroll = () => {
                             type="text"
                             className="form-control form-control-sm  "
                             id="projectId"
-                            placeholder='Search by Project ID' 
+                            placeholder= {t('main_page.search_form.project_id_ph')}
                             value={projectId}
                             onChange={(e) => setProjectId(e.target.value)}
                           />
@@ -401,8 +410,7 @@ const handleScroll = () => {
 
                       </div>
 
-                      <h4 className="text-muted mt-2 fs-6">{searchProjectType_NameQuery && `Search for template name : ${searchProjectType_NameQuery}` }</h4>
-
+ 
 
                     </form>
                   </div>
@@ -413,12 +421,12 @@ const handleScroll = () => {
               <table className="table table-sm small table-striped d-none d-md-table">
                 <thead>
                   <tr>
-                    <th scope="col">ProjectType Name</th>
-                    <th scope="col">ID</th>
-                    <th scope="col">Created</th> 
-                    <th scope="col">Latest Activity</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">User</th>
+                    <th scope="col"> {t('main_page.project_type_name')}</th>
+                    <th scope="col">{t('main_page.id')}</th>
+                    <th scope="col">{t('main_page.Created')}</th> 
+                    <th scope="col">{t('main_page.Latest_Activity')}</th>
+                    <th scope="col">{t('main_page.Status')}</th>
+                    <th scope="col">{t('main_page.User')}</th>
 
                   </tr>
                 </thead>
@@ -430,23 +438,25 @@ const handleScroll = () => {
 
                       <td>
                         <Link href={`/staff/projectFlow/projectFlow/projectFlowDetails/${obj.id}`}  >
-                          {obj?.project_type_name.length > 25 
-                          ? `${obj?.project_type_name.slice(0, 25)}...` 
-                          : obj?.project_type_name
-                          }        
+ 
+                          {
+                            (locale === 'ar' ? obj?.project_type_name_ar : obj?.project_type_name)?.length > 25
+                              ? `${(locale === 'ar' ? obj?.project_type_name_ar : obj?.project_type_name).slice(0, 25)}...`
+                              : (locale === 'ar' ? obj?.project_type_name_ar : obj?.project_type_name)
+                          }
                         
                         </Link>
 
 
                       </td>
-                      <td>{`#${obj?.id}`}</td>
+                      <td>{`#${formatNumber(obj?.id)}`}</td>
                       <td>{formatDate(obj?.created_date)}</td>
                       <td>{formatDate(obj?.latest_activity)}</td>
                       <td>
 
                         <span className={` ${getprojectStatusBadgeColors(obj?.project_flow_status)}  `}>
                           {/* {ticket.ticket_status} */}
-                          {obj?.project_flow_status && obj.project_flow_status}
+                          {   getProjectStatus(obj?.project_flow_status)}
                         </span>
 
 

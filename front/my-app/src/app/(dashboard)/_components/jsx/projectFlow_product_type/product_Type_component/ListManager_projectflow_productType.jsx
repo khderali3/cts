@@ -35,7 +35,7 @@ export default function ListManagerProjectFlowProductType() {
  
  
 
-  const t = useTranslations('dashboard.projectFlow.projectType.projectTypeSection')
+  const t = useTranslations('dashboard.projectFlow.installed_product_type')
   const locale = useLocale()
 
   const [reloadFlag, setReloadFlag] = useState(false)
@@ -95,7 +95,8 @@ useEffect(() => {
 
   return (
     <div className="container mt-5">
-      <h6>List item Installed Product Type</h6>
+      {/* <h6>List item Installed Product Type</h6> */}
+      <h6>{t('list_items.title')}</h6>
 
  
 		
@@ -104,10 +105,10 @@ useEffect(() => {
 			<thead className="table-light">
 			<tr>
 				<th className="small">#</th>
-				<th className="small">Product Type Name</th>
-				<th className="small">Product Type Name (Ar)</th>
-				<th className="small">Private Note</th>
-				<th className="small">{t('actions')}</th>
+				<th className="small">{t('list_items.Product_Type_Name')}</th>
+				<th className="small">{t('list_items.Product_Type_Name_ar')}</th>
+				<th className="small">{t('list_items.Private_Note')}</th>
+				<th className="small">{t('list_items.actions')}</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -126,18 +127,18 @@ useEffect(() => {
 						setSelectedItemToEeditId(item.id);
 						}}
 						className="text-primary mx-2"
-						title="Edit"
+						title={t('list_items.edit')}
 					>
 						<i className="bi bi-pencil-fill"></i>
 					</Link>
-					<DeleteButton item_id={item.id} handleReloadFlag={handleReloadFlag} />
+					<DeleteButton title={t('list_items.delete')} item_id={item.id} handleReloadFlag={handleReloadFlag} />
 					</td>
 				</tr>
 				))
 			) : (
 				<tr>
 				<td colSpan="5" className="text-center text-muted small py-3">
-					No product installed type available
+					{t('list_items.No_product_available')}
 				</td>
 				</tr>
 			)}

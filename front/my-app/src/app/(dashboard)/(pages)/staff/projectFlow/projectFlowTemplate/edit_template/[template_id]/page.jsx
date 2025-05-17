@@ -199,9 +199,12 @@ const Page = () =>  {
                     value={formData.default_start_process_step_or_sub_step_strategy}
               
                   >
+
                     <option value="" disabled >{locale === 'ar' ? 'يرجى الإختيار' : 'Select Option'}</option>  
                     <option value="auto"> {locale === 'ar' ? 'تلقائي' : 'Auto'}</option>
                     <option value="manual"> {locale === 'ar' ? 'يدوي' : 'Manual'} </option>
+
+
                   </select> 
                   <div className="form-text fs-8">
                      {t('steps_process_strategy_des')}
@@ -222,9 +225,12 @@ const Page = () =>  {
 
                     // defaultValue=''
                   >
+
                     <option value="" disabled>{locale === 'ar' ? 'يرجى الإختيار' : 'Select Option'}</option>
                     <option value="serialized">{locale === 'ar' ? 'تسلسلي' : 'Serialized'}</option>
                     <option value="non-serialized">{locale === 'ar' ? 'غير تسلسلي' : 'Non-Serialized'}</option>
+
+                    
                   </select> 
                   <div className="form-text fs-8">
                       {t('manual_start_mode_des')}

@@ -3,7 +3,7 @@
  
 import { parseISO, format } from "date-fns";
 
-import { useLocale } from "next-intl"; // Get the current locale from next-intl
+import { useLocale, useTranslations } from "next-intl"; // Get the current locale from next-intl
 import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 
 import Link from "next/link";
@@ -22,7 +22,8 @@ export const  StepOrSubStepSingleNote = ({note={}, note_for="step",  handleReloa
 
     const locale = useLocale(); // Get the current locale
     const currentLocale = locale === "ar" ? ar : enUS;
- 
+    const t = useTranslations('dashboard.projectFlow.single_note')
+    
 
     const [customFetch] = useCustomFetchMutation();
  
@@ -47,7 +48,13 @@ export const  StepOrSubStepSingleNote = ({note={}, note_for="step",  handleReloa
          });  
          if (response && response.data) {
             if(handleReloadFlag){handleReloadFlag()}
+            if (locale === 'ar'){
+            toast.success('تم الحذف بنجاح')
+
+            }else{
             toast.success('the object has been deleted')
+
+            }
          } else {
            toast.error(getErrorMessage(response?.error?.data))
    
@@ -102,50 +109,21 @@ export const  StepOrSubStepSingleNote = ({note={}, note_for="step",  handleReloa
                         e.preventDefault()
                         setIsModalOpen(true)
                         }}
-                        className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i></Link>
+                        className="text-danger mx-2" title={t('delete')}><i className="bi bi-trash-fill"></i></Link>
                     </div>
                     
                     </div>
 
 
 
-
-
-
-
-
-                {/* <p className="  small">{note?.note}</p> */}
-     
-
-                {/* <div className="attachments  ">
-                    <ul className="list-unstyled small">
-                         {note?.files?.map((file) => 
-                            <li key={`note_${file.created_data}_${file.id}`} className="d-flex align-items-center">
-                                <i className="bi bi-file-earmark" style={{ marginRight: '5px' }}></i>
-                                <a href={file?.file || ''} target="_blank" rel="noopener noreferrer" className="text-muted  text-break">
-                                    {file.file_name}
-                                </a>
-                            </li>
-                        )}
-                    </ul>
-
-                    <div className="text-end mt-2 ">
-                        <Link href="#"
-                        
-                        onClick={(e) => {
-                        e.preventDefault()
-                        setIsModalOpen(true)
-                        }}
-                        className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i></Link>
-                    </div>
-                </div> */}
+ 
 
                 <CustomModal  
                 id={`delete_template_${note_for}_note_id`}
                 handleSubmit={handleDelete}
 
                 submitting={deleting}
-                message={'are you sure you want to delete this note ?'}
+                message={t('modal_msg')}
                 showModal={true} 
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}

@@ -8,11 +8,15 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 
 import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/siteApiSlice"
 
-
+import { useLocale } from "next-intl";
 
 
 
 const useSubmitForm = (endpoint, onSuccess) => {
+
+    const locale = useLocale(); 
+
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const fileInputRefs = useRef([]);
     const [customFetch] = useCustomFetchMutation();
@@ -25,12 +29,33 @@ const useSubmitForm = (endpoint, onSuccess) => {
         for (const field of requiredFields) {
             if (!formData[field] || formData[field].trim() === "") {
                 if (field === "note") {
-                    toast.error("Comment note body can't be empty");
+
+
+                    if(locale === 'ar'){
+                        toast.error("لايمكن أن يكون التعليق فارغ");
+
+                    } else {
+                        toast.error("Comment note body can't be empty");
+                    }
+
+                    
                 } else if (field === "project_type") {
+                    if(locale === 'ar'){
+                    toast.error("نوع المشروع لا يمكن أن يكون فارغ");
+
+                    } else {
                     toast.error("project type can't be empty");
+
+                    }
  
                 } else if (field === "details") {
+                    if( locale === 'ar'){
+                    toast.error("حلق التفاصيل فارغ!");
+
+                    } else {
                     toast.error("details can't be empty");
+
+                    }
                 }
                 return;  
             }
@@ -60,7 +85,16 @@ const useSubmitForm = (endpoint, onSuccess) => {
             });
 
             if (response && response.data) {
-                toast.success("Your data has been added.");
+
+
+                if (locale === 'ar'){
+                    toast.success(' تمت الإضافة بنجاح ')
+
+                }else{
+                    toast.success('the object has been added')
+                }
+
+
                 setFormData({note: ""});
                 setFiles([{ id: 1, file: null }]);
 

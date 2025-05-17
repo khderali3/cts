@@ -49,13 +49,28 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 
 
 
+import { useTrueFalseLabel, useStepsProcessStrategy, useManualStartMode, useProjectStatus } from "@/app/public_utils/hooks"; 
+
+
 
 
 const Page = () => {
 
+ useTrueFalseLabel, useStepsProcessStrategy, useManualStartMode, useProjectStatus
+
+    const getTrueFalseLabel = useTrueFalseLabel()
+    const getStepsProcessStrategy = useStepsProcessStrategy()
+    const getManualStartMode = useManualStartMode()
+    const getProjectStatus = useProjectStatus()
+
+
+
+
+
 
     const t_common = useTranslations('common')
-    const t = useTranslations('dashboard.ticket')
+ 
+    const t = useTranslations('dashboard.projectFlow.projectflow.projectflow_details')
 
 
     const locale = useLocale(); // Get the current locale
@@ -115,8 +130,13 @@ const Page = () => {
              method: "DELETE",
            });  
            if (response && response.data) {
+            if(locale === 'ar'){
+                toast.success('تم الحذف بنجاح')
+            } else {
+                toast.success('the projectFlow has been deleted')
+            }
             router.push('/staff/projectFlow/projectFlow')
-            toast.success('the projectFlow has been deleted')
+
            } else {
              toast.error(getErrorMessage(response?.error?.data))
      
@@ -139,8 +159,11 @@ const Page = () => {
  
    
       const formatNumber = (number) => {
-        const formatter = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US"); // Arabic for "ar", fallback to English
-        return formatter.format(number);
+        if(number){
+            const formatter = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US"); // Arabic for "ar", fallback to English
+            return formatter.format(number);
+        }
+
       };
 
 
@@ -199,9 +222,9 @@ useEffect(() => {
             
             <div className="   mt-2  ">
                 <h6> <Link href='/staff/projectFlow/projectFlow'>
-                 {/* Tickets */}
-                 ProjectFlow  
-                </Link>   - ProjectFlow Details </h6>
+
+                 {t('mini_nav.ProjectFlow')}  
+                </Link>   - {t('mini_nav.projectflow_Details')} </h6>
                 <hr />
             </div>
 
@@ -212,7 +235,7 @@ useEffect(() => {
  
 
         <div className=" col-11  border-bottom border-2   my-2  ">
-            <h3 className="text-break mx-2 " dir="auto">{data?.project_type_name} </h3>
+            <h3 className="text-break mx-2 " dir="auto"> { locale === 'ar' ? data?.project_type_name_ar : data?.project_type_name } </h3>
         </div>
 
         <div className="row d-flex justify-content-between">
@@ -232,7 +255,7 @@ useEffect(() => {
                 >
                     {/* Ticket Details  */}
                     <i className="bi bi-caret-down ms-2 me-2" />
-                    {t('ticket_details_msgs.ticket_details_btn')} 
+                    {t('details_btn')} 
                     
                 </button>
 
@@ -253,51 +276,51 @@ useEffect(() => {
                             aria-expanded="false"
                             aria-controls="extra_info"
                             >
-                            <i className="bi bi-info-circle-fill"></i> <span>More Info</span>
+                            <i className="bi bi-info-circle-fill"></i> <span> {t('More_Info')} </span>
                             </button>
 
             
                             <div id="extra_info" className="collapse "  >  
                                 <div className="p-1 row col-12 ">
-                                    <div className="col-6 text-muted">ProjectFlow ID</div>
-                                    <div className="col-6">#{data?.id}</div>
+                                    <div className="col-6 text-muted">{t('projectflow_id')}</div>
+                                    <div className="col-6">#{formatNumber(data?.id)}</div>
                                 </div>
 
 
 
                                 <div className="p-1 row col-12 ">
-                                    <div className="col-6 text-muted">Is Template Cloned</div>
-                                    <div className="col-6">{data?.is_template_cloned ? 'Yes' : 'No'}</div>
+                                    <div className="col-6 text-muted">{t('Is_Template_Cloned')}</div>
+                                    <div className="col-6">{ getTrueFalseLabel(data?.is_template_cloned )}</div>
                                 </div>
 
                                 <div className="p-1 row col-12 ">
-                                    <div className="col-6 text-muted">Template Cloned Name</div>
+                                    <div className="col-6 text-muted">{t('Template_Cloned_Name')}</div>
                                     <div className="col-6">{data?.template_name_cloned_from || '-'}</div>
                                 </div>
 
                                 <div className="p-1 row col-12 ">
-                                    <div className="col-6 text-muted">Steps Process Strategy</div>
-                                    <div className="col-6">{data?.default_start_process_step_or_sub_step_strategy}</div>
+                                    <div className="col-6 text-muted">{t('Steps_Process_Strategy')}</div>
+                                    <div className="col-6">{ getStepsProcessStrategy(data?.default_start_process_step_or_sub_step_strategy)}</div>
                                 </div>
 
                                 <div className="p-1 row col-12 ">
-                                    <div className="col-6 text-muted">Manual Start Mode</div>
-                                    <div className="col-6">{data?.manual_start_mode}</div>
+                                    <div className="col-6 text-muted">{t('Manual_Start_Mode')}</div>
+                                    <div className="col-6">{ getManualStartMode(data?.manual_start_mode)}</div>
                                 </div>
 
                                 <div className="p-1 row col-12 ">
-                                    <div className="col-6 text-muted">Auto Start First Step</div>
-                                    <div className="col-6">{data?.auto_start_first_step_after_clone ? 'Yes' : 'No'}</div>
+                                    <div className="col-6 text-muted">{t('Auto_Start_First_Step')}</div>
+                                    <div className="col-6">{  getTrueFalseLabel(data?.auto_start_first_step_after_clone)}</div>
                                 </div>
 
                                 <div className="p-1 row col-12 ">
-                                    <div className="col-6 text-muted">Show Steps To Client</div>
-                                    <div className="col-6">{data?.show_steps_to_client ? 'Yes' : 'No'}</div>
+                                    <div className="col-6 text-muted">{t('Show_Steps_To_Client')}</div>
+                                    <div className="col-6">{  getTrueFalseLabel(data?.show_steps_to_client) }</div>
                                 </div>
 
                                 <div className="p-1 row col-12 ">
-                                    <div className="col-6 text-muted">Show Step Status Logs To Client</div>
-                                    <div className="col-6">{data?.show_steps_or_sub_steps_status_log_to_client ? 'Yes' : 'No'}</div>
+                                    <div className="col-6 text-muted">{t('Show_Step_Status_Logs_To_Client')}</div>
+                                    <div className="col-6">{  getTrueFalseLabel(data?.show_steps_or_sub_steps_status_log_to_client)}</div>
                                 </div>
 
             
@@ -306,7 +329,7 @@ useEffect(() => {
                                         href={`/staff/projectFlow/projectFlow/step/${data?.id}/add_new_step`}
                                         
                                         className="text-success mx-2"
-                                        title="Add New Step">
+                                        title={t('Add_New_Step')}>
                                         <i className="bi   bi-plus-circle-fill"></i> 
                                     </Link>
     
@@ -320,7 +343,7 @@ useEffect(() => {
                                     <Link 
                                         href={`/staff/projectFlow/projectFlow/edit_projectflow/${id}`}
                                     
-                                        className="text-primary mx-2" title="Edit"><i className="bi bi-pencil-fill"></i>
+                                        className="text-primary mx-2" title={t('Edit')}><i className="bi bi-pencil-fill"></i>
                                     </Link> 
                                     
                                 
@@ -336,7 +359,7 @@ useEffect(() => {
                                             setIsModalOpen(true) 
                                             } 
                                         }
-                                        className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+                                        className="text-danger mx-2" title={t('Delete')}><i className="bi bi-trash-fill"></i>
                                     </Link>
                                 }
 
@@ -364,14 +387,14 @@ useEffect(() => {
 
                             
                             <div className="p-1 row col-12 align-items-center ">
-                                <div className="col-6 text-muted">Project Type</div>
-                                <div className="col-6">{data?.project_type_name}</div>
+                                <div className="col-6 text-muted">{t('Project_Type')}</div>
+                                <div className="col-6">{ locale === 'ar' ? data?.project_type_name_ar : data?.project_type_name }</div>
                             </div>
 
                             <div className="p-1 row col-12 ">
                                 <div className="col-6  text-muted">
                 
-                                    Requester:
+                                    {t('Requester')}
                                 </div>
                                 <div className="col-6">
                                     {data?.project_created_user?.full_name}
@@ -382,7 +405,7 @@ useEffect(() => {
                             <div className="p-1 row col-12 ">
                                 <div className="col-6  text-muted">
                 
-                                    Related User:
+                                    {t('Related_User')}
                                 </div>
                                 <div className="col-6">
                                     {data?.project_created_user?.full_name}
@@ -391,7 +414,7 @@ useEffect(() => {
 
                             <div className="p-1 row col-12">
                                 <div className="col-6  text-muted">
-                                    Created: 
+                                     {t('Created')} 
                                 </div>
                                 <div className="col-6">
                                     {formatDate( data?.created_date)}
@@ -399,7 +422,7 @@ useEffect(() => {
                             </div>
                             <div className="p-1 row col-12 ">
                                 <div className="col-6  text-muted">
-                                    Latest activity: 
+                                     {t('Latest_activity')} 
                                 </div>
                                 <div className="col-6">
                                     {formatDate( data?.latest_activity)}
@@ -408,13 +431,13 @@ useEffect(() => {
 
                             <div className="p-1 row col-12 ">
                                 <div className="col-6  text-muted">
-                                    status : 
+                                     {t('status')}
                                 </div>
                                 <div className="col-6">
                                     {/* {data?.project_flow_status} */}
 
                                     <span className={` ${getprojectStatusBadgeColors(data?.project_flow_status)}  `}>
-                                        {  data?.project_flow_status}
+                                        {  getProjectStatus( data?.project_flow_status) }
                                     </span>
 
 
@@ -432,7 +455,7 @@ useEffect(() => {
 
                         <div className="p-1 row col-12 d-flex justify-content-start   align-items-center ">
                             <div className="col-6  text-muted">
-                                Progress
+                                 {t('Progress')}
                             </div>
                             <div className="col-6">
 
@@ -537,51 +560,51 @@ useEffect(() => {
                         aria-expanded="false"
                         aria-controls="extra_info"
                         >
-                        <i className="bi bi-info-circle-fill"></i> <span>More Info</span>
+                        <i className="bi bi-info-circle-fill"></i> <span> {t('More_Info')}</span>
                         </button>
 
         
                         <div id="extra_info" className="collapse "  >  
                             <div className="p-1 row col-12 ">
-                                <div className="col-6 text-muted">ProjectFlow ID</div>
-                                <div className="col-6">#{data?.id}</div>
+                                <div className="col-6 text-muted">{t('projectflow_id')}</div>
+                                <div className="col-6">#{formatNumber(data?.id)}</div>
                             </div>
 
 
 
                             <div className="p-1 row col-12 ">
-                                <div className="col-6 text-muted">Is Template Cloned</div>
-                                <div className="col-6">{data?.is_template_cloned ? 'Yes' : 'No'}</div>
+                                <div className="col-6 text-muted">{t('Is_Template_Cloned')}</div>
+                                <div className="col-6">{ getTrueFalseLabel(data?.is_template_cloned )}</div>
                             </div>
 
                             <div className="p-1 row col-12 ">
-                                <div className="col-6 text-muted">Template Cloned Name</div>
+                                <div className="col-6 text-muted">{t('Template_Cloned_Name')}</div>
                                 <div className="col-6">{data?.template_name_cloned_from || '-'}</div>
                             </div>
 
                             <div className="p-1 row col-12 ">
-                                <div className="col-6 text-muted">Steps Process Strategy</div>
-                                <div className="col-6">{data?.default_start_process_step_or_sub_step_strategy}</div>
+                                <div className="col-6 text-muted">{t('Steps_Process_Strategy')}</div>
+                                <div className="col-6">{ getStepsProcessStrategy(data?.default_start_process_step_or_sub_step_strategy)}</div>
                             </div>
 
                             <div className="p-1 row col-12 ">
-                                <div className="col-6 text-muted">Manual Start Mode</div>
-                                <div className="col-6">{data?.manual_start_mode}</div>
+                                <div className="col-6 text-muted">{t('Manual_Start_Mode')}</div>
+                                <div className="col-6">{ getManualStartMode(data?.manual_start_mode)}</div>
                             </div>
 
                             <div className="p-1 row col-12 ">
-                                <div className="col-6 text-muted">Auto Start First Step</div>
-                                <div className="col-6">{data?.auto_start_first_step_after_clone ? 'Yes' : 'No'}</div>
+                                <div className="col-6 text-muted">{t('Auto_Start_First_Step')}</div>
+                                <div className="col-6">{ getTrueFalseLabel(data?.auto_start_first_step_after_clone)}</div>
                             </div>
 
                             <div className="p-1 row col-12 ">
-                                <div className="col-6 text-muted">Show Steps To Client</div>
-                                <div className="col-6">{data?.show_steps_to_client ? 'Yes' : 'No'}</div>
+                                <div className="col-6 text-muted">{t('Show_Steps_To_Client')}</div>
+                                <div className="col-6">{ getTrueFalseLabel(data?.show_steps_to_client)}</div>
                             </div>
 
                             <div className="p-1 row col-12 ">
-                                <div className="col-6 text-muted">Show Step Status Logs To Client</div>
-                                <div className="col-6">{data?.show_steps_or_sub_steps_status_log_to_client ? 'Yes' : 'No'}</div>
+                                <div className="col-6 text-muted">{t('Show_Step_Status_Logs_To_Client')}</div>
+                                <div className="col-6">{ getTrueFalseLabel(data?.show_steps_or_sub_steps_status_log_to_client)}</div>
                             </div>
 
          
@@ -590,7 +613,7 @@ useEffect(() => {
                                     href={`/staff/projectFlow/projectFlow/step/${data?.id}/add_new_step`}
                                     
                                     className="text-success mx-2"
-                                    title="Add New Step">
+                                    title={t('Add_New_Step')}>
                                     <i className="bi   bi-plus-circle-fill"></i> 
                                 </Link>
  
@@ -604,7 +627,7 @@ useEffect(() => {
                                 <Link 
                                     href={`/staff/projectFlow/projectFlow/edit_projectflow/${id}`}
                                 
-                                    className="text-primary mx-2" title="Edit"><i className="bi bi-pencil-fill"></i>
+                                    className="text-primary mx-2" title={t('Edit')}><i className="bi bi-pencil-fill"></i>
                                 </Link> 
                                 
                                
@@ -623,7 +646,7 @@ useEffect(() => {
                                             setIsModalOpen(true) 
                                             } 
                                         }
-                                        className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+                                        className="text-danger mx-2" title={t('Delete')}><i className="bi bi-trash-fill"></i>
                                     </Link>
                                 }
 
@@ -648,14 +671,14 @@ useEffect(() => {
 
                         
                         <div className="p-1 row col-12 align-items-center ">
-                            <div className="col-6 text-muted">Project Type</div>
-                            <div className="col-6">{data?.project_type_name}</div>
+                            <div className="col-6 text-muted">{t('Project_Type')}</div>
+                            <div className="col-6">{ locale === 'ar' ? data?.project_type_name_ar : data?.project_type_name }</div>
                         </div>
 
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
             
-                                Requester:
+                                {t('Requester')}
                             </div>
                             <div className="col-6">
                                 {data?.project_created_user?.full_name}
@@ -666,7 +689,7 @@ useEffect(() => {
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
             
-                                Related User:
+                               {t('Related_User')}
                             </div>
                             <div className="col-6">
                                 {data?.project_user?.full_name}
@@ -675,7 +698,7 @@ useEffect(() => {
 
                         <div className="p-1 row col-12">
                             <div className="col-6  text-muted">
-                                Created: 
+                                 {t('Created')} 
                             </div>
                             <div className="col-6">
                                 {formatDate( data?.created_date)}
@@ -683,7 +706,7 @@ useEffect(() => {
                         </div>
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
-                                Latest activity: 
+                                 {t('Latest_activity')} 
                             </div>
                             <div className="col-6">
                                 {formatDate( data?.latest_activity)}
@@ -692,12 +715,12 @@ useEffect(() => {
 
                         <div className="p-1 row col-12 ">
                             <div className="col-6  text-muted">
-                                status : 
+                                 {t('status')}
                             </div>
                             
                             <div className="col-6">
                                 <span className={` ${getprojectStatusBadgeColors(data?.project_flow_status)}  `}>
-                                    {  data?.project_flow_status}
+                                    {  getProjectStatus( data?.project_flow_status)}
                                 </span>
                             </div>
 
@@ -716,7 +739,7 @@ useEffect(() => {
 
                     <div className="p-1 row col-12 d-flex justify-content-start   align-items-center ">
                         <div className="col-6  text-muted">
-                            Progress
+                             {t('Progress')}
                         </div>
                         <div className="col-6">
 
@@ -772,7 +795,8 @@ useEffect(() => {
         handleSubmit={handleDelete}
  
         submitting={deleting}
-        message={'are you sure you want to delete this projectFlow?'}
+        message={t('modal_msg')}
+
         showModal={true} 
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}

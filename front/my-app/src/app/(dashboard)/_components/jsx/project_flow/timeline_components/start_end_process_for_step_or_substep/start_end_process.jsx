@@ -7,12 +7,13 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
+import { useLocale } from "next-intl";
 
 export const StartOrEndStepOrSubStepProcess = ({resort_for='step', disabled_status=false, action='start_process', projectflow_id=null,   step_id=null, sub_step_id=null, reloadComponentMethod}) =>{
 
     const [customFetch] = useCustomFetchMutation();
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const locale = useLocale()
      
 
     const submit_url = resort_for === "step" 
@@ -52,7 +53,12 @@ export const StartOrEndStepOrSubStepProcess = ({resort_for='step', disabled_stat
  
     return(
  
-        <button type="button" disabled={!disabled_status || isSubmitting} onClick={handleSubmit}  className="btn btn-primary btn-sm small m-2 "> {action === 'start_process' ? "Start Process" : "End Process" } </button>
+        <button type="button" disabled={!disabled_status || isSubmitting} onClick={handleSubmit}  className="btn btn-primary btn-sm small m-2 "> 
+            {/* {action === 'start_process' ? "Start Process" : "End Process" }  */}
+
+            {action === 'start_process' ?  (locale === 'ar' ? 'بدء المعالجة' : "Start Process") :  (locale === 'ar' ? 'إنهاء المعالجة ' : "End Process") }
+
+        </button>
  
     )
 }

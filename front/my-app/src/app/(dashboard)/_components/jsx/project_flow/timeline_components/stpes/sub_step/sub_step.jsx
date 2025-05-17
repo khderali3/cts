@@ -8,7 +8,7 @@ import { parseISO, format } from "date-fns";
 
 
 import { handleTimelineColler } from "@/app/public_utils/utils";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ChangeStatusLogs } from "../../status_change_logs";
 
 
@@ -31,9 +31,17 @@ import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staf
 
 
 import { getprojectStatusBadgeColors } from "@/app/public_utils/utils";
+import { useFormatNumber, useTrueFalseLabel, useStepOrSubStepProcessStrategy, useStepOrSubStepAllowedProcessBy, useStepStatus } from "@/app/public_utils/hooks";
 
 
 export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadComponentMethod , hasPermissionToDeleteStep=() => false }) =>{
+    const t = useTranslations('dashboard.projectFlow.projectflow.projectflow_sub_step')
+    const formatNumber = useFormatNumber()
+    const getTrueFalseLabel = useTrueFalseLabel()
+    const getStepOrSubStepProcessStrategy = useStepOrSubStepProcessStrategy()
+    const getStepOrSubStepAllowedProcessBy = useStepOrSubStepAllowedProcessBy()
+    const getStepStatus = useStepStatus()
+
 
     const locale = useLocale(); // Get the current locale
     const currentLocale = locale === "ar" ? ar : enUS;
@@ -77,21 +85,26 @@ export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadCo
     return(
         <div  className="sub-timeline-item d-flex w-100">
             <div className={`small-timeline-icon `}></div>
-            <div className="border border-secondary rounded ms-4 flex-grow-1 p-3">
+            {/* <div className="border border-secondary rounded ms-4 flex-grow-1 p-3"> */}
+            <div className={`border border-secondary rounded flex-grow-1 p-3 ${locale === 'ar' ? 'me-4'   : 'ms-4'}`}>
 
 
             <div 
-                className={`step-number rounded-circle d-flex justify-content-center align-items-center ${handleTimelineColler(sub_step?.project_flow_sub_step_status)}`}
-                style={{ 
-                position: 'absolute', 
-                top: '-5px', 
-                left: '-10px', 
-                width: '20px', 
-                height: '20px', 
-                // backgroundColor: '#007bff', 
-                color: 'white', 
-                fontWeight: 'bold' 
-                }}
+                className={`step-number rounded-circle d-flex justify-content-center align-items-center ${handleTimelineColler(sub_step?.project_flow_sub_step_status)}  `}
+
+                    style={{ 
+                        position: 'absolute', 
+                        top: '-5px', 
+                        insetInlineStart: '-10px',  
+                        width: '20px', 
+                        height: '20px',  
+                        color: 'white', 
+                        fontWeight: 'bold' 
+                    }}
+ 
+
+
+
             >
                {index +1}
             </div>
@@ -104,7 +117,7 @@ export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadCo
                             aria-expanded="false"
                             aria-controls={`step_extra_info_${sub_step?.id}`}
                             >
-                            <i className="bi bi-info-circle-fill"></i> <span>More Info</span>
+                            <i className="bi bi-info-circle-fill"></i> <span>{t('more_info')}</span>
                         </button>
 
                         <div id={`step_extra_info_${sub_step?.id}`} className="collapse "  >  
@@ -112,7 +125,7 @@ export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadCo
 
                             <Link 
                                 href={`/staff/projectFlow/projectFlow/sub_step/${projectflow_id}/${sub_step?.step}/edit_sub_step/${sub_step?.id}`}
-                                className="text-primary mx-2" title="Edit"><i className="bi bi-pencil-fill"></i>
+                                className="text-primary mx-2" title={t('Edit')}><i className="bi bi-pencil-fill"></i>
 
                             </Link>
         
@@ -125,7 +138,7 @@ export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadCo
                                             setIsModalOpen(true) 
                                             } 
                                         }
-                                    className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+                                    className="text-danger mx-2" title={t('Delete')}><i className="bi bi-trash-fill"></i>
                                 </Link>
                             }
 
@@ -137,52 +150,52 @@ export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadCo
 
 
 
-                            <ResortStepUpOrDown move_to="up" resort_for='sub_step' step_id={sub_step?.step}  sub_step_id={sub_step?.id} reloadComponentMethod={reloadComponentMethod} />
+                            <ResortStepUpOrDown   title={t('move_up')} move_to="up" resort_for='sub_step' step_id={sub_step?.step}  sub_step_id={sub_step?.id} reloadComponentMethod={reloadComponentMethod} />
 
-                            <ResortStepUpOrDown move_to="down" resort_for='sub_step' step_id={sub_step?.step}  sub_step_id={sub_step?.id} reloadComponentMethod={reloadComponentMethod} />  
-
-
+                            <ResortStepUpOrDown  title={t('move_down')} move_to="down" resort_for='sub_step' step_id={sub_step?.step}  sub_step_id={sub_step?.id} reloadComponentMethod={reloadComponentMethod} />  
 
 
-                            <div className="mb-2">
-                                <span className="fw-bold">Sub Step ID:</span> 
-                                <span className="ms-2 text-secondary">{sub_step?.id && sub_step.id}</span>
+
+
+                            <div className="mb-2  d-flex  gap-2">
+                                <span className="fw-bold">{t('Step_ID')} : </span> 
+                                <span className="ms-2 text-secondary">{formatNumber(sub_step?.id)}</span>
                             </div>
 
 
-                            <div className="mb-2">
-                                <span className="fw-bold">Show To Client:</span> 
-                                <span className="ms-2 text-muted">{sub_step?.show_to_client ? 'Yes' : 'No'  }</span>
+                            <div className="mb-2  d-flex  gap-2">
+                                <span className="fw-bold">{t('Show_To_Client')}  : </span> 
+                                <span className="ms-2 text-muted">{getTrueFalseLabel(sub_step?.show_to_client) }</span>
                             </div>
 
 
-                            <div className="mb-2">
-                                <span className="fw-bold">Start Process Strategy:</span> 
+                            <div className="mb-2  d-flex  gap-2">
+                                <span className="fw-bold">{t('Start_Process_Strategy')} : </span> 
                                 <span className="ms-2 text-muted">
-                                    {  get_string_step_or_sub_step_start_process_strategy_projectFlow(sub_step?.start_process_sub_step_strategy)  }
+                                   { getStepOrSubStepProcessStrategy(sub_step?.start_process_step_strategy)}
                                     
                                 </span>
                             </div>
 
-                            <div className="mb-2">
-                                <span className="fw-bold">Allowed Process By:</span> 
-                                <span className="ms-2 text-muted">{  get_string_allow_process_by(sub_step?.allowed_process_by)  }</span>
+                            <div className="mb-2  d-flex  gap-2">
+                                <span className="fw-bold">{t('Allowed_Process_By')} : </span> 
+                                <span className="ms-2 text-muted">{ getStepOrSubStepAllowedProcessBy(sub_step?.allowed_process_by) }</span>
                             </div>
 
 
                             {sub_step?.allowed_process_by === "specific_staff_group"  &&
                                     
-                                <div className="mb-2">
-                                    <span className="fw-bold">Allowed Process Groups:</span> 
+                                <div className="mb-2  d-flex  gap-2">
+                                    <span className="fw-bold">{t('Allowed_Process_Groups')} : </span> 
                                     <span className="ms-2 text-muted">[{sub_step.allowed_process_groups.map(group => group.name).join(", ")}]</span>
                                 </div>
                                 
                             }
 
 
-                            <div className  ="mb-2">
-                                <span className="fw-bold">Show Status Logs To Client:</span> 
-                                <span className="ms-2 text-muted">{ get_string_step_or_sub_step_show_status_log_to_client_projectFlow(sub_step?.show_status_log_to_client) }</span>
+                            <div className  ="mb-2  d-flex  gap-2">
+                                <span className="fw-bold">{t('Show_Status_Logs_To_Client')} : </span> 
+                                <span className="ms-2 text-muted">{ getTrueFalseLabel(sub_step?.show_status_log_to_client) }</span>
                             </div>
 
 
@@ -197,19 +210,19 @@ export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadCo
 
 
  
-                        <div className="mb-2">
-                            <span className="fw-bold">Sub Step Title:</span> 
-                            <span className="ms-2 text-secondary">{sub_step?.sub_step_name && sub_step.sub_step_name}</span>
+                        <div className="mb-2  d-flex  gap-2">
+                            <span className="fw-bold">{t('Step_Title')} : </span> 
+                            <span className="ms-2 text-secondary">{ locale === 'ar' ? sub_step?.sub_step_name_ar :  sub_step?.sub_step_name }</span>
                         </div>
 
     
-                        <div className="mb-2">
-                            <div className="fw-bold">Sub Step Details:</div> 
+                        <div className="mb-2  d-flex  gap-2">
+                            <div className="fw-bold">{t('Step_Details')} : </div> 
                             <div className="ms-2 text-muted"
                                 dir="auto"  style={{ whiteSpace: 'pre-line' }}
                             >
 
-                                {sub_step?.sub_step_description && sub_step.sub_step_description}
+                                { locale === 'ar'  ? sub_step?.sub_step_description_ar :   sub_step?.sub_step_description }
                             </div>
                         </div>
 
@@ -221,9 +234,9 @@ export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadCo
 
  
 
-                        <div className="mb-2">
-                            <span className="fw-bold">Sub Step status:</span> 
-                            <span className={`ms-2   ${getprojectStatusBadgeColors(sub_step?.project_flow_sub_step_status)} `} >{sub_step?.project_flow_sub_step_status && sub_step.project_flow_sub_step_status}</span>
+                        <div className="mb-2  d-flex  gap-2">
+                            <span className="fw-bold">{t('step_status')}  : </span> 
+                            <span className={`ms-2   ${getprojectStatusBadgeColors(sub_step?.project_flow_sub_step_status)} `} >{getStepStatus(sub_step?.project_flow_sub_step_status)  }</span>
                         </div>
 
 
@@ -246,12 +259,12 @@ export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadCo
 
                         {/* Start & End Process Dates */}
                         <div className="row">
-                            <div className="col-md-6">
-                                <span className="fw-bold">Start Process Date:</span> 
+                            <div className="col-md-6  ">
+                                <span className="fw-bold">{t('Start_Process_Date')} : </span> 
                                 <span className="ms-2 text-primary">{ sub_step?.start_date_process ? formatDate(sub_step?.start_date_process) :" - " }</span>
                             </div>
-                            <div className="col-md-6">
-                                <span className="fw-bold">End Process Date:</span> 
+                            <div className="col-md-6   ">
+                                <span className="fw-bold">{t('End_Process_Date')} : </span> 
                                 <span className="ms-2 text-danger">{ sub_step?.end_date_process ? formatDate(sub_step?.end_date_process) :" - " }</span>
                             </div>
                         </div>
@@ -264,7 +277,7 @@ export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadCo
 
                     {sub_step?.status_logs && sub_step.status_logs.length > 0 &&
                         <div   className="mt-3">
-                            <h6 className="fw-bold">Change Sub-Step Status Logs</h6>
+                            <h6 className="fw-bold">{t('Change_Step_Status_Logs')}</h6>
                             <div className="list-group small border rounded p-2" style={{ maxHeight: "150px", overflowY: "auto" }}>
 
                             {sub_step?.status_logs.map((log) =>  <ChangeStatusLogs key={`step_status_${log.id}`} log={log} />)}
@@ -295,7 +308,7 @@ export const SubStepComponent = ({sub_step={}, projectflow_id, index=0, reloadCo
                 handleSubmit={handleDelete}
         
                 submitting={deleting}
-                message={'are you sure you want to delete this sub-step?'}
+                message={t('del_modal_msg')}
                 showModal={true} 
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}

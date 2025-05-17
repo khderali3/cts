@@ -9,15 +9,17 @@ import { getErrorMessage } from "@/app/public_utils/utils";
 import { useCustomFetchMutation } from "@/app/(site)/_components/redux/features/siteApiSlice"
 
 
-
+import { useLocale } from "next-intl";
 
 
 const useSubmitForm = (endpoint, onSuccess) => {
+    const locale = useLocale()
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const fileInputRefs = useRef([]);
     const [customFetch] = useCustomFetchMutation();
 
-    const handleSubmit = async (e, formData, requiredFields=[], method="POST",  setFormData,files, setFiles) => {
+    const handleSubmit = async (e, formData, requiredFields=[], method="POST",  setFormData,files, setFiles, onsuccess_message=null) => {
         e.preventDefault();
         
 
@@ -60,7 +62,17 @@ const useSubmitForm = (endpoint, onSuccess) => {
             });
 
             if (response && response.data) {
-                toast.success("Your comment has been added.");
+                if(onsuccess_message){
+                     toast.success(onsuccess_message)
+                } else {
+                    if(locale === 'ar') {
+                        toast.success("تم إضافة التعليق بنجاح.");
+                    } else {
+                        toast.success("Your comment has been added.");
+                    }
+                }
+
+           
                 setFormData({note: ""});
                 setFiles([{ id: 1, file: null }]);
 

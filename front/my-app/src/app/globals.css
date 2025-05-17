@@ -287,15 +287,8 @@ select.form-select:hover {
 
  
 
-
-
- /* start timeline */
- /* .timeline {
-  position: relative;
-  border-left: 3px solid #dee2e6;
-}  */
-
-
+/* start timeline  */
+/*  
 .timeline {
   position: relative !important;
   border-left: 3px solid #dee2e6 !important;
@@ -344,5 +337,31 @@ select.form-select:hover {
 .sub-timeline-item-dash {
   position: relative !important;
   margin-bottom: 15px !important;
+} */
+
+/* end timeline */
+
+
+.timeline,
+.timeline-dash {
+  position: relative !important;
+  border-inline-start: 3px solid #dee2e6 !important;
 }
 
+.timeline-item,
+.timeline-item-dash {
+  position: relative !important;
+  margin-bottom: 20px !important;
+}
+
+.sub-timeline,
+.sub-timeline-dash {
+  position: relative !important;
+  border-inline-start: 2px solid #dee2e6 !important;
+}
+
+.sub-timeline-item,
+.sub-timeline-item-dash {
+  position: relative !important;
+  margin-bottom: 15px !important;
+}

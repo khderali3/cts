@@ -1404,7 +1404,9 @@ class ProjectFlowView(APIView):
 
             if ProjectType_Name:
                 list_obj = list_obj.filter(
-                    Q(project_type_name__icontains=ProjectType_Name)
+                    Q(project_type_name__icontains=ProjectType_Name) |
+                    Q(project_type__project_name_ar__icontains=ProjectType_Name)
+                
                 ) 
 
 
