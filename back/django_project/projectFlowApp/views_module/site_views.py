@@ -727,6 +727,9 @@ class ProjectFlowNoteView(APIView):
 
 from django.db.models import Q
 
+from projectFlowApp.custom_app_utils import get_client_ip
+
+
 class ProjectFlowView(APIView):
  
 
@@ -734,6 +737,8 @@ class ProjectFlowView(APIView):
         data = request.data.copy()
         data['project_user'] = request.user.pk
         data['project_created_user'] = request.user.pk
+        data['created_ip_address'] = get_client_ip(request)
+
  
         # return Response({"message" : "error x from back"}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -7,8 +7,8 @@ from ..views_module.staff_workflow_views import (
     ProjectFlowView, ProjectFlowAttachmentView, ProjectFlowNoteView, ProjectFlowNoteAttachmentView , ProjectFlowStepView, 
     ProjectFlowStepNoteView, ProjectFlowStepNoteAttachmentView, ProjectFlowSubStepView,  ProjectFlowSubStepNoteView, ProjectFlowSubStepNoteAttachmentView,
     GetFullProjectFlowView, StepResortMoveUpOrDownView, StepResortByAbsolutePositionView, SubStepResortMoveUpOrDownView, SubStepResortByAbsolutePositionView,
-    StartStepProcess, EndStepProcess, StartSubStepProcess, EndSubStepProcess, CanceleProjectFlow, ReopenProjectFlow, InstalledProductView, InstalledProductTypeView
-
+    StartStepProcess, EndStepProcess, StartSubStepProcess, EndSubStepProcess, CanceleProjectFlow, ReopenProjectFlow, InstalledProductView, InstalledProductTypeView,
+    ProjectFlowStatusCountAPIView
     )
  
 
@@ -16,6 +16,10 @@ from ..views_module.mount_template_views import CloneWorkFlowTemplateView
 
 
 urlpatterns = [
+
+
+    path('projectflow/projectflow/status_counts/', ProjectFlowStatusCountAPIView.as_view(), name='projectflow-status-counts'),
+
  
     path("projectflow/clone_project_flow_template/<int:template_id>/<int:projectflow_id>/", CloneWorkFlowTemplateView.as_view()),
 

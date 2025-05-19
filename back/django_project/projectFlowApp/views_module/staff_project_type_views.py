@@ -10,10 +10,12 @@ from ..models.project_type_models import ProjectType, ProjectTypeExtraImages, Pr
 
 
 
+from projectFlowApp.custom_app_utils import  IsStaffOrSuperUser
 
 
 
 class ProjectTypeAttachmentView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
 
     serializer_class = ProjectTypeAttachmentSerializer
 
@@ -79,6 +81,7 @@ class ProjectTypeAttachmentView(APIView):
 
 
 class ProjectTypeExtraImagesView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
 
     serializer_class = ProjectTypeExtraImagesSerializer
 
@@ -129,7 +132,8 @@ class ProjectTypeExtraImagesView(APIView):
 
 
 class ProjectTypeView(APIView):
- 
+    permission_classes = [IsStaffOrSuperUser]
+
     def post(self, request):
 
         serializer = ProjectTypeSerializer(data=request.data, context={'request': request})

@@ -27,6 +27,13 @@ from mimetypes import guess_type
 
 
 
+
+
+
+
+
+
+
 class CloseTicketView(APIView):
 
 	def post(self, request, ticket_id, *args, **kwargs):

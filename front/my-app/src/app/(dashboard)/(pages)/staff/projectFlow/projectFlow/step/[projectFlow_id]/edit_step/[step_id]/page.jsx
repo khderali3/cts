@@ -15,12 +15,22 @@ import { GroupAasignOrRemove } from "@/app/(dashboard)/_components/jsx/project_f
 
 
 
+import { useStepStatus } from "@/app/public_utils/hooks";
+
+
+
 
 import { useParams } from "next/navigation";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 
 
 const Page = () =>  {
 
+
+
+    const getStepStatus = useStepStatus()
     const {projectFlow_id, step_id} = useParams()
  
     const locale = useLocale()
@@ -35,6 +45,8 @@ const Page = () =>  {
 
 
 
+  const [startDateProcess, setStartDateProcess] = useState('');
+  const [endDateProcess, setEndDateProcess] = useState('');
 
 
 
@@ -48,6 +60,7 @@ const Page = () =>  {
         // allowed_process_groups:[],
         start_process_step_strategy : '',
         show_status_log_to_client: true,
+        project_flow_step_status:'',
     });
 
 
@@ -59,6 +72,11 @@ const Page = () =>  {
       });  
       if (response && response.data) {
         setFormData(response.data);
+        if(response?.data?.start_date_process) {setStartDateProcess( new Date(response?.data?.start_date_process))}
+
+        if(response?.data?.end_date_process) {setEndDateProcess( new Date(response?.data?.end_date_process))}
+
+
         setAllowedProcessGroups(response.data.allowed_process_groups)
       } else {
         toast.error(getErrorMessage(response?.error?.data))
@@ -122,20 +140,24 @@ const Page = () =>  {
           key === 'allowed_process_by'  ||      
           key === 'start_process_step_strategy' ||        
           key === 'show_status_log_to_client'  ||
-          key === 'show_to_client'   
-                
+          key === 'show_to_client'  ||
+          key === 'project_flow_step_status' 
+               
         
         ){
           form.append(key, formData[key]);
+ 
 
         }
 
 
         // form.append(key, formData[key]);
       }
+ 
+      form.append('start_date_process', startDateProcess ? startDateProcess.toISOString() : '' );
+      form.append('end_date_process', endDateProcess ? endDateProcess.toISOString() : '' );
 
-      form.append('allowed_process_groups', JSON.stringify(allowedProcessGroups));
-
+      // form.append('end_date_process', '');
 
 
 
@@ -386,6 +408,80 @@ const Page = () =>  {
                   </div>
 
                 </div>
+
+
+
+                <div className="mb-3">
+                  <label htmlFor="project_flow_step_status" className="form-label small">
+                     {t('status_label')}
+                  </label>
+                  <select 
+                    className="form-select form-select-sm" 
+                    id="project_flow_step_status"
+                    name="project_flow_step_status"   
+                    onChange={handleChange}  
+                    value={formData.project_flow_step_status}
+                  >
+
+                    <option value="" disabled>{t('Select_Option')}</option>
+                    <option value="pending">{getStepStatus('pending')}</option>
+                    <option value="wait_customer_action">{getStepStatus('wait_customer_action')}</option>
+                    <option value="in_progress">{getStepStatus('in_progress')}</option>
+                    <option value="completed">{getStepStatus('completed')}</option>
+                    <option value="canceled">{getStepStatus('canceled')}</option>
+
+                  </select> 
+                  <div className="form-text fs-8 text-danger">
+
+                    {t('step_status_des')}
+
+                  </div>
+                </div>
+
+ 
+
+
+ 
+            <div className="mb-3">
+              <label className="form-label small d-block"> {t('Start_Process_Date')}</label>
+              <DatePicker
+                selected={startDateProcess ? startDateProcess : null}
+                onChange={(date) => setStartDateProcess(date ?? null)}
+                showTimeSelect
+                dateFormat="yyyy-MM-dd HH:mm"
+                className="form-control form-control-sm"
+                isClearable
+                popperPlacement="bottom-start" 
+
+              />
+
+              <div className="form-text fs-8 text-danger">
+                {t('Start_Process_Date_des')}
+              </div>
+            </div>
+ 
+
+
+          <div className="mb-3 ">
+            <label className="form-label small d-block">  {t('End_Process_Date')} </label>
+            <DatePicker
+              selected={endDateProcess ? endDateProcess : null}
+              onChange={(date) => setEndDateProcess(date ?? null)}
+              showTimeSelect
+              dateFormat="yyyy-MM-dd HH:mm"
+              className="form-control form-control-sm"
+              isClearable
+              popperPlacement="bottom-start" 
+
+       
+            />
+
+              <div className="form-text fs-8 text-danger">
+                {t('End_Process_Date_des')}
+              </div>
+
+
+          </div>
 
 
 

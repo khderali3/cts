@@ -88,6 +88,18 @@ export const AddNewProjectComponent = ({handleReloadFlag=null}) => {
 		return;
 	  }
 
+	  if (!projectMainImageSelected){
+		if(locale === 'ar'){
+		toast.error(` يرجى إختيار صورة رئيسية للمشروع `)
+
+		} else {
+		toast.error(` kinely select main project type image `)
+
+		}
+		return;
+
+	  }
+
 
 
 

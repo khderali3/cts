@@ -112,22 +112,63 @@ export function useManualStartMode() {
 
 
 
+export function useTicketStatus() {
+  const locale = useLocale()
+
+  const getTicketStatus = (value) => {
+
+    if(value){
+
+        if (value === 'open') {
+          return locale === 'ar' ? 'مفتوحة' : 'Open'
+        } else if (value === 'wait_customer_reply') {
+          return locale === 'ar' ? 'بإنتظار رد العميل' : 'Wait Customer Reply'
+        } else if (value === 'replied_by_staff'){
+          return locale === 'ar' ?  'تم الرد من قبل فريق العمل' : 'Replied By Staff'
+        }  else if (value === 'replied_by_customer'){
+          return locale === 'ar' ? 'تم الرد من قبل العميل' : 'Replied By Customer'
+        }  else if (value === 'solved'){
+          return locale === 'ar' ? 'محلولة' : 'Solved'
+        } else if(value === 'all'){
+            return locale === 'ar' ? 'الكل' : 'All'
+        }
+        return value
+    }
+
+  }
+
+  return getTicketStatus
+}
+
+
+
+
+
+
  
 export function useProjectStatus() {
   const locale = useLocale()
 
   const getProjectStatus = (value) => {
-    if (value === 'pending') {
-      return locale === 'ar' ? 'قيد الإنتظار' : 'Pending'
-    } else if (value === 'wait_customer_action') {
-      return locale === 'ar' ? 'بإنتظار إجراء من العميل' : 'Wait Customer Action'
-    } else if (value === 'in_progress'){
-      return locale === 'ar' ? 'قيد العمل' : 'In Progress'
-    }  else if (value === 'completed'){
-      return locale === 'ar' ? 'منتهي' : 'Completed'
-    }  else if (value === 'canceled'){
-      return locale === 'ar' ? 'ملغى' : 'Canceled'
+
+    if(value){
+
+        if (value === 'pending') {
+          return locale === 'ar' ? 'قيد الإنتظار' : 'Pending'
+        } else if (value === 'wait_customer_action') {
+          return locale === 'ar' ? 'بإنتظار إجراء من العميل' : 'Wait Customer Action'
+        } else if (value === 'in_progress'){
+          return locale === 'ar' ? 'قيد العمل' : 'In Progress'
+        }  else if (value === 'completed'){
+          return locale === 'ar' ? 'منتهي' : 'Completed'
+        }  else if (value === 'canceled'){
+          return locale === 'ar' ? 'ملغى' : 'Canceled'
+        } else if(value === 'all'){
+            return locale === 'ar' ? 'الكل' : 'All'
+        }
+        return value
     }
+
   }
 
   return getProjectStatus
@@ -141,16 +182,18 @@ export function useStepStatus() {
   const locale = useLocale()
 
   const getStepStatus = (value) => {
-    if (value === 'pending') {
-      return locale === 'ar' ? 'قيد الإنتظار' : 'Pending'
-    } else if (value === 'wait_customer_action') {
-      return locale === 'ar' ? 'بإنتظار إجراء من العميل' : 'Wait Customer Action'
-    } else if (value === 'in_progress'){
-      return locale === 'ar' ? 'قيد العمل' : 'In Progress'
-    }  else if (value === 'completed'){
-      return locale === 'ar' ? 'منتهية' : 'Completed'
-    }  else if (value === 'canceled'){
-      return locale === 'ar' ? 'ملغى' : 'Canceled'
+    if(value){
+        if (value === 'pending') {
+          return locale === 'ar' ? 'قيد الإنتظار' : 'Pending'
+        } else if (value === 'wait_customer_action') {
+          return locale === 'ar' ? 'بإنتظار إجراء من العميل' : 'Wait Customer Action'
+        } else if (value === 'in_progress'){
+          return locale === 'ar' ? 'قيد العمل' : 'In Progress'
+        }  else if (value === 'completed'){
+          return locale === 'ar' ? 'منتهية' : 'Completed'
+        }  else if (value === 'canceled'){
+          return locale === 'ar' ? 'ملغى' : 'Canceled'
+        }
     }
   }
 

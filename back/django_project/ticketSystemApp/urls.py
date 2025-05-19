@@ -5,6 +5,11 @@ urlpatterns = [
     # Other URLs...
 
     # Ticket creation API
+
+
+ 
+
+
     path('', TicketView.as_view(), name='tickets'),  
     path('ticket_replay/', TicketReplayView.as_view(), name='ticket_reply_create'), # create a new reply ticket
     path('departments/', DepartmentsView.as_view(), name='get_departments'), # get departments

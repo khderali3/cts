@@ -13,11 +13,11 @@ import { useTranslations, useLocale } from "next-intl";
 import useSubmitForm from "@/app/(site)/_components/hooks/project_hoks/use_submit_form";
 
 import { useSearchParams } from 'next/navigation';
-
+ 
 
 const Page = () =>  {
 
-
+  const locale = useLocale()
   const searchParams = useSearchParams();
   const selectedProjectTypeId = searchParams.get('projecttype_id');
 
@@ -25,7 +25,7 @@ const Page = () =>  {
 
 
   const t = useTranslations('site.ticket.add_new_ticket')
-  const locale = useLocale()
+ 
   const [customFetch] = useCustomFetchMutation();
   const [projectTypes, setProjectTypes] = useState([])
   const [files, setFiles] = useState([{ id: 1, file: null }]);
@@ -46,7 +46,8 @@ const Page = () =>  {
   const [formData, setFormData] = useState({
     // project_type: "",
     project_type: selectedProjectTypeId || "",
-
+    contact_phone_no : '',
+    project_address: '',
     details: "",
   });
 
@@ -117,7 +118,10 @@ useEffect(() => {
     return (
       <div className="mb-5 pb-5">  
       <div className="container mt-2">
-        <h6> <Link href='/projectflow'>  Projects Flow </Link>   - New Project Flow </h6>
+        <h6> 
+          <Link href='/projectflow'>
+          {locale === 'ar' ? 'مشاريعي' : 'Projects Flow '}
+          </Link>   - {locale === 'ar' ? ' مشروع جديد' : 'New ProjectFlow'} </h6>
         <hr />
       </div>
 
@@ -131,19 +135,24 @@ useEffect(() => {
 
 
           <h2>
-            Apply for a new Project
+
+            {locale === 'ar' ? 'طلب مشروع جديد' : 'Apply for a new Project'}
  
           </h2>
           <form className="col-md-8 col-12 mb5 " onSubmit={(e) => handleSubmit(e, formData, ['project_type', 'details'],"POST", setFormData, files, setFiles)}>
             <div className="mb-3">
-              <label htmlFor="project_type" className="form-label">
-                Please select Project Type
+              <label htmlFor="project_type" className="form-label small">
+               
+
+              {locale === 'ar' ? 'يرجى إختيار نوع المشروع' : ' Please select Project Type'}
+
+
                 <span className="text-danger">*</span>
               </label>
 
 
                 <select 
-                  className="form-select" 
+                  className="form-select form-select-sm" 
                   id="project_type"
                   name="project_type"  // Correct place for name
                   onChange={handleChange}  // Handle the change event
@@ -151,13 +160,13 @@ useEffect(() => {
                   >
 
                 <option disabled   value=''> 
-                  Select Project Type
+                    {locale === 'ar' ? 'يرجى الإختيار' : ' please Select'}
  
                   </option>
                   {projectTypes?.map((item) => (
                     <option key={item.id} value={item.id}>
-                      {item?.project_name}
-                      {/* { locale ==="ar"  ? item.department_name_ar :  item.department_name} */}
+                      {locale === 'ar' ? item?.project_name_ar : item?.project_name}
+                       {/* { locale ==="ar"  ? item.department_name_ar :  item.department_name} */}
                     </option>
                   ))}
                 </select>
@@ -169,17 +178,64 @@ useEffect(() => {
   
 
 
+            <div className="mb-3 mt-3">
+              <label htmlFor="contact_phone_no" className="form-label small">
+                {/* Contact Phone number */}
+                  { locale === 'ar' ?  'رقم هاتف التواصل' : 'Contact Phone number' }
+                 <span className="text-danger">*</span>
+              </label>
+              <input
+                className="form-control form-control-sm"
+                id="contact_phone_no"
+ 
+                placeholder=  { locale === 'ar' ?  'يرجى كتابة رقم هاتف للتواصل عليه عند الحاجة' : 'write contact phone number please '}
+                // placeholder={t('description_placeholder')}
+                required="" 
+                name="contact_phone_no"
+                onChange={handleChange}
+                maxLength={30}
+              />
+            </div>
+
+
+
+
+
+            <div className="mb-3 mt-3">
+              <label htmlFor="project_address" className="form-label small">
+                  { locale === 'ar' ?  'مكان تنفيذ المشروع' : 'Project place Address' }
+                 <span className="text-danger">*</span>
+              </label>
+              <input
+                className="form-control form-control-sm"
+                id="project_address"
+                 placeholder=   { locale === 'ar' ?  'يرجى كتابة عنوان المكان الذي تريد تنفيذ المشروع به. ' :  'write the address where you want to implemet this project ' }
+                required
+                name="project_address"
+                onChange={handleChange}
+              />
+            </div>
+
+
+
+
+
+
             <div className="mb-3">
-              <label htmlFor="description" className="form-label">
-                Description 
+              <label htmlFor="description" className="form-label small">
+                {locale === 'ar' ? 'الشرح' : 'Description'}
+
+                 
  
                 <span className="text-danger">*</span>
               </label>
               <textarea
-                className="form-control"
+                className="form-control "
                 id="description"
                 rows={6}
-                placeholder="Please enter the details of your project environment, and our staff will start working on it as soon as possible."
+                placeholder={ locale === 'ar' 
+                  ? " يرجى كتابة تفاصيل حول بيئة المشروع , وسيتم المباشرة بالعمل عليه من قبل طاقم العمل في أسرع وقت ممكن "
+                : "Please enter the details of your project environment, and our staff will start working on it as soon as possible." }
                 // placeholder={t('description_placeholder')}
 
 
@@ -261,7 +317,7 @@ useEffect(() => {
  
 
 
-            <button type="submit" className="btn btn-primary"
+            <button type="submit" className="btn btn-primary btn-sm mt-4"
             disabled={isSubmitting}
             >
               {/* Submit */}

@@ -76,7 +76,13 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
         .map(([key]) => key); // Extract field names
 
     if (emptyFields.length > 0) {
+        if(locale === 'ar'){
+        toast.error(`جميع الحقول مطلوبة: ${emptyFields.join(", ")}`);
+
+        } else {
         toast.error(`Please fill in all fields: ${emptyFields.join(", ")}`);
+
+        }
         return;
     }
 
@@ -138,6 +144,17 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
        });
 
       if(response && response.data){
+
+       if(locale === 'ar'){
+        toast.success('تم تحديث البيانات بنجاح')
+
+       } else {
+        toast.success('your data has been changed')
+
+       }
+
+
+
         onClose()
         if(handleReloadFlag){handleReloadFlag()}
 
@@ -146,31 +163,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
         }
  
  
-        
 
-        // setData({
-        //   project_name:'',
-        //   project_name_hint: "",
-        //   project_description: '',
-        //   project_name_ar: '',
-        //   project_name_hint_ar: '',
-        //   project_description_ar: '',
-        //  })
- 
- 
-          // setFilesExtraImages([{ id: 1, file: null }]);
-          // fileInputRefsExtraImages.current.forEach((input) => {
-          //     if (input) input.value = "";
-          // });
-
-
-
-        // setFilesAttachment([{ id: 1, file: null }]);
-        //   fileInputRefsFilesAttachment.current.forEach((input) => {
-        //       if (input) input.value = "";
-        //   });
-
-        toast.success('your data has been submited')
       } else{
         setIsSubmitting(false)
         console.log('response', response)

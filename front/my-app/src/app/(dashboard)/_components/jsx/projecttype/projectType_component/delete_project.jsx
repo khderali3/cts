@@ -38,7 +38,7 @@ export const DeleteButton = ({ title= 'Delete' ,item_id, handleReloadFlag=null})
 	
 		 if( response && response.data) {
 		   if(locale === "ar"){
-			   toast.success("تم حذف المنتج بنجاح ");
+			   toast.success("تم حذف العنصر بنجاح ");
    
 		   } else {
 			   toast.success("the item has been deleted");
@@ -91,23 +91,11 @@ export const DeleteButton = ({ title= 'Delete' ,item_id, handleReloadFlag=null})
 
 
 
-        {/* <button
-        className="btn btn-sm btn-danger m-2"
-		onClick= {() => setIsModalOpen(true)}
-
-        disabled={isSubmitting}
-        style={{ minWidth: '75px' }}
-      >
-        {isSubmitting ? t('deleting') :  t('delete')}
-      </button> */}
-
-
-
-
+ 
 
 
 	  <CustomModal  
-		id={`list_manager_Product${item_id}`}
+		id={`list_manager_project_type_delete${item_id}`}
 		handleSubmit={handleDelete}
 		submitting={isSubmitting}
 

@@ -32,9 +32,7 @@ import { useTrueFalseLabel, useStepsProcessStrategy, useManualStartMode, useProj
 
 const Page = () => {
 
-    const getTrueFalseLabel = useTrueFalseLabel()
-    const getStepsProcessStrategy = useStepsProcessStrategy()
-    const getManualStartMode = useManualStartMode()
+
     const getProjectStatus = useProjectStatus()
 
     const t = useTranslations('dashboard.projectFlow.projectflow.projectflow_details')
@@ -146,7 +144,7 @@ useEffect(() => {
         <div className=" px-md-5 px-2 mt-2">
             <h6> 
                 <Link href='/projectflow'> 
-                    ProjectFlow 
+                    {locale === 'ar' ? 'مشاريعي' : 'ProjectFlow'} 
                     
                 </Link>
                    - {t('mini_nav.projectflow_Details')}
@@ -230,6 +228,37 @@ useEffect(() => {
                                 {formatDate( projectDetails?.latest_activity)}
                             </div>
                         </div>
+
+
+
+                        <div className="p-1 row col-12 ">
+                            <div className="col-6  text-muted">
+            
+                            {locale === 'ar' ? 'هاتف التواصل' : 'Contact phone'}
+                            </div>
+                            <div className="col-6">
+                                {projectDetails?.contact_phone_no}
+                            </div>
+                        </div>
+
+                        <div className="p-1 row col-12 ">
+                            <div className="col-6  text-muted">
+            
+                            {locale === 'ar' ? 'مكان تنفيذ المشروع' : 'Project Address'}
+                            </div>
+                            <div className="col-6">
+                                {projectDetails?.project_address}
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+
                         <hr />
 
             
@@ -401,6 +430,34 @@ useEffect(() => {
                             {formatDate( projectDetails?.latest_activity)}
                         </div>
                     </div>
+
+
+
+                    <div className="p-1 row col-12 ">
+                        <div className="col-6  text-muted">
+        
+                        {locale === 'ar' ? 'هاتف التواصل' : 'Contact phone'}
+                        </div>
+                        <div className="col-6">
+                            {projectDetails?.contact_phone_no}
+                        </div>
+                    </div>
+
+                    <div className="p-1 row col-12 ">
+                        <div className="col-6  text-muted">
+        
+                        {locale === 'ar' ? 'مكان تنفيذ المشروع' : 'Project Address'}
+                        </div>
+                        <div className="col-6">
+                            {projectDetails?.project_address}
+                        </div>
+                    </div>
+
+
+
+
+
+
                     <hr />
 
         

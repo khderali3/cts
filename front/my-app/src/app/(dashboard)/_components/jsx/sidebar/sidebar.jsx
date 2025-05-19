@@ -9,6 +9,11 @@ import LanguageSwitcherComponent from "./sidebar_components/languge_switcher";
 
 import { useTranslations } from "next-intl";
 
+
+
+
+
+
 const SideBar = () => {
   const { isLoading, isAuthenticated, permissions, is_superuser } = useSelector(state => state.staff_auth);
   const pathname = usePathname();
@@ -52,17 +57,17 @@ useEffect(() => {
       <div className="sidebar-brand">
 
 
-        <a href="../../index.html" className="brand-link">
+        <Link href="/staff" className="brand-link">
           {/*begin::Brand Image*/}
           <img
             src="/Images/AdminLTELogo.png"
             alt="AdminLTE Logo"
-            className="brand-image opacity-75 shadow"
+            className="brand-image opacity-75 shadow ms-2"
           />{" "}
           {/*end::Brand Image*/} {/*begin::Brand Text*/}
           <span className="brand-text fw-light">CloudTech</span>
 
-        </a>
+        </Link>
 
       </div>
 

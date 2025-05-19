@@ -50,7 +50,7 @@ const useSubmitForm = (endpoint, onSuccess) => {
  
                 } else if (field === "details") {
                     if( locale === 'ar'){
-                    toast.error("حلق التفاصيل فارغ!");
+                    toast.error("حقل الشرح فارغ!");
 
                     } else {
                     toast.error("details can't be empty");

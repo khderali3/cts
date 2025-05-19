@@ -2,7 +2,7 @@
 from django.urls import path
 from .ticket_views import (DepartmentsStaffView, TicketStaffView,
 					 TicketFileStaffView, CloseTicketStaffView, ReopenTicketStaffView,
-					 AssignTicketToMeStaffView, AssignReassignTicketStaffView,GetTicketByIdStaff
+					 AssignTicketToMeStaffView, AssignReassignTicketStaffView,GetTicketByIdStaff, TicketStatusCountAPIView
 					 )
 
 
@@ -13,6 +13,13 @@ from .ticketReply_views import (
 
 urlpatterns = [
 	# start ticket staff views 
+    
+
+    path('status_counts/', TicketStatusCountAPIView.as_view(), name='ticket-status-counts'),
+
+
+
+
 	path('departments/', DepartmentsStaffView.as_view()),  
     path('departments/<int:id>/', DepartmentsStaffView.as_view() ),
 

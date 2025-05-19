@@ -108,11 +108,15 @@ export const SubStepComponent = ({sub_step={}, index=0, reloadComponentMethod}) 
 
                     </div>
 
+                    {sub_step?.can_requester_start_step || sub_step?.can_requester_end_step ? 
+                        (<>
+                            <StartOrEndStepOrSubStepProcess disabled_status={sub_step?.can_requester_start_step} action="start_process" resort_for='sub_step' sub_step_id={sub_step?.id} step_id={sub_step?.step} reloadComponentMethod={reloadComponentMethod} />  
 
-                    <StartOrEndStepOrSubStepProcess disabled_status={sub_step?.can_requester_start_step} action="start_process" resort_for='sub_step' sub_step_id={sub_step?.id} step_id={sub_step?.step} reloadComponentMethod={reloadComponentMethod} />  
-
-                    <StartOrEndStepOrSubStepProcess disabled_status={sub_step?.can_requester_end_step} action="end_process" resort_for='sub_step' sub_step_id={sub_step?.id} step_id={sub_step?.step} reloadComponentMethod={reloadComponentMethod} />  
-
+                            <StartOrEndStepOrSubStepProcess disabled_status={sub_step?.can_requester_end_step} action="end_process" resort_for='sub_step' sub_step_id={sub_step?.id} step_id={sub_step?.step} reloadComponentMethod={reloadComponentMethod} />  
+                        
+                        </>) : ''
+                
+                    }
 
 
 

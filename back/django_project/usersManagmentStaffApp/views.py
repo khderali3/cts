@@ -549,8 +549,10 @@ class UserobjectView(APIView):
 			# Prevent deletion of superusers for safety
 			if user.is_superuser:
 				return Response({"error": "Cannot delete a superuser."}, status=status.HTTP_403_FORBIDDEN)
-			
-			user.delete()
+			try:
+				user.delete()
+			except Exception as e :
+				return Response({'message' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
 			return Response({"message": "User deleted successfully."}, status=status.HTTP_202_ACCEPTED)
 
 

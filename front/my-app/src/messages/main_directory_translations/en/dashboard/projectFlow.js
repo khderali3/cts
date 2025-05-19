@@ -309,6 +309,18 @@ export default  {
                 Select_ProjectFlow_User : 'Select ProjectFlow User',
                 Description : 'Description',
                 Description_ph : "Please enter the details of this project environment",
+                
+                contact_phone_no : 'Contact Phone number',
+                contact_phone_no_ph : 'write contact phone number please ',
+                project_address :  'Project Address',
+                project_address_ph : 'write the address where you want to implemet this project ',
+
+
+
+
+
+
+
                 submit : 'Submit'
             },
 
@@ -324,6 +336,14 @@ export default  {
             projectflow_id : 'ProjectFlow ID',
             Is_Template_Cloned : 'Is Template Cloned',
             Template_Cloned_Name : 'Template Cloned Name',
+
+            Contact_phone : 'Contact phone',
+            Project_Address : 'Project Address',
+            created_ip_address : 'Client IP Address',
+
+
+
+
 
  
             Steps_Process_Strategy : ' Steps Process Strategy',
@@ -513,6 +533,16 @@ export default  {
             Start_Process_Strategy_des :  ' Inherit From ProjectFlow Settings: Uses the predefined process from the projectFlow . Auto: The  step starts automatically when the previous step is complete. Manual: Staff must manually start each step.',
 
 
+            status_label : 'Status',
+            step_status_des : 'The status updates automatically based on workflow steps process. Use this dropdown to manually override it if needed.',
+
+            Start_Process_Date :'Start Process Date',
+            Start_Process_Date_des : "The Start Process Date is automatically updated based on the Start Process Action. You can override it if needed.",
+
+            End_Process_Date : 'End Process Date',
+            End_Process_Date_des : "The End Process Date is automatically updated based on the End Process Action. You can override it if needed.",
+
+
 
             
             Show_Status_Logs_To_Client : 'Show Status Logs To Client',
@@ -562,6 +592,15 @@ export default  {
             Start_Process_Strategy : 'Start Process Strategy',
 
             Start_Process_Strategy_des :  ' Inherit From projectflow: Uses the predefined process from the projectflow settings. Auto: The  Sub-Step starts automatically when the previous step is complete. Manual: Staff must manually start each step.',
+
+            status_label : 'Status',
+            step_status_des : 'The status updates automatically based on workflow steps process. Use this dropdown to manually override it if needed.',
+
+            Start_Process_Date :'Start Process Date',
+            Start_Process_Date_des : "The Start Process Date is automatically updated based on the Start Process Action. You can override it if needed.",
+
+            End_Process_Date : 'End Process Date',
+            End_Process_Date_des : "The End Process Date is automatically updated based on the End Process Action. You can override it if needed.",
 
 
 
@@ -615,6 +654,12 @@ export default  {
             cancel : 'Cancel',
             update : 'Update'
         }
+        
+    },
+
+    Statistics : {
+        title : 'Projectflows Statistics',
+        View : 'View',
         
     }
 

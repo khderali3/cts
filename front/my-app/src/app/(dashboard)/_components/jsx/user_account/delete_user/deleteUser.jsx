@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
+import { getErrorMessage } from "@/app/public_utils/utils";
 
 
 import { useLocale } from "next-intl";
@@ -46,10 +47,11 @@ const DeleteUserButton = ({user_id}) => {
 		  } else {
 			if(locale === "ar"){
 				toast.error('حصل خطأ رقم 1 أثناء محاولة حذف المستخدم . يرجى المحاولة لاحقاً')
+				toast.error(getErrorMessage(response?.error?.data))
 
 			} else {
 				toast.error('error 1 with delete user!')
-
+				toast.error(getErrorMessage(response?.error?.data))
 			}
 			console.log('error1', response)
 
@@ -70,10 +72,10 @@ const DeleteUserButton = ({user_id}) => {
 		} catch (error) {
 			if(locale === "ar"){
 				toast.error('حصل خطأ رقم 2 أثناء محاولة حذف المستخدم . يرجى المحاولة لاحقاً')
-
+				 toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
 			} else {
 				toast.error('error 2 with delete user!')
-
+				toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
 			}
 	
 		  console.error("Error 2 deleting user:", error);

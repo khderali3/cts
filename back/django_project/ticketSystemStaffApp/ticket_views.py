@@ -22,6 +22,39 @@ from .my_utils import IsStaffOrSuperUser, HasUserManagementPermission
 
 
 
+
+from django.db.models import Count
+
+class TicketStatusCountAPIView(APIView):
+    def get(self, request):
+        all_statuses = dict(Ticket.ticket_status_options)
+
+ 
+        result = {}
+        for status in all_statuses.keys():
+            result[status] = 0
+
+ 
+        counts = Ticket.objects.values('ticket_status').order_by().annotate(count=Count('id'))
+
+        for item in counts:
+            status = item['ticket_status']
+            count = item['count']
+            result[status] = count
+
+        # Add total count of all tickets cts
+        total_projects = Ticket.objects.count()
+        result['all'] = total_projects
+
+        return Response(result)
+
+
+
+
+
+
+
+
 class AssignTicketToMeStaffView(APIView):
 	permission_classes = [IsStaffOrSuperUser]
 

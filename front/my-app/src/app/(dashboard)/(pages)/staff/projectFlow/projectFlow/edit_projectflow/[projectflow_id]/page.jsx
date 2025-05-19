@@ -33,7 +33,9 @@ const Page = () =>  {
     manual_start_mode : '',
     show_steps_to_client: true,
     show_steps_or_sub_steps_status_log_to_client: true,
-    project_flow_status : ''
+    project_flow_status : '',
+    contact_phone_no : '',
+    project_address: '',
   });
 
  
@@ -101,7 +103,9 @@ const Page = () =>  {
           key === 'manual_start_mode' || 
           key === 'show_steps_to_client' || 
           key === 'show_steps_or_sub_steps_status_log_to_client'  ||
-          key === 'project_flow_status'
+          key === 'project_flow_status' || 
+          key === 'contact_phone_no' ||
+          key === 'project_address'
         
         ){
           form.append(key, formData[key]);
@@ -276,24 +280,70 @@ const Page = () =>  {
  
 
                 <div className={` ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
-                  <input
-                    name="show_steps_or_sub_steps_status_log_to_client"   
+                      <input
+                        name="show_steps_or_sub_steps_status_log_to_client"   
 
-                    className="form-check-input small"
-                    type="checkbox"
-                    onChange={handleChange}
-                    checked={formData.show_steps_or_sub_steps_status_log_to_client}
-                    id="show_steps_or_sub_steps_status_log_to_client"
-                  />
-                  <label className="form-check-label small" htmlFor="show_steps_or_sub_steps_status_log_to_client">
-                    {t('show_steps_status_logs_to_client')}
-                  </label>
-                  <div className="form-text fs-8">
-                     {t('show_steps_status_logs_to_client_des')}
-    
-                  </div>
+                        className="form-check-input small"
+                        type="checkbox"
+                        onChange={handleChange}
+                        checked={formData.show_steps_or_sub_steps_status_log_to_client}
+                        id="show_steps_or_sub_steps_status_log_to_client"
+                      />
+                      <label className="form-check-label small" htmlFor="show_steps_or_sub_steps_status_log_to_client">
+                        {t('show_steps_status_logs_to_client')}
+                      </label>
+                      <div className="form-text fs-8">
+                        {t('show_steps_status_logs_to_client_des')}
+        
+                      </div>
 
                 </div>
+
+
+
+
+
+
+                <div className="mb-3 mt-3">
+                  <label htmlFor="contact_phone_no" className="form-label small">
+                    {/* Contact Phone number */}
+                    {locale === 'ar' ? 'هاتف التواصل' : 'Contact phone'}
+                    <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    className="form-control form-control-sm"
+                    id="contact_phone_no"
+                    value={formData.contact_phone_no || ''}
+                    required="" 
+                    name="contact_phone_no"
+                    onChange={handleChange}
+                    maxLength={30}
+                  />
+                </div>
+
+                <div className="mb-3 mt-3">
+                  <label htmlFor="project_address" className="form-label small">
+                    {locale === 'ar' ? 'مكان تنفيذ المشروع' : 'Project Address'}
+                    <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    className="form-control form-control-sm"
+                    id="project_address"
+                    value={formData.project_address || ''}
+                    required
+                    name="project_address"
+                    onChange={handleChange}
+                  />
+                </div>
+
+
+
+
+
+
+
+
+
 
 
 

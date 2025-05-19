@@ -24,7 +24,9 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import status
 from rest_framework.response import Response
-from projectFlowApp.custom_app_utils import MyCustomPagination
+from projectFlowApp.custom_app_utils import MyCustomPagination, IsStaffOrSuperUser
+from django.db.models import Q
+
 
 
 applied_permissions =  [AllowAny]
@@ -65,10 +67,12 @@ def validate_allowed_process_groups(data, field_name="allowed_process_groups"):
 
 
 
- 
+
 
 
 class GetFullProjectFlowTemplateView(APIView):    
+    permission_classes = [IsStaffOrSuperUser]
+
     def get(self, request, id):
         try:
             obj = ProjectFlowTemplate.objects.get(id=id)
@@ -86,6 +90,9 @@ class GetFullProjectFlowTemplateView(APIView):
 
 
 class StepTemplateResortMoveUpOrDownView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+
     def post(self, request, project_flow_template_id, step_id, direction):
         step = get_object_or_404(StepTemplate, id=step_id, project_flow_template_id=project_flow_template_id)
 
@@ -119,6 +126,11 @@ class StepTemplateResortMoveUpOrDownView(APIView):
 
 
 class StepTemplateResortByAbsolutePositionView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
+
     def post(self, request, project_flow_template_id, step_id, absolute_position):
         # Get the step
         step = get_object_or_404(StepTemplate, id=step_id, project_flow_template_id=project_flow_template_id)
@@ -165,6 +177,9 @@ class StepTemplateResortByAbsolutePositionView(APIView):
 
 
 class SubStepTemplateResortMoveUpOrDownView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+
     def post(self, request, step_id, sub_step_id, direction):
         sub_step = get_object_or_404(SubStepTemplate, id=sub_step_id, step_template=step_id)
 
@@ -201,6 +216,10 @@ class SubStepTemplateResortMoveUpOrDownView(APIView):
 
 
 class SubStepTemplateResortByAbsolutePositionView(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
     def post(self, request, step_id, sub_step_id, absolute_position):
         # Get the step
         sub_step = get_object_or_404(SubStepTemplate, id=sub_step_id, step_template=step_id)
@@ -251,6 +270,9 @@ class SubStepTemplateResortByAbsolutePositionView(APIView):
 
 class SubStepTemplateNoteAttachmentView(APIView):
 
+
+    permission_classes = [IsStaffOrSuperUser]
+
     def post(self, request, note_id):
 
         data = request.data.copy()
@@ -291,6 +313,7 @@ class SubStepTemplateNoteAttachmentView(APIView):
 
 
 class SubStepTemplateNoteView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
 
     def post(self, request, sub_step_id):
 
@@ -352,6 +375,8 @@ class SubStepTemplateNoteView(APIView):
  
 
 class SubStepTemplateView(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
 
     def post(self, request, step_id):
  
@@ -429,6 +454,9 @@ class SubStepTemplateView(APIView):
 
 class ProjectFlowTemplateNoteAttachmentView(APIView):
 
+    permission_classes = [IsStaffOrSuperUser]
+
+
     def post(self, request, note_id):
         data = request.data.copy()
         data['project_flow_template_note'] =  note_id 
@@ -471,6 +499,7 @@ class ProjectFlowTemplateNoteAttachmentView(APIView):
 
 
 class ProjectFlowTemplateNoteView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
 
     def post(self, request, project_flow_template_id):
         data = request.data.copy()
@@ -529,62 +558,12 @@ class ProjectFlowTemplateNoteView(APIView):
             return Response({'message': str(e)})
         
  
-
-
-# class ProjectFlowTemplateAttachmentView(APIView):
-
-#     def post(self, request, project_flow_template_id):
-
-#         data = request.data.copy()
-        
- 
-#         data['project_flow_template'] =  project_flow_template_id 
-
-#         serializer = CreateProjectFlowTemplateAttachmentSerializer(data=data, context={'request': request})
-
-#         if serializer.is_valid():
-#             list_data = serializer.save()
-#             return Response(CreateProjectFlowTemplateAttachmentSerializer( list_data, many=True, context={'request': request}).data, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#     def get(self, request, project_flow_template_id, file_id=None):
-
-#         if file_id:
-#             try:
-#                 file_obj = ProjectFlowTemplateAttachment.objects.get(id=file_id)
-#                 serializer = ProjectFlowTemplateAttachmentSerializer(file_obj , context={'request': request})
-#                 return Response(serializer.data, status=status.HTTP_200_OK)
-            
-#             except ProjectFlowTemplateAttachment.DoesNotExist:
-#                 return Response({"message": "object not found"}, status=status.HTTP_400_BAD_REQUEST)
-#             except Exception as e:            
-#                 return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST) 
-#         else:
-#             files_list = ProjectFlowTemplateAttachment.objects.filter(project_flow_template=project_flow_template_id)
-#             serializer = ProjectFlowTemplateAttachmentSerializer(files_list, many=True, context={'request': request})
-#             return Response(serializer.data, status=status.HTTP_200_OK)
-
-#     def delete(self, request,  project_flow_template_id, file_id=None):
-
-#         try:
-#             file_obj = ProjectFlowTemplateAttachment.objects.get(id=file_id)
-#             file_obj.delete()
-#             return Response({"message": "object has been deleted "}, status=status.HTTP_202_ACCEPTED)
-        
-#         except ProjectFlowTemplateAttachment.DoesNotExist:
-#             return Response({"message": "object not found"}, status=status.HTTP_404_NOT_FOUND)
-#         except Exception as e :
-#             return Response({'messge:' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
  
 
 class StepTemplateNoteAttachmentView(APIView):
  
- 
+    permission_classes = [IsStaffOrSuperUser]
+
 
     # post list of files by using "file[]" keyword
     def post(self, request, step_template_note_id):
@@ -637,6 +616,7 @@ class StepTemplateNoteAttachmentView(APIView):
 
 
 class StepTemplateNoteView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
 
     def post(self, request, step_template_id ):
         data = request.data.copy()
@@ -713,7 +693,8 @@ class StepTemplateNoteView(APIView):
 
 class StepTemplateView(APIView):
 
- 
+    permission_classes = [IsStaffOrSuperUser]
+
     def post(self, request, project_flow_template_id):
         data = request.data.copy()  # Create a mutable copy of request data
 
@@ -791,11 +772,11 @@ class StepTemplateView(APIView):
 
 
 
-from django.db.models import Q
 
 
 class ProjectFlowTemplateView(APIView):
-    
+    permission_classes = [IsStaffOrSuperUser]
+
     def get(self, request, id=None):
         if id:
             try:

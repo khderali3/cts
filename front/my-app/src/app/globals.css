@@ -365,3 +365,21 @@ select.form-select:hover {
   position: relative !important;
   margin-bottom: 15px !important;
 }
+
+
+
+
+/* for datatiem input fields */
+
+html[dir="rtl"] .react-datepicker__close-icon {
+  left: 0.75rem !important;
+  right: auto !important;
+}
+
+/* for statistics page */
+.hover-zoom {
+  transition: transform 0.2s ease-in-out;
+}
+.hover-zoom:hover {
+  transform: scale(1.03);
+}

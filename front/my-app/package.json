@@ -21,6 +21,7 @@
     "next-intl": "^3.26.3",
     "react": "19.0.0-rc-69d4b800-20241021",
     "react-country-state-city": "^1.1.7",
+    "react-datepicker": "^8.3.0",
     "react-dom": "19.0.0-rc-69d4b800-20241021",
     "react-dropdown-select": "^4.11.4",
     "react-google-recaptcha": "^3.1.0",

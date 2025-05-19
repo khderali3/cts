@@ -2,7 +2,7 @@
 
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_delete
  
 import os
  
@@ -19,20 +19,55 @@ from ..project_flow_models import (
 
 
 
+# def delete_attachment_file(sender, instance, **kwargs):
+#     if instance.file:
+#         file_path = instance.file.path
+#         if os.path.isfile(file_path):
+#             os.remove(file_path)
+
+# # Attach the signal handler to multiple models
+# models_to_register = [ProjectFlowAttachment, ProjectFlowNoteAttachment, ProjectFlowStepNoteAttachment,
+#                        ProjectFlowSubStepNoteAttachment]
+
+# for model in models_to_register:
+#     pre_delete.connect(delete_attachment_file, sender=model)
+
+ 
+
 def delete_attachment_file(sender, instance, **kwargs):
     if instance.file:
         file_path = instance.file.path
-        if os.path.isfile(file_path):
-            os.remove(file_path)
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        except :
+            pass
 
-# Attach the signal handler to multiple models
-models_to_register = [ProjectFlowAttachment, ProjectFlowNoteAttachment, ProjectFlowStepNoteAttachment,
-                       ProjectFlowSubStepNoteAttachment]
+# Example usage for multiple models
+models_to_register = [
+    ProjectFlowAttachment,
+    ProjectFlowNoteAttachment,
+    ProjectFlowStepNoteAttachment,
+    ProjectFlowSubStepNoteAttachment,
+]
 
 for model in models_to_register:
-    pre_delete.connect(delete_attachment_file, sender=model)
+    post_delete.connect(delete_attachment_file, sender=model)
 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 from projectFlowApp.middleware import get_current_user
 

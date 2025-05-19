@@ -412,6 +412,44 @@ useEffect(() => {
                                 </div>
                             </div>
 
+
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6  text-muted">
+                
+                                {t('Contact_phone')}
+                                </div>
+                                <div className="col-6">
+                                    {data?.contact_phone_no}
+                                </div>
+                            </div>
+
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6  text-muted">
+                
+                                {t('Project_Address')}
+                                </div>
+                                <div className="col-6">
+                                    {data?.project_address}
+                                </div>
+                            </div>
+
+
+                            <div className="p-1 row col-12 ">
+                                <div className="col-6  text-muted">
+                
+                                {t('created_ip_address')}
+                                </div>
+                                <div className="col-6">
+                                    {data?.created_ip_address}
+                                </div>
+                            </div>
+
+
+
+
+
+
+
                             <div className="p-1 row col-12">
                                 <div className="col-6  text-muted">
                                      {t('Created')} 
@@ -695,6 +733,48 @@ useEffect(() => {
                                 {data?.project_user?.full_name}
                             </div>
                         </div>
+
+
+
+                        <div className="p-1 row col-12 ">
+                            <div className="col-6  text-muted">
+            
+                              {t('Contact_phone')}
+                            </div>
+                            <div className="col-6">
+                                {data?.contact_phone_no}
+                            </div>
+                        </div>
+
+                        <div className="p-1 row col-12 ">
+                            <div className="col-6  text-muted">
+            
+                               {t('Project_Address')}
+                            </div>
+                            <div className="col-6">
+                                {data?.project_address}
+                            </div>
+                        </div>
+
+                        <div className="p-1 row col-12 ">
+                            <div className="col-6  text-muted">
+            
+                            {t('created_ip_address')}
+                            </div>
+                            <div className="col-6">
+                                {data?.created_ip_address}
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+
+
 
                         <div className="p-1 row col-12">
                             <div className="col-6  text-muted">

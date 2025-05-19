@@ -3,6 +3,12 @@
 
 import { useLocale } from "next-intl"
 
+ 
+
+import {ProjectFlowStatisticsComponent} from "@/app/(dashboard)/_components/jsx/project_flow/statistics_component/statistics"
+import { TicketStatisticsComponent } from "@/app/(dashboard)/_components/jsx/tickets/statistics_component/statistics"
+
+
  const HomeStaff = () => {
   const locale = useLocale()
 
@@ -28,26 +34,23 @@ import { useLocale } from "next-intl"
 
 
               <div className="container mt-2">
-                <div>  
-                  {locale === "ar" ? "إدارة تطبيق الويب - شركة كلاود تك سكاي" : " CloudTech Sky - Web Application Managment System"}
-                   
-                </div>
-                {/* Row for Search Form */}
-                <div className="row mb-4">
-                  <div className="col-12">
-
-
+                  <div>  
+                    {locale === "ar" ? "إدارة تطبيق الويب - شركة كلاود تك سكاي" : " CloudTech Sky - Web Application Managment System"}
+                    
                   </div>
-                </div>
-                {/* Divider (Separation between form and table) */}
-                <hr className="my-4" />
-                {/* Row for Table Results */}
-                <div className="row">
 
-                </div>
-          </div>
+                  <hr />
+ 
+ 
+              </div>
 
+            <div className="container">
 
+              <ProjectFlowStatisticsComponent />  
+                  <hr />
+              <TicketStatisticsComponent />  
+
+            </div>
 
 
               

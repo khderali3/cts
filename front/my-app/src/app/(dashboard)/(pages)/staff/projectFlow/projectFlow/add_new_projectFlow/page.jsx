@@ -61,6 +61,8 @@ const Page = () =>  {
   const [formData, setFormData] = useState({
     project_type: "",
     details: "",
+    contact_phone_no : '',
+    project_address: '',
     project_user: projectUser
   });
 
@@ -156,14 +158,14 @@ useEffect(() => {
             <h4>{tt('title')} </h4>
             <form className="col-md-8 col-12 mb5 " onSubmit={(e) => handleSubmit(e, formData, ['project_type', 'details'],"POST", setFormData, files, setFiles, success_message)}>
             <div className="mb-3">
-              <label htmlFor="project_type" className="form-label">
+              <label htmlFor="project_type" className="form-label small">
                 {tt('select_project_type_label')}
                 <span className="text-danger">*</span>
               </label>
 
 
                 <select 
-                  className="form-select" 
+                  className="form-select form-select-sm small" 
                   id="project_type"
                   name="project_type"  // Correct place for name
                   onChange={handleChange}  // Handle the change event
@@ -194,25 +196,61 @@ useEffect(() => {
               />
 
 
+
+
             <div className="mb-3 mt-3">
-              <label htmlFor="description" className="form-label">
+              <label htmlFor="contact_phone_no" className="form-label small">
+                {/* Contact Phone number */}
+                 {tt('contact_phone_no')}
+                 <span className="text-danger">*</span>
+              </label>
+              <input
+                className="form-control form-control-sm"
+                id="contact_phone_no"
+ 
+                placeholder= {tt('contact_phone_no_ph')}
+                // placeholder={t('description_placeholder')}
+                required="" 
+                name="contact_phone_no"
+                onChange={handleChange}
+                maxLength={30}
+              />
+            </div>
+
+            <div className="mb-3 mt-3">
+              <label htmlFor="project_address" className="form-label small">
+                 {tt('project_address')}
+                 <span className="text-danger">*</span>
+              </label>
+              <input
+                className="form-control form-control-sm"
+                id="project_address"
+                 placeholder=  {tt('project_address_ph')}
+                required
+                name="project_address"
+                onChange={handleChange}
+              />
+            </div>
+
+
+
+
+            <div className="mb-3 mt-3">
+              <label htmlFor="description" className="form-label small">
                 {tt('Description')} 
  
                 <span className="text-danger">*</span>
               </label>
               <textarea
-                className="form-control"
+                className="form-control  "
                 id="description"
                 rows={6}
                 placeholder= {tt('Description_ph')}
                 // placeholder={t('description_placeholder')}
-
-
                 required=""
                 // onChange={handleChange}
                 name="details"
                 onChange={handleChange}
-
 
               />
             </div>
@@ -226,7 +264,7 @@ useEffect(() => {
             <div className="mb-3">
                 <label 
                 htmlFor={`fileInput-${fileInput.id}`} 
-                className="form-label fw-bold me-2"
+                className="form-label form-label-sm small fw-bold me-2"
                 >
                 {/* Upload File {index + 1} */}
                 {t('upload_file') } {index + 1}
@@ -234,7 +272,7 @@ useEffect(() => {
                 </label>
                 <input
                 type="file"
-                className="form-control-file"
+                className="form-control-file small"
                 id={`fileInput-${fileInput.id}`}
                 onChange={(e) => handleFileChange(e, fileInput.id)}
                 name="file[]"
@@ -286,7 +324,7 @@ useEffect(() => {
  
 
 
-            <button type="submit" className="btn btn-primary"
+            <button type="submit" className="btn btn-primary btn-sm"
             disabled={isSubmitting}
             >
               {/* Submit */}

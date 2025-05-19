@@ -30,13 +30,13 @@ class ProjectFlow(models.Model):
         ('manual', 'manual'),
     ]
 
-    project_type = models.ForeignKey(ProjectType, related_name='ProjectFlow_project_type_related_ProjectType', on_delete=models.SET_NULL, blank=True, null=True)
-    project_type_name = models.CharField(max_length=255, default='',  blank=True )
-    project_type_name_ar = models.CharField(max_length=255, default='',  blank=True)
+    project_type = models.ForeignKey(ProjectType, related_name='ProjectFlow_project_type_related_ProjectType', on_delete=models.SET_NULL, blank=True, null=True, db_index=True,)
+    project_type_name = models.CharField(max_length=255, default='',  blank=True, db_index=True, )
+    project_type_name_ar = models.CharField(max_length=255, default='',  blank=True, db_index=True,)
     details = models.TextField()
     project_user = models.ForeignKey(User, related_name='ProjectFlow_project_user_related_User', on_delete=models.PROTECT, blank=True, null=True)
     project_created_user = models.ForeignKey(User, related_name='ProjectFlow_project_created_user_related_User', on_delete=models.PROTECT, blank=True, null=True)
-    project_flow_status = models.CharField(max_length=30, choices=ProjectFlow_status_options, default='pending')
+    project_flow_status = models.CharField(max_length=30, choices=ProjectFlow_status_options, default='pending', db_index=True,)
 
     project_flow_status_when_canceled = models.CharField(max_length=30, choices=ProjectFlow_status_options, default='pending')
 
@@ -56,6 +56,11 @@ class ProjectFlow(models.Model):
     ]
     manual_start_mode = models.CharField(max_length=30, choices=manual_start_mode_options, default='serialized')
     auto_start_first_step_after_clone = models.BooleanField(default=True)
+
+    contact_phone_no  = models.CharField(max_length=255,  blank=True, default='')
+    project_address = models.CharField(max_length=255,  blank=True, default='')
+    created_ip_address = models.GenericIPAddressField(null=True, blank=True) 
+
 
 
     def __str__(self):

@@ -16,13 +16,18 @@ import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 import { useLocale } from "next-intl"; // Get the current locale from next-intl
 
 import { getprojectStatusBadgeColors } from "@/app/public_utils/utils";
+import { useProjectStatus } from "@/app/public_utils/hooks";
 
 
 const Page = () => {
 
-  const t = useTranslations('site.ticket')
-  const t_common = useTranslations('common')
+  // const t = useTranslations('site.ticket')
+  // const t_common = useTranslations('common')
 
+  const getProjectStatus = useProjectStatus()
+
+
+  const t = useTranslations('dashboard.projectFlow.projectflow')
 
   const locales = { ar, en: enUS }; // Map of supported locales
   const locale = useLocale(); // Get the current locale
@@ -221,7 +226,7 @@ const Page = () => {
       <div className="container mt-2">
         <h6> <Link href='/projectflow'> 
  
-            Projects Flow
+            {locale  === 'ar' ? 'مشاريعي' : 'my ProjectsFlows'}
          </Link>  </h6>
         <hr />
       </div>
@@ -229,16 +234,17 @@ const Page = () => {
 
     <div className="row">
       <div className="col-12 col-md-6  ">
-        <h1 className="mb-2">
+        <h4 className="mb-2">
           {/* My Requests */}
-          My Project Flows
-        </h1>
+          {locale === 'ar' ? ' مشاريعي' : 'My ProjectFlows'}
+          
+        </h4>
       </div>
       <div className="col-12 col-md-6 d-flex justify-content-md-end">
-        <button type="button" onClick={handleAddRequest} className="btn btn-outline-secondary">
+        <button type="button" onClick={handleAddRequest} className="btn btn-outline-secondary small btn-sm">
           {/* Add a new Request */}
           
-          Add a new ProjectFlow
+           {t('main_page.add_new_projectflow')}
 
         </button>
       </div>
@@ -258,7 +264,7 @@ const Page = () => {
                     <label htmlFor="search_words"> 
                       {/* Search in Subject / Ticket Body  */}
                       {/* {t('my_tickets.search_aria.label_search_words')} */}
-                        Search Per Project Name
+                         {t('main_page.search_form.project_type_name')}
 
                     </label>
                     <input
@@ -266,7 +272,7 @@ const Page = () => {
                       className="form-control rounded-pill"
                       id="search_words"
                       // placeholder="search here"
-                      placeholder= {t('my_tickets.search_aria.placeholder_search_words')}
+                      placeholder= { locale === 'ar' ? 'إبحث هنا..' : 'search here' }
 
 
                       aria-describedby="search"
@@ -280,7 +286,7 @@ const Page = () => {
 
                     {/* Search Per Ticket Status  */}
  
-                    Search Per ProjectFlow Status
+                   {t('main_page.search_form.ProjectFlow_Status')}
 
                   </label>
 
@@ -291,42 +297,19 @@ const Page = () => {
                       onChange={handleStatusChange}
  
                     >
-                      <option value={'all'}>
-                         All status 
+                            <option value={'all'}>  {t('main_page.search_form.all')} </option>
+                            <option value={'pending'}>{t('main_page.search_form.pending')}</option>
+                            <option value={'wait_customer_action'}> {t('main_page.search_form.wait_customer_action')}  </option>
+                            <option value={'in_progress'}>{t('main_page.search_form.in_progress')}</option>
+                            <option value={'completed'}>{t('main_page.search_form.completed')}</option>
+                            <option value={'canceled'}>{t('main_page.search_form.canceled')}</option> 
  
-
-                      </option>
-                      <option value={'pending'}>
-                        Pending  
- 
-
-                      </option>
-                      <option value={'wait_customer_action'}>
-                        wait customer action
- 
-
-                      </option>
-                      <option value={'in_progress'}>
-                        in Progress
- 
-
-                      </option>
-                      <option value={'completed'}>
-                        Completed
- 
-
-                      </option>
-                      <option value={'canceled'}>
-                        Canceled
- 
-
-                      </option>
                     </select>
                   </div>
                 </div>
 
                 {/* <h4 className="text-muted mt-2">{searchQuery && `results for : ${searchQuery}` }</h4> */}
-                <h4 className="text-muted mt-2">{searchQuery && `${ t('my_tickets.search_aria.results_label')} : ${searchQuery}` }</h4>
+                <h4 className="text-muted mt-2">{searchQuery && `${( locale === 'ar' ? 'نتائج البحث لـ' : 'results for' )} : ${searchQuery}` }</h4>
 
 
               </form>
@@ -337,26 +320,26 @@ const Page = () => {
           <thead>
             <tr>
               <th scope="col">
-                Project Name
+                {t('main_page.project_type_name')}
               </th>
               <th scope="col">
                 {/* ID */}
-                ID
+               {t('main_page.id')}
 
               </th>
               <th scope="col">
                 {/* Created */}
-                Created
+                {t('main_page.Created')}
 
               </th>
               <th scope="col">
                 {/* Latest activity */}
                  
-                    Latest activity 
+                 {t('main_page.Latest_Activity')}
               </th>
               <th scope="col">
                 {/* Status */}
-                Status
+                {t('main_page.Status')}
 
               </th>
               {/* <th scope="col">Actions</th> */}
@@ -368,11 +351,20 @@ const Page = () => {
                 <td>
                   {/* <Link href="/ticket/">{ticket.ticket_subject}</Link> */}
                   <Link href={`/projectflow/projectflowDetails/${project_flow.project_flow_slug}`} > 
-                    {/* {ticket.ticket_subject} */}
-                    {project_flow?.project_type_name?.length > 25 
-                    ? `${project_flow?.project_type_name?.slice(0, 25)}...` 
-                    : project_flow?.project_type_name
-                    }  
+ 
+                    {/* {project_flow?.project_type_name?.length > 25 
+                      ? `${project_flow?.project_type_name?.slice(0, 25)}...` 
+                      : project_flow?.project_type_name
+                    }   */}
+
+                          {
+                            (locale === 'ar' ? project_flow?.project_type_name_ar : project_flow?.project_type_name)?.length > 25
+                              ? `${(locale === 'ar' ? project_flow?.project_type_name_ar : project_flow?.project_type_name).slice(0, 25)}...`
+                              : (locale === 'ar' ? project_flow?.project_type_name_ar : project_flow?.project_type_name)
+                          }
+
+
+
                   </Link>
                 </td>
                 {/* <td>#{ticket.id}</td> */}
@@ -386,7 +378,7 @@ const Page = () => {
                     {/* {project_flow?.project_flow_status } */}
 
                         <span className={` ${getprojectStatusBadgeColors(project_flow?.project_flow_status)}  `}> 
-                          {project_flow?.project_flow_status && project_flow.project_flow_status}
+                          { getProjectStatus(project_flow?.project_flow_status) }
                         </span>
 
 
@@ -417,7 +409,7 @@ const Page = () => {
             <div className="card mb-3" key={`card_${project_flow.id}`}>
               <div className="card-body">
                 <p>
-                  <strong>{t('my_tickets.table_list_items.subject')} : </strong> 
+                  <strong>subject : </strong> 
  
 
                   <Link className="ms-2" href={`/projectflow/projectFlowDetails/${project_flow.project_flow_slug}`}>

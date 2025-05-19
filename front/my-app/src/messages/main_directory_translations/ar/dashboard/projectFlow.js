@@ -312,12 +312,22 @@ export default  {
             },
 
             add_new_projectflow : {
-                title : 'إضافة مشروع لعميل جديد',
+                title : 'إضافة مشروع لعميل ',
                 select_project_type_label : 'يرجى إختيار نوع المشروع',
                 Select_Project_Type : 'إختر نوع المشروع',
                 Select_ProjectFlow_User : 'إختر العميل',
                 Description : 'تفاصيل',
                 Description_ph : "يرجى كتابة تفاصيل عن بيئة المشروع ",
+
+                contact_phone_no : 'رقم هاتف التواصل',
+                contact_phone_no_ph : 'يرجى كتابة رقم هاتف للتواصل عليه عند الحاجة',
+                project_address :  'مكان تنفيذ المشروع',
+                project_address_ph : 'يرجى كتابة عنوان المكان الذي تريد تنفيذ المشروع به. ',
+
+
+
+
+
                 submit : 'إرسال'
             },
             projectflow_details : {
@@ -341,6 +351,12 @@ export default  {
                 Show_Steps_To_Client : 'إظهار الخطوات للعميل',
                 Show_Step_Status_Logs_To_Client  : 'إظهار سجلات حالات الخطوات للعميل',
         
+
+                Contact_phone : 'هاتف التواصل',
+                Project_Address : 'مكان تنفيذ المشروع',
+                created_ip_address : 'عنوان الآي بي للعميل',
+
+
 
                 Add_New_Step : 'إضافة خطوة جديدة',
                 Edit : 'تعديل',
@@ -528,6 +544,25 @@ export default  {
                 save_changes : 'حفظ التغييرات',
 
 
+
+                status_label : 'الحالة ',
+                step_status_des : "   الحالة يتم تحديثها تلقائياً بالإعتماد على معالجة الخطوات , وتستطيع تغييرها يدوياً في حال رغبت بذلك. ",
+
+                Start_Process_Date :'تاريخ بدء المعالجة',
+                Start_Process_Date_des : "   تاريخ بدء المعالجة يتم تحديثها تلقائياً بالإعتماد على بدء معالجة الخطوة , وتستطيع تغييرها يدوياً في حال رغبت بذلك. ",
+
+                End_Process_Date : 'تاريخ إنتهاء المعالجة',
+                End_Process_Date_des :  "   تاريخ إنتهاء المعالجة يتم تحديثها تلقائياً بالإعتماد على إنتهاء معالجة الخطوة , وتستطيع تغييرها يدوياً في حال رغبت بذلك. ",
+
+
+                
+
+                    
+                    
+
+
+
+
                 Select_Option : 'يرجى الإختيار',
                 any_staff :  'أي موظف في طاقم العمل',
                 specific_staff_group : 'مجموعات محددة من طاقم العمل',
@@ -565,6 +600,22 @@ export default  {
                 Start_Process_Strategy : 'إستراتيجية بدء الخطوة',
 
                 Start_Process_Strategy_des : ' إختر إستراتيجية البدء لهذه الخطوة',
+
+
+                status_label : 'الحالة ',
+                step_status_des : "   الحالة يتم تحديثها تلقائياً بالإعتماد على معالجة الخطوات , وتستطيع تغييرها يدوياً في حال رغبت بذلك. ",
+
+                Start_Process_Date :'تاريخ بدء المعالجة',
+                Start_Process_Date_des : "   تاريخ بدء المعالجة يتم تحديثها تلقائياً بالإعتماد على بدء معالجة الخطوة , وتستطيع تغييرها يدوياً في حال رغبت بذلك. ",
+
+                End_Process_Date : 'تاريخ إنتهاء المعالجة',
+                End_Process_Date_des :  "   تاريخ إنتهاء المعالجة يتم تحديثها تلقائياً بالإعتماد على إنتهاء معالجة الخطوة , وتستطيع تغييرها يدوياً في حال رغبت بذلك. ",
+
+
+                
+
+
+
 
                 Show_Status_Logs_To_Client :  'إظهار سجلات حالات الخطوة للعميل',
                 Show_Status_Logs_To_Client_des : ' حدد اذا كنت تسمح للعميل بمشاهدة سجلات حالات هذه الخطوة.',
@@ -615,9 +666,12 @@ export default  {
             
         }
         
+    },
+
+
+    Statistics : {
+
     }
-
-
 
 
 

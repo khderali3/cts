@@ -122,12 +122,13 @@ export const StepComponent = ({ step={}, index=0 , reloadComponentMethod}) =>{
 
                             </div>
 
-
-                            <StartOrEndStepOrSubStepProcess disabled_status={step?.can_requester_start_step} action="start_process" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
-                        
-
-                            <StartOrEndStepOrSubStepProcess disabled_status={step?.can_requester_end_step} action="end_process" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
-
+                            {step?.can_requester_start_step || step?.can_requester_end_step ?
+                                (<>
+                                    <StartOrEndStepOrSubStepProcess disabled_status={step?.can_requester_start_step} action="start_process" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
+                                    <StartOrEndStepOrSubStepProcess disabled_status={step?.can_requester_end_step} action="end_process" resort_for='step' projectflow_id={step?.project_flow} step_id={step?.id} reloadComponentMethod={reloadComponentMethod} />  
+                                </>)
+                            : ''
+                            }
 
 
 

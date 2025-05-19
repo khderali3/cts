@@ -22,16 +22,54 @@ from ..serializers_module.staff_serializer_projectFlow import (
 
 from ..serializers_module.get_full_projectFlow.staff_get_full_project_flow import GetFullProjectFlowSeriallizer
 
-from projectFlowApp.custom_app_utils import MyCustomPagination
+# from projectFlowApp.custom_app_utils import MyCustomPagination
 
 from django.db import transaction
-from ..custom_app_utils import IsStaffOrSuperUser
+
+from projectFlowApp.custom_app_utils import get_client_ip, IsStaffOrSuperUser, MyCustomPagination
+
+
+
+from django.db.models import Count
+
+
+class ProjectFlowStatusCountAPIView(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+    def get(self, request):
+        all_statuses = dict(ProjectFlow.ProjectFlow_status_options)
+
+        # Initialize counts to zero for each status using a simple for loop
+        result = {}
+        for status in all_statuses.keys():
+            result[status] = 0
+
+        # Count how many ProjectFlow objects per status
+        counts = ProjectFlow.objects.values('project_flow_status').order_by().annotate(count=Count('id'))
+
+        for item in counts:
+            status = item['project_flow_status']
+            count = item['count']
+            result[status] = count
+
+        # Add total count of all projects
+        total_projects = ProjectFlow.objects.count()
+        result['all'] = total_projects
+
+        return Response(result)
+
+
 
 
 
 
 
 class InstalledProductTypeView(APIView):
+
+
+
     permission_classes = [IsStaffOrSuperUser]
     def post(self, request):
         serializer = InstalledProductTypeSerializer(data=request.data)
@@ -79,6 +117,11 @@ class InstalledProductTypeView(APIView):
 
 
 class InstalledProductView(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
 
     def post(self, request, projectflow, installed_product_type):
  
@@ -137,6 +180,11 @@ class InstalledProductView(APIView):
 
 
 class CanceleProjectFlow(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
     def post(self, request, id):
 
         if not (request.user.is_staff or request.user.is_superuser):
@@ -162,6 +210,12 @@ class CanceleProjectFlow(APIView):
 
 
 class ReopenProjectFlow(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
+
     def post(self, request, id):
         if not (request.user.is_staff or request.user.is_superuser):
             return Response({'message' : 'you are not authorized to do this operation'}, status=status.HTTP_403_FORBIDDEN)
@@ -223,6 +277,13 @@ def validate_allowed_process_groups(data, field_name="allowed_process_groups"):
 
 
 class StartStepProcess(APIView):
+
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
+
     def post(self, request,project_flow, step_id):
 
 
@@ -301,6 +362,11 @@ class StartStepProcess(APIView):
 
 
 class EndStepProcess(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
     def post(self, request, project_flow, step_id):
 
         try:
@@ -385,6 +451,12 @@ class EndStepProcess(APIView):
  
 
 class StartSubStepProcess(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
+
     def post(self, request, step_id, sub_step_id):
 
         try:
@@ -476,6 +548,12 @@ class StartSubStepProcess(APIView):
 
 
 class EndSubStepProcess(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
+
     def post(self, request, step_id, sub_step_id):
 
 
@@ -589,6 +667,11 @@ class EndSubStepProcess(APIView):
  
 
 class StepResortMoveUpOrDownView(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
     def post(self, request, project_flow_id, step_id, direction):
         step = get_object_or_404(ProjectFlowStep, id=step_id, project_flow=project_flow_id)
 
@@ -622,6 +705,12 @@ class StepResortMoveUpOrDownView(APIView):
 
 
 class StepResortByAbsolutePositionView(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
+
     def post(self, request, project_flow_id, step_id, absolute_position):
         # Get the step
         step = get_object_or_404(ProjectFlowStep, id=step_id,  project_flow=project_flow_id)
@@ -667,6 +756,11 @@ class StepResortByAbsolutePositionView(APIView):
 
 
 class SubStepResortMoveUpOrDownView(APIView):
+
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
     def post(self, request, step_id, sub_step_id, direction):
         sub_step = get_object_or_404(ProjectFlowSubStep, id=sub_step_id, step=step_id)
 
@@ -702,6 +796,11 @@ class SubStepResortMoveUpOrDownView(APIView):
 
 
 class SubStepResortByAbsolutePositionView(APIView):
+    permission_classes = [IsStaffOrSuperUser]
+
+
+
+
     def post(self, request, step_id, sub_step_id, absolute_position):
         # Get the step
         sub_step = get_object_or_404(ProjectFlowSubStep, id=sub_step_id, step=step_id)
@@ -1352,7 +1451,8 @@ class ProjectFlowView(APIView):
 
         data = request.data.copy()
         data['project_user'] =  request.data.get("project_user", None)
-   
+        data['created_ip_address'] = get_client_ip(request)
+
         serializer = CreateOrPutObjectProjectFlowSerializer(data=data , context={'request': request})
 
         if serializer.is_valid():

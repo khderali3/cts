@@ -147,7 +147,7 @@ useEffect(() => {
 
 				</Link>
 
-
+ 
 
 
 				<DeleteButton title={t('delete')} item_id={item.id} handleReloadFlag={handleReloadFlag}/>  
@@ -167,17 +167,17 @@ useEffect(() => {
 
 
 
-	  <CustomModal  
-		id="list_manager_Product"
+	  {/* <CustomModal  
+		id="list_manager_project_type"
 		handleSubmit={ () =>   deleteItem(itemIdToDelete)}
 		submitting={deletingItemId}
-		// message={ }
+		message={ locale === 'ar' ? 'هل فعلا تريد حذف هذا العنصر' : 'are you shure you want to delete this item? '}
 		operationType = "Delete"
 		showModal={true} 
 		isModalOpen={isModalOpen}
 		setIsModalOpen={setIsModalOpen}
 
-		/>  
+		/>   */}
 
 
 

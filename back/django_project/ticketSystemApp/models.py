@@ -32,14 +32,14 @@ class Ticket(models.Model):
         ('replied_by_customer', 'replied_by_customer'),
         ('solved', 'solved'),
     ]
-    ticket_user = models.ForeignKey(User, related_name='ticket_user_related_name', on_delete=models.SET_NULL, blank=True, null=True)
+    ticket_user = models.ForeignKey(User, related_name='ticket_user_related_name', on_delete=models.PROTECT, blank=True, null=True)
     ticket_department = models.ForeignKey('Department', related_name='ticket_department_related_name', on_delete=models.SET_NULL, blank=True, null=True)
     ticket_subject = models.CharField(max_length=50, db_index=True, verbose_name="ticket subject")
     ticket_body = models.TextField(verbose_name="ticket body")
-    ticket_assigned_to = models.ForeignKey(User, related_name='Assigned', on_delete=models.SET_NULL, blank=True, null=True)
-    ticket_status = models.CharField(max_length=30, choices=ticket_status_options, default='open')
-    ticket_created_by = models.ForeignKey(User, related_name='ticket_user_created_by_related_name',on_delete=models.SET_NULL, blank=True, null=True)
-    ticket_closed_by = models.ForeignKey(User, related_name='ticket_user_closed_by_related_name', on_delete=models.SET_NULL, blank=True, null=True)
+    ticket_assigned_to = models.ForeignKey(User, related_name='Assigned', on_delete=models.PROTECT, blank=True, null=True)
+    ticket_status = models.CharField(max_length=30, choices=ticket_status_options, default='open', db_index=True)
+    ticket_created_by = models.ForeignKey(User, related_name='ticket_user_created_by_related_name',on_delete=models.CASCADE, blank=True, null=True)
+    ticket_closed_by = models.ForeignKey(User, related_name='ticket_user_closed_by_related_name', on_delete=models.CASCADE, blank=True, null=True)
     ticket_slog = models.SlugField(max_length=100, blank=True, null=True, db_index=True, unique=True)
     ticket_created_date = models.DateTimeField(auto_now_add=True)
     ticket_updated_date = models.DateTimeField(auto_now=True)
@@ -64,7 +64,7 @@ class Ticket(models.Model):
 
 
 class TicketFiles(models.Model):
-    ticket_file_ticket = models.ForeignKey(Ticket, related_name='ticket_files_ticket_related_name', on_delete=models.SET_NULL, blank=True, null=True)
+    ticket_file_ticket = models.ForeignKey(Ticket, related_name='ticket_files_ticket_related_name', on_delete=models.CASCADE, blank=True, null=True)
     ticket_file_ticket_file = models.FileField(upload_to='ticket/ticket_files/', validators=[validate_file_or_image])
     ticket_file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
     ticket_file_created_data = models.DateTimeField(auto_now_add=True)
@@ -82,8 +82,8 @@ class TicketFiles(models.Model):
 
 class TicketReplay(models.Model):
 
-    ticket_replay_ticket = models.ForeignKey(Ticket, related_name='ticket_replay_ticket_related_name', on_delete=models.SET_NULL, blank=True, null=True)
-    ticket_replay_from = models.ForeignKey(User, related_name='ticket_replay_from_user_related_name', on_delete=models.SET_NULL, blank=True, null=True)
+    ticket_replay_ticket = models.ForeignKey(Ticket, related_name='ticket_replay_ticket_related_name', on_delete=models.CASCADE, blank=True, null=True)
+    ticket_replay_from = models.ForeignKey(User, related_name='ticket_replay_from_user_related_name', on_delete=models.PROTECT, blank=True, null=True)
     ticket_replay_body = models.TextField(verbose_name="ticket reply body")
     ticket_replay_created_date = models.DateTimeField(auto_now_add=True)
     ticket_replay_updated_date = models.DateTimeField(auto_now=True)
@@ -97,7 +97,7 @@ class TicketReplay(models.Model):
 
 
 class TicketReplyFiles(models.Model):
-    ticket_replay_file_ticket_replay = models.ForeignKey(TicketReplay, related_name='ticket_replay_files_ticket_replay_related_name', on_delete=models.SET_NULL, blank=True, null=True)
+    ticket_replay_file_ticket_replay = models.ForeignKey(TicketReplay, related_name='ticket_replay_files_ticket_replay_related_name', on_delete=models.CASCADE, blank=True, null=True)
     ticket_replay_file = models.FileField(upload_to='ticket/ticket_replay_files/', validators=[validate_file_or_image])
     ticket_replay_file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
     ticket_replay_file_created_data = models.DateTimeField(auto_now_add=True)

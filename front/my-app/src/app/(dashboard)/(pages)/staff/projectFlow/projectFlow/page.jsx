@@ -23,6 +23,9 @@ import { useSelector } from "react-redux";
 
 import { useProjectStatus } from "@/app/public_utils/hooks";
 
+import { useSearchParams } from "next/navigation";
+
+
 
 const Page = () => {
 
@@ -75,7 +78,28 @@ const Page = () => {
   const [loading, setLoading] = useState(true); // Loading state
 
   const [searchProjectType_NameQuery, setSearchProjectType_NameQuery] = useState(''); // Search query state
+
+
+  const searchParams = useSearchParams();
+
+  const statusFromQuery = searchParams.get('status') || 'all';
+
+
+
+
   const [status, setStatus] = useState('all');  
+
+
+
+  useEffect(() => {
+    setStatus(statusFromQuery);
+  }, [statusFromQuery]);
+
+
+
+
+
+
   const [userId, setUserId] = useState('all');  
   const [projectId, setProjectId] = useState('');   
 
@@ -506,12 +530,14 @@ const handleScroll = () => {
                     <div className="card-body">
 
                       <p>
-                        <strong>ProjectType Name : </strong> 
+                          <strong>{t('main_page.project_type_name')} : </strong> 
                           <Link href={`/staff/projectFlow/projectFlow/projectFlowDetails/${obj.id}`}  >
-                            {obj?.project_type_name.length > 25 
-                            ? `${obj?.project_type_name.slice(0, 25)}...` 
-                            : obj?.project_type_name
-                            }        
+  
+                            {
+                              (locale === 'ar' ? obj?.project_type_name_ar : obj?.project_type_name)?.length > 25
+                                ? `${(locale === 'ar' ? obj?.project_type_name_ar : obj?.project_type_name).slice(0, 25)}...`
+                                : (locale === 'ar' ? obj?.project_type_name_ar : obj?.project_type_name)
+                            }
                           
                           </Link>
                       </p>
@@ -520,24 +546,24 @@ const handleScroll = () => {
 
 
                       <p>
-                        <strong>ID : </strong>  {`#${obj?.id}`}           
+                        <strong>{t('main_page.id')} : </strong> {`#${formatNumber(obj?.id)}`}         
                       </p>
                       
                       <p>
-                        <strong>Created : </strong> {formatDate(obj?.created_date)}
+                        <strong>{t('main_page.Created')} : </strong> {formatDate(obj?.created_date)}
                       </p>
             
                       
                       <p>
-                        <strong>Latest Activity : </strong> {formatDate(obj?.latest_activity)}
+                        <strong>{t('main_page.Latest_Activity')} : </strong> {formatDate(obj?.latest_activity)}
                       </p>
             
                       <p>
-                        <strong>Status : </strong> 
+                        <strong>{t('main_page.Status')} : </strong> 
                         
                         <span className={` ${getprojectStatusBadgeColors(obj?.project_flow_status)}  `}>
                           {/* {ticket.ticket_status} */}
-                          {obj?.project_flow_status && obj.project_flow_status}
+                          {   getProjectStatus(obj?.project_flow_status)}
                         </span>
 
 
@@ -550,11 +576,11 @@ const handleScroll = () => {
                       </p>
 
                       <p>
-                        <strong>User : </strong>
-                          {obj?.project_user?.full_name.length > 15 
-                            ? `${obj?.project_user?.full_name.slice(0, 15)}...` 
-                            : obj?.project_user?.full_name 
-                          }         
+                        <strong>{t('main_page.User')} : </strong>
+                        {obj?.project_user?.full_name.length > 15 
+                          ? `${obj?.project_user?.full_name.slice(0, 15)}...` 
+                          : obj?.project_user?.full_name 
+                        }     
                       </p>
 
 

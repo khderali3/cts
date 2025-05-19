@@ -23,6 +23,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { ar, enUS } from "date-fns/locale"; // Import necessary locales
 
 import { useSelector } from "react-redux";
+import { useSearchParams } from "next/navigation";
 
 
 const Page = () => {
@@ -68,6 +69,24 @@ const Page = () => {
 
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
   const [status, setStatus] = useState('all'); // Ticket status state
+
+
+  const searchParams = useSearchParams();
+
+  const statusFromQuery = searchParams.get('status') || 'all';
+
+
+  useEffect(() => {
+    setStatus(statusFromQuery);
+  }, [statusFromQuery]);
+
+
+
+
+
+
+
+
   const [userId, setUserId] = useState('all'); // Ticket status state
 
   const router = useRouter();
