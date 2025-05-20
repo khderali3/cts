@@ -56,22 +56,7 @@ const loginPage = async () => {
 
   </div>
 
-
-
-{/* 
-  <Link className="nav-link" href="/account/password-reset" >
-            reset password
-  </Link>
-
-  <Link className="nav-link" href="/account/register" >
-            register a new account
-  </Link>
-
-
-
-
-<LogingWithGoogle />
-   */}
+ 
 
 
 

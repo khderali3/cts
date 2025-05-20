@@ -507,7 +507,7 @@ class SiteGetFullProjectFlowSerializer(serializers.ModelSerializer):
         context = self.context.copy()  # Preserve existing context (including `request`)
 
         return ProjectFlowNoteSerializer(
-            obj.ProjectFlowNote_project_flow_related_ProjectFlow.filter(show_to_client=True),  # Filter steps
+            obj.ProjectFlowNote_project_flow_related_ProjectFlow.filter(),  # Filter steps
             many=True,
             context=context
         ).data

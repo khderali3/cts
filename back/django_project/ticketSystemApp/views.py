@@ -34,6 +34,7 @@ from mimetypes import guess_type
 
 
 
+
 class CloseTicketView(APIView):
 
 	def post(self, request, ticket_id, *args, **kwargs):
@@ -189,7 +190,12 @@ class TicketView(APIView):
             
  
 
-class ProtectedMediaView(APIView):
+
+
+
+
+
+class TicketProtectedMediaView(APIView):
 
     
     def get(self, request, file_name, *args, **kwargs):
@@ -199,11 +205,19 @@ class ProtectedMediaView(APIView):
             if 'ticket_files' in request.path:
                 # Lookup for ticket file
                 ticket_file = get_object_or_404(TicketFiles, ticket_file_ticket_file__icontains=file_name)
+                # ticket_file = get_object_or_404(TicketFiles, ticket_file_name=file_name)
+
+
                 ticket = ticket_file.ticket_file_ticket
                 file_path = ticket_file.ticket_file_ticket_file.path
             elif 'ticket_replay_files' in request.path:
                 # Lookup for ticket reply file
                 reply_file = get_object_or_404(TicketReplyFiles, ticket_replay_file__icontains=file_name)
+                # reply_file = get_object_or_404(TicketReplyFiles, ticket_replay_file_name=file_name)
+
+
+
+
                 ticket = reply_file.ticket_replay_file_ticket_replay.ticket_replay_ticket
                 file_path = reply_file.ticket_replay_file.path
             else:
@@ -227,3 +241,177 @@ class ProtectedMediaView(APIView):
                 return HttpResponseForbidden("You do not have permission to access this file")
         else:
             return HttpResponseForbidden("Authentication required")
+
+
+
+
+
+
+
+
+
+from projectFlowApp.models.project_flow_models import ( ProjectFlowAttachment, ProjectFlowNoteAttachment, ProjectFlowStepNoteAttachment,
+                                                    ProjectFlowSubStepNoteAttachment,
+                                                        )
+
+
+
+
+
+class ProjectFlowProtectedMediaView(APIView):
+
+    
+    def get(self, request, file_name, *args, **kwargs):
+        # Ensure the user is authenticated (the permission classes do this)
+        if request.user.is_authenticated:
+            # Check if the file is from the ticket files or ticket reply files
+            if 'ProjectFlowAttachment' in request.path:
+ 
+                file_obj = get_object_or_404(ProjectFlowAttachment, file__icontains=file_name)
+                try:
+                    project_flow_obj = file_obj.project_flow
+                except:
+                    project_flow_obj =  None                     
+                file_path = file_obj.file.path
+ 
+ 
+            elif 'ProjectFlowNoteAttachment' in request.path:
+                file_obj = get_object_or_404(ProjectFlowNoteAttachment, file__icontains=file_name)
+                try:
+                    project_flow_obj = file_obj.project_flow_note.project_flow
+                except :
+                    project_flow_obj = None                     
+                file_path = file_obj.file.path
+
+ 
+            elif 'ProjectFlowStepNoteAttachment' in request.path:
+                file_obj = get_object_or_404(ProjectFlowStepNoteAttachment, file__icontains=file_name)
+                try:
+                    project_flow_obj = file_obj.project_flow_step_note.project_step.project_flow
+                except :
+                    project_flow_obj = None                     
+                file_path = file_obj.file.path
+
+            elif 'ProjectFlowSubStepNoteAttachment' in request.path:
+                file_obj = get_object_or_404(ProjectFlowSubStepNoteAttachment, file__icontains=file_name)
+                try:
+                    project_flow_obj = file_obj.sub_step_note.sub_step.step.project_flow
+                except :
+                    project_flow_obj = None                     
+                file_path = file_obj.file.path
+
+
+
+
+
+
+            else:
+                return HttpResponseForbidden("Invalid file path")
+
+            # Permission check: Only allow access to the file if the user is a superuser, staff, or the ticket owner
+
+
+
+            if project_flow_obj is None:
+                return HttpResponseForbidden("No associated projectFlow found for this file.")
+
+
+
+            if request.user.is_superuser or request.user.is_staff or project_flow_obj.project_user == request.user:
+                try:
+                    # Determine the file's MIME type
+                    mime_type, _ = guess_type(file_path)
+                    if not mime_type:
+                        mime_type = 'application/octet-stream'  # Default if type cannot be guessed
+                    
+                    # Open the file and send it as a response
+                    response = FileResponse(open(file_path, 'rb'))
+                    response['Content-Type'] = mime_type  # Set appropriate content type
+                    return response
+                except FileNotFoundError:
+                    return HttpResponseForbidden("File not found")
+            else:
+                return HttpResponseForbidden("You do not have permission to access this file")
+        else:
+            return HttpResponseForbidden("Authentication required")
+
+
+
+
+
+
+
+
+
+from projectFlowApp.models.project_flow_template_models import (ProjectFlowTemplateNoteAttachment , StepTemplateNoteAttachment, SubStepTemplateNoteAttachment)
+
+
+
+
+class ProjectFlowTemplateProtectedMediaView(APIView):
+
+    
+    def get(self, request, file_name, *args, **kwargs):
+        # Ensure the user is authenticated (the permission classes do this)
+        if request.user.is_authenticated:
+            # Check if the file is from the ticket files or ticket reply files
+            if 'ProjectFlowTemplateNoteAttachment' in request.path: 
+                file_obj = get_object_or_404(ProjectFlowTemplateNoteAttachment, file__icontains=file_name)                  
+                file_path = file_obj.file.path
+ 
+
+            elif 'StepTemplateNoteAttachment' in request.path: 
+                file_obj = get_object_or_404(StepTemplateNoteAttachment, file__icontains=file_name)                  
+                file_path = file_obj.file.path
+
+            elif 'SubStepTemplateNoteAttachment' in request.path: 
+                file_obj = get_object_or_404(SubStepTemplateNoteAttachment, file__icontains=file_name)                  
+                file_path = file_obj.file.path
+
+
+            else:
+                return HttpResponseForbidden("Invalid file path")
+
+            # Permission check: Only allow access to the file if the user is a superuser, staff, or the ticket owner
+
+            if request.user.is_superuser or request.user.is_staff :
+                try:
+                    # Determine the file's MIME type
+                    mime_type, _ = guess_type(file_path)
+                    if not mime_type:
+                        mime_type = 'application/octet-stream'  # Default if type cannot be guessed
+                    
+                    # Open the file and send it as a response
+                    response = FileResponse(open(file_path, 'rb'))
+                    response['Content-Type'] = mime_type  # Set appropriate content type
+                    return response
+                except FileNotFoundError:
+                    return HttpResponseForbidden("File not found")
+            else:
+                return HttpResponseForbidden("You do not have permission to access this file")
+        else:
+            return HttpResponseForbidden("Authentication required")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# elif 'ProjectFlowTemplateNoteAttachment' in request.path:
+#     file_obj = get_object_or_404( ProjectFlowTemplateNoteAttachment, file__icontains=file_name)
+#     try:
+#         project_flow_obj =  
+#     except :
+#         project_flow_obj = None                     
+#     file_path = file_obj.file.path

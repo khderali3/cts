@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 
 import { useLocale } from 'next-intl';
 
-export default function RequireAuthTicket({ children }) {
+export default function RequireAuthComponent({ children }) {
   const { isLoading, isAuthenticated } = useSelector(state => state.auth);
   const [shouldRender, setShouldRender] = useState(false);
 
@@ -20,7 +20,11 @@ export default function RequireAuthTicket({ children }) {
     if (!isLoading) {
       if (!isAuthenticated) {
         // Redirect only after confirming loading has finished
-        redirect('/account/login');
+        // redirect('/account/login');
+        redirect(`/account/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+
+
+
       } else {
         // Set flag to render content after auth check completes
         setShouldRender(true);

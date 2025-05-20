@@ -6,16 +6,27 @@ import { useLoginMutation } from '../redux/features/authApiSlice';
 import { setAuth, setloginFirstName, setprofileImage, setIs_staff, setIs_superuser } from '../redux/features/authSlice';
 import { toast } from 'react-toastify';
 import { jwtDecode} from 'jwt-decode';
+import { getErrorMessage } from "@/app/public_utils/utils";
 
 
 import { useLocale } from 'next-intl';
 import ReCAPTCHA from "react-google-recaptcha";
+
+import { useSearchParams } from 'next/navigation';
+
 
 
 export default function useLogin() {
 
   const [recaptchaValue, setRecaptchaValue] = useState('')
   const recaptchaRef = useRef(null);
+
+
+	const searchParams = useSearchParams();
+	const redirectPath = searchParams.get('redirect') || '/';
+
+
+
 
   function onChangeRecaptcha(value) { 
     setRecaptchaValue(value)
@@ -95,7 +106,8 @@ export default function useLogin() {
 
 
 
-					router.push('/');
+					// router.push('/');
+					router.push(redirectPath);
 
 				} else  {
 
@@ -114,9 +126,11 @@ export default function useLogin() {
 
 				if(locale === "ar"){
 					toast.error('فشل في تسجل الدخول');
+					toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
 
 				} else {
 					toast.error('Failed to log in');
+					toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
 
 				}
 				if(error.data.detail === "Invalid reCAPTCHA. Please try again."){
