@@ -16,6 +16,10 @@ router.register(r'users', CustomUserViewSet, basename='user')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('api/staff/log/', include('logSystemApp.urls')),
+
+
     path('api/staff/auth/', include('staffAuthApp.urls')),
     path('api/staff/site/', include('sitestaffApp.urls')),
     path('api/staff/ticket/', include('ticketSystemStaffApp.urls')),
@@ -56,5 +60,5 @@ urlpatterns = [
 
  
 
-# if settings.DEBUG:
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

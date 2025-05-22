@@ -20,7 +20,7 @@ import staff_nav from './main_directory_translations/en/dashboard/staff_nav';
 import account_staff from './main_directory_translations/en/dashboard/account';
 
 import projectFlow from './main_directory_translations/en/dashboard/projectFlow'
-
+import logs from "./main_directory_translations/en/dashboard/logs"
 
 
 export default {
@@ -113,6 +113,8 @@ export default {
 		sidebar,
 		account: account_staff,
 		nav : staff_nav,
-		projectFlow
+		projectFlow,
+		logs,
+		
 	}
 }

@@ -2,7 +2,7 @@
 
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from django.db.models.signals import pre_delete, post_delete
+from django.db.models.signals import  post_delete
  
 import os
  
@@ -16,24 +16,7 @@ from ..project_flow_models import (
  
 
 
-
-
-
-# def delete_attachment_file(sender, instance, **kwargs):
-#     if instance.file:
-#         file_path = instance.file.path
-#         if os.path.isfile(file_path):
-#             os.remove(file_path)
-
-# # Attach the signal handler to multiple models
-# models_to_register = [ProjectFlowAttachment, ProjectFlowNoteAttachment, ProjectFlowStepNoteAttachment,
-#                        ProjectFlowSubStepNoteAttachment]
-
-# for model in models_to_register:
-#     pre_delete.connect(delete_attachment_file, sender=model)
-
  
-
 def delete_attachment_file(sender, instance, **kwargs):
     if instance.file:
         file_path = instance.file.path
@@ -69,7 +52,7 @@ for model in models_to_register:
 
 
 
-from projectFlowApp.middleware import get_current_user
+from django_project.middleware import get_current_user
 
 @receiver(pre_save, sender=ProjectFlowSubStep)
 def log_project_flow_step_status_change(sender, instance, **kwargs):

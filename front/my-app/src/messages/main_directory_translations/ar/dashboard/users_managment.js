@@ -85,6 +85,13 @@ export default {
 		projectflow_delete:  'مشروع | حذف مشروع',
 		projectflow_step_delete:  'مشروع | حذف خطوة',
 
+		logs_view: 'السجلات | عرض',
+		logs_delete: 'السجلات | حذف',
+
+
+
+
+
 	 },
 	users : {
 		title: "إدارة المستخدمين",

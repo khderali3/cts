@@ -383,3 +383,14 @@ html[dir="rtl"] .react-datepicker__close-icon {
 .hover-zoom:hover {
   transform: scale(1.03);
 }
+
+
+
+
+
+/* logs */
+.sticky-bottom-buttons {
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 1050 !important;
+}

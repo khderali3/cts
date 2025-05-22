@@ -560,7 +560,11 @@ class UserobjectView(APIView):
 	def put(self, request, *args, **kwargs):
 			user_id = kwargs.get('id')
 			user = get_object_or_404(User, id=user_id)
+			if user:
+				## jsut to avoid error if not profile created for some resones
+				profile_obj, created = Profile.objects.update_or_create(PRF_user=user)
 
+ 
 			# Extract user and profile data
 			user_data = {
 				key.split('user.')[1]: value 
@@ -579,6 +583,8 @@ class UserobjectView(APIView):
 				return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 			# Update Profile
+
+
 			profile = getattr(user, 'profile_prf_user_relaed_useraccount', None)
 			if profile:
 				profile_serializer = ProfileSerializer(instance=profile, data=profile_data, partial=True)
@@ -587,7 +593,11 @@ class UserobjectView(APIView):
 				else:
 					return Response(profile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 			elif profile_data:
+
+
 				profile_data['PRF_user'] = user.id
+
+
 				profile_serializer = ProfileSerializer(data=profile_data)
 				if profile_serializer.is_valid():
 					profile_serializer.save()

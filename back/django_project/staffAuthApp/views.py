@@ -26,8 +26,24 @@ from usersAuthApp.myutils.public_utils import verify_recaptcha
 
 
 
+
+
+from django_project.middleware import  get_current_ip_address
+
+from logSystemApp.models import Log
+
+from django.utils import timezone
+from rest_framework_simplejwt.tokens import AccessToken
+from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
+
+
+
+
+
+ 
 
 # AUTH_COOKIE_MAX_AGE = 60 * 60 * 24
 # AUTH_COOKIE_SECURE =  'True'
@@ -161,6 +177,40 @@ class StaffCustomTokenObtainPairView(TokenObtainPairView):
                 samesite=AUTH_COOKIE_SAMESITE,
             )
 
+
+
+            user = None
+            try:
+                # access_token = response.data.get('access')
+                token = AccessToken(access_token)
+                user_id = token['user_id']
+                user = User.objects.get(id=user_id)
+            except:
+                pass
+            if user:
+                try:
+                    Log.objects.create(
+                        user=user,
+                        action_type=Log.LOGIN,
+                        model_name='User',
+                        object_id=user.pk,
+                        object_description=str(user),
+                        timestamp=timezone.now(),
+                        changes={
+                            "status": "User logged in to a staff dashboard",
+                            "first_name": user.first_name,
+                            "last_name": user.last_name,
+                            "email": user.email,
+                        },
+                        ip_address=get_current_ip_address(),
+                    )
+                except:
+                    pass
+
+
+
+
+
             return response
         else:
             # If validation fails, return an error response
@@ -171,6 +221,44 @@ class StaffCustomTokenObtainPairView(TokenObtainPairView):
 class StaffLogoutView(APIView):
     def post(self, request, *args, **kwargs):
         response = Response(status=status.HTTP_204_NO_CONTENT)
+
+
+        user = None
+        try:
+            access_token = request.COOKIES.get('access')
+            token = AccessToken(access_token)
+            user_id = token['user_id']
+            user = User.objects.get(id=user_id)
+        except :
+            pass
+
+        if user:
+
+            try:
+                Log.objects.create(
+                    user=user,
+                    action_type=Log.LOGOUT,
+                    model_name='User',
+                    object_id=user.pk,
+                    object_description=str(user),
+                    timestamp=timezone.now(),
+                    changes={
+                        "status": "User logged out from staff dashboard",
+                        "first_name": user.first_name,
+                        "last_name": user.last_name,
+                        "email": user.email,
+                    },
+                    ip_address=get_current_ip_address(),
+                )
+            except:
+                pass
+
+
+
+
+
+
+
         response.delete_cookie('access')
         response.delete_cookie('refresh')
 

@@ -158,11 +158,11 @@ const MainUserEditInfoSection = ({user_id}) => {
   
   
   
-	  if(data.profile.PRF_company){ form.append("profile.PRF_company", data.profile.PRF_company) }
-	  if(data.profile.PRF_country){form.append("profile.PRF_country", data.profile.PRF_country)}
-	  if(data.profile.PRF_city){form.append("profile.PRF_city", data.profile.PRF_city)}
-	  if(data.profile.PRF_address){form.append("profile.PRF_address", data.profile.PRF_address)}
-	  if(data.profile.PRF_phone_number){form.append("profile.PRF_phone_number", data.profile.PRF_phone_number)}
+	  if(data?.profile?.PRF_company){ form.append("profile.PRF_company", data.profile.PRF_company) }
+	  if(data?.profile?.PRF_country){form.append("profile.PRF_country", data.profile.PRF_country)}
+	  if(data?.profile?.PRF_city){form.append("profile.PRF_city", data.profile.PRF_city)}
+	  if(data?.profile?.PRF_address){form.append("profile.PRF_address", data.profile.PRF_address)}
+	  if(data?.profile?.PRF_phone_number){form.append("profile.PRF_phone_number", data.profile.PRF_phone_number)}
 	  if(isProfileImageDelete === true){form.append("profile.PRF_image_delete", true)}
 	
 	
@@ -199,6 +199,8 @@ const MainUserEditInfoSection = ({user_id}) => {
 		  }
    
 		} else {
+			setIsObjUpdateing(false) 
+ 
 			if( locale==="ar" ){
 				toast.error("حصل خطأ رقم 1 في تعديل البيانات . يرجى المحاولة لاحقاً");
 

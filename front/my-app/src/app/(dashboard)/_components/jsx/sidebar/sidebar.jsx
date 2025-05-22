@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 
 import LanguageSwitcherComponent from "./sidebar_components/languge_switcher";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 
 
@@ -15,10 +15,24 @@ import { useTranslations } from "next-intl";
 
 
 const SideBar = () => {
-  const { isLoading, isAuthenticated, permissions, is_superuser } = useSelector(state => state.staff_auth);
+  const { isLoading, isAuthenticated, permissions, is_superuser, is_staff } = useSelector(state => state.staff_auth);
   const pathname = usePathname();
 
+  const locale = useLocale()
  
+
+ 
+  const hasPermissionToLogsView = () => {
+    if (is_superuser || (permissions?.includes('usersAuthApp.logs_view') && is_staff)) {
+        return true
+    }
+      return false
+  }
+
+
+
+
+
 
   const t = useTranslations('dashboard.sidebar')
 
@@ -307,12 +321,6 @@ useEffect(() => {
 
  
 
-
-
-
-
-
-
           </ul>
 
  
@@ -392,6 +400,52 @@ useEffect(() => {
           </ul>
 
  
+          {hasPermissionToLogsView() &&
+              
+              <ul className="nav sidebar-menu flex-column   ">
+                <li className="nav-item">
+                      <a
+                          className="nav-link"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#Logs_Managment"
+                          aria-expanded="false"
+                          role="button"
+                        >
+                          <i className="nav-icon bi bi-speedometer" />
+                          <p>
+                            {locale === 'ar' ? 'السجلات' : 'Logs'}
+                            <i className="nav-arrow bi bi-chevron-right  " />
+                          </p>
+                      </a>
+                </li>
+
+                    <ul className=" collapse nav ps-2" id="Logs_Managment" >
+
+
+
+                      <li className="nav-item text-light w-100 ">
+                        <Link href="/staff/logs" className={` rounded text-light nav-link    ${isActive('/staff/logs', true) ? ' active_class' : '' }     `}  >
+                        <i className= 'nav-icon bi bi-circle '  />
+                        <p>{locale === 'ar' ? 'كافة السجلات' : 'All Logs'}</p>
+                        </Link>
+                      </li>
+
+
+
+
+                    </ul>
+
+    
+
+              </ul>
+
+          }
+
+
+
+
+
+
 
 
 

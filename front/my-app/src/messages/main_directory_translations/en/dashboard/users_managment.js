@@ -93,6 +93,9 @@ export default {
 		projectflow_step_delete: 'ProjectFlow | Step delete',
 
 
+		logs_view: 'Logs | View',
+		logs_delete: 'Logs | Delete',
+ 
 
 	 },
 	users : {

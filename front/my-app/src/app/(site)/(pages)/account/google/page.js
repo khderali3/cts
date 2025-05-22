@@ -12,6 +12,10 @@ import { Suspense } from 'react'
 
 import { useLocale } from 'next-intl';
 
+import { getErrorMessage } from '@/app/public_utils/utils';
+
+
+
  function LoadPage() {
 
 	const locale = useLocale()
@@ -53,7 +57,9 @@ import { useLocale } from 'next-intl';
 					}
 					router.push('/');
 				})
-				.catch(() => {
+				.catch((errors) => {
+					console.log(errors)
+					
 					if(locale === "ar"){
 						toast.error('فشل في تسجيل الدخول بحساب جوجل');
 
@@ -61,6 +67,10 @@ import { useLocale } from 'next-intl';
 						toast.error('Failed to log in with google ');
 
 					}
+
+					toast.error(getErrorMessage(errors.data || errors.message) || "Something went wrong");
+
+
 					router.push('/account/login');
 				});
 		}

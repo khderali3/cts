@@ -139,6 +139,8 @@ class CustomPermission(models.Model):
 
             ('projectflow_step_delete', 'projectflow step delete'),
 
+            ('logs_view', 'Logs View'),
+            ('logs_delete', 'Logs Delete'),
 
         )
 

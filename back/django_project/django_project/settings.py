@@ -1,6 +1,8 @@
 
 from decouple import config
 from pathlib import Path
+from datetime import timedelta
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
 	'ticketSystemStaffApp',
 	'usersManagmentStaffApp',
     'projectFlowApp',
+    'logSystemApp',
 ]
 
 
@@ -76,14 +79,13 @@ SITE_NAME = 'CloudTech Sky Company '
 
 DJOSER = {
 
-
     'PASSWORD_RESET_CONFIRM_URL': 'account/password-reset/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': False,
     'ACTIVATION_URL': 'account/activation/{uid}/{token}',
     'USER_CREATE_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'TOKEN_MODEL': None,
-    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS':['http://localhost:3000/account/google'],
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS':['http://localhost:3000/account/google' ],
     'SOCIAL_AUTH_TOKEN_STRATEGY': "usersAuthApp.myutils.custom_serializers.CustomProviderTokenStrategy",
 
     'SERIALIZERS': {
@@ -125,11 +127,12 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
 }
 
 
-from datetime import timedelta
+
 
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+    'http://127.0.0.1:3000'
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -156,7 +159,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'projectFlowApp.middleware.RequestMiddleware',
+    # 'logSystemApp.middleware.RequestMiddleware',
+    # 'projectFlowApp.middleware.RequestMiddleware',
+    'django_project.middleware.RequestMiddleware',
+
+
 ]
 
 
@@ -297,3 +304,9 @@ AUTH_COOKIE_SAMESITE = 'None'
 
 
 PROJECT_FLOW_PAGINATION_PAGE_SIZE = 30
+
+
+
+
+
+ 
