@@ -25,7 +25,10 @@ class Log(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     action_type = models.CharField(max_length=6, choices=ACTION_TYPES)
     model_name = models.CharField(max_length=255)
-    object_id = models.PositiveIntegerField()
+    # object_id = models.PositiveIntegerField()
+
+    object_id = models.CharField(max_length=100) 
+
     object_description = models.CharField(max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
     changes = models.JSONField(null=True, blank=True)

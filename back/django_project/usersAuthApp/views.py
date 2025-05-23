@@ -151,7 +151,7 @@ class CustomProviderAuthView(ProviderAuthView):
                         object_description=str(user),
                         timestamp=timezone.now(),
                         changes={
-                            "status": "User logged in",
+                            "status": "User logged in with google account",
                             "first_name": user.first_name,
                             "last_name": user.last_name,
                             "email": user.email,

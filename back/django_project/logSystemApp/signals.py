@@ -22,6 +22,7 @@ from django.forms.models import model_to_dict
 
 @receiver(m2m_changed)
 def track_m2m_changes(sender, instance, action, model, pk_set, **kwargs):
+    
     if action not in ["post_add", "post_remove", "post_clear"]:
         return
 
@@ -70,7 +71,6 @@ def track_m2m_changes(sender, instance, action, model, pk_set, **kwargs):
 def log_model_edit(sender, instance, **kwargs):
     if sender == Log:
         return  # Prevent logging Log model changes
-
     try:
         old_instance = sender.objects.get(pk=instance.pk)
         changes = {}
@@ -96,24 +96,30 @@ def log_model_edit(sender, instance, **kwargs):
                 
 
         if changes:
+ 
             try:
                 Log.objects.create(
-                    # user=getattr(instance, 'modified_by', None),
                     user=get_current_user(),
                     action_type=Log.EDIT,
                     model_name=sender.__name__,
-                    object_id=instance.pk,
+                    object_id=str(instance.pk),
                     object_description=str(instance),
                     timestamp=timezone.now(),
                     changes=changes,
-                    # ip_address=getattr(instance, 'request_ip', None),
                     ip_address=get_current_ip_address(),
                     )
-            except:
-                pass
-    except sender.DoesNotExist:
+            except Exception as e: 
+                print('error', str(e))
+
+ 
+
+    except Exception as e:
         # Object is new, will be handled in post_save
-        pass
+        print('error2', str(e))
+
+
+
+
 
 
 
@@ -139,7 +145,7 @@ def log_model_add(sender, instance, created, **kwargs):
                 user=get_current_user(),
                 action_type=Log.ADD,
                 model_name=sender.__name__,
-                object_id=instance.pk,
+                object_id=str(instance.pk),
                 object_description=str(instance),
                 timestamp=timezone.now(),
                 changes=object_data,
@@ -172,7 +178,7 @@ def log_model_delete(sender, instance, **kwargs):
             user=get_current_user(),
             action_type=Log.DELETE,
             model_name=sender.__name__,
-            object_id=instance.pk,
+             object_id=str(instance.pk),
             object_description=str(instance),
             timestamp=timezone.now(),
             changes=object_data,
@@ -185,76 +191,3 @@ def log_model_delete(sender, instance, **kwargs):
 
 
 
-
-
-
-
-
-
-
-#login and logout logs:
-
-
-
-
-
-# from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
-# from django.http import JsonResponse
-# from .models import Log
-# from .middleware import get_current_ip_address  # or your IP getter
-# from django.utils.timezone import now as timezone_now
-
-# def login_view(request):
-#     if request.method == 'POST':
-#         username = request.POST.get('username')
-#         password = request.POST.get('password')
-#         user = authenticate(request, username=username, password=password)
-#         if user is not None:
-#             auth_login(request, user)
-
-#             # Log the login event
-#             Log.objects.create(
-#                 user=user,
-#                 action_type=Log.LOGIN,
-#                 model_name='User',
-#                 object_id=user.pk,
-#                 object_description=str(user),
-#                 timestamp=timezone_now(),
-#                 changes={'status': 'User logged in'},
-#                 ip_address=get_current_ip_address(),
-#             )
-
-#             return JsonResponse({'detail': 'Logged in successfully'})
-#         else:
-#             return JsonResponse({'detail': 'Invalid credentials'}, status=401)
-
-
-# def logout_view(request):
-#     if request.user.is_authenticated:
-#         user = request.user
-
-#         # Log the logout event before logging out
-#         Log.objects.create(
-#             user=user,
-#             action_type=Log.LOGOUT,
-#             model_name='User',
-#             object_id=user.pk,
-#             object_description=str(user),
-#             timestamp=timezone_now(),
-#             changes={'status': 'User logged out'},
-#             ip_address=get_current_ip_address(),
-#         )
-
-#         auth_logout(request)
-#         return JsonResponse({'detail': 'Logged out successfully'})
-
-#     return JsonResponse({'detail': 'No user logged in'}, status=400)
-
-
-
-
-
-
-
-
- 

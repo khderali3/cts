@@ -94,8 +94,6 @@ class ProjectTypeSection(models.Model):
 
 
 
-
-
 class Product(models.Model):
     prod_name = models.CharField(  db_index=True,  max_length=255)
     prod_name_hint = models.CharField(  db_index=True,  max_length=255)
@@ -122,6 +120,12 @@ class Product(models.Model):
     def __str__(self):
         return f"{self.id},{self.prod_name}"
     
+
+
+
+
+
+
 
 
 
