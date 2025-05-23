@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 import CustomModal from "@/app/(dashboard)/_components/jsx/myModal";
 
-
+import { AddFilesComponent } from "./add_product_components/extra_images";
 
 
 import { useTranslations, useLocale } from "next-intl";
@@ -37,6 +37,18 @@ export default function ListManagerProduct() {
 
   const [editSelectedFile, setEditSelectedFile] = useState(null)
   const editFileInputRef = useRef(null);
+
+
+	const [filesExtraImages, setFilesExtraImages] = useState([{ id: 1, file: null }]);
+	const fileInputRefsExtraImages = useRef([]);
+
+
+
+	const [filesAttachment, setFilesAttachment] = useState([{ id: 1, file: null }]);
+	const fileInputRefsFilesAttachment = useRef([]);
+
+
+
 
 
 
@@ -286,6 +298,25 @@ const handleaddItem = async (e) => {
 		(newItem.prod_name_hint_ar && newItem.prod_name_hint_ar.trim() !== '') &&
 		(newItem.prod_details_ar && newItem.prod_details_ar.trim() !== '') 
   ){ 
+
+ 
+
+	filesExtraImages.forEach((fileInput) => {
+		if (fileInput.file) {
+			form.append("extra_images[]", fileInput.file);
+		}
+	});
+
+	filesAttachment.forEach((fileInput) => {
+		if (fileInput.file) {
+			form.append("attachment[]", fileInput.file);
+		}
+	});
+
+
+
+
+
 	try {
 
 		const response = await customFetch({
@@ -330,6 +361,7 @@ const handleaddItem = async (e) => {
   			} 
 		  } else {
 			toast.error(JSON.stringify(response?.error?.data));
+			setAddingItem(false);
 		  }
 
 		}
@@ -629,6 +661,28 @@ const handleaddItem = async (e) => {
              
             </div>
 
+
+
+
+
+			<AddFilesComponent 
+				custom_id = "add_extra_images"
+				title =  "extra_images"
+				filesExtraImages={filesExtraImages} 
+				setFilesExtraImages={setFilesExtraImages} 
+				fileInputRefsExtraImages={fileInputRefsExtraImages} 
+				only_image={true} 
+			/>
+
+
+			<AddFilesComponent 
+				custom_id = "add_attachment"
+				title = "attachment"
+				filesExtraImages={filesAttachment} 
+				setFilesExtraImages={setFilesAttachment} 
+				fileInputRefsExtraImages={fileInputRefsFilesAttachment} 
+				only_image={false} 
+			/>
 
 
 

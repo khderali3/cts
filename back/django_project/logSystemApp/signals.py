@@ -115,7 +115,7 @@ def log_model_edit(sender, instance, **kwargs):
 
     except Exception as e:
         # Object is new, will be handled in post_save
-        print('error2', str(e))
+      pass
 
 
 

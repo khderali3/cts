@@ -132,34 +132,7 @@ class ProjectTypeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'error': str(e)})  # Return error to serializer instead of raising 500 error
         
 
-        # def create(self, validated_data):
-        #     obj = super().create(validated_data)
-        #     request = self.context.get('request')
-        #     extra_image_files = request.FILES.getlist('extra_images[]')  if request else []
-        #     extra_images_list = []
-        #     for extra_image in extra_image_files:
-        #         # extra_image_obj = ProjectTypeExtraImages.objects.create( project_type=obj, file=extra_image)
-        #         extra_image_obj = ProjectTypeExtraImages(project_type=obj, file=extra_image)
-        #         try:
-        #             extra_image_obj.full_clean()
-        #         except ValidationError as e:
-        #             raise serializers.ValidationError({'extra_images': str(e)})
-        #         extra_image_obj.save()
-        #         extra_images_list.append(extra_image_obj)
-
-        #     attachment_files = request.FILES.getlist("attachment[]") if request else []
-        #     attachment_list = []
-        #     for attachment in attachment_files:
-        #         attachment_obj = ProjectTypeAttachment(file=attachment, project_type=obj)
-        #         try:
-        #             attachment_obj.full_clean()
-        #         except ValidationError as e:
-        #             raise serializers.ValidationError({'extra_images': str(e)})
-        #         attachment_obj.save()
-        #         attachment_list.append(attachment_obj)
-        #     obj.attachments = attachment_list
-        #     obj.extra_images = extra_images_list
-        #     return obj
+ 
 
 
 

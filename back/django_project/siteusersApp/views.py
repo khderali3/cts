@@ -53,6 +53,10 @@ class ProductDetailView(APIView):
 
 
 
+
+
+
+
 Timeline = namedtuple('Timeline', ('home_section',
                                     'about_us',
                                     'why_us',

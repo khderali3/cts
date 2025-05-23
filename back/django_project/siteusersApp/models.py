@@ -1,7 +1,26 @@
 from django.db import models
 from django.utils.text import slugify
 # Create your models here.
+from django.core.exceptions import ValidationError
 
+from datetime import datetime
+
+
+
+
+
+
+def validate_image(value):
+    if not value.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+        raise ValidationError("Only image files (.png, .jpg, .jpeg, .gif) are allowed.")
+
+
+def validate_file_or_image(value):
+    if not value.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.pdf', '.docx', '.txt')):
+        raise ValidationError("Only image files (.png, .jpg, .jpeg, .gif) and document files (.pdf, .docx, .txt) are allowed.")
+
+
+from os.path  import basename
 
 class HomeSection(models.Model):
     home_sec_title = models.TextField(blank=True, null=True, db_index=True, unique=True)
@@ -113,13 +132,56 @@ class Product(models.Model):
 
     def save(self , *args , **kwargs):
         if not self.prod_slog:
-            data_to_slug = f"{self.id}_{self.prod_name}"
+            time_now = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+            data_to_slug = f"{time_now}_{self.prod_name}"
             self.prod_slog = slugify(data_to_slug)
         super(Product , self).save(*args, **kwargs)
+
+
+
+
+
+
+
 
     def __str__(self):
         return f"{self.id},{self.prod_name}"
     
+
+
+
+
+class ProductExtraImages(models.Model):
+    product = models.ForeignKey(Product, related_name='ProductExtraImages_product', on_delete=models.CASCADE, blank=True, null=True)
+    file = models.FileField(upload_to='Product_extra_images', validators=[validate_image])
+    file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
+    created_data = models.DateTimeField(auto_now_add=True) 
+
+    def save(self, *args, **kwargs):
+        if self.file :
+            self.file_name = basename(self.file.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.id}, {self.file_name}" 
+ 
+
+
+class ProductAttachment(models.Model):
+    product = models.ForeignKey(Product, related_name='ProductAttachment_product', on_delete=models.CASCADE, blank=True, null=True)
+    file = models.FileField(upload_to='ProjectType/attachment/', validators=[validate_file_or_image])
+    file_name = models.CharField(max_length=255, editable=False, null=True, blank=True)
+    created_data = models.DateTimeField(auto_now_add=True) 
+
+    def save(self, *args, **kwargs):
+        if self.file :
+            self.file_name = basename(self.file.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.id} - {self.file_name}" 
+
+
 
 
 

@@ -1,9 +1,122 @@
 
 from siteusersApp.models import (  HomeSection, AboutUs, WhyUs, FeatureWhyUs, ProductSection,
 								  Product, OurServicesSection, Service, OurVision , Focus, OurClientSection, OurClient,
-								  CompnayIfRight, Footer, SocialMedia, ProjectTypeSection
+								  CompnayIfRight, Footer, SocialMedia, ProjectTypeSection, ProductExtraImages, ProductAttachment
 								  )
 from rest_framework import serializers
+
+
+
+class ProductAttachmentSerializer(serializers.ModelSerializer):
+	file = serializers.FileField(required=False)
+	
+	class Meta:
+		model = ProductAttachment
+		fields = "__all__"
+		read_only_fields = ['id']
+
+
+	def validate(self, attrs):
+		request = self.context.get('request')
+		files = request.FILES.getlist('file[]')
+		if not files:
+			raise serializers.ValidationError({"file[]": "This field is required and cannot be empty."}) 
+
+		return attrs
+	
+	def create(self, validated_data):
+		request = self.context.get('request')
+		files = request.FILES.getlist('file[]') if request else []
+
+		attachments = []
+		for file in files:
+			attachment = ProductAttachment.objects.create(**validated_data, file=file)
+			attachments.append(attachment)
+
+		return attachments
+
+
+
+
+class ProductExtraImagesSerializer(serializers.ModelSerializer):
+	file = serializers.FileField(required=False)
+	class Meta:
+		model = ProductExtraImages
+		fields = "__all__"
+		read_only_fields = ['id']
+
+	def validate(self, attrs):
+		request = self.context.get('request')
+		files = request.FILES.getlist('file[]')
+		if not files:
+			raise serializers.ValidationError({"file[]": "This field is required and cannot be empty."}) 
+
+		return attrs
+	
+	def create(self, validated_data):
+		request = self.context.get('request')
+		files = request.FILES.getlist('file[]') if request else []
+
+		attachments = []
+		for file in files:
+			attachment = ProductExtraImages.objects.create(**validated_data, file=file)
+			attachments.append(attachment)
+
+		return attachments
+
+
+from django.core.exceptions import ValidationError
+from django.db import transaction
+
+class ProductSerializer(serializers.ModelSerializer):
+	extra_images = ProductExtraImagesSerializer(many=True, read_only=True, source="ProductExtraImages_product")
+	attachments = ProductAttachmentSerializer(many=True, read_only=True,  source="ProductAttachment_product")
+
+ 
+	class Meta:
+		model = Product
+		fields =  "__all__"
+		read_only_fields  = ['id','prod_slog', 'prod_created_date', 'prod_updated_date' ]	
+
+
+	def create(self, validated_data):
+		request = self.context.get('request')
+		extra_image_files = request.FILES.getlist('extra_images[]') if request else []
+		attachment_files = request.FILES.getlist("attachment[]") if request else []
+
+		try:
+			with transaction.atomic():  # Ensures all operations are either committed or rolled back
+				obj = super().create(validated_data)
+				
+				extra_images_list = []
+				for extra_image in extra_image_files:
+					extra_image_obj = ProductExtraImages(product=obj, file=extra_image)
+					extra_image_obj.full_clean()  # Validate before saving
+					extra_image_obj.save()
+					extra_images_list.append(extra_image_obj)
+
+				attachment_list = []
+				for attachment in attachment_files:
+					attachment_obj = ProductAttachment(file=attachment, product=obj)
+					attachment_obj.full_clean()  # Validate before saving
+					attachment_obj.save()
+					attachment_list.append(attachment_obj)
+
+				obj.attachments = attachment_list  # Use set() for ManyToMany fields
+
+
+				obj.extra_images = extra_images_list
+
+				return obj  # Successfully return object after all operations
+
+		except ValidationError as e:
+			raise serializers.ValidationError({'error': str(e)})  # Return error to serializer instead of raising 500 error
+
+
+
+
+
+
 
 
 
@@ -78,11 +191,7 @@ class ProductSectionSerializer(serializers.ModelSerializer):
 
 
 
-class ProductSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Product
-		fields =  "__all__"
-		read_only_fields  = ['id','prod_slog', 'prod_created_date', 'prod_updated_date' ]	
+
 
 
 

@@ -49,14 +49,6 @@ const ProjectDetailsComponent = async ({ params }) => {
 
   
 
-  // if (loading) {
-  //   return (
-  //     <div className="products-info d-flex justify-content-center align-items-center">
-  //       <p className="fs-6 text-light text-center">Loading project...</p>
-  //     </div>
-  //   );
-  // }
-
   if (!data) {
     return (
       <div className="products-info d-flex justify-content-center align-items-center">
@@ -98,7 +90,7 @@ const ProjectDetailsComponent = async ({ params }) => {
                   
                   <div className="attachments ">
                     <hr />  
-                    <p className="text-light  fs-8  mb-0 ">Attachments:</p>
+                    <p className="text-light  fs-8  mb-0 ">{locale === 'ar' ? 'المرفقات' : 'Attachments'} : </p>
                       {data?.files.map((file, index) => (
                           <div key={file.id}>
                             <a href={file.file} target="_blank" rel="noopener noreferrer" className="text-decoration-none">

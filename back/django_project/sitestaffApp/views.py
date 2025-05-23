@@ -2,13 +2,14 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from siteusersApp.models import (HomeSection, AboutUs,WhyUs, FeatureWhyUs, ProductSection, Product,
                                   OurServicesSection, Service, OurVision, Focus, OurClientSection, OurClient, CompnayIfRight,
-                                  Footer, SocialMedia, ProjectTypeSection
+                                  Footer, SocialMedia, ProjectTypeSection, ProductExtraImages, ProductAttachment
                                   )
 from .my_serializers import (HomeSectionSerializer, AboutUsSectionSerializer,
                               WhyUsSectionSerializer, FeatureWhyUsSectionSerializer, 
                               ProductSectionSerializer, ProductSerializer, OurServicesSectionSerializer, ServiceSerializer,
                               OurVisionSerializer, FocusSecSerializer, OurClientSectionSerializer, OurClientSerializer,
-                              CompnayIfRightSecSerializer, FooterSectionSerializer, SocialMediaSerializer, ProjectTypeSectionSerializer
+                              CompnayIfRightSecSerializer, FooterSectionSerializer, SocialMediaSerializer, ProjectTypeSectionSerializer,
+                              ProductExtraImagesSerializer, ProductAttachmentSerializer
                                 )
 
 from rest_framework.response import Response
@@ -20,6 +21,93 @@ from rest_framework import status
 #         return request.user and (request.user.is_staff or request.user.is_superuser)
     
 from ticketSystemStaffApp.my_utils import IsStaffOrSuperUser, HasSiteManagementPermission
+
+
+class ProductAttachmentView(APIView):
+    def post(self, request, product_id):
+
+        data = request.data.copy()
+        data['product'] = product_id
+
+        serializer = ProductAttachmentSerializer(data=data, context={'request' : request})
+        if serializer.is_valid():
+            list_files = serializer.save()
+            return Response(ProductAttachmentSerializer(list_files, many=True, context={'request': request}).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def get(self, request, product_id, id=None):
+        if id:
+            try:
+                obj = ProductAttachment.objects.get(id=id)
+                serializer = ProductAttachmentSerializer(obj, context={'request' : request})
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Exception as e :
+                return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        else :
+            list_obj = ProductAttachment.objects.filter(product=product_id)
+            serializer = ProductAttachmentSerializer(list_obj, many=True, context={'request' : request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+    def delete(self, request,product_id, id):
+        try:
+            obj = ProductAttachment.objects.get(id=id)
+            obj.delete()
+            return Response({'message' : 'object has been deleted'}, status=status.HTTP_202_ACCEPTED)
+        except Exception as e :
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+class ProductExtraImagesView(APIView):
+    def post(self, request, product_id):
+
+        data = request.data.copy()
+        data['product'] = product_id
+
+        serializer = ProductExtraImagesSerializer(data=data, context={'request' : request})
+        if serializer.is_valid():
+            list_files = serializer.save()
+            return Response(ProductExtraImagesSerializer(list_files, many=True, context={'request': request}).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def get(self, request, product_id, id=None):
+        if id:
+            try:
+                obj = ProductExtraImages.objects.get(id=id)
+                serializer = ProductExtraImagesSerializer(obj, context={'request' : request})
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Exception as e :
+                return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        else :
+            list_obj = ProductExtraImages.objects.filter(product=product_id)
+            serializer = ProductExtraImagesSerializer(list_obj, many=True, context={'request' : request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+    def delete(self, request,product_id, id):
+        try:
+            obj = ProductExtraImages.objects.get(id=id)
+            obj.delete()
+            return Response({'message' : 'object has been deleted'}, status=status.HTTP_202_ACCEPTED)
+        except Exception as e :
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        
+
+
+
+
+
+
+
 
 
 

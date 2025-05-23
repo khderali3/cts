@@ -1,6 +1,6 @@
 from .models import (HomeSection, AboutUs, WhyUs, FeatureWhyUs, ProductSection,
                       Product , Service, OurServicesSection, OurVision, Focus,
-					  OurClient, OurClientSection, CompnayIfRight, Footer, SocialMedia 
+					  OurClient, OurClientSection, CompnayIfRight, Footer, SocialMedia , ProductAttachment, ProductExtraImages
                       )
 
 
@@ -111,10 +111,59 @@ class WhyUsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+class ProductAttachmentSerializer(serializers.ModelSerializer):
+	file = serializers.FileField(required=False)
+	
+	class Meta:
+		model = ProductAttachment
+		fields = "__all__"
+		read_only_fields = ['id']
+
+ 
+
+class ProductExtraImagesSerializer(serializers.ModelSerializer):
+	file = serializers.FileField(required=False)
+	class Meta:
+		model = ProductExtraImages
+		fields = "__all__"
+		read_only_fields = ['id']
+
+ 
+ 
+
+
+
+
+
 class ProductSerializer(serializers.ModelSerializer):
-   class Meta:
-    model=Product
-    fields = '__all__'
+   
+	extra_images = ProductExtraImagesSerializer(many=True, read_only=True, source="ProductExtraImages_product")
+	attachments = ProductAttachmentSerializer(many=True, read_only=True,  source="ProductAttachment_product")
+
+	class Meta:
+		model=Product
+		fields = '__all__'
+
+
+
+
+
+
+
+
+
 
 
 class ProductSectionSerializer(serializers.ModelSerializer):
