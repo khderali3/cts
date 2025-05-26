@@ -19,6 +19,7 @@ export default  {
     Select_All : 'تحديد الكل',
 
     Select_this_log : 'تحديد هذا السجل',
+    ip_address : 'عنوان الآي بي',
 
  
 }

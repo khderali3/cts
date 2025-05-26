@@ -103,14 +103,49 @@ class ProductSerializer(serializers.ModelSerializer):
 					attachment_list.append(attachment_obj)
 
 				obj.attachments = attachment_list  # Use set() for ManyToMany fields
-
-
 				obj.extra_images = extra_images_list
 
 				return obj  # Successfully return object after all operations
 
 		except ValidationError as e:
 			raise serializers.ValidationError({'error': str(e)})  # Return error to serializer instead of raising 500 error
+
+
+
+
+	def update(self, obj, validated_data):
+
+		request = self.context.get('request')
+		extra_image_files = request.FILES.getlist('extra_images[]') if request else []
+		attachment_files = request.FILES.getlist("attachment[]") if request else []
+
+		try:
+			with transaction.atomic():  # Ensures all operations are either committed or rolled back
+				obj = super().update(obj, validated_data)
+				
+				extra_images_list = []
+				for extra_image in extra_image_files:
+					extra_image_obj = ProductExtraImages(product=obj, file=extra_image)
+					extra_image_obj.full_clean()  # Validate before saving
+					extra_image_obj.save()
+					extra_images_list.append(extra_image_obj)
+
+				attachment_list = []
+				for attachment in attachment_files:
+					attachment_obj = ProductAttachment(file=attachment, product=obj)
+					attachment_obj.full_clean()  # Validate before saving
+					attachment_obj.save()
+					attachment_list.append(attachment_obj)
+
+				obj.attachments = attachment_list  # Use set() for ManyToMany fields
+				obj.extra_images = extra_images_list
+
+				return obj 
+
+		except ValidationError as e:
+			raise serializers.ValidationError({'error': str(e)})  # Return error to serializer instead of raising 500 error
+			
+
 
 
 

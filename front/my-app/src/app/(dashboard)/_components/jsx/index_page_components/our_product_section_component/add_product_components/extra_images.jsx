@@ -3,7 +3,7 @@
 
 import { useState, useRef } from "react";
 
-import { ProjectFileList } from "../edit_product/files_list";
+import { FilesList } from "../edit_product/files_list";
 
 import { useTranslations } from "next-intl";
 
@@ -15,7 +15,7 @@ export const AddFilesComponent = ({
     fileInputRefsExtraImages, 
     only_image=false,
     isEdit_form=false,
-    editProject_id=null,
+    product_id=null,
     files_type // or "attachment"
 
     }) => {
@@ -64,13 +64,13 @@ return(
     <div>{title}</div>
 
 
-    {isEdit_form && editProject_id && <ProjectFileList project_id={editProject_id} files_type={files_type} /> }
+    {isEdit_form && product_id && <FilesList product_id={product_id} files_type={files_type} /> }
 
- 
 
     {/* Render file inputs dynamically */}
     {filesExtraImages.map((fileInput, index) => (
     <div className="card  p-2 m-2 shadow-sm border rounded" key={fileInput.id}>
+
         <div className="form-group">
         <div className="mb-3">
             <label 

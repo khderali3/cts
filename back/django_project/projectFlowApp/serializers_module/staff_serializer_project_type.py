@@ -138,18 +138,7 @@ class ProjectTypeSerializer(serializers.ModelSerializer):
 
 
     def update(self, obj, validated_data):
-        # obj = super().update(obj, validated_data)  # Update StepTemplateNote instance
-        # request = self.context.get("request")
 
-        # extra_image_files = request.FILES.getlist('extra_images[]')  if request else []
-        # for extra_image in extra_image_files:
-        #     ProjectTypeExtraImages.objects.create( project_type=obj, file=extra_image)
-
-        # attachment_files = request.FILES.getlist("attachment[]") if request else []
-        # for attachment in attachment_files:
-        #     ProjectTypeAttachment.objects.create(file=attachment, project_type=obj)
-
-        # return obj
         request = self.context.get('request')
         extra_image_files = request.FILES.getlist('extra_images[]') if request else []
         attachment_files = request.FILES.getlist("attachment[]") if request else []

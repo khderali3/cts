@@ -6,32 +6,31 @@ import { useCustomFetchMutation } from "@/app/(dashboard)/_components/redux_staf
 import { toast } from "react-toastify"
 import { getErrorMessage } from "@/app/public_utils/utils"
 
-import { AddFilesComponent } from "../add_project_components/extra_images"
+ import { AddFilesComponent } from "../add_product_components/extra_images"
 
  
-import { FormSearchInput } from "../../../project_flow_template/input_search_templates/page"
+// import { FormSearchInput } from "../../../project_flow_template/input_search_templates/page"
 
 import {useLocale} from "next-intl"
 
 export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
     const locale = useLocale()
-    const t = useTranslations('dashboard.projectFlow.projectType.form_add_or_edit')
+    const t = useTranslations('dashboard.site_managment.our_product.list_manager')
     const [customFetch] = useCustomFetchMutation()
-    const [data, setData] = useState({
-        project_name:'',
-        project_name_hint: "",
-        project_description: '',
-        project_name_ar: '',
-        project_name_hint_ar: '',
-        project_description_ar: '',
-        main_image: '',
-        is_published:false,
-        is_auto_clone_template: false,
-        default_template_to_clone: ''
+
+
+    const [editingItem, setEditingItem] = useState({
+      id:null,
+      prod_name:'',
+      prod_name_hint:'',
+      prod_details:'',
+      prod_name_ar:'',
+      prod_name_hint_ar:'',
+      prod_details_ar:'',
+      prod_image: ''
      })
 
-     const [projectMainImageSelected, setProjectMainImageSelected] = useState(null)
-     const mainImagefileInputRef = useRef(null);
+ 
 
     const [filesExtraImages, setFilesExtraImages] = useState([{ id: 1, file: null }]);
     const fileInputRefsExtraImages = useRef([]);
@@ -44,163 +43,170 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
      
 
  
-    const handleChangeSelectedClonedTemplate =  (template_id) => {
+  const [editSelectedFile, setEditSelectedFile] = useState(null)
+  const editFileInputRef = useRef(null)
 
-        setData((prevState) => ({
-          ...prevState,
-          default_template_to_clone: template_id,
-          }));
+		const handleChangeEditingItem = (e) => {
+ 			const { name, value, type, files } = e.target;
 
-    }
+			if (type === "file") {
+			  // If the input is a file, update the selectedFile state
+			  setEditSelectedFile(files[0]);
+			} else {
+			  // If the input is not a file, update the data state
+			  setEditingItem((prevState) => ({
+				...prevState,
+				[name]: value,
+			  }));
+			}
 
-
-
-
-
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-
- 
-    const fieldsToCheck = [
-        'project_name',
-        'project_name_hint',
-        'project_description',
-        'project_name_ar',
-        'project_name_hint_ar',
-        'project_description_ar'
-    ];
-
-    const emptyFields = Object.entries(data)
-        .filter(([key, value]) => fieldsToCheck.includes(key) && !value.trim()) // Check only specified fields
-        .map(([key]) => key); // Extract field names
-
-    if (emptyFields.length > 0) {
-        if(locale === 'ar'){
-        toast.error(`جميع الحقول مطلوبة: ${emptyFields.join(", ")}`);
-
-        } else {
-        toast.error(`Please fill in all fields: ${emptyFields.join(", ")}`);
-
-        }
-        return;
-    }
-
-
-    try{
-      setIsSubmitting(true)
-
-      const formData = new FormData()
-
-      Object.entries(data).forEach(([key, value]) => {
-        if (
-          key === "project_name" ||  
-          key === "project_name_hint" ||  
-          key === "project_description" ||  
-          key === "project_name_ar" ||  
-          key === "project_name_hint_ar" ||  
-          key === "project_description_ar" ||  
-          key === "is_published" ||
-          key === 'is_auto_clone_template'
-        ) {
-          formData.append(key, value);
-        }
-      });
-
-			if(data?.default_template_to_clone) {
-				formData.append("default_template_to_clone", data?.default_template_to_clone  );
 			}
 
 
 
-
-
-
-      if (projectMainImageSelected) {
-        formData.append("main_image", projectMainImageSelected);
+ 
+  const handleSubmit = async (e) => {
+  // setAddingItem(true);
+  e.preventDefault();
+   const form = new FormData();
+ 
+  for (const key in editingItem) {
+    if (editingItem.hasOwnProperty(key)) {
+      if(key !== 'id' && key !== 'prod_image') {
+        form.append(key, editingItem[key]);
       }
-
-      filesExtraImages.forEach((fileInput) => {
-        if (fileInput.file) {
-          formData.append("extra_images[]", fileInput.file);
-        }
-      });
-
-      filesAttachment.forEach((fileInput) => {
-        if (fileInput.file) {
-          formData.append("attachment[]", fileInput.file);
-        }
-      });
-
-
-
  
-
-
-      const response = await customFetch({
-         url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/project_type/${id}/`,
-         method: "PUT",
-         body: formData, 
-       });
-
-      if(response && response.data){
-
-       if(locale === 'ar'){
-        toast.success('تم تحديث البيانات بنجاح')
-
-       } else {
-        toast.success('your data has been changed')
-
-       }
-
-
-
-        onClose()
-        if(handleReloadFlag){handleReloadFlag()}
-
-        if (mainImagefileInputRef.current) {
-          mainImagefileInputRef.current.value = ""; // Reset the file input
-        }
+    }}
  
- 
-
-      } else{
-        setIsSubmitting(false)
-        console.log('response', response)
-        if (response?.error?.data) {
-          toast.error(getErrorMessage(response.error.data));
-        }
-      }
-
-
-    } catch(error){
-      console.log('error', error)			
-      toast.error(getErrorMessage(error.data || error.message) || "Something went wrong");
-    } finally{ setIsSubmitting(false) }
-
+  if(editSelectedFile instanceof File  ) {
+    form.append("prod_image", editSelectedFile);
   }
 
+  filesExtraImages.forEach((fileInput) => {
+    if (fileInput.file) {
+      form.append("extra_images[]", fileInput.file);
+    }
+  });
+
+  filesAttachment.forEach((fileInput) => {
+    if (fileInput.file) {
+      form.append("attachment[]", fileInput.file);
+    }
+  });
 
 
-
-
-
-
-
-     const handleChange = (e) => {
-        const { name, value, type, files } = e.target;
+  
+ 
+  if (
     
-        if (type === "file") {
-          // If the input is a file, update the selectedFile state
-          setProjectMainImageSelected(files[0]);
-        } else {
-          // If the input is not a file, update the data state
-          setData((prevState) => ({
-          ...prevState,
-          [name]: value,
-          }));
-        }   
+  (editingItem.prod_name && editingItem.prod_name.trim() !== '') &&
+  (editingItem.prod_name_hint && editingItem.prod_name_hint.trim() !== '') &&
+  (editingItem.prod_details && editingItem.prod_details.trim() !== '')&&
+  (editingItem.prod_name_ar && editingItem.prod_name_ar.trim() !== '')&&
+  (editingItem.prod_name_hint_ar && editingItem.prod_name_hint_ar.trim() !== '')&&
+  (editingItem.prod_details_ar && editingItem.prod_details_ar.trim() !== '')
+ 
+ 
+   ){ 
+  try {
+ 
+    const response = await customFetch({
+      url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/product/${editingItem.id}/`,
+      method: "PUT",
+      body: form, // Send FormData as the body
+    });
+   
+    if( response && response.data){
+ 
+      if(locale === "ar") {
+        toast.success("تم تحديث المنتج بنجاح");
+ 
+      } else {
+        toast.success("your item been Updated ");
+ 
       }
+
+
+
+        if (editFileInputRef.current) {
+          editFileInputRef.current.value = ""; // Reset the file input
+        }
+
+      
+			// Clear extra images inputs
+			fileInputRefsExtraImages.current.forEach((input) => {
+			if (input) input.value = "";
+			});
+
+			// Clear attachment inputs
+			fileInputRefsFilesAttachment.current.forEach((input) => {
+			if (input) input.value = "";
+			});
+
+      onClose()
+      if(handleReloadFlag){handleReloadFlag()}
+
+
+
+    } else{
+      if(locale === "ar"){
+        toast.error("حدث خطأ رقم 1 أثناء تحديث المنتج . يرجى المحاولة مجدداً");
+ 
+      }else {
+        toast.error("Error submitting form 1.");
+ 
+      }
+ 
+      
+      if (response?.error?.data?.detail) {
+        if(response.error.data.detail === "Permission denied for this operation."){
+          if(locale === "ar") {
+          toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
+    
+          } else {
+          toast.error(response.error.data.detail);
+          }
+    
+        } 
+        } else {
+        toast.error(JSON.stringify(response?.error?.data));
+        }
+    }
+   
+    } catch (error) {
+    console.error("Error submitting form:", error);
+ 
+    if(locale === "ar"){
+      toast.error("حدث خطأ رقم 2 أثناء تحديث المنتج . يرجى المحاولة مجدداً");
+ 
+    } else {
+      toast.error("Error submitting form2.");
+ 
+    }
+    }
+ 
+   } else {
+  if(locale === "ar"){
+    toast.error("كافة الحقول مطلوبة ");
+ 
+  } else {
+    toast.error("Error. all fields are required ");
+ 
+  }
+ 
+   }
+ 
+  
+    
+ };
+ 
+ 
+
+
+
+
+
+ 
 
   const fetchData = async (pageUrl) => {
     try {
@@ -212,7 +218,7 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
       }, 
       });
        if( response && response.data) {
-        setData(response.data)
+        setEditingItem(response.data)
       } else{
         console.log(response)
       }
@@ -224,8 +230,10 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
 
   useEffect(() => {
+    if(id){
+      fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/product/${id}/`)
 
-    fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/project_type/${id}`)
+    }
   }, [id]);
 
 
@@ -234,325 +242,328 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
 
 
 
-  useEffect(() => {
-    const modalElement = document.getElementById('editModal_project');
+  // useEffect(() => {
+  //   const modalElement = document.getElementById('editModal_product');
   
-    if (modalElement) {
+  //   if (modalElement) {
      
-      const modalInstance = new window.bootstrap.Modal(modalElement, {
-        backdrop: true,  
-        keyboard: true,  
-      });
+  //     const modalInstance = new window.bootstrap.Modal(modalElement, {
+  //       backdrop: true,  
+  //       keyboard: true,  
+  //     });
   
-      modalInstance.show();
-  
- 
-      const handleModalClose = () => {
-        if(onClose){
-          onClose();  
-          document.activeElement?.blur(); 
-          document.body.style.overflow = ""; // Restore scrolling
- 
-        }
-      };
+  //     modalInstance.show();
   
  
-      modalElement.addEventListener("hidden.bs.modal", handleModalClose);
+  //     const handleModalClose = () => {
+  //       if(onClose){
+  //         onClose();  
+  //         document.activeElement?.blur(); 
+  //         document.body.style.overflow = ""; // Restore scrolling
+ 
+  //       }
+  //     };
   
  
-      return () => {
-        modalElement.removeEventListener("hidden.bs.modal", handleModalClose);
-        modalInstance.dispose();
-        document.body.style.overflow = ""; // Ensure scrolling is restored
+  //     modalElement.addEventListener("hidden.bs.modal", handleModalClose);
+  
+ 
+  //     return () => {
+  //       modalElement.removeEventListener("hidden.bs.modal", handleModalClose);
+  //       modalInstance.dispose();
+  //       document.body.style.overflow = ""; // Ensure scrolling is restored
 
-      };
-    }
-  }, [id, onClose]);
+  //     };
+  //   }
+  // }, [id, onClose]);
    
  
 
+
+useEffect(() => {
+  const timeout = setTimeout(() => {
+    const modalElement = document.getElementById('editModal_product');
+    if (!modalElement) return;
+
+    const modalInstance = new window.bootstrap.Modal(modalElement, {
+      backdrop: true,
+      keyboard: true,
+    });
+
+    modalInstance.show();
+
+    const handleModalClose = () => {
+      document.activeElement?.blur();
+      // document.body.style.overflow = "";
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+
+      onClose?.();
+
+
+    };
+
+    modalElement.addEventListener("hidden.bs.modal", handleModalClose);
+
+    // Cleanup
+    return () => {
+      modalElement.removeEventListener("hidden.bs.modal", handleModalClose);
+      modalInstance.dispose();
+      // document.body.style.overflow = "";
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+
+
+
+
+    };
+  }, 0);
+
+  return () => clearTimeout(timeout);
+}, [id, onClose]);
+
+
+
+
+
+
+
+
+
+
+
+
+
     return (
 
- 
-        <div
-        className="modal fade  modal-lg   "
-        id="editModal_project"
-        tabIndex="1"
-        aria-labelledby="editModal_projectLabel"
+       <div
+        className="modal fade modal-lg "
+        id="editModal_product"
+        tabIndex="-1"
+        aria-labelledby="editModal_productLabel"
         aria-hidden="true"
       >
-        <div className="modal-dialog        ">
+        <div className="modal-dialog   ">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="editModal_projectLabel">{t('edit_project_type')}</h5>
+              <h5 className="modal-title" id="editModal_productLabel">{t('form_edit.title')}</h5>
               <button
                 type="button"
                 className="btn-close"
                 data-bs-dismiss="modal"
-                // aria-label="Close"
- 
+                aria-label="Close"
               ></button>
             </div>
 
 
 
-          <div className="modal-body">
+
+			<form   className="   modal-body    "     >
+
+			
+			<div className="mb-3">
+				<label htmlFor="prod_name" className="form-label">
+				{t('form_edit.Product_Name')}
+				</label>
+				<input
+					type="text"
+					className="form-control"
+					id="prod_name"
+					name="prod_name"
+					value={editingItem?.prod_name  || ""}
+					onChange={handleChangeEditingItem}
+					dir='ltr'
 
 
-            <form   className=" p-2 "     >
-
-            
-              
-              <div className="mb-3">
-                  <label htmlFor="project_name_edit" className="form-label small">
-                  {t('project_name')}
-                  </label>
-                  <input
-                      type="text"
-                      className="form-control form-control-sm "
-                      id="project_name_edit"
-                      name="project_name"
-                      value={data.project_name  || ""}
-                      onChange={handleChange}
-                      dir='ltr'
-
-
-                  />
-              </div>
-
-
-
-
-              <div className="mb-3">
-                  <label htmlFor="project_name_hint_edit" className="form-label small">
-                       {t('project_name_hint')}
-                  </label>
-                  <input
-                      type="text"
-                      className="form-control  form-control-sm"
-                      id="project_name_hint_edit"
-                      name="project_name_hint"
-                      value={data.project_name_hint  || ""}
-                      onChange={handleChange}
-                      dir='ltr'
-
-
-                  />
-              </div>
-
-              <div className="mb-3">
-                  <label htmlFor="project_description_edit" className="form-label small">
-                    {t('details')}
-                  </label>
-                  <textarea 
-                      className="form-control  form-control-sm" 
-                      id="project_description_edit"
-                      name="project_description"
-                      value={data.project_description  || ""}
-                      onChange={handleChange}
-                      dir='ltr'
-                  >
-
-                  </textarea>
-
-              </div>
-
-
-
-
-              <div className="mb-3">
-                  <label htmlFor="project_name_ar_edit" className="form-label small">
-                   {t('project_name_ar')}
-                  </label>
-                  <input
-                      type="text"
-                      className="form-control   form-control-sm text-end"
-                      dir="rtl"
-                      id="project_name_ar_edit"
-                      name="project_name_ar"
-                      value={data.project_name_ar  || ""}
-                      onChange={handleChange}
-                  />
-              </div>
-
-
-              <div className="mb-3">
-                  <label htmlFor="project_name_hint_ar_edit" className="form-label small">
-                   {t('project_name_hint_ar')}
-                  </label>
-                  <input
-                      type="text"
-                      className="form-control   form-control-sm text-end"
-                      dir='rtl'
-                      id="project_name_hint_ar_edit"
-                      name="project_name_hint_ar"
-                      value={data.project_name_hint_ar  || ""}
-                      onChange={handleChange}
-
-
-                  />
-              </div>
-
-              <div className="mb-3">
-                  <label htmlFor="project_description_ar_edit" className="form-label small">
-                     {t('details_ar')}
-                  </label>
-                  <textarea 
-                      className="form-control   form-control-sm text-end"
-                      dir='rtl' 
-
-                      id="project_description_ar_edit"
-                      name="project_description_ar"
-                      value={data.project_description_ar  || ""}
-                      onChange={handleChange}
-
-                  >
-
-                  </textarea>
-
-              </div>
-
-
-              <div className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
-                <input
-                    className="form-check-input small"
-                    type="checkbox"
-
-                    id="is_published_edit"
-                    checked={data?.is_published}
-                    // onChange={(e) => setIsPublished(e.target.checked)}
-                    onChange={ (e) => {
-                      setData((prevState) => ({
-                        ...prevState,
-                        is_published: e.target.checked,
-                        }));
-                      }
-                    }
-                />
-                <label className="form-check-label small " htmlFor="is_published_edit">
-                    {t('Published')}
-                </label>
-              </div>
-
-
-              <div className={` col-md-3  ms-2 ${locale === "ar" ? 'form-check-reverse' : 'form-check'} `}>
-                <input
-                  className="form-check-input small"
-                  type="checkbox"
-            
-                  id="is_auto_clone_template"
-                  checked={data?.is_auto_clone_template}
-                  onChange={ (e) => {
-                    setData((prevState) => ({
-                      ...prevState,
-                      is_auto_clone_template: e.target.checked,
-                      }));
-                    }
-                  }
-                />
-                <label className="form-check-label small " htmlFor="is_auto_clone_template">
-                   {t('auto_clone_template')}
-                </label>
-              </div>
-
-
-            {data?.is_auto_clone_template &&
-              <FormSearchInput  handleobjectIdChange={handleChangeSelectedClonedTemplate} objectId={data?.default_template_to_clone} lable={t('search_template_lable')} ph={t('search_template_ph')} />
-
-            }
+				/>
+			</div>
 
 
 
 
 
-              <div className="mb-3">
-                <label htmlFor="main_image_edit" className="form-label small">
-                  {t('main_image')}
-                </label>
-                <input
-                  type="file"
-                  className="form-control   form-control-sm"
-                  accept="image/*"
-                  id="main_image_edit"
-                  name="main_image"                
-                  onChange={handleChange}
-                  ref={mainImagefileInputRef}
-                />
+			<div className="mb-3">
+				<label htmlFor="prod_name_hint" className="form-label">
+				{t('form_edit.Product_Name_hint')}
+				</label>
+				<input
+					type="text"
+					className="form-control"
+					id="prod_name_hint"
+					name="prod_name_hint"
+					value={editingItem?.prod_name_hint  || ""}
+					onChange={handleChangeEditingItem}
+					dir='ltr'
 
-                {data?.main_image &&  <a href={data?.main_image || '/#'} target="_blank">  {t('current_image')}  </a> }
 
-              </div>
+				/>
+			</div>
+
+			<div className="mb-3">
+				<label htmlFor="prod_details" className="form-label">
+				{t('form_edit.Product_Details')}
+				</label>
+				<textarea 
+					className="form-control" 
+					rows="3"
+					id="prod_details"
+					name="prod_details"
+					value={editingItem?.prod_details  || ""}
+					onChange={handleChangeEditingItem}
+					dir='ltr'
+
+				>
+
+				</textarea>
+
+			</div>
+
+
+
+			
+			<div className="mb-3">
+				<label htmlFor="prod_name_ar" className="form-label">
+				{t('form_edit.Product_Name_ar')}
+				</label>
+				<input
+					type="text"
+					className="form-control text-end"
+					dir="rtl"
+					id="prod_name_ar"
+					name="prod_name_ar"
+					value={editingItem?.prod_name_ar  || ""}
+					onChange={handleChangeEditingItem}
+
+
+				/>
+			</div>
+
+
+			<div className="mb-3">
+				<label htmlFor="prod_name_hint_ar" className="form-label">
+				{t('form_edit.Product_Name_hint_ar')}
+				</label>
+				<input
+					type="text"
+					className="form-control text-end"
+					dir='rtl'
+					id="prod_name_hint_ar"
+					name="prod_name_hint_ar"
+					value={editingItem?.prod_name_hint_ar  || ""}
+					onChange={handleChangeEditingItem}
+				/>
+			</div>
+
+			<div className="mb-3">
+				<label htmlFor="prod_details_ar" className="form-label">
+				{t('form_edit.Product_Details_ar')}
+				</label>
+				<textarea 
+					className="form-control text-end"
+					dir='rtl' 
+					rows="3"
+					id="prod_details_ar"
+					name="prod_details_ar"
+					value={editingItem?.prod_details_ar  || ""}
+					onChange={handleChangeEditingItem}
+
+				>
+
+				</textarea>
+
+			</div>
+
+
+
+            <div className="mb-3">
+              <label htmlFor="prod_image" className="form-label">
+			  {t('form_edit.image')}
+              </label>
+              <input
+                type="file"
+                className="form-control"
+                accept="image/*"
+                id="prod_image"
+                name="prod_image"                
+                onChange={handleChangeEditingItem}
+              ref={editFileInputRef}
+              />
+              {editingItem?.prod_image &&  <a href={editingItem?.prod_image} target="_blank">  {t('form_edit.current_image')}  </a> }
+             
+            </div>
+
+
+
+
 
 
       <AddFilesComponent 
-          custom_id = "extra_images_edit_form"
-          title = {t('extra_images')}
+          custom_id = "extra_images_edit_form_product"
+          title = {locale === 'ar' ?  'صور إضافية': 'Extra Images'}
           filesExtraImages={filesExtraImages} 
           setFilesExtraImages={setFilesExtraImages} 
           fileInputRefsExtraImages={fileInputRefsExtraImages} 
           only_image={true}
           isEdit_form={true}
-          editProject_id={data?.id}
+          product_id={editingItem?.id}
           files_type={"extra_images"}
       />
 
+
       <AddFilesComponent 
-          custom_id = "attachment_edit"
-          title = {t('Attachments')}
+          custom_id = "extra_images_edit_form_product"
+          title = {locale === 'ar' ?  'المرفقات': 'attachment'}
           filesExtraImages={filesAttachment} 
           setFilesExtraImages={setFilesAttachment} 
           fileInputRefsExtraImages={fileInputRefsFilesAttachment} 
           only_image={false}
           isEdit_form={true}
 
-          editProject_id={data?.id}
+          product_id={editingItem?.id}
           files_type={"attachment"}
       />
 
 
 
-      
-
-
-
-     
 
 
 
 
-
-                </form>
-
-              </div>
+			</form>
 
 
 
- 
+
+
+
+
+
+
+
+
+
             <div className="modal-footer">
               <button
                 type="button"
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
- 
-
               >
-                {/* {t('form_edit.cancel')} */}
-                 {t('cancel')}
+                {t('form_edit.cancel')}
               </button>
               <button
                 type="button"
                 className="btn btn-primary"
                 onClick={handleSubmit}
-                // data-bs-dismiss="modal"
-                disabled={isSubmitting}
+                data-bs-dismiss="modal"
               >
-				{/* {editingItemId  ? t('form_edit.updating') : t('form_edit.update') } */}
-                 {t('update')}
+                {locale === 'ar' ? "حفظ التغييرات" : "Update"}
               </button>
+
             </div>
           </div>
         </div>
       </div>
+
  
 
 

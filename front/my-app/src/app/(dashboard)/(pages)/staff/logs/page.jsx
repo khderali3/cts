@@ -467,6 +467,7 @@ if (!hasPermissionToLogsView()  ) {
                             />
                           </th>
                           <th scope="col" style={{ width: "15%" }}>{t('User')}</th>
+                          <th scope="col" style={{ width: "8%" }}>{t('ip_address')}</th>
                           <th scope="col" style={{ width: "7%" }}>{t('Action')}</th>
                           <th scope="col" style={{ width: "12%" }}>{t('DB_Table')}</th>
                           <th scope="col" style={{ width: "8%" }}>{t('Record_ID')}</th>
@@ -497,6 +498,14 @@ if (!hasPermissionToLogsView()  ) {
                                 {obj?.user?.email}
                               </div>
                             </td>
+
+                            <td>
+                              <div style={{ overflowX: "auto", maxWidth: "100%", whiteSpace: "nowrap" }} title={obj?.ip_address}>
+                                {obj?.ip_address}
+                              </div>
+                            </td>
+
+
                             <td>
                               <div style={{ overflowX: "auto", maxWidth: "100%", whiteSpace: "nowrap" }} title={obj?.action_type}>
                                 {obj?.action_type}
@@ -616,6 +625,10 @@ if (!hasPermissionToLogsView()  ) {
                         </div>
 
                         <div className="mb-1"><strong>{t('User')} : </strong> {obj?.user?.email}</div>
+                        <div className="mb-1"><strong>{t('ip_address')} : </strong>  {obj?.ip_address}</div>
+
+
+              
                         <div className="mb-1"><strong>{t('Action')} : </strong> {obj?.action_type}</div>
                         <div className="mb-1"><strong>{t('DB_Table')} : </strong> {obj?.model_name}</div>
                         <div className="mb-1"><strong>{t('Record_ID')} : </strong> #{formatNumber(obj?.object_id)}</div>

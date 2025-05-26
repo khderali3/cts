@@ -43,7 +43,6 @@ export default function ListManagerProjectType() {
 
   const handleReloadFlag = () => {
  	setReloadFlag(!reloadFlag)
-	//  setSelectedItemToEeditId(null)
   }
 
   const isFirstLoad = useRef(true)

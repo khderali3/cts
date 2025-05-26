@@ -18,6 +18,7 @@ export default  {
     No_changes : 'No changes',
     Select_All : 'Select All',
     Select_this_log : 'Select this log',
+    ip_address : 'IP Address',
 
 
 

@@ -10,20 +10,21 @@ import { AddFilesComponent } from "./add_product_components/extra_images";
 
 import { useTranslations, useLocale } from "next-intl";
 
+import { EditModalComponent } from "./edit_product/edit_modal";
  
+import Link from "next/link";
 
 export default function ListManagerProduct() {
+
+
+
+const [selectedItemToEeditId, setSelectedItemToEeditId] = useState(null);
+
+
+
   const [data, setdata] = useState([]);
-  const [editingItem, setEditingItem] = useState({
-	id:null,
-	prod_name:'',
-	prod_name_hint:'',
-	prod_details:'',
-	prod_name_ar:'',
-	prod_name_hint_ar:'',
-	prod_details_ar:'',
-	prod_image: ''
-  });
+
+ 
 
   const t = useTranslations('dashboard.site_managment.our_product.list_manager')
   const locale = useLocale()
@@ -35,8 +36,7 @@ export default function ListManagerProduct() {
   const [selectedFile, setSelectedFile] = useState(null)
   const fileInputRef = useRef(null);
 
-  const [editSelectedFile, setEditSelectedFile] = useState(null)
-  const editFileInputRef = useRef(null);
+ 
 
 
 	const [filesExtraImages, setFilesExtraImages] = useState([{ id: 1, file: null }]);
@@ -58,127 +58,17 @@ export default function ListManagerProduct() {
   const [addingItem, setAddingItem] = useState(false)
   const [deletingItemId, setDeletingItemId] = useState(null); // Track which item is being deleted
 
-  const [editingItemId, setIditingItemId] = useState(null);  
+ 
   const [itemIdToDelete, setItemIdToDelete] = useState(null)
 
 
-  const handleEditingItem = async (e) => {
-	// setAddingItem(true);
-	e.preventDefault();
-	setIditingItemId(editingItem.id)
-	const form = new FormData();
+ 
 
-	for (const key in editingItem) {
-		if (editingItem.hasOwnProperty(key)) {
-			if(key !== 'id' && key !== 'prod_image') {
-				form.append(key, editingItem[key]);
-			}
+  const [reloadFlag, setReloadFlag] = useState(false)
 
-		}}
-
-	if(editSelectedFile instanceof File  ) {
-		form.append("prod_image", editSelectedFile);
-	}
-
-	if (
-		
-	(editingItem.prod_name && editingItem.prod_name.trim() !== '') &&
-	(editingItem.prod_name_hint && editingItem.prod_name_hint.trim() !== '') &&
-	(editingItem.prod_details && editingItem.prod_details.trim() !== '')&&
-	(editingItem.prod_name_ar && editingItem.prod_name_ar.trim() !== '')&&
-	(editingItem.prod_name_hint_ar && editingItem.prod_name_hint_ar.trim() !== '')&&
-	(editingItem.prod_details_ar && editingItem.prod_details_ar.trim() !== '')
-
-
-  ){ 
-	try {
-
-		const response = await customFetch({
-		  url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/product/${editingItem.id}/`,
-		  method: "PUT",
-		  body: form, // Send FormData as the body
-		});
-  
-		if( response && response.data){
-
-			if(locale === "ar") {
-				toast.success("تم تحديث المنتج بنجاح");
-
-			} else {
-				toast.success("your item been Updated ");
-
-			}
-
-
-		  fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/product/`)
-		  setEditingItem({
-			id:null,
-			prod_name:'',
-			prod_name_hint:'',
-			prod_details:'',
-			prod_name_ar:'',
-			prod_name_hint_ar:'',
-			prod_details_ar:'',
-			})
-		} else{
-			if(locale === "ar"){
-				toast.error("حدث خطأ رقم 1 أثناء تحديث المنتج . يرجى المحاولة مجدداً");
-
-			}else {
-				toast.error("Error submitting form 1.");
-
-			}
-
-			
-			if (response?.error?.data?.detail) {
-				if(response.error.data.detail === "Permission denied for this operation."){
-				  if(locale === "ar") {
-					toast.error(" لا يوجد لديك صلاحيات للقيام بهذه العملية!");
-	  
-				  } else {
-					toast.error(response.error.data.detail);
-				  }
-	  
-				} 
-			  } else {
-				toast.error(JSON.stringify(response?.error?.data));
-			  }
-		}
-  
-	  } catch (error) {
-		console.error("Error submitting form:", error);
-
-		if(locale === "ar"){
-			toast.error("حدث خطأ رقم 2 أثناء تحديث المنتج . يرجى المحاولة مجدداً");
-
-		} else {
-			toast.error("Error submitting form2.");
-
-		}
-	  }
-
-  } else {
-	if(locale === "ar"){
-		toast.error("كافة الحقول مطلوبة ");
-
-	} else {
-		toast.error("Error. all fields are required ");
-
-	}
-
+  const handleReloadFlag = () => {
+	setReloadFlag(!reloadFlag)
   }
-
-
-	setIditingItemId(null)
-	editFileInputRef.current.value = "";
-	setEditSelectedFile(null)
-	  
-};
-
-
-
-
-
 
 
 
@@ -215,28 +105,7 @@ export default function ListManagerProduct() {
 		}
 
 
-		const handleChangeEditingItem = (e) => {
-			// const { name, value } = e.target;
-			// setEditingItem((prevState) => ({
-			// 	...prevState,
-			// 	[name]: value,
-			//   }));
-
-			const { name, value, type, files } = e.target;
-
-			if (type === "file") {
-			  // If the input is a file, update the selectedFile state
-			  setEditSelectedFile(files[0]);
-			} else {
-			  // If the input is not a file, update the data state
-			  setEditingItem((prevState) => ({
-				...prevState,
-				[name]: value,
-			  }));
-			}
-
-
-			}
+ 
 
 
 
@@ -264,7 +133,7 @@ const fetchData = async (pageUrl) => {
   useEffect(() => {
 
 	fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/product/`)
-}, []);
+}, [reloadFlag]);
 
 
 
@@ -375,7 +244,28 @@ const handleaddItem = async (e) => {
 			toast.error("Error submitting form2.");
 
 		}
-	  } finally{ setAddingItem(false);  }
+	  } finally{ 
+			setAddingItem(false);  
+			fileInputRef.current.value = "";
+			setSelectedFile(null)
+
+			setFilesExtraImages([{ id: 1, file: null }])
+			// fileInputRefsExtraImages.current.value = "";
+
+			setFilesAttachment([{ id: 1, file: null }])
+			// fileInputRefsFilesAttachment.current.value = "";
+
+			// Clear extra images inputs
+			fileInputRefsExtraImages.current.forEach((input) => {
+			if (input) input.value = "";
+			});
+
+			// Clear attachment inputs
+			fileInputRefsFilesAttachment.current.forEach((input) => {
+			if (input) input.value = "";
+			});
+
+		}
 
   } else {
 	if(locale === "ar"){
@@ -389,8 +279,7 @@ const handleaddItem = async (e) => {
   }
 
 	setAddingItem(false);
-	fileInputRef.current.value = "";
-	setSelectedFile(null)
+
 };
 
 
@@ -468,47 +357,34 @@ const handleaddItem = async (e) => {
               <td dir='ltr' >{item.prod_name}</td>
               <td className="text-end" >{item.prod_name_ar}</td>
               <td>
-                <button
-                  className="btn btn-sm btn-primary m-2"
-					onClick={() => {
-						setEditingItem({
-							id:item.id,
-							prod_name:item.prod_name,
-							prod_name_hint: item.prod_name_hint,
-							prod_details:item.prod_details,
-							prod_name_ar:item.prod_name_ar,
-							prod_name_hint_ar:item.prod_name_hint_ar,
-							prod_details_ar:item.prod_details_ar,
-							prod_image:item.prod_image,
-							
-							}
-						)
-					}}
 
-                  data-bs-toggle="modal"
-                  data-bs-target="#editModal_product"
-				  style={{ minWidth: '75px' }}
-                >
-                  
-				  {editingItemId === item.id ?  t('editing') : t('edit') }
-                </button>
+   
+
+				<Link 
+					href='#'
+					onClick={(e) => {
+						e.preventDefault()
+						setSelectedItemToEeditId(item?.id)
+						} 
+					}
+
+					className="text-primary mx-2" title={t('edit')}><i className="bi bi-pencil-fill"></i>
+
+				</Link>
 
 
-
-
-                <button
-                  className="btn btn-sm btn-danger m-2"
-					onClick= { () => {
-						setItemIdToDelete(item.id)
+				<Link href=""
+					onClick= { (e) => {
+						e.preventDefault()
+						setItemIdToDelete(item?.id)
 						setIsModalOpen(true)
 					
 					}}
+					className="text-danger mx-2" title="Delete"><i className="bi bi-trash-fill"></i>
+				</Link>
 
-				  disabled={deletingItemId === item.id}
-				  style={{ minWidth: '75px' }}
-                >
-                  {deletingItemId === item.id ? t('deleting') :  t('delete')}
-                </button>
+ 
+
               </td>
             </tr>
           ))}
@@ -667,7 +543,7 @@ const handleaddItem = async (e) => {
 
 			<AddFilesComponent 
 				custom_id = "add_extra_images"
-				title =  "extra_images"
+				title =  {locale === 'ar' ?  'صور إضافية': 'Extra Images'}
 				filesExtraImages={filesExtraImages} 
 				setFilesExtraImages={setFilesExtraImages} 
 				fileInputRefsExtraImages={fileInputRefsExtraImages} 
@@ -677,7 +553,7 @@ const handleaddItem = async (e) => {
 
 			<AddFilesComponent 
 				custom_id = "add_attachment"
-				title = "attachment"
+				title = {locale === 'ar' ?  'المرفقات': 'attachment'}
 				filesExtraImages={filesAttachment} 
 				setFilesExtraImages={setFilesAttachment} 
 				fileInputRefsExtraImages={fileInputRefsFilesAttachment} 
@@ -710,208 +586,7 @@ const handleaddItem = async (e) => {
 
 
 
-
-      {/* Modal for Editing */}
-      <div
-        className="modal fade modal-lg "
-        id="editModal_product"
-        tabIndex="-1"
-        aria-labelledby="editModal_productLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog   ">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="editModal_productLabel">{t('form_edit.title')}</h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-
-
-
-
-			<form   className="   modal-body    "     >
-
-			
-			<div className="mb-3">
-				<label htmlFor="prod_name" className="form-label">
-				{t('form_edit.Product_Name')}
-				</label>
-				<input
-					type="text"
-					className="form-control"
-					id="prod_name"
-					name="prod_name"
-					value={editingItem?.prod_name  || ""}
-					onChange={handleChangeEditingItem}
-					dir='ltr'
-
-
-				/>
-			</div>
-
-
-
-
-
-			<div className="mb-3">
-				<label htmlFor="prod_name_hint" className="form-label">
-				{t('form_edit.Product_Name_hint')}
-				</label>
-				<input
-					type="text"
-					className="form-control"
-					id="prod_name_hint"
-					name="prod_name_hint"
-					value={editingItem?.prod_name_hint  || ""}
-					onChange={handleChangeEditingItem}
-					dir='ltr'
-
-
-				/>
-			</div>
-
-			<div className="mb-3">
-				<label htmlFor="prod_details" className="form-label">
-				{t('form_edit.Product_Details')}
-				</label>
-				<textarea 
-					className="form-control" 
-					rows="3"
-					id="prod_details"
-					name="prod_details"
-					value={editingItem?.prod_details  || ""}
-					onChange={handleChangeEditingItem}
-					dir='ltr'
-
-				>
-
-				</textarea>
-
-			</div>
-
-
-
-			
-			<div className="mb-3">
-				<label htmlFor="prod_name_ar" className="form-label">
-				{t('form_edit.Product_Name_ar')}
-				</label>
-				<input
-					type="text"
-					className="form-control text-end"
-					dir="rtl"
-					id="prod_name_ar"
-					name="prod_name_ar"
-					value={editingItem?.prod_name_ar  || ""}
-					onChange={handleChangeEditingItem}
-
-
-				/>
-			</div>
-
-
-			<div className="mb-3">
-				<label htmlFor="prod_name_hint_ar" className="form-label">
-				{t('form_edit.Product_Name_hint_ar')}
-				</label>
-				<input
-					type="text"
-					className="form-control text-end"
-					dir='rtl'
-					id="prod_name_hint_ar"
-					name="prod_name_hint_ar"
-					value={editingItem?.prod_name_hint_ar  || ""}
-					onChange={handleChangeEditingItem}
-				/>
-			</div>
-
-			<div className="mb-3">
-				<label htmlFor="prod_details_ar" className="form-label">
-				{t('form_edit.Product_Details_ar')}
-				</label>
-				<textarea 
-					className="form-control text-end"
-					dir='rtl' 
-					rows="3"
-					id="prod_details_ar"
-					name="prod_details_ar"
-					value={editingItem?.prod_details_ar  || ""}
-					onChange={handleChangeEditingItem}
-
-				>
-
-				</textarea>
-
-			</div>
-
-
-
-            <div className="mb-3">
-              <label htmlFor="prod_image" className="form-label">
-			  {t('form_edit.image')}
-              </label>
-              <input
-                type="file"
-                className="form-control"
-                accept="image/*"
-                id="prod_image"
-                name="prod_image"                
-                onChange={handleChangeEditingItem}
-				ref={editFileInputRef}
-              />
-              {editingItem?.prod_image &&  <a href={editingItem?.prod_image} target="_blank">  {t('form_edit.current_image')}  </a> }
-             
-            </div>
-
-
-
-
-
-
-
-
-
-
-			</form>
-
-
-
-
-
-
-
-
-
-
-
-
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                {t('form_edit.cancel')}
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleEditingItem}
-                data-bs-dismiss="modal"
-              >
-				{editingItemId  ? t('form_edit.updating') : t('form_edit.update') }
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
+ 
 
 	  <CustomModal  
 		id="list_manager_Product"
@@ -928,7 +603,12 @@ const handleaddItem = async (e) => {
 
 
 
-
+		{selectedItemToEeditId && 
+		<EditModalComponent
+		 id={selectedItemToEeditId}
+		 onClose={() => setSelectedItemToEeditId(null)} 
+		 handleReloadFlag={ handleReloadFlag }
+		 />}
 
 
 

@@ -161,6 +161,10 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
         if (mainImagefileInputRef.current) {
           mainImagefileInputRef.current.value = ""; // Reset the file input
         }
+
+ 
+
+
  
  
 
@@ -201,6 +205,9 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
           }));
         }   
       }
+
+
+
 
   const fetchData = async (pageUrl) => {
     try {
@@ -249,10 +256,15 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
  
       const handleModalClose = () => {
         if(onClose){
-          onClose();  
+           
           document.activeElement?.blur(); 
-          document.body.style.overflow = ""; // Restore scrolling
- 
+          // document.body.style.overflow = ""; // Restore scrolling
+
+          document.body.style.overflow = "";
+          document.body.style.paddingRight = "";
+
+
+          onClose(); 
         }
       };
   
@@ -263,13 +275,20 @@ export const EditModalComponent = ({ id, onClose , handleReloadFlag=null}) => {
       return () => {
         modalElement.removeEventListener("hidden.bs.modal", handleModalClose);
         modalInstance.dispose();
-        document.body.style.overflow = ""; // Ensure scrolling is restored
+        // document.body.style.overflow = ""; // Ensure scrolling is restored
+        document.body.style.overflow = "";
+        document.body.style.paddingRight = "";
 
       };
     }
   }, [id, onClose]);
    
  
+
+
+ 
+
+
 
     return (
 

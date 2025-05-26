@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 import { useLocale, useTranslations } from "next-intl";
 
-export const ProjectFileList = ({project_id, files_type} ) => {
+export const FilesList = ({product_id, files_type} ) => {
  
 	const [files, setFiles] = useState([])
 	const [customFetch] = useCustomFetchMutation();
@@ -20,11 +20,11 @@ export const ProjectFileList = ({project_id, files_type} ) => {
 
 	const getBaseUrl = (files_type) => {
 		if (files_type === "extra_images") {
-			return `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/project_type/${project_id}/extra_images/`;
+			return `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/product/${product_id}/extra_images/`;
 		} 
 		
 		if (files_type === "attachment") {
-			return `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/projectflow/project_type/${project_id}/files/`;
+			return `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/staff/site/product/${product_id}/attachment/`;
 		}
 
 	}; 
@@ -140,6 +140,7 @@ useEffect(() => {
             <label className="form-label"></label>
             <ul className="list-group  ">
                 {files.map((file) => (
+					
 					<li
 					key={file.id}
 					className="list-group-item d-flex justify-content-between align-items-start mb-2 flex-wrap ps-2"
