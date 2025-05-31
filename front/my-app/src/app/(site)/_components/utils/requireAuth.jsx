@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { useLocale } from 'next-intl';
 
 export default function RequireAuthComponent({ children }) {
-  const { isLoading, isAuthenticated } = useSelector(state => state.auth);
+  const { isLoading, isAuthenticated, is_superuser, is_staff  } = useSelector(state => state.auth);
   const [shouldRender, setShouldRender] = useState(false);
 
   const locale = useLocale()
@@ -18,17 +18,26 @@ export default function RequireAuthComponent({ children }) {
 
   useEffect(() => {
     if (!isLoading) {
+      // if (!isAuthenticated) {
+      //   redirect(`/account/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      // } else {
+      //   setShouldRender(true);
+      // }
+
       if (!isAuthenticated) {
-        // Redirect only after confirming loading has finished
-        // redirect('/account/login');
         redirect(`/account/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      } else if( isAuthenticated && is_superuser || isAuthenticated && is_staff){
+        redirect(`/staff`);
 
-
-
-      } else {
-        // Set flag to render content after auth check completes
+      }   
+      
+      else {
         setShouldRender(true);
       }
+
+
+
+
     }
   }, [isLoading, isAuthenticated]);
 

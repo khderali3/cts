@@ -142,6 +142,43 @@ export function useTicketStatus() {
 
 
 
+ 
+
+ 
+export function useLogAction() {
+  const locale = useLocale()
+
+  const getLogAction = (value) => {
+
+ 
+ 
+
+    if(value){
+
+        if (value === 'Add') {
+          return locale === 'ar' ?  ' إضافة ' : 'Add'
+        } else if (value === 'Edit') {
+          return locale === 'ar' ? 'تعديل' : 'Edit'
+        } else if (value === 'Delete'){
+          return locale === 'ar' ? 'حذف' : 'Delete'
+        }  else if (value === 'Login'){
+          return locale === 'ar' ? 'تسجيل الدخول' : 'Login'
+        }  else if (value === 'Logout'){
+          return locale === 'ar' ? 'تسجيل الخروج' : 'Logout'
+        }
+        return value
+    }
+
+  }
+
+  return getLogAction
+}
+
+
+
+
+
+
 
 
 

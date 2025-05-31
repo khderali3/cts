@@ -29,11 +29,12 @@ import { DeleteSelectedButtonLogs } from "@/app/(dashboard)/_components/jsx/logs
 import { FlushLogsButton } from "@/app/(dashboard)/_components/jsx/logs/flush_records_button";
 
 
+import { useLogAction } from "@/app/public_utils/hooks";
 
 const Page = () => {
 
 
-
+  const getLogAction = useLogAction()
  
   const t = useTranslations('dashboard.logs')
 
@@ -58,6 +59,13 @@ const Page = () => {
   }
 
  
+
+
+ 
+
+
+
+
 
 
 
@@ -508,7 +516,7 @@ if (!hasPermissionToLogsView()  ) {
 
                             <td>
                               <div style={{ overflowX: "auto", maxWidth: "100%", whiteSpace: "nowrap" }} title={obj?.action_type}>
-                                {obj?.action_type}
+                                { getLogAction(obj?.action_type)} 
                               </div>
                             </td>
                             <td>

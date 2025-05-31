@@ -9,11 +9,11 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class Log(models.Model):
-    ADD = 'add'
-    EDIT = 'edit'
-    DELETE = 'delete'
-    LOGIN = 'login'
-    LOGOUT = 'logout'
+    ADD = 'Add'
+    EDIT = 'Edit'
+    DELETE = 'Delete'
+    LOGIN = 'Login'
+    LOGOUT = 'Logout'
     ACTION_TYPES = [
         (ADD, 'Add'),
         (EDIT, 'Edit'),
