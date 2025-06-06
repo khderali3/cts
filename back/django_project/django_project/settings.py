@@ -117,6 +117,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/userinfo.profile',
     'openid'
 ]
+
 SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
 
 SOCIAL_AUTH_FACEBOOK_KEY = "getenv('FACEBOOK_AUTH_KEY')"

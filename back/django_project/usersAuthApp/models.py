@@ -110,7 +110,6 @@ def create_profile(sender, instance, created, **kwargs):
 
 
 class CustomPermission(models.Model):
-            
     class Meta:        
         managed = False   
         default_permissions = ()                                
