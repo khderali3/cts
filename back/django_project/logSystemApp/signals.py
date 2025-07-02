@@ -18,11 +18,18 @@ User = get_user_model()
 from django.db.models.signals import m2m_changed
 
 from django.forms.models import model_to_dict
+from social_django.models import UserSocialAuth, Association, Nonce
+from django.contrib.admin.models import LogEntry
+EXCLUDED_MODELS = {Log, LogEntry, UserSocialAuth, Association, Nonce}
+
+
 
 
 @receiver(m2m_changed)
 def track_m2m_changes(sender, instance, action, model, pk_set, **kwargs):
-    
+    if sender in EXCLUDED_MODELS:
+        return
+
     if action not in ["post_add", "post_remove", "post_clear"]:
         return
 
@@ -69,8 +76,9 @@ def track_m2m_changes(sender, instance, action, model, pk_set, **kwargs):
 
 @receiver(pre_save)
 def log_model_edit(sender, instance, **kwargs):
-    if sender == Log:
-        return  # Prevent logging Log model changes
+    if sender in EXCLUDED_MODELS:
+        return
+
     try:
         old_instance = sender.objects.get(pk=instance.pk)
         changes = {}
@@ -125,8 +133,10 @@ def log_model_edit(sender, instance, **kwargs):
 
 @receiver(post_save)
 def log_model_add(sender, instance, created, **kwargs):
-    if sender == Log or sender == LogEntry:
+    if sender in EXCLUDED_MODELS:
+
         return  # Prevent logging Log model changes
+
 
     if created:
 
@@ -160,8 +170,10 @@ def log_model_add(sender, instance, created, **kwargs):
 
 @receiver(pre_delete)
 def log_model_delete(sender, instance, **kwargs):
-    if sender == Log:
-        return  # Prevent recursive logging
+    if sender in EXCLUDED_MODELS:
+
+        return  # Prevent logging Log model changes
+
 
     object_data = {}
     for field in instance._meta.fields:
