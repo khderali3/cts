@@ -68,7 +68,6 @@ const Nav = () => {
 
   return (
 
-    // <nav className="app-header navbar navbar-expand bg-body  sticky-top bg-primary-subtle" data-bs-theme="dark" >
       <nav className={ `app-header navbar navbar-expand bg-body  sticky-top bg-primary-subtle   ${!isAuthenticated && 'not_showing' }`}  data-bs-theme="dark" >
 
 

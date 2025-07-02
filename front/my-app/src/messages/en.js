@@ -5,23 +5,14 @@ import ticket from './main_directory_translations/en/site/ticket';
 import account from "./main_directory_translations/en/site/account"
 
 import staff_ticket from './main_directory_translations/en/dashboard/ticket';
-
 import site_managment from './main_directory_translations/en/dashboard/site_managment';
-
 import users_managment from './main_directory_translations/en/dashboard/users_managment';
-
-
 import sidebar from './main_directory_translations/en/dashboard/sidebar';
-
 import staff_nav from './main_directory_translations/en/dashboard/staff_nav';
-
-
-
 import account_staff from './main_directory_translations/en/dashboard/account';
-
 import projectFlow from './main_directory_translations/en/dashboard/projectFlow'
 import logs from "./main_directory_translations/en/dashboard/logs"
-
+import licenses from "./main_directory_translations/en/dashboard/licenses"
 
 export default {
 
@@ -29,7 +20,7 @@ export default {
 		ip_address: "IP Address",
 		staff : "Staff",
 		
-		pwa_prompt_msg : "Install CloudTechSky App on your device for a better experience.",
+		pwa_prompt_msg : "Install View ISP App on your device for a better experience.",
 		pwa_prompt_btn_install : "Install",
 		pwa_prompt_btn_Dismiss : "Dismiss",
 
@@ -115,6 +106,7 @@ export default {
 		nav : staff_nav,
 		projectFlow,
 		logs,
-		
+		licenses,
+	
 	}
 }

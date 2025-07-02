@@ -1,0 +1,14 @@
+{
+    "license": {
+        "license_id": "9051e2d3-573f-11f0-bb11-f69e89b7583b",
+        "device_app_fingerprint": "0997304b605155bcf79615d6ee8b2ac9e2e8dbc3347241d6366b4478cf488391",
+        "issued_at": "2025-07-02T12:24:56Z",
+        "expires_at": "2026-07-02T12:24:56Z",
+        "license_type": "pro",
+        "application": "CloudTechSKy Tickting System",
+        "app_Name_id": "ticketSystem",
+        "app_installation_id": "22fd2dcb-1b82-47c6-b58a-7b3b970a6ba9",
+        "issued_to": "View ISP Company"
+    },
+    "signature": "PgmQwAe8vu7qHfRhI3Lt/KYP+XPEBLNTJcNK7agtk7+d8vXKMKW9AuXnMYqCBfPHo9UDDE7DXbmD07Iy69FF67zQhm2fJThHx30QY/Cdgafd+jzBhSVoQbrT0sjLrM2x9kEX5eOw1Jw8vc62NHf15XL5BhMh8C4bal6obpPie4PO1BHBlIU9nu0LKily9Z67fouJoc5zDJE/VrpbZbkBaR3myhc4RMhlGLr/PEbyRBVx7SqVUaPbvl/2T/kcCFpgWm51DDTmU13tzjLWb+v4yjlp+8WKD8Ae1yzvH+aZ+sWovLb/+c70mWGECLLKiGusbHq2AvYXnTxdyaTQq39uSw=="
+}

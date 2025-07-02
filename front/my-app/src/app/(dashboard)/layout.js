@@ -1,8 +1,5 @@
 
 
-
- 
-
 import 'bootstrap-icons/font/bootstrap-icons.css';
  
 import '@/app/(dashboard)/_components/assets/css/adminlte.css';  
@@ -53,7 +50,7 @@ export default async function Layout({ children }) {
       </head>
 
 
-  <body className="layout-fixed   sidebar-expand-lg bg-body-tertiary">
+      <body className="layout-fixed   sidebar-expand-lg bg-body-tertiary">
   <NextIntlClientProvider messages={messages}>
     <CustomProviderStaff> 
       <StaffSetup />

@@ -1,0 +1,14 @@
+{
+    "license": {
+        "license_id": "a1eedffe-573d-11f0-9217-ed03d6e07452",
+        "device_app_fingerprint": "5a80ce09e2bf9ebcc2b9654ae66710d6deabb58418ac79b066a29ca75a07df1f",
+        "issued_at": "2025-07-02T12:11:06Z",
+        "expires_at": "2026-07-02T12:11:06Z",
+        "license_type": "pro",
+        "application": "CloudTechSKy ProjectFlow System",
+        "app_Name_id": "projectFlowApp",
+        "app_installation_id": "6ca3ddbf-23a9-4363-b4fb-6ba125cf2310",
+        "issued_to": "View ISP Company"
+    },
+    "signature": "FOwkK6A6z8fQP+jJ5JQmEYHk38grNCsqVhvPu2mHyYHSOra41QmvAnsAzi1KqS7VSt6LWAbJ6hKlZztqKLnLeq7x6o75rGuK7jYDfSkJczRHCC5EzPJosxlg9m1CfXDBTMAQV0poWArLe5wNWxjQp3JaJq/BhZzAbio/xZsdU9je5JljlbyTqqLP0pPRVd3rGgSXfz+AdkQpkNh5U83+gVbX4VQcDdAXktoTfviZtYuL+4TnuAceimGgm+YxU/dAShjAqA0/7PyemxHg9sKqkXjtrQAwtECE+XxEAddNhh/WK59avYYxxV0s79fGx2yBba5RtjLrZ7H7HSFDXuKcQw=="
+}

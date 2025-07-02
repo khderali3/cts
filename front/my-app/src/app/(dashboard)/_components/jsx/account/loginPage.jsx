@@ -88,16 +88,12 @@ const LoginPageComponent = () => {
             dispatch(setAuth());
             dispatch(setloginFirstName(response.data.firstname))
             dispatch(setIsUserId(response.data.user_id))
-
-
             dispatch(setprofileImage(response.data.PRF_image)) 
             dispatch(setIsStaff(response.data.is_staff)) 
             dispatch(setIsSupserUser(response.data.is_superuser)) 
             dispatch(setGroups(response.data.groups)) 
             dispatch(setPermissions(response.data.permissions)) 
-            
             dispatch(setDepartments(response.data.departments)) 
-
             toast.success('Logged in');
             router.push('/staff');
 

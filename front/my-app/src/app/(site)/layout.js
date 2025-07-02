@@ -88,9 +88,6 @@ export default  async function   RootLayout({ children }) {
  
     </Provider >
    
-
- 
-
   </NextIntlClientProvider>
 
   

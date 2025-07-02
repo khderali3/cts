@@ -17,7 +17,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.db.models import BooleanField, Case, Value, When
 
-from .my_utils import IsStaffOrSuperUser, HasUserManagementPermission
+from .my_utils import IsStaffOrSuperUser, HasUserManagementPermission, license_required
 
 
 
@@ -26,27 +26,27 @@ from .my_utils import IsStaffOrSuperUser, HasUserManagementPermission
 from django.db.models import Count
 
 class TicketStatusCountAPIView(APIView):
-    def get(self, request):
-        all_statuses = dict(Ticket.ticket_status_options)
+	def get(self, request):
+		all_statuses = dict(Ticket.ticket_status_options)
 
- 
-        result = {}
-        for status in all_statuses.keys():
-            result[status] = 0
 
- 
-        counts = Ticket.objects.values('ticket_status').order_by().annotate(count=Count('id'))
+		result = {}
+		for status in all_statuses.keys():
+			result[status] = 0
 
-        for item in counts:
-            status = item['ticket_status']
-            count = item['count']
-            result[status] = count
 
-        # Add total count of all tickets cts
-        total_projects = Ticket.objects.count()
-        result['all'] = total_projects
+		counts = Ticket.objects.values('ticket_status').order_by().annotate(count=Count('id'))
 
-        return Response(result)
+		for item in counts:
+			status = item['ticket_status']
+			count = item['count']
+			result[status] = count
+
+		# Add total count of all tickets cts
+		total_projects = Ticket.objects.count()
+		result['all'] = total_projects
+
+		return Response(result)
 
 
 
@@ -58,6 +58,8 @@ class TicketStatusCountAPIView(APIView):
 class AssignTicketToMeStaffView(APIView):
 	permission_classes = [IsStaffOrSuperUser]
 
+
+	@license_required
 	def post(self, request, ticket_id, *args, **kwargs):
 		try:
 			ticket = Ticket.objects.get(id=ticket_id)
@@ -72,22 +74,22 @@ class AssignTicketToMeStaffView(APIView):
 
 
 class AssignReassignTicketStaffView(APIView):
-    def post(self, request, ticket_id, *args, **kwargs):
-        try:
-            ticket = Ticket.objects.get(id=ticket_id)
-        except Ticket.DoesNotExist:
-            return Response({"message": "Ticket not found."}, status=status.HTTP_404_NOT_FOUND)
+	def post(self, request, ticket_id, *args, **kwargs):
+		try:
+			ticket = Ticket.objects.get(id=ticket_id)
+		except Ticket.DoesNotExist:
+			return Response({"message": "Ticket not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Use the serializer to validate the data from the request body
-        serializer = TicketAssignStaffSerializer(ticket, data=request.data)
+		# Use the serializer to validate the data from the request body
+		serializer = TicketAssignStaffSerializer(ticket, data=request.data)
 
-        if serializer.is_valid():
-            # The save method will update the ticket_assigned_to field and save the ticket
-            serializer.save()
+		if serializer.is_valid():
+			# The save method will update the ticket_assigned_to field and save the ticket
+			serializer.save()
 
-            return Response({"message": "Ticket assigned successfully."}, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+			return Response({"message": "Ticket assigned successfully."}, status=status.HTTP_200_OK)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -98,6 +100,7 @@ class AssignReassignTicketStaffView(APIView):
 class CloseTicketStaffView(APIView):
 	permission_classes = [IsStaffOrSuperUser]
 
+	@license_required
 	def post(self, request, ticket_id, *args, **kwargs):
 		# Get the ticket
 		ticket = get_object_or_404(Ticket, id=ticket_id)
@@ -125,6 +128,7 @@ class CloseTicketStaffView(APIView):
 class ReopenTicketStaffView(APIView):
 	permission_classes = [IsStaffOrSuperUser]
 
+	@license_required
 	def post(self, request, ticket_id, *args, **kwargs):
 		# Get the ticket
 		ticket = get_object_or_404(Ticket, id=ticket_id)
@@ -217,33 +221,33 @@ class DepartmentsStaffView(APIView):
  
 
 class MyCustomStaffPagination(PageNumberPagination):
-    page_size = 5
-    page_size_query_param = 'page_size'
-               
-    def get_current_page_url(self):
-        if not self.request:
-            return None
-        current_page = self.page.number
-        request = self.request
-        url = request.build_absolute_uri(request.path)
-        query_params = request.query_params.copy()
-        query_params[self.page_query_param] = current_page
+	page_size = 5
+	page_size_query_param = 'page_size'
+				
+	def get_current_page_url(self):
+		if not self.request:
+			return None
+		current_page = self.page.number
+		request = self.request
+		url = request.build_absolute_uri(request.path)
+		query_params = request.query_params.copy()
+		query_params[self.page_query_param] = current_page
 
-        return f"{url}?{query_params.urlencode()}"
+		return f"{url}?{query_params.urlencode()}"
 
-    def get_paginated_response(self, data):
-        return Response({
-        'page_size': self.page_size,
-        'total_objects': self.page.paginator.count,
-        'total_objects_in_current_page': len(data),
-        'total_pages': self.page.paginator.num_pages,
-        'current_page_number': self.page.number,
-        'next_page_url': self.get_next_link(),
-        'previous_page_url': self.get_previous_link(),
-        'current_page_url': self.get_current_page_url(),
+	def get_paginated_response(self, data):
+		return Response({
+		'page_size': self.page_size,
+		'total_objects': self.page.paginator.count,
+		'total_objects_in_current_page': len(data),
+		'total_pages': self.page.paginator.num_pages,
+		'current_page_number': self.page.number,
+		'next_page_url': self.get_next_link(),
+		'previous_page_url': self.get_previous_link(),
+		'current_page_url': self.get_current_page_url(),
 
-        'results': data,
-        })
+		'results': data,
+		})
 
 
 
@@ -267,6 +271,9 @@ class GetTicketByIdStaff(APIView):
 class TicketStaffView(APIView):
 	permission_classes = [IsStaffOrSuperUser]
 
+
+
+	@license_required
 	def post(self, request, *args, **kwargs):
 		if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.ticket_create_behalf_client'):
 			return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
@@ -281,6 +288,7 @@ class TicketStaffView(APIView):
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
+	@license_required
 	def put(self, request, *args, **kwargs):
 			
 			if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.ticket_change'):
@@ -298,6 +306,7 @@ class TicketStaffView(APIView):
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+	@license_required
 	def delete(self, request, *args, **kwargs):
 			ticket_id = kwargs.get('id')
 
@@ -312,7 +321,7 @@ class TicketStaffView(APIView):
 			return Response({"detail": "ticket deleted successfully."}, status=status.HTTP_202_ACCEPTED)
 	
 
-
+	@license_required
 	def get(self, request, *args, **kwargs):
 			ticket_id = kwargs.get('id')
 			if ticket_id:
@@ -404,11 +413,7 @@ class TicketFileStaffView(APIView):
 
 	# 	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
-
-
+ 
 
 	def delete(self, request, file_id, *args, **kwargs):
 		"""

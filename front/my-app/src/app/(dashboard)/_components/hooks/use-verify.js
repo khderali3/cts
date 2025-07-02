@@ -22,18 +22,12 @@ export default function useVerify() {
 				dispatch(setAuth());
 				dispatch(setloginFirstName(response.firstname))
 				dispatch(setIsUserId(response.user_id))
-
-
 				dispatch(setprofileImage(response.PRF_image)) 
 				dispatch(setIsStaff(response.is_staff)) 
 				dispatch(setIsSupserUser(response.is_superuser)) 
 				dispatch(setGroups(response.groups)) 
 				dispatch(setPermissions(response.permissions)) 
 				dispatch(setDepartments(response.departments)) 
-
-
-
-
 
 			})
 			.finally(() => {

@@ -1,7 +1,7 @@
 from .models import (HomeSection, AboutUs, WhyUs, FeatureWhyUs, ProductSection,
-                      Product , Service, OurServicesSection, OurVision, Focus,
+					  Product , Service, OurServicesSection, OurVision, Focus,
 					  OurClient, OurClientSection, CompnayIfRight, Footer, SocialMedia , ProductAttachment, ProductExtraImages
-                      )
+					  )
 
 
 from siteusersApp.models import ProjectTypeSection
@@ -78,13 +78,13 @@ class OurServicesSectionSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = OurServicesSection
 		fields = '__all__'
-          
+		  
 
 class ServiceSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Service
 		fields = ('id','service_name', 'service_name_ar')
-          
+		  
 
 
 
@@ -100,15 +100,15 @@ class AboutUsSerializer(serializers.ModelSerializer):
 
 
 class FeatureWhyUsSerializer(serializers.ModelSerializer):
-   class Meta:
-    model=FeatureWhyUs
-    fields = '__all__'
+	class Meta:
+		model=FeatureWhyUs
+		fields = '__all__'
 
 
 class WhyUsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WhyUs        
-        fields = '__all__'
+	class Meta:
+		model = WhyUs        
+		fields = '__all__'
 
 
 
@@ -167,9 +167,9 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductSectionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductSection        
-        fields = '__all__'
+	class Meta:
+		model = ProductSection        
+		fields = '__all__'
   
 
 class TimelineSerializer(serializers.Serializer):

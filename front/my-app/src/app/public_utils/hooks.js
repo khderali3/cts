@@ -2,9 +2,6 @@
 
 import { useLocale } from 'next-intl'
 
-
-
-
 export function useFormatNumber() {
   const locale = useLocale()
 

@@ -1,6 +1,5 @@
 
 import nav from './main_directory_translations/ar/site/nav'; // Import nav.js
-
 import footer from './main_directory_translations/ar/site/footer';
 import ticket from './main_directory_translations/ar/site/ticket';
 import account from "./main_directory_translations/ar/site/account"
@@ -8,18 +7,13 @@ import account from "./main_directory_translations/ar/site/account"
 
 import staff_ticket from './main_directory_translations/ar/dashboard/ticket';
 import site_managment from './main_directory_translations/ar/dashboard/site_managment';
-
 import users_managment from './main_directory_translations/ar/dashboard/users_managment';
-
 import sidebar from './main_directory_translations/ar/dashboard/sidebar';
-
 import staff_nav from './main_directory_translations/ar/dashboard/staff_nav';
-
-
-
 import account_staff from './main_directory_translations/ar/dashboard/account';
 import projectFlow from './main_directory_translations/ar/dashboard/projectFlow'
 import logs from "./main_directory_translations/ar/dashboard/logs"
+import licenses from "./main_directory_translations/ar/dashboard/licenses"
 
 
 export default {
@@ -29,7 +23,7 @@ export default {
 
 		staff : "فريق العمل",
 
-		pwa_prompt_msg : "قم بتنصيب تطبيق كلاود تك سكاي على جهازك لأداء أفضل.",
+		pwa_prompt_msg : "قم بتنصيب تطبيق مزود خدمة الانترنت فيو على جهازك لأداء أفضل.",
 		pwa_prompt_btn_install : "تنصيب",
 		pwa_prompt_btn_Dismiss : "رفض",
 	
@@ -118,6 +112,7 @@ export default {
 		nav : staff_nav,
 		projectFlow,
 		logs,
+		licenses,
 		
 		
 	}

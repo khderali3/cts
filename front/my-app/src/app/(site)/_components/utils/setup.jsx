@@ -2,6 +2,8 @@
 
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+
+
  import useVerify from "../hooks/use-verify";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
@@ -42,6 +44,7 @@ const Setup = () => {
     const isRTL =  locale === 'ar' ? true : false  
 
     useVerify();
+    
     // return < ToastContainer rtl={isRTL}  />
 
     return(
