@@ -210,12 +210,39 @@ const LoginPageComponent = () => {
               <label htmlFor="floatingPassword">{t('password')}</label>
             </div>
  
-            <ReCAPTCHA
+            {/* <ReCAPTCHA
                 sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPCHA_SITE_KEY}
                 onChange={onChangeRecaptcha}
                 ref={recaptchaRef}
                 hl={locale}
-              />,
+              /> */}
+
+
+          {process.env.NEXT_PUBLIC_GOOGLE_RECAPCHA_SITE_KEY ? (
+              <ReCAPTCHA
+                  sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPCHA_SITE_KEY}
+                  onChange={onChangeRecaptcha}
+                  ref={recaptchaRef}
+                  hl={locale}
+              />
+              ) : (
+                <div style={{ color: 'red' }}>
+                There is no site key: <strong>process.env.NEXT_PUBLIC_GOOGLE_RECAPCHA_SITE_KEY</strong>
+                </div>
+            )}
+
+ 
+
+
+
+
+
+
+
+
+
+
+
 
             <div className="row  ">
               <div className="col-8">

@@ -1,7 +1,8 @@
 
 from pathlib import Path
 from datetime import timedelta
- 
+import os
+
 
 # from decouple import config
 
@@ -12,21 +13,19 @@ DEBUG = True
 
 IS_PRODUCTION_ENV = False
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+ENV_FILE = os.getenv("DJANGO_ENV_FILE", BASE_DIR / ".env.development")
 
 
-
-ENV_FILE = ".env.production" if IS_PRODUCTION_ENV else ".env.development"
+# ENV_FILE = ".env.production" if IS_PRODUCTION_ENV else ".env.development"
 config = Config(RepositoryEnv(ENV_FILE))
 
 
 SECRET_KEY = config("SECRET_KEY")
 
 
-
-
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
+ 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -87,9 +86,12 @@ REST_FRAMEWORK = {
 if IS_PRODUCTION_ENV:
     DOMAIN = 'cloudtech-it.com'
     SOCIAL_AUTH_ALLOWED_REDIRECT_URIS = ['https://cloudtech-it.com/account/google']
+    MY_SITE_URL = 'https://back.cloudtech-it.com'  # Replace with your domain in production
+
 else:
     DOMAIN = 'localhost:3000'
     SOCIAL_AUTH_ALLOWED_REDIRECT_URIS = ['http://localhost:3000/account/google' ]
+    MY_SITE_URL = 'http://localhost:8000'  # Replace with your domain in production
 
 
 SITE_NAME = 'CloudTech Sky Company '
@@ -275,7 +277,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -315,12 +318,15 @@ DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 # send_mail('Test4', 'This is a test4',None ,['khdersliman3@gmail.com'],fail_silently=False)
 # '''
 
-import os
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root_dir/')
 MEDIA_URL = '/media_url/'
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = []
 
-MY_SITE_URL = 'http://localhost:8000'  # Replace with your domain in production
+
+
 
 
 RECAPTCHA_ENABLED = False

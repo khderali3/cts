@@ -91,7 +91,7 @@ export default  async function   RootLayout({ children }) {
   </NextIntlClientProvider>
 
   
-        <Script src={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/js/bootstrap.bundle.min.js`} />
+        <Script src="/js/bootstrap.bundle.min.js" />
 
 
       </body>

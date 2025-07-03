@@ -34,14 +34,35 @@ export default function Form({
 
  
 
-			{ReCAPTCHA !== null &&
+			{/* {ReCAPTCHA !== null &&
+
 				<ReCAPTCHA
 					sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPCHA_SITE_KEY}
 					onChange={onChangeRecaptcha}
 					ref={recaptchaRef}
 					hl={locale}
 				/>
-			}
+			} */}
+
+			{ReCAPTCHA !== null ? (
+				process.env.NEXT_PUBLIC_GOOGLE_RECAPCHA_SITE_KEY ? (
+					<ReCAPTCHA
+					sitekey={process.env.NEXT_PUBLIC_GOOGLE_RECAPCHA_SITE_KEY}
+					onChange={onChangeRecaptcha}
+					ref={recaptchaRef}
+					hl={locale}
+					/>
+				) : (
+					<div style={{ color: 'red' }}>
+					There is no site key: <strong>process.env.NEXT_PUBLIC_GOOGLE_RECAPCHA_SITE_KEY</strong>
+					</div>
+				)
+			) : ''}
+
+
+
+
+
 
 			<div>
 				<button
