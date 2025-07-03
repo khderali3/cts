@@ -84,7 +84,7 @@ const TicketLisenseComponent = () =>{
         <div className="">
           <div className="card shadow-sm">
             <div className="card-header bg-light">
-              <h5 className="mb-0">{t('title')} : {t('project_flow')}</h5>
+              <h5 className="mb-0">{t('title')} : {t('Ticketing_System')}</h5>
             </div>
             <div className="card-body">
 
@@ -161,7 +161,7 @@ const TicketLisenseComponent = () =>{
         <div className=" ">
           <div className="card shadow-sm">
             <div className="card-header bg-light ">
-              <h5 className="mb-0">{t('title')} : {t('project_flow')}</h5>
+              <h5 className="mb-0">{t('title')} : {t('Ticketing_System')}</h5>
             </div>
             <div className="card-body">
               <div className="row mb-3">
@@ -226,7 +226,7 @@ const TicketLisenseComponent = () =>{
 
                 {data.reason && (
                   <div className="col-md-6">
-                    <strong>Reason:</strong>
+                    <strong>{t('Reason')} : </strong>
                     <div className="text-danger">{data.reason}</div>
                   </div>
                 )}

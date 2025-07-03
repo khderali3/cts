@@ -62,6 +62,9 @@ INSTALLED_APPS = [
     'projectFlowApp.apps.ProjectflowappConfig',
 
     'logSystemApp',
+    'django_celery_beat',
+
+
 ]
 
 

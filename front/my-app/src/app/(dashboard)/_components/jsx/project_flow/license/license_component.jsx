@@ -216,7 +216,7 @@ const ProjectFlowLisenseComponent = () => {
 
                 {data.reason && (
                   <div className="col-md-6">
-                    <strong>Reason:</strong>
+                    <strong>{t('Reason')} : </strong>
                     <div className="text-danger">{data.reason}</div>
                   </div>
                 )}
