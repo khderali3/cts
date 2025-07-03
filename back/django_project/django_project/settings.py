@@ -1,27 +1,37 @@
 
-from decouple import config
 from pathlib import Path
 from datetime import timedelta
+ 
+
+# from decouple import config
+
+from decouple import Config, RepositoryEnv
 
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+DEBUG = True
+
+IS_PRODUCTION_ENV = False
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
+
+
+ENV_FILE = ".env.production" if IS_PRODUCTION_ENV else ".env.development"
+config = Config(RepositoryEnv(ENV_FILE))
 
 
 SECRET_KEY = config("SECRET_KEY")
 
 
 
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS=['127.0.0.1', 'localhost']
-
+ALLOWED_HOSTS=['127.0.0.1', 'localhost', 'back.cloudtech-it.com']
 
 # Application definition
 
@@ -74,7 +84,14 @@ REST_FRAMEWORK = {
 }
 
 #DJOSER domain and site name to use it with email templates.
-DOMAIN = 'localhost:3000'
+if IS_PRODUCTION_ENV:
+    DOMAIN = 'cloudtech-it.com'
+    SOCIAL_AUTH_ALLOWED_REDIRECT_URIS = ['https://cloudtech-it.com/account/google']
+else:
+    DOMAIN = 'localhost:3000'
+    SOCIAL_AUTH_ALLOWED_REDIRECT_URIS = ['http://localhost:3000/account/google' ]
+
+
 SITE_NAME = 'CloudTech Sky Company '
 
 
@@ -91,7 +108,7 @@ DJOSER = {
     'USER_CREATE_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'TOKEN_MODEL': None,
-    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS':['http://localhost:3000/account/google' ],
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS':SOCIAL_AUTH_ALLOWED_REDIRECT_URIS,
     'SOCIAL_AUTH_TOKEN_STRATEGY': "usersAuthApp.myutils.custom_serializers.CustomProviderTokenStrategy",
 
     'SERIALIZERS': {
@@ -137,9 +154,17 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
 
 
 
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:3000',
+#     'http://127.0.0.1:3000'
+# ]
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
-    'http://127.0.0.1:3000'
+    'http://127.0.0.1:3000',
+    'https://cloudtech-it.com',
+    'http://cloudtech-it.com:3000',
+    'http://cloudtech-it.com'
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -147,18 +172,14 @@ CORS_ALLOW_CREDENTIALS = True
 
 SIMPLE_JWT = {
 
-  "TOKEN_OBTAIN_SERIALIZER": "usersAuthApp.myutils.custom_serializers.MyTokenObtainPairSerializer",
-
-    "ACCESS_TOKEN_LIFETIME": timedelta(weeks=104),
-
+    "TOKEN_OBTAIN_SERIALIZER": "usersAuthApp.myutils.custom_serializers.MyTokenObtainPairSerializer",
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(weeks=104),
 }
 
 
 MIDDLEWARE = [
-    # "usersAuthApp.custommiddlewareCors.CorsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
-
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -166,11 +187,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'logSystemApp.middleware.RequestMiddleware',
-    # 'projectFlowApp.middleware.RequestMiddleware',
     'django_project.middleware.RequestMiddleware',
-
-
 ]
 
 
@@ -198,35 +215,31 @@ WSGI_APPLICATION = 'django_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+
+
+if IS_PRODUCTION_ENV:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': config("DB_NAEM"),  # Replace with your database name
+            'USER': config("DB_USER"),         # Default MySQL username
+            'PASSWORD': config("DB_PASSWORD"),         # Default MySQL password (empty for XAMPP)
+            'HOST': config("DB_HOST"),    # Default MySQL host
+            'PORT': config("DB_PORT"),         # Default MySQL port
+        }
     }
-}
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'django_cloudtech',  # Replace with your database name
-#         'USER': 'db_cloudtech_user',         # Default MySQL username
-#         'PASSWORD': 'db_cloudtech_password',         # Default MySQL password (empty for XAMPP)
-#         'HOST': '127.0.0.1',    # Default MySQL host
-#         'PORT': '3306',         # Default MySQL port
-#     }
-# }
+else:
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': config("DB_NAEM"),  # Replace with your database name
-#         'USER': config("DB_USER"),         # Default MySQL username
-#         'PASSWORD': config("DB_PASSWORD"),         # Default MySQL password (empty for XAMPP)
-#         'HOST': config("DB_HOST"),    # Default MySQL host
-#         'PORT': config("DB_PORT"),         # Default MySQL port
-#     }
-# }
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
+ 
+ 
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -274,11 +287,21 @@ AUTH_USER_MODEL = 'usersAuthApp.UserAccount'
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.view.sy'
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = False
-EMAIL_PORT = 25
-DEFAULT_FROM_EMAIL = 'khder@view.sy'
+
+# EMAIL_HOST = 'smtp.view.sy'
+# EMAIL_USE_TLS = False
+# EMAIL_USE_SSL = False
+# EMAIL_PORT = 25
+# DEFAULT_FROM_EMAIL = 'khder@view.sy'
+
+EMAIL_HOST = config("EMAIL_HOST")
+EMAIL_USE_TLS = config("EMAIL_USE_TLS")
+EMAIL_USE_SSL = config("EMAIL_USE_SSL")
+EMAIL_PORT = config("EMAIL_PORT")
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+
+
+
 
 # EMAIL_HOST_USER = 'your email address@gmail.com'
 # EMAIL_HOST_PASSWORD = 'gmail API Key (password)'
