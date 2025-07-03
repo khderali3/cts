@@ -52,7 +52,7 @@ def find_relative_py_files(base_dir, app_name):
     """Find .py files in an app, excluding __init__.py and migrations"""
     py_files = []
     app_path = os.path.join(base_dir, app_name)
-    EXCLUDE_FILES = {'__init__.py', 'settings.py', 'asgi.py', 'wsgi.py'}
+    EXCLUDE_FILES = {'__init__.py', 'settings.py', 'asgi.py', 'wsgi.py',}
 
     for dirpath, _, filenames in os.walk(app_path):
         if 'migrations' in dirpath.replace('\\', '/'):
