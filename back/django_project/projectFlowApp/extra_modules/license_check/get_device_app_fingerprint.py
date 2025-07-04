@@ -11,8 +11,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_project.settings')
 
 
 
-
-
 from projectFlowApp.extra_modules.license_check.utils import get_or_create_installation_info
  
 

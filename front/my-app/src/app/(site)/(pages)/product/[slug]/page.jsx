@@ -7,7 +7,7 @@ import { getLocale } from "next-intl/server";
 
 import { ProjectDetailsImagesPreview } from "@/app/(site)/_components/jsx/project_details_images";
 
-
+import { ButtonProductApplyNow } from "@/app/(site)/_components/jsx/button_product_apply_now";
 
 const Page = async ({ params }) => {
 
@@ -121,6 +121,9 @@ const Page = async ({ params }) => {
                   </div>
                 )}
 
+                <div className="d-flex justify-content-center align-items-center"> 
+                  <ButtonProductApplyNow  />
+                </div>
 
 
 

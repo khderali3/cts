@@ -354,7 +354,7 @@ useEffect(() => {
 					<div>
 						<a href={data.PRF_image} target="_blank" > {t('current_image')}   </a> 
 						
-						<div className="form-check   mt-2  ">
+						<div className={`form-check  mt-2  ${locale === "ar" ? 'form-check-reverse ': '' } `  }>
 								<input
 								className=" form-check-input   "
 								type="checkbox"

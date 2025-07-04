@@ -13,9 +13,10 @@ from usersAuthApp.views import CustomUserViewSet
 router = DefaultRouter()
 router.register(r'users', CustomUserViewSet, basename='user')
 # end added by khder
+from django.http import JsonResponse
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('', lambda request: JsonResponse({'status': 'backend alive'})),
 
     path('api/staff/log/', include('logSystemApp.urls')),
 

@@ -1,8 +1,3 @@
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import { useParams } from "next/navigation";
-// import { useLocale } from "next-intl";
  
 import { getLocale } from "next-intl/server";
 import { Suspense } from "react";

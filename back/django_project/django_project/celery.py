@@ -24,16 +24,26 @@ if settings.DEBUG:
 
 from celery.schedules import crontab
 
-app.conf.beat_schedule = {
-    'check-license-every-hour-ticketSystemStaffApp': {
-        'task': 'ticketSystemStaffApp.tasks.check_license_task',
-        'schedule': crontab(minute=0, hour='*'),  # every hour at minute 0
-    },
-    'check-license-every-hour-projectFlowApp': {
-        'task': 'projectFlowApp.tasks.check_license_task',
-        'schedule': crontab(minute=0, hour='*'),  # every hour at minute 0
-    },
-}
+# app.conf.beat_schedule = {
+#     'check-license-every-hour-ticketSystemStaffApp': {
+#         'task': 'ticketSystemStaffApp.tasks.check_license_task',
+#         'schedule': crontab(minute=0, hour='*'),  # every hour at minute 0
+#     },
+#     'check-license-every-hour-projectFlowApp': {
+#         'task': 'projectFlowApp.tasks.check_license_task',
+#         'schedule': crontab(minute=0, hour='*'),  # every hour at minute 0
+#     },
+# }
 
 
  
+app.conf.beat_schedule = {
+    'check-license-every-minute-ticketSystemStaffApp': {
+        'task': 'ticketSystemStaffApp.tasks.check_license_task',
+        'schedule': crontab(minute='*'),  # every minute
+    },
+    'check-license-every-minute-projectFlowApp': {
+        'task': 'projectFlowApp.tasks.check_license_task',
+        'schedule': crontab(minute='*'),  # every minute
+    },
+}
