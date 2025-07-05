@@ -85,7 +85,7 @@ def save_license_file(license_package, filename='license.json'):
 
 if __name__ == '__main__':
     # Example usage: replace with actual client machine_id
-    device_app_fingerprint = '592d207afbe23daece98ac36be42f9e4cb84419a151c3e6e1c34cc7a26079584'
+    device_app_fingerprint = 'dcc5cb466ed1dc76f04cf6c528d7c98b76c2d2638610f359b2b78e60b11ee88e'
     for_app_installation_id  = "b23e90b7-78bc-4972-9cca-947b3e47f4dc"
     for_application = "CloudTechSKy ProjectFlow System"
     for_app_Name_id = "projectFlowApp" 

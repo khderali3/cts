@@ -15,10 +15,12 @@ IS_PRODUCTION_ENV = False
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ENV_FILE = os.getenv("DJANGO_ENV_FILE", BASE_DIR / ".env.development")
+# ENV_FILE = os.getenv("DJANGO_ENV_FILE", BASE_DIR / ".env.development")
 
 
-# ENV_FILE = ".env.production" if IS_PRODUCTION_ENV else ".env.development"
+ENV_FILE = BASE_DIR / (".env.production" if IS_PRODUCTION_ENV else ".env.development")
+
+
 config = Config(RepositoryEnv(ENV_FILE))
 
 
@@ -87,11 +89,15 @@ REST_FRAMEWORK = {
 
 #DJOSER domain and site name to use it with email templates.
 if IS_PRODUCTION_ENV:
+    RECAPTCHA_ENABLED = True
+
     DOMAIN = 'cloudtech-it.com'
     SOCIAL_AUTH_ALLOWED_REDIRECT_URIS = ['https://cloudtech-it.com/account/google']
     MY_SITE_URL = 'https://back.cloudtech-it.com'  # Replace with your domain in production
 
 else:
+    RECAPTCHA_ENABLED = False
+
     DOMAIN = 'localhost:3000'
     SOCIAL_AUTH_ALLOWED_REDIRECT_URIS = ['http://localhost:3000/account/google' ]
     MY_SITE_URL = 'http://localhost:8000'  # Replace with your domain in production
@@ -108,7 +114,7 @@ SITE_NAME = 'CloudTech Sky Company '
 DJOSER = {
 
     'PASSWORD_RESET_CONFIRM_URL': 'account/password-reset/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': False,
+    'SEND_ACTIVATION_EMAIL': True,
     'ACTIVATION_URL': 'account/activation/{uid}/{token}',
     'USER_CREATE_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
@@ -292,22 +298,20 @@ AUTH_USER_MODEL = 'usersAuthApp.UserAccount'
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-# EMAIL_HOST = 'smtp.view.sy'
-# EMAIL_USE_TLS = False
-# EMAIL_USE_SSL = False
-# EMAIL_PORT = 25
-# DEFAULT_FROM_EMAIL = 'khder@view.sy'
+EMAIL_BACKEND = 'usersAuthApp.email_backend.SSLIgnoreEmailBackend'
 
 EMAIL_HOST = config("EMAIL_HOST")
-EMAIL_USE_TLS = config("EMAIL_USE_TLS")
 EMAIL_USE_SSL = config("EMAIL_USE_SSL")
 EMAIL_PORT = config("EMAIL_PORT")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")  # Your email password
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
 
 
+# EMAIL_USE_TLS = config("EMAIL_USE_TLS")
 
 # EMAIL_HOST_USER = 'your email address@gmail.com'
 # EMAIL_HOST_PASSWORD = 'gmail API Key (password)'
@@ -332,7 +336,6 @@ STATICFILES_DIRS = []
 
 
 
-RECAPTCHA_ENABLED = False
 
 #auth cookie settings 
 AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 * 2 
