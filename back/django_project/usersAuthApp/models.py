@@ -5,6 +5,12 @@ from django.contrib.auth.models import (
     PermissionsMixin
 )
 from django.db.models.signals import post_save
+import logging
+
+logger = logging.getLogger("django")
+
+
+
 
 
 from django.utils.text import slugify
@@ -68,7 +74,6 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
         return f"{self.first_name} {self.last_name}"
 
 
-
 class Profile(models.Model):
     PRF_user = models.OneToOneField(UserAccount, related_name='profile_prf_user_relaed_useraccount', on_delete=models.CASCADE)
     PRF_company = models.CharField(max_length=255, blank=True, null=True)
@@ -86,11 +91,16 @@ class Profile(models.Model):
 
 
         if self.PRF_image:
-            img = Image.open(self.PRF_image.path)
-            if img.width > 300 or img.height > 300:
-                output_size = (300, 300)
-                img.thumbnail(output_size)
-                img.save(self.PRF_image.path)
+            try:
+                img = Image.open(self.PRF_image.path)
+                if img.width > 300 or img.height > 300:
+                    output_size = (300, 300)
+                    img.thumbnail(output_size)
+                    img.save(self.PRF_image.path)
+
+            except Exception as e :
+                logger.error(f"Profile image file missing: {e}")
+                logging.getLogger("django").error(f"Profile image file missing: {e}")
 
 
 # create profile automatically  when the user is created using (signal) ##

@@ -20,7 +20,12 @@ from django.db.models.signals import m2m_changed
 from django.forms.models import model_to_dict
 from social_django.models import UserSocialAuth, Association, Nonce
 from django.contrib.admin.models import LogEntry
-EXCLUDED_MODELS = {Log, LogEntry, UserSocialAuth, Association, Nonce}
+from django_celery_beat.models import PeriodicTask
+
+
+
+
+EXCLUDED_MODELS = {Log, LogEntry, UserSocialAuth, Association, Nonce, PeriodicTask}
 
 
 

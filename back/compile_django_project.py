@@ -5,18 +5,7 @@ from Cython.Build import cythonize
 from contextlib import contextmanager
 import glob
 
-# === CONFIGURATION ===
-
-# Apps (relative to project root) to compile
-
-# APPS_TO_COMPILE = [
-#     'django_project',
-#     'ticketSystemApp',
- 
-# ]
-
-
-
+  
 
 APPS_TO_COMPILE = [
     'django_project',

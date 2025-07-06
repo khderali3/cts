@@ -76,17 +76,32 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+if not IS_PRODUCTION_ENV:
 
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'usersAuthApp.authentication.CustomJWTAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
-}
-
+    REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': [
+            'usersAuthApp.authentication.CustomJWTAuthentication',
+        ],
+        'DEFAULT_PERMISSION_CLASSES': [
+            'rest_framework.permissions.IsAuthenticated',
+        ],
+        'DEFAULT_RENDERER_CLASSES': [
+            'rest_framework.renderers.JSONRenderer',
+            'rest_framework.renderers.BrowsableAPIRenderer',
+        ],
+    }
+else:
+    REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': [
+            'usersAuthApp.authentication.CustomJWTAuthentication',
+        ],
+        'DEFAULT_PERMISSION_CLASSES': [
+            'rest_framework.permissions.IsAuthenticated',
+        ],
+        'DEFAULT_RENDERER_CLASSES': [
+            'rest_framework.renderers.JSONRenderer',
+        ],
+    }
 #DJOSER domain and site name to use it with email templates.
 if IS_PRODUCTION_ENV:
     RECAPTCHA_ENABLED = True
@@ -276,11 +291,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Damascus'
+USE_TZ = True
+ 
 
 USE_I18N = True
 
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -310,22 +327,7 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER")  # Your email password
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
 
-
-# EMAIL_USE_TLS = config("EMAIL_USE_TLS")
-
-# EMAIL_HOST_USER = 'your email address@gmail.com'
-# EMAIL_HOST_PASSWORD = 'gmail API Key (password)'
-
-# '''
-# test email from django shell
-# python .\manage.py shell
-# from django.core.mail import send_mail
-# send_mail('cloudTech sky test', 'This is a test from cloudtech sky application', 'khder@view.sy', ['khdersliman3@gmail.com'],fail_silently=False)
-
-# send_mail('Test4', 'This is a test4',None ,['khdersliman3@gmail.com'],fail_silently=False)
-# '''
-
-
+ 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root_dir/')
 MEDIA_URL = '/media_url/'
 STATIC_URL = 'static/'
@@ -367,4 +369,38 @@ CELERY_TASK_SERIALIZER = 'json'
  
 
 
+
  
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] {levelname} {name} {message}\n########",
+            "style": "{",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+    },
+    "handlers": {
+        "file": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "django_errors.log"),
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+    },
+}
+
+
+
+ 
+
+

@@ -20,6 +20,7 @@ class LogView(APIView):
 
     def get(self, request):
 
+ 
         if not request.user.is_superuser and not request.user.has_perm('usersAuthApp.logs_view'):
             return Response({"detail": "Permission denied for this operation."}, status=status.HTTP_403_FORBIDDEN)
 
