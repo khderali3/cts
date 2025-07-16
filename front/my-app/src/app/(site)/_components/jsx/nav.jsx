@@ -49,6 +49,7 @@ export const Nav =  () => {
       >
         <i className="fa-solid fa-bars-staggered" />
       </button>
+      
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
 
       <ContactUsButton handleNavLinkClick={handleNavLinkClick} />

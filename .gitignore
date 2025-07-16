@@ -1,6 +1,9 @@
 back/myenv_39/
-back/django_project/db.sqlit
+back/django_project/db.sqlite3
 back/django_project/.env
-front/node_modules
-"front/node_modules/" 
+back/django_project/.env.*
+back/compiled_django_project
+/front/my-app/node_modules
 react_native/
+
+ 

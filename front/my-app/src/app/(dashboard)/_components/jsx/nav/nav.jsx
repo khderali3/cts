@@ -146,13 +146,7 @@ const Nav = () => {
  
 
               <li className="user-header text-bg-primary">
-                {/* <img
 
-                  src={profileImage ? profileImage : "/Images/def_prof_image.jpg"}
-
-                  className="rounded-circle shadow"
-                  alt="User Image"
-                /> */}
 
                 <img
                   src={profileImage || defaultImage}

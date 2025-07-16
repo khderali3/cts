@@ -12,10 +12,7 @@ const Home = async () => {
  
     const local = await getLocale()
   
-
-
-
-
+ 
 
 
   let res = ''

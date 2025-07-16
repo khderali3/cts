@@ -5,7 +5,7 @@ import Slider from "react-slick";
 
 const ImageSlider = ({clients}) => {
 
-
+ 
 
   // Images from the internet
 
@@ -14,14 +14,7 @@ const ImageSlider = ({clients}) => {
     "/Images/DHL.png",
     "/Images/emmatell.png",
     "/Images/pronet.png",
-    "/Images/ByblosBank.png",
-    "/Images/HARAM.png",
-    "/Images/jica.png",
-    "/Images/KINGDOM.png",
-    "/Images/samanet-logo.png",
-    "/Images/Layer 1.png",
-    "/Images/الائتمان الأهلي.png",
-    "/Images/الشام.png",
+   
 
   ];
 
@@ -69,8 +62,7 @@ const ImageSlider = ({clients}) => {
                   <img src={src} alt={`Slide ${index + 1}`} className='image_slider' />
                 </div>
               ))} */}
-
-
+ 
               {clients?.map((i) => (
                 <div key={i.id} className='slide d-flex justify-content-center text-light'>
                   <img src={i.our_client_image}    className='image_slider' />

@@ -21,11 +21,12 @@ from django.forms.models import model_to_dict
 from social_django.models import UserSocialAuth, Association, Nonce
 from django.contrib.admin.models import LogEntry
 from django_celery_beat.models import PeriodicTask
+from django.contrib.sessions.models import Session
 
 
 
 
-EXCLUDED_MODELS = {Log, LogEntry, UserSocialAuth, Association, Nonce, PeriodicTask}
+EXCLUDED_MODELS = {Log, LogEntry, UserSocialAuth, Association, Nonce, PeriodicTask, Session}
 
 
 

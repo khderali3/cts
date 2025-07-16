@@ -6,6 +6,8 @@ import "@/app/(site)/_components/assets/css/org_bootstrap.min.css"
 import "@/app/(site)/_components/assets/css/all.min.css"
 import "@/app/(site)/_components/assets/css/style.css"
 
+
+
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 

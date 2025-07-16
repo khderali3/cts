@@ -14,10 +14,6 @@ DEBUG = True
 IS_PRODUCTION_ENV = False
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# ENV_FILE = os.getenv("DJANGO_ENV_FILE", BASE_DIR / ".env.development")
-
-
 ENV_FILE = BASE_DIR / (".env.production" if IS_PRODUCTION_ENV else ".env.development")
 
 
@@ -63,7 +59,7 @@ INSTALLED_APPS = [
     # 'projectFlowApp',
     'projectFlowApp.apps.ProjectflowappConfig',
 
-    'logSystemApp',
+    'logSystemApp.apps.LogSystemAppConfig',
     'django_celery_beat',
 
 
